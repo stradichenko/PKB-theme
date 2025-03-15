@@ -4,6 +4,7 @@ This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://
 
 ## Installation
 Make sure to have [HUGO](https://gohugo.io/installation/) and [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
 ⚠️ We assume you have a HUGO site with the basics elements, otherwise read [FAQ](#faq).
 
 ### As a Hugo Module (recommended)
@@ -37,12 +38,12 @@ By default, running the command `hugo` will generate the static files for your w
 
 
 ### Creating a new HUGO site
-You can start by: `hugo new site <your-site-name>`. Now the typical options would be to:
+You can start by: `hugo new site <your-site-name>`. Tipically the options would be to:
 
 ```bash
 Create or install a theme:
    - Create a new theme with the command "hugo new theme <THEMENAME>"
    - Or, install a theme from https://themes.gohugo.io/
 ```
-
+ But in this case the installation will come from the instructions above this repo.
 
