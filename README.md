@@ -4,6 +4,7 @@ This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://
 
 ## Installation
 Make sure to have [HUGO](https://gohugo.io/installation/) and [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+⚠️ We assume you have a HUGO site with the basics elements, otherwise read [FAQ](#faq).
 
 ### As a Hugo Module (recommended)
 From your project's root directory, initiate the hugo module system and add the theme's repo to your `config.toml`. A [module](https://gohugo.io/hugo-modules/use-modules/#article) is a collection of related Go packages that are versioned together as a single unit. 
@@ -30,3 +31,18 @@ Described at [documentation](https://github.com/Stradichenko/PKB-theme/blob/main
 
 ## Publising site
 By default, running the command `hugo` will generate the static files for your website from your content and templates. The generated files will be placed in the `public` directory (or another specified output directory).
+
+## FAQ
+## [You don't have a starting site built in HUGO](#creating-a-new-hugo-site)
+
+
+### Creating a new HUGO site
+You can start by: `hugo new site <your-site-name>`. Now the typical options would be to:
+
+```bash
+Create or install a theme:
+   - Create a new theme with the command "hugo new theme <THEMENAME>"
+   - Or, install a theme from https://themes.gohugo.io/
+```
+
+
