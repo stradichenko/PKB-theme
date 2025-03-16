@@ -3,27 +3,38 @@
 This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/Stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
 
 ## Installation
+To make sure that this installation adjust to you context; check the   [installation and customization flowchart](#installation-flowchart).
 Make sure to have [HUGO](https://gohugo.io/installation/) and [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 
-⚠️ We assume you have a HUGO site with the basic elements, otherwise read [FAQ](#faq).
+⚠️ It is assumed you don't have. [FAQ](#faq).
 
 ### As a Hugo Module (recommended)
 From your project's root directory, initiate the hugo module system and add the theme's repo to your `config.toml`. A [module](https://gohugo.io/hugo-modules/use-modules/#article) is a collection of related Go packages that are versioned together as a single unit. 
 
 ```bash
 hugo mod init github.com/<your_user>/<your_project> # to initialize a new Hugo Module.
-echo 'theme = ["github.com/Stradichenko/PKB-theme"]' >> config.toml
+cat <<EOF > config.toml
+[module]
+  [[module.imports]]
+    path = 'github.com/Stradichenko/PKB-theme'
+EOF
+mkdir -p archetypes
+cp "$(hugo mod vendor && find vendor -path "*/PKB-theme/archetypes/default.md")" archetypes/default.md
 ```
+The easiest way to keep the module updated while allowing you to populate the theme with your preferences is to copy the archetype (or any other personalized files) from the theme into their site’s own archetypes/ directory. Since Hugo gives precedence to local files over module files, any customizations (such as personal profile information) remain in place even if the theme updates.
+Since Hugo gives precedence to local files over module files, any customizations (such as personal profile information) remain in place even if the theme updates.
 
 ### As Git submodule
 
 ```bash
 hugo new site <YOURWEBSITENAME>
-cd <YOURWEBSITENAME> # go inside the folder of your PKB
+cd <YOURWEBSITENAME>
 git init
 git submodule add https://github.com/Stradichenko/PKB-theme.git themes/PKB-theme
 echo "theme = 'PKB-theme'" >> hugo.toml
 ```
+
+---
 
 ## Getting Started
 Inside your <YOURWEBSITENAME> folder you can always use the command `hugo server` and check it with [localhost:1313](http://localhost:1313/) in the address bar of your browser. The hugo server command starts a local development server that watches for changes in your files and automatically regenerates the site and refreshes the browser. This is useful for live previewing changes as you develop your site. Press `CTRL + <C>` to stop Hugo’s development server.
@@ -34,27 +45,29 @@ Described at [documentation](https://github.com/Stradichenko/PKB-theme/blob/main
 ## Publising site
 By default, running the command `hugo` will generate the static files for your website from your content and templates. The generated files will be placed in the `public` directory (or another specified output directory).
 
+## Installation Flowchart
+
 ## FAQ
 ## [You don't have a starting site built in HUGO](#creating-a-new-hugo-site)
-## [What are the differences of the different methods of installation?](#key-differences)
+## [What are the differences of the different methods of installation?](#key-differences-in-installation-methods)
 
 ### Creating a new HUGO site
-You can start by: `hugo new site <your-site-name>`. Tipically the options would be to:
-
+You can start by: 
 ```bash
-Create or install a theme:
-   - Create a new theme with the command "hugo new theme <THEMENAME>"
-   - Or, install a theme from https://themes.gohugo.io/
+hugo new site <your-site-name>
+cd <your-site-name>
 ```
- But in this case the installation will come from the instructions above this repo.
+Tipically the options would be to create a new theme with the command `hugo new theme <THEMENAME>`. Or, install a theme from https://themes.gohugo.io/. But in this case the installation will come from the instructions above this repo.
 
 ---
 
-### Key Differences
-When you install a theme as a Hugo module, Hugo manages the theme as a dependency rather than copying its files directly into your project's themes/ folder: 
+### Key Differences in installation methods
+When you install a theme as a Hugo module, Hugo manages the theme as a dependency rather than copying its files directly into your project's `themes/` folder. You’re telling Hugo to treat your project as a module. In practical terms, this command creates a `go.mod` file in your project’s root directory. This file is a key component of Go’s module system and serves as a manifest that lets Hugo manage dependencies (like themes or other modules) and control versioning. Without running this initialization, Hugo wouldn’t know to look for or handle module-based imports in your project.
 - **Module Cache:** Hugo Modules are managed through Go's module system, which downloads and stores the theme in an internal module cache. The files remain there and are referenced during the build process.
 - **Separation of Dependencies:** Unlike Git submodules, which add a physical copy of the theme into your repository (typically under themes/), Hugo Modules keep the dependency separate. This helps with cleaner project management and easier updates.
 - **On-Demand Access:** The theme files are automatically fetched and used when you build your site. You don’t need a local copy in your themes/ folder for Hugo to incorporate them.
+
+When you run hugo mod init,
 
 | Method | Pros | Cons |
 |--------|------|------|
@@ -63,7 +76,8 @@ When you install a theme as a Hugo module, Hugo manages the theme as a dependenc
 
 If you’re using **Hugo Modules**, you can just run:  
 ```sh
-hugo mod get -u
+hugo mod get -u github.com/Stradichenko/PKB-theme
+cat go.mod | grep "github.com/Stradichenko/PKB-theme"
 ```
 to update the theme.  If you ever need to see a local copy of all module files, you can use the command `hugo mod vendor`.
 
