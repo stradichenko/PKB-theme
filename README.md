@@ -24,6 +24,7 @@ git init
 git submodule add https://github.com/Stradichenko/PKB-theme.git themes/PKB-theme
 echo "theme = 'PKB-theme'" >> hugo.toml
 ```
+
 ## Getting Started
 Inside your <YOURWEBSITENAME> folder you can always use the command `hugo server` and check it with [localhost:1313](http://localhost:1313/) in the address bar of your browser. The hugo server command starts a local development server that watches for changes in your files and automatically regenerates the site and refreshes the browser. This is useful for live previewing changes as you develop your site. Press `CTRL + <C>` to stop Hugo’s development server.
 
@@ -35,7 +36,7 @@ By default, running the command `hugo` will generate the static files for your w
 
 ## FAQ
 ## [You don't have a starting site built in HUGO](#creating-a-new-hugo-site)
-
+## [What are the differences of the different methods of installation?](#key-differences)
 
 ### Creating a new HUGO site
 You can start by: `hugo new site <your-site-name>`. Tipically the options would be to:
@@ -46,4 +47,31 @@ Create or install a theme:
    - Or, install a theme from https://themes.gohugo.io/
 ```
  But in this case the installation will come from the instructions above this repo.
+
+---
+
+### Key Differences
+When you install a theme as a Hugo module, Hugo manages the theme as a dependency rather than copying its files directly into your project's themes/ folder: 
+- **Module Cache:** Hugo Modules are managed through Go's module system, which downloads and stores the theme in an internal module cache. The files remain there and are referenced during the build process.
+- **Separation of Dependencies:** Unlike Git submodules, which add a physical copy of the theme into your repository (typically under themes/), Hugo Modules keep the dependency separate. This helps with cleaner project management and easier updates.
+- **On-Demand Access:** The theme files are automatically fetched and used when you build your site. You don’t need a local copy in your themes/ folder for Hugo to incorporate them.
+
+| Method | Pros | Cons |
+|--------|------|------|
+| **Hugo Module** | Easier dependency management, automatic updates, no need to track theme files in your project. | Requires Hugo Modules (Go-based). |
+| **Git Submodule** | Works well with Git workflows, allows manual control of theme updates. | More manual updates, extra Git commands needed. |
+
+If you’re using **Hugo Modules**, you can just run:  
+```sh
+hugo mod get -u
+```
+to update the theme.  If you ever need to see a local copy of all module files, you can use the command `hugo mod vendor`.
+
+which will copy all module dependencies into a vendor/ folder.
+
+If you’re using **Git submodules**, you need to run:  
+```sh
+git submodule update --remote --merge
+```
+to fetch the latest theme updates.
 
