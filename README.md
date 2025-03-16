@@ -3,10 +3,11 @@
 This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/Stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
 
 ## Installation
-To make sure that this installation adjust to you context; check the   [installation and customization flowchart](#installation-flowchart).
-Make sure to have [HUGO](https://gohugo.io/installation/) and [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+⚠️ For the most part of the instructions we assume that you are creating a site from scratch.
 
-⚠️ It is assumed you don't have. [FAQ](#faq).
+If you already have a populated HUGO site, make sure that this installation steps adjust to you context; check the [installation and customization flowchart](#installation-flowchart). For any other doubt, read the [FAQ](#faq).
+
+Have [HUGO](https://gohugo.io/installation/) and [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed in your system.
 
 ### As a Hugo Module (recommended)
 From your project's root directory, initiate the hugo module system and add the theme's repo to your `config.toml`. A [module](https://gohugo.io/hugo-modules/use-modules/#article) is a collection of related Go packages that are versioned together as a single unit. 
