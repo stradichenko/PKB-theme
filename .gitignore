@@ -21,3 +21,6 @@
 go.work
 go.work.sum
 
+# Files created during hugo server
+.hugo_build.lock
+public/
