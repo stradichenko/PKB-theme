@@ -1,6 +1,6 @@
 # PKB-theme
 ## About
-This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/Stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
+This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
 
 ## Installation
 ⚠️ For the most part of the instructions we assume that you are creating a site from scratch.
@@ -17,7 +17,7 @@ hugo mod init github.com/<your_user>/<your_project> # to initialize a new Hugo M
 cat <<EOF > config.toml
 [module]
   [[module.imports]]
-    path = 'github.com/Stradichenko/PKB-theme'
+    path = 'github.com/stradichenko/PKB-theme'
 EOF
 mkdir -p archetypes
 cp "$(hugo mod vendor && find vendor -path "*/PKB-theme/archetypes/default.md")" archetypes/default.md
@@ -31,7 +31,7 @@ Since Hugo gives precedence to local files over module files, any customizations
 hugo new site <YOURWEBSITENAME>
 cd <YOURWEBSITENAME>
 git init
-git submodule add https://github.com/Stradichenko/PKB-theme.git themes/PKB-theme
+git submodule add https://github.com/stradichenko/PKB-theme.git themes/PKB-theme
 echo "theme = 'PKB-theme'" >> hugo.toml
 ```
 
@@ -41,7 +41,7 @@ echo "theme = 'PKB-theme'" >> hugo.toml
 Inside your <YOURWEBSITENAME> folder you can always use the command `hugo server` and check it with [localhost:1313](http://localhost:1313/) in the address bar of your browser. The hugo server command starts a local development server that watches for changes in your files and automatically regenerates the site and refreshes the browser. This is useful for live previewing changes as you develop your site. Press `CTRL + <C>` to stop Hugo’s development server.
 
 ## Configure your site
-Described at [documentation](https://github.com/Stradichenko/PKB-theme/blob/main/documentation), these are the initial steps to understand how you can customize your blog to your liking.
+Described at [documentation](https://github.com/stradichenko/PKB-theme/blob/main/documentation), these are the initial steps to understand how you can customize your blog to your liking.
 
 ## Publising site
 By default, running the command `hugo` will generate the static files for your website from your content and templates. The generated files will be placed in the `public` directory (or another specified output directory).
@@ -77,8 +77,8 @@ When you run hugo mod init,
 
 If you’re using **Hugo Modules**, you can just run:  
 ```sh
-hugo mod get -u github.com/Stradichenko/PKB-theme
-cat go.mod | grep "github.com/Stradichenko/PKB-theme"
+hugo mod get -u github.com/stradichenko/PKB-theme
+cat go.mod | grep "github.com/stradichenko/PKB-theme"
 ```
 to update the theme.  If you ever need to see a local copy of all module files, you can use the command `hugo mod vendor`.
 
