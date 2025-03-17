@@ -1,31 +1,35 @@
-name = 'Theme name'
+name = 'PKB Theme'
 license = 'MIT'
-licenselink = 'https://github.com/owner/repo/LICENSE'
-description = 'Theme description'
+licenselink = 'https://github.com/stradichenko/PKB-theme/blob/main/LICENSE'
+description = 'Modern documentation theme for Hugo'
 
-# The home page of the theme, where the source can be found
-homepage = 'https://github.com/owner/repo'
-
-# If you have a running demo of the theme
-demosite = 'https://owner.github.io/repo'
-
-# Taxonomy terms
-tags = ['blog', 'company']
-features = ['some', 'awesome', 'features']
-
-# If the theme has multiple authors
-authors = [
-  {name = 'Name of author', homepage = 'Website of author'},
-  {name = 'Name of author', homepage = 'Website of author'}
-]
-
-# If the theme has a single author
+# Required for validation
 [author]
-  name = 'Your name'
-  homepage = 'Your website'
+name = 'Your Name'
+homepage = 'https://your-website.com'
 
-# If porting an existing theme
+# Remove one of these conflicting sections:
+# EITHER this (single author):
+[author]
+  name = "Your Name"
+  homepage = "https://your-website.com"
+
+# OR this (multiple authors):
+# authors = [
+#   {name = 'Name 1', homepage = 'https://site1.com'},
+#   {name = 'Name 2', homepage = 'https://site2.com'}
+# ]
+
+# Demo configuration
+homepage = 'https://github.com/stradichenko/PKB-theme'
+demosite = 'https://stradichenko.github.io/PKB-theme/'
+
+# Taxonomy
+tags = ['documentation', 'knowledge-base']
+features = ['responsive', 'search']
+
+# Original theme attribution (if applicable)
 [original]
-  author = 'Name of original author'
-  homepage = 'Website of original author'
-  repo = 'https://github.com/owner/repo'
+  author = 'Original Author Name'
+  homepage = 'https://original-theme-site.com'
+  repo = 'https://github.com/original/repo'
