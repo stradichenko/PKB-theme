@@ -33,7 +33,11 @@ jobs:
     - name: Build and test
       run: |
         cd exampleSite
-        hugo mod init example.com/test-site
-        hugo mod get -u
-        hugo --minify --cleanDestinationDir --environment production
+        # Initialize module with proper path
+        hugo mod init github.com/stradichenko/PKB-theme/exampleSite
+        # Get theme as dependency
+        hugo mod get github.com/stradichenko/PKB-theme
+        # Build with module path verification
+        hugo --minify --cleanDestinationDir --environment production --logLevel debug
+        # Link checking
         htmltest -c .htmltest.yml
