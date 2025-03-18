@@ -30,22 +30,23 @@ jobs:
         tar xzf htmltest_0.17.0_linux_amd64.tar.gz
         sudo mv htmltest /usr/local/bin/
 
-    - name: Build and test
+      - name: Build and test
       run: |
         cd exampleSite
         
-        # Clean previous modules
-        rm -f go.mod go.sum
+        # Clean environment
+        rm -rf go.mod go.sum resources/_gen public
         
-        # Initialize temporary module
-        hugo mod init temp-site
+        # Initialize with valid path
+        hugo mod init github.com/stradichenko/PKB-theme/exampleSite
         
-        # Get latest theme version automatically
-        hugo mod get -u github.com/stradichenko/PKB-theme
+        # Get latest version
+        hugo mod get -u
+        hugo mod tidy
         
-        # Verify module integrity
+        # Verify and build
         hugo mod verify
-        
-        # Build and test
         hugo --minify --cleanDestinationDir --environment production
+        
+        # Test output
         htmltest -c .htmltest.yml
