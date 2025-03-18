@@ -34,17 +34,18 @@ jobs:
       run: |
         cd exampleSite
         
-        # 1. Initialize module with proper path
+        # Clean previous modules
+        rm -f go.mod go.sum
+        
+        # Initialize temporary module
         hugo mod init temp-site
         
-        # 2. Explicitly get theme from main branch
-        hugo mod get github.com/stradichenko/PKB-theme@main
+        # Get latest theme version automatically
+        hugo mod get -u github.com/stradichenko/PKB-theme
         
-        # 3. Update module paths
-        hugo mod tidy
+        # Verify module integrity
+        hugo mod verify
         
-        # 4. Build with debug logging
-        hugo --minify --cleanDestinationDir --environment production --logLevel debug
-        
-        # 5. Validate output
+        # Build and test
+        hugo --minify --cleanDestinationDir --environment production
         htmltest -c .htmltest.yml
