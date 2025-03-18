@@ -1,4 +1,5 @@
 [module]
   [[module.imports]]
-    path = "PKB-theme"
-    disable = false  # Explicitly enable
+    path = "../"
+    disable = false
+
