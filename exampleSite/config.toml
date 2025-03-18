@@ -1,7 +1,15 @@
 baseURL = "http://example.org"
 title = "PKB Theme Demo"
-theme = "github.com/stradichenko/PKB-theme"
+languageCode = "en-us"
 
 [module]
   [[module.imports]]
     path = "github.com/stradichenko/PKB-theme"
+
+[params]
+  description = "Demo site for PKB Hugo Theme"
+
+[build]
+  writeStats = true
+  noChmod = true
+  noTimes = true

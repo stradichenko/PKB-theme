@@ -1,0 +1,39 @@
+name: Test Hugo Theme
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        hugo-version: ['0.123.7'] # Match your theme's requirement
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v2
+      with:
+        hugo-version: ${{ matrix.hugo-version }}
+        extended: true
+
+    - name: Install htmltest
+      run: |
+        wget -q https://github.com/wjdp/htmltest/releases/download/v0.17.0/htmltest_0.17.0_linux_amd64.tar.gz
+        tar xzf htmltest_0.17.0_linux_amd64.tar.gz
+        sudo mv htmltest /usr/local/bin/
+
+    - name: Build and test
+      run: |
+        cd exampleSite
+        hugo mod init example.com/test-site
+        hugo mod get -u
+        hugo --minify --cleanDestinationDir --environment production
+        htmltest -c .htmltest.yml

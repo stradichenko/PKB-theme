@@ -1,0 +1,5 @@
+DirectoryPath: public
+IgnoreURLs:
+  - http://localhost*
+  - http://example.org*  # Match your baseURL
+TestFilesConcurrently: true
