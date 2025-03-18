@@ -33,11 +33,18 @@ jobs:
     - name: Build and test
       run: |
         cd exampleSite
-        # Initialize module with proper path
-        hugo mod init github.com/stradichenko/PKB-theme/exampleSite
-        # Get theme as dependency
-        hugo mod get github.com/stradichenko/PKB-theme
-        # Build with module path verification
+        
+        # 1. Initialize module (only if needed)
+        if [ ! -f "go.mod" ]; then
+          hugo mod init github.com/stradichenko/PKB-theme/exampleSite
+        fi
+
+        # 2. Auto-resolve and verify latest version
+        hugo mod get -u
+        hugo mod verify
+
+        # 3. Build with debug logging
         hugo --minify --cleanDestinationDir --environment production --logLevel debug
-        # Link checking
+
+        # 4. Validate output
         htmltest -c .htmltest.yml
