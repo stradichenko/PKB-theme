@@ -24,3 +24,6 @@ go.work.sum
 # Files created during hugo server
 .hugo_build.lock
 public/
+
+# Files created during CI/CD
+exampleSite/go.mod
