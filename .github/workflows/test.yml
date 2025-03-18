@@ -35,7 +35,7 @@ jobs:
         cd exampleSite
         
         # Clean previous modules
-        rm -f go.mod go.sum
+        rm -rf go.mod go.sum resources/_gen public
         
         # Initialize temporary module
         hugo mod init temp-site
@@ -47,5 +47,5 @@ jobs:
         hugo mod verify
         
         # Build and test
-        hugo --minify --cleanDestinationDir --environment production
+        hugo --minify --cleanDestinationDir --environment production --logLevel debug
         htmltest -c .htmltest.yml
