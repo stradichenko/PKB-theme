@@ -1,4 +1,5 @@
 # PKB-theme
+![CI Status](https://github.com/stradichenko/PKB-theme/actions/workflows/test.yml/badge.svg)
 ## About
 This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
 
