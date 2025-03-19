@@ -15,8 +15,12 @@ Have [HUGO](https://gohugo.io/installation/) and [Git](https://git-scm.com/book/
 From your project's root directory, initiate the hugo module system and add the theme's repo to your `config.toml`. A [module](https://gohugo.io/hugo-modules/use-modules/#article) is a collection of related Go packages that are versioned together as a single unit. 
 
 ```bash
+
+# 0. Create boilerplate files for your site, replace placeholder title
+hogo new site <your-site>
+
 # 1. Initialize HUGO module to go.mod
-hugo mod init github.com/stradichenko/krotanote
+hugo mod init github.com/stradichenko/PKB-theme
 
 # 2. Create config.toml with module config
 cat <<EOF >> config.toml
@@ -29,7 +33,8 @@ EOF
 hugo mod get github.com/stradichenko/PKB-theme
 
 # 4. This will use HUGO to Auto-create archetype for the user to customize
-hugo new --kind default example.md && rm content/example.md
+curl -L -o archetypes/default.md https://github.com/stradichenko/PKB-theme/raw/main/archetypes/default.md
+
 ```
 The easiest way to keep the module updated while allowing you to populate the theme with your preferences is to copy the archetype (or any other personalized files) from the theme into their site’s own archetypes/ directory. Since Hugo gives precedence to local files over module files, any customizations (such as personal profile information) remain in place even if the theme updates.
 Since Hugo gives precedence to local files over module files, any customizations (such as personal profile information) remain in place even if the theme updates.
