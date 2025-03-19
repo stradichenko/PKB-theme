@@ -1,6 +1,7 @@
 # PKB-theme
 ![CI Status](https://github.com/stradichenko/PKB-theme/actions/workflows/test.yml/badge.svg)
 ![GitHub License](https://img.shields.io/github/license/stradichenko/PKB-theme)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/stradichenko/PKB-theme)
 ## About
 This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
 
@@ -16,7 +17,7 @@ From your project's root directory, initiate the hugo module system and add the 
 
 ```bash
 
-# 0. Create boilerplate files for your site, replace placeholder title
+# 0. Create boilerplate files for your site, replace placeholder title (in case of testing locally anything like <example.com/my-blog> works fine)
 hogo new site <your-site>
 
 # 1. Initialize HUGO module to go.mod
