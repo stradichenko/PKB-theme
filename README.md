@@ -15,8 +15,8 @@ Have [HUGO](https://gohugo.io/installation/) and [Git](https://git-scm.com/book/
 From your project's root directory, initiate the hugo module system and add the theme's repo to your `config.toml`. A [module](https://gohugo.io/hugo-modules/use-modules/#article) is a collection of related Go packages that are versioned together as a single unit. 
 
 ```bash
-# 1. Initialize HUGO module (use your actual repo or example.com paths)
-hugo mod init github.com/yourname/your_project
+# 1. Initialize HUGO module to go.mod
+hugo mod init github.com/stradichenko/krotanote
 
 # 2. Create config.toml with module config
 cat <<EOF >> config.toml
