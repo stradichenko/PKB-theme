@@ -1,6 +1,6 @@
 {
-  "title": "{{ replace .File.ContentBaseName `-` ` ` | title }}",
-  "date": "{{ .Date }}",
+  "title": "About",
+  "date": "2025-03-19T20:04:53+01:00",
   "draft": true,
   "publishDate": "",
   "lastmod": "",
