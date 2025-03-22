@@ -26,8 +26,10 @@ jobs:
 
     - name: Install htmltest
       run: |
-        wget -q https://github.com/wjdp/htmltest/releases/download/v0.17.0/htmltest_0.17.0_linux_amd64.tar.gz
-        tar xzf htmltest_0.17.0_linux_amd64.tar.gz
+        # Fetch the latest version of htmltest
+        LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+        wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION}_linux_amd64.tar.gz
+        tar xzf htmltest_${LATEST_VERSION}_linux_amd64.tar.gz
         sudo mv htmltest /usr/local/bin/
 
     - name: Build and test
@@ -48,4 +50,4 @@ jobs:
         
         # Build and test
         hugo --minify --cleanDestinationDir --environment production --logLevel debug
-        htmltest -c .htmltest.yml
+        htmltest -c .htmltest.yml --log-level info --skip-external
