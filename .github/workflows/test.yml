@@ -27,17 +27,19 @@ jobs:
     - name: Install htmltest
       run: |
         # Fetch the latest version of htmltest
-        # Fetch the latest version of htmltest, a tool for testing HTML output
-        # It ensures that the generated site does not contain broken links or other HTML issues
         LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+        echo "LATEST_VERSION=${LATEST_VERSION}"
         
-        # Download the htmltest binary for the latest version
-        wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION}_linux_amd64.tar.gz || { echo "Error: Failed to download htmltest"; exit 1; }
-          mv htmltest "$CACHE_DIR/htmltest_${LATEST_VERSION}"
+        if [ -z "$LATEST_VERSION" ]; then
+            echo "Failed to fetch the latest version of htmltest."
+            exit 1
         fi
-        sudo cp "$CACHE_DIR/htmltest_${LATEST_VERSION}" /usr/local/bin/htmltest
-        mv htmltest $HOME/bin/
-        echo "$HOME/bin" >> $GITHUB_PATH
+        
+        echo "Downloading from: https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION}_linux_amd64.tar.gz"
+        wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION}_linux_amd64.tar.gz
+        
+        tar xzf htmltest_${LATEST_VERSION}_linux_amd64.tar.gz
+        sudo mv htmltest /usr/local/bin/
 
     - name: Build and test
       run: |
