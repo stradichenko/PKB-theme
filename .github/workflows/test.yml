@@ -35,10 +35,14 @@ jobs:
             exit 1
         fi
         
-        echo "Downloading from: https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION}_linux_amd64.tar.gz"
-        wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION}_linux_amd64.tar.gz
+        # Adjust the URL to match the asset naming convention
+        echo "Downloading from: https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
+        wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz || {
+            echo "Failed to download htmltest. Check the URL or network connection.";
+            exit 1;
+        }
         
-        tar xzf htmltest_${LATEST_VERSION}_linux_amd64.tar.gz
+        tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
         sudo mv htmltest /usr/local/bin/
 
     - name: Build and test
