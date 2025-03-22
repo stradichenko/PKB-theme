@@ -1,7 +1,9 @@
 {
+  // Replaces dashes in the file name with spaces and converts it to title case
   "title": "{{ replace .File.ContentBaseName `-` ` ` | title }}",
-  "date": "{{ .Date }}",
+  // The "draft" field is set to true by default to indicate that new content is unpublished.
   "draft": true,
+  "publishDate": "", // Expected format: YYYY-MM-DD
   "publishDate": "",
   "lastmod": "",
   "expiryDate": "",
@@ -19,6 +21,7 @@
   "type": "",
   "layout": "",
   "aliases": [],
+  // Defines the main menu entry for this content
   "menu": {
     "main": {
       "weight": 0,
