@@ -63,4 +63,4 @@ jobs:
         
         # Build and test
         hugo --minify --cleanDestinationDir --environment production --logLevel debug
-        htmltest -c .htmltest.yml --log-level info --skip-external
+        htmltest -c .htmltest.yml --log-level 3 --skip-external
