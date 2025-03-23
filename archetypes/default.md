@@ -4,7 +4,6 @@
   // The "draft" field is set to true by default to indicate that new content is unpublished.
   "draft": true,
   "publishDate": "", // Expected format: YYYY-MM-DD
-  "publishDate": "",
   "lastmod": "",
   "expiryDate": "",
   "description": "",
@@ -24,6 +23,7 @@
   // Defines the main menu entry for this content
   "menu": {
     "main": {
+      // Determines the order of menu items; lower values appear first
       "weight": 0,
       "identifier": "",
       "url": ""
@@ -44,6 +44,7 @@
   "weight": 0,
   "summary": "",
   "readTime": 0,
+  // Indicates whether comments are enabled for the content
   "comments": false
 }
 
