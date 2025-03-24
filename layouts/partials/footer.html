@@ -1,1 +1,14 @@
-<p>Copyright {{ now.Year }}. All rights reserved.</p>
+{{- with resources.Get "css/footer.css" }}
+  {{- if eq hugo.Environment "development" }}
+    <link rel="stylesheet" href="{{ .RelPermalink }}">
+  {{- else }}
+    {{- with . | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+<footer>
+    <p>Current Environment: {{ hugo.Environment }}</p>
+  <p>Copyright {{ now.Year }}. All rights reserved.</p>
+</footer>

@@ -1,0 +1,27 @@
+/* Footer container styling */
+footer {
+  background-color: var(--footer-bg-color, #8f7e73); /* Blue background */
+  color: var(--footer-text-color, #000000); /* Use CSS variable with fallback */
+  text-align: center; /* Center-align text */
+  padding: 20px 10px; /* Add spacing: 20px vertical, 10px horizontal */
+  font-size: 14px; /* Set a smaller font size */
+  font-family: 'Comic Sans MS', 'Comic Sans', cursive; /* Add Comic Sans font family */
+  border-top: 1px solid var(--footer-border-color, #eaeaea); /* Add a subtle border at the top using a CSS variable */
+}
+
+/* Footer text styling */
+footer p {
+  margin: 0; /* Remove default margin */
+  line-height: 1.5; /* Improve readability */
+}
+
+/* Add hover effect for links in the footer */
+footer a {
+  color: var(--footer-link-color, #5a7fa3); /* Use CSS variable with fallback */
+  text-decoration: none; /* Remove underline */
+}
+
+footer a:hover {
+  text-decoration: underline; /* Add underline on hover */
+  color: var(--footer-link-hover-color, #0056b3); /* Add slight color change for better feedback */
+}
