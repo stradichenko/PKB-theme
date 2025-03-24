@@ -1,0 +1,79 @@
+/* ============================
+    Header Stylesheet
+    ============================
+    This stylesheet defines the styles for the header section of the website.
+    It includes layout, typography, and responsive design rules.
+*/
+
+/* General Header Styles */
+header {
+  background-color: #f8f9fa; /* Light gray background */
+  color: #333; /* Dark text color */
+  padding: 20px; /* Spacing around the header */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  position: relative;
+  z-index: 1000; /* Ensure header is above other elements */
+  width: 100%; /* Make the header span the full width of the page */
+  margin: 0; /* Remove any default margins */
+}
+
+/* Logo Styles */
+header .logo {
+  font-size: 1.5rem; /* Larger font size for logo */
+  font-weight: bold; /* Bold text for emphasis */
+  text-decoration: none; /* Remove underline */
+  color: #007bff; /* Primary color for logo */
+}
+
+header .logo:hover {
+  color: #0056b3; /* Darker shade on hover */
+}
+
+/* Navigation Styles */
+header nav {
+  display: flex; /* Flexbox for layout */
+  justify-content: space-between; /* Space between logo and nav items */
+  align-items: center; /* Center items vertically */
+  max-width: 1200px; /* Limit the content width */
+  margin: 0 auto; /* Center the content horizontally */
+  width: 100%; /* Ensure the nav spans the full width of the header */
+}
+
+header nav ul {
+  list-style: none; /* Remove default list styling */
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
+  display: flex; /* Flexbox for horizontal layout */
+  gap: 15px; /* Spacing between nav items */
+}
+
+header nav ul li {
+  display: inline-block; /* Inline-block for individual items */
+}
+
+header nav ul li a {
+  text-decoration: none; /* Remove underline */
+  color: #333; /* Dark text color */
+  font-size: 1rem; /* Standard font size */
+  padding: 5px 10px; /* Padding for clickable area */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.3s, color 0.3s; /* Smooth hover effect */
+}
+
+header nav ul li a:hover {
+  background-color: #007bff; /* Primary color background */
+  color: #fff; /* White text on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  header nav {
+     flex-direction: column; /* Stack items vertically */
+     align-items: flex-start; /* Align items to the left */
+  }
+
+  header nav ul {
+     flex-direction: column; /* Stack nav items vertically */
+     gap: 10px; /* Adjust spacing */
+  }
+}
