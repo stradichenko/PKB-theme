@@ -1,4 +1,3 @@
-/* Colors */
 :root { /* Why use :root? It ensures the variables are globally scoped and available throughout the entire document. */
   /* General Colors */
   --primary-color: #007bff;
@@ -30,7 +29,7 @@
   --footer-border-color: #6d2f2f; /* Default border color */
   --footer-link-color: #5a7fa3; /* Default link color */
   --footer-link-hover-color: #004080; /* Unique link hover color for better distinction */
-  --footer-font-family: 'Arial', sans-serif; /* Default font family */
+  --footer-font-family: var(--font-family-sans); /* Default font family */
   --footer-font-size: 30px; /* Default font size */
   --footer-padding-vertical: 20px; /* Vertical padding */
   --footer-padding-horizontal: 10px; /* Horizontal padding */
@@ -40,7 +39,7 @@
   --header-text-color: #333; /* Dark text color */
   --header-logo-color: #007bff; /* Logo color */
   --header-logo-hover-color: #0056b3; /* Logo hover color */
-  --header-font-family: 'Arial', sans-serif; /* Default font family */
+  --header-font-family: var(--font-family-sans); /* Default font family */
   --header-font-size: 1.5rem; /* Font size for header logo */
   --header-padding: 20px; /* Padding around the header */
   --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */

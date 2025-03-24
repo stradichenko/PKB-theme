@@ -1,12 +1,16 @@
-{{- with resources.Get "css/header.css" | toCSS }}
-  {{- if eq hugo.Environment "development" }}
-    <link rel="stylesheet" href="{{ .RelPermalink }}">
-  {{- else }}
-    {{- with . | minify | fingerprint }}
-      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
-    {{- end }}
-  {{- end }}
-{{- end }}
+{{ if eq hugo.Environment "development" }}
+  <!-- In development, load individual CSS files for easier debugging -->
+  <link rel="stylesheet" href="{{ (resources.Get "css/global/variables.css" | toCSS).RelPermalink }}">
+  <link rel="stylesheet" href="{{ (resources.Get "css/header.css" | toCSS).RelPermalink }}">
+{{ else }}
+  <!-- In production, combine, minify, and fingerprint the CSS files -->
+  {{ $headerFiles := slice 
+      (resources.Get "css/global/variables.css" | toCSS) 
+      (resources.Get "css/header.css" | toCSS) 
+  }}
+  {{ $headerCSS := $headerFiles | resources.Concat "css/header-combined.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $headerCSS.RelPermalink }}" integrity="{{ $headerCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
 
 <header>
   <h1>{{ site.Title }}</h1>

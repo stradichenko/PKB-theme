@@ -1,14 +1,15 @@
-{{- with resources.Get "css/footer.css" | toCSS }}
-  {{- if eq hugo.Environment "development" }}
-    <link rel="stylesheet" href="{{ .RelPermalink }}">
-  {{- else }}
-    {{- with . | minify | fingerprint }}
-      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
-    {{- end }}
-  {{- end }}
-{{- end }}
+{{ if eq hugo.Environment "development" }}
+  <!-- In development, load individual CSS files -->
+  <link rel="stylesheet" href="{{ (resources.Get "css/global/variables.css").RelPermalink }}">
+  <link rel="stylesheet" href="{{ (resources.Get "css/footer.css").RelPermalink }}">
+{{ else }}
+  <!-- In production, concatenate, minify, and fingerprint -->
+  {{ $cssFiles := slice (resources.Get "css/global/variables.css") (resources.Get "css/footer.css") }}
+  {{ $footerCSS := $cssFiles | resources.Concat "css/footer-combined.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $footerCSS.RelPermalink }}" integrity="{{ $footerCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
 
 <footer>
-    <p>Current Environment: {{ hugo.Environment }}</p>
+  <p>Current Environment: {{ hugo.Environment }}</p>
   <p>Copyright {{ now.Year }}. All rights reserved.</p>
 </footer>
