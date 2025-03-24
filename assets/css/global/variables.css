@@ -4,7 +4,7 @@
   --primary-color: #007bff;
   --primary-color-hover: #0056b3;
   --secondary-color: #f8f9fa;
-  --body-text-color: #333;
+  --body-text-color: #222; /* Text color for the body */
   --link-color: #00e;
   --link-hover-color: #0056b3;
 
@@ -48,4 +48,12 @@
   --header-nav-link-color: #333; /* Navigation link color */
   --header-nav-link-hover-bg: #007bff; /* Navigation link hover background */
   --header-nav-link-hover-color: #fff; /* Navigation link hover text color */
+
+  /* Body Variables */
+  --body-bg-color: #922f2f; /* Background color for the body */
+  --body-font-family: var(--font-family-sans); /* Font family for the body */
+  --body-font-size: var(--font-size-base); /* Font size for the body */
+  --body-line-height: 1.5; /* Line height for the body */
+  --body-padding: var(--spacing-medium); /* Padding for the body */
+  --body-text-color: var(--body-text-color); /* Text color for the body */
 }
