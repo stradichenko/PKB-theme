@@ -1,4 +1,4 @@
-{{- with resources.Get "css/footer.css" | toCSS}}
+{{- with resources.Get "css/footer.css" | toCSS }}
   {{- if eq hugo.Environment "development" }}
     <link rel="stylesheet" href="{{ .RelPermalink }}">
   {{- else }}
