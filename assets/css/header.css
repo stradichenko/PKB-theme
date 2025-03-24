@@ -1,3 +1,5 @@
+@import url('./global/variables.css'); /* Import CSS variables */
+
 /* ============================
     Header Stylesheet
     ============================
@@ -7,26 +9,27 @@
 
 /* General Header Styles */
 header {
-  background-color: #f8f9fa; /* Light gray background */
-  color: #333; /* Dark text color */
-  padding: 20px; /* Spacing around the header */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background-color: var(--header-bg-color);
+  color: var(--header-text-color);
+  padding: var(--header-padding);
+  box-shadow: var(--header-shadow);
   position: relative;
   z-index: 1000; /* Ensure header is above other elements */
   width: 100%; /* Make the header span the full width of the page */
   margin: 0; /* Remove any default margins */
+  font-family: var(--header-font-family);
 }
 
 /* Logo Styles */
 header .logo {
-  font-size: 1.5rem; /* Larger font size for logo */
+  font-size: var(--header-font-size);
   font-weight: bold; /* Bold text for emphasis */
   text-decoration: none; /* Remove underline */
-  color: #007bff; /* Primary color for logo */
+  color: var(--header-logo-color);
 }
 
 header .logo:hover {
-  color: #0056b3; /* Darker shade on hover */
+  color: var(--header-logo-hover-color);
 }
 
 /* Navigation Styles */
@@ -37,6 +40,7 @@ header nav {
   max-width: 1200px; /* Limit the content width */
   margin: 0 auto; /* Center the content horizontally */
   width: 100%; /* Ensure the nav spans the full width of the header */
+  gap: var(--header-nav-gap);
 }
 
 header nav ul {
@@ -44,7 +48,7 @@ header nav ul {
   margin: 0; /* Reset margin */
   padding: 0; /* Reset padding */
   display: flex; /* Flexbox for horizontal layout */
-  gap: 15px; /* Spacing between nav items */
+  gap: var(--header-nav-gap);
 }
 
 header nav ul li {
@@ -53,16 +57,16 @@ header nav ul li {
 
 header nav ul li a {
   text-decoration: none; /* Remove underline */
-  color: #333; /* Dark text color */
+  color: var(--header-nav-link-color);
   font-size: 1rem; /* Standard font size */
-  padding: 5px 10px; /* Padding for clickable area */
-  border-radius: 4px; /* Rounded corners */
+  padding: var(--spacing-small) var(--spacing-medium); /* Padding for clickable area */
+  border-radius: var(--border-radius); /* Rounded corners */
   transition: background-color 0.3s, color 0.3s; /* Smooth hover effect */
 }
 
 header nav ul li a:hover {
-  background-color: #007bff; /* Primary color background */
-  color: #fff; /* White text on hover */
+  background-color: var(--header-nav-link-hover-bg); /* Primary color background */
+  color: var(--header-nav-link-hover-color); /* White text on hover */
 }
 
 /* Responsive Design */

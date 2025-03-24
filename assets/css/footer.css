@@ -1,12 +1,14 @@
+@import url('./global/variables.css'); /* Import CSS variables */
+
 /* Footer container styling */
 footer {
-  background-color: var(--footer-bg-color, #8f7e73); /* Blue background */
-  color: var(--footer-text-color, #000000); /* Use CSS variable with fallback */
+  background-color: var(--footer-bg-color); /* Use CSS variable */
+  color: var(--footer-text-color); /* Use CSS variable */
   text-align: center; /* Center-align text */
-  padding: 20px 10px; /* Add spacing: 20px vertical, 10px horizontal */
-  font-size: 14px; /* Set a smaller font size */
-  font-family: 'Comic Sans MS', 'Comic Sans', cursive; /* Add Comic Sans font family */
-  border-top: 1px solid var(--footer-border-color, #eaeaea); /* Add a subtle border at the top using a CSS variable */
+  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal); /* Use CSS variables for padding */
+  font-size: var(--footer-font-size); /* Use CSS variable for font size */
+  font-family: var(--footer-font-family); /* Use CSS variable for font family */
+  border-top: 1px solid var(--footer-border-color); /* Use CSS variable for border color */
 }
 
 /* Footer text styling */
@@ -17,11 +19,11 @@ footer p {
 
 /* Add hover effect for links in the footer */
 footer a {
-  color: var(--footer-link-color, #5a7fa3); /* Use CSS variable with fallback */
+  color: var(--footer-link-color); /* Use CSS variable for link color */
   text-decoration: none; /* Remove underline */
 }
 
 footer a:hover {
   text-decoration: underline; /* Add underline on hover */
-  color: var(--footer-link-hover-color, #0056b3); /* Add slight color change for better feedback */
+  color: var(--footer-link-hover-color); /* Use CSS variable for hover color */
 }

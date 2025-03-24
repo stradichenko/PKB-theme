@@ -1,0 +1,51 @@
+/* Colors */
+:root { /* Why use :root? It ensures the variables are globally scoped and available throughout the entire document. */
+  /* General Colors */
+  --primary-color: #007bff;
+  --primary-color-hover: #0056b3;
+  --secondary-color: #f8f9fa;
+  --body-text-color: #333;
+  --link-color: #00e;
+  --link-hover-color: #0056b3;
+
+  /* Fonts */
+  --font-family-sans: 'Arial', sans-serif;
+  --font-family-serif: 'Georgia', serif;
+  --font-size-base: 16px;
+  --font-size-large: 1.5rem;
+  --font-size-small: 0.875rem;
+
+  /* Spacing */
+  --spacing-small: 8px;
+  --spacing-medium: 16px;
+  --spacing-large: 24px;
+
+  /* Borders */
+  --border-radius: 4px; /* Default border radius */
+  --border-color: #ddd;
+
+  /* Footer Variables */
+  --footer-bg-color: #8f62d8; /* Default background color */
+  --footer-text-color: #000000; /* Default text color */
+  --footer-border-color: #eaeaea; /* Default border color */
+  --footer-link-color: #5a7fa3; /* Default link color */
+  --footer-link-hover-color: #004080; /* Unique link hover color for better distinction */
+  --footer-font-family: 'Arial', sans-serif; /* Default font family */
+  --footer-font-size: 14px; /* Default font size */
+  --footer-padding-vertical: 20px; /* Vertical padding */
+  --footer-padding-horizontal: 10px; /* Horizontal padding */
+
+  /* Header Variables */
+  --header-bg-color: #0a3d70; /* Light gray background */
+  --header-text-color: #333; /* Dark text color */
+  --header-logo-color: #007bff; /* Logo color */
+  --header-logo-hover-color: #0056b3; /* Logo hover color */
+  --header-font-family: 'Arial', sans-serif; /* Default font family */
+  --header-font-size: 1.5rem; /* Font size for header logo */
+  --header-padding: 20px; /* Padding around the header */
+  --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  --header-nav-gap: 15px; /* Spacing between navigation items */
+  --header-nav-link-color: #333; /* Navigation link color */
+  --header-nav-link-hover-bg: #007bff; /* Navigation link hover background */
+  --header-nav-link-hover-color: #fff; /* Navigation link hover text color */
+}
