@@ -1,4 +1,4 @@
-{{- with resources.Get "css/header.css" }}
+{{- with resources.Get "css/header.css" | toCSS }}
   {{- if eq hugo.Environment "development" }}
     <link rel="stylesheet" href="{{ .RelPermalink }}">
   {{- else }}

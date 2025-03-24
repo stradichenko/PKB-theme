@@ -1,0 +1,97 @@
+@import url("./global/variables.css");
+/* Import CSS variables */
+/* ============================
+    Header Stylesheet
+    ============================
+    This stylesheet defines the styles for the header section of the website.
+    It includes layout, typography, and responsive design rules.
+*/
+/* General Header Styles */
+header {
+  background-color: var(--header-bg-color);
+  color: var(--header-text-color);
+  padding: var(--header-padding);
+  box-shadow: var(--header-shadow);
+  position: relative;
+  z-index: 1000;
+  /* Ensure header is above other elements */
+  width: 100%;
+  /* Make the header span the full width of the page */
+  margin: 0;
+  /* Remove any default margins */
+  font-family: var(--header-font-family); }
+
+/* Logo Styles */
+header .logo {
+  font-size: var(--header-font-size);
+  font-weight: bold;
+  /* Bold text for emphasis */
+  text-decoration: none;
+  /* Remove underline */
+  color: var(--header-logo-color); }
+
+header .logo:hover {
+  color: var(--header-logo-hover-color); }
+
+/* Navigation Styles */
+header nav {
+  display: flex;
+  /* Flexbox for layout */
+  justify-content: space-between;
+  /* Space between logo and nav items */
+  align-items: center;
+  /* Center items vertically */
+  max-width: 1200px;
+  /* Limit the content width */
+  margin: 0 auto;
+  /* Center the content horizontally */
+  width: 100%;
+  /* Ensure the nav spans the full width of the header */
+  gap: var(--header-nav-gap); }
+
+header nav ul {
+  list-style: none;
+  /* Remove default list styling */
+  margin: 0;
+  /* Reset margin */
+  padding: 0;
+  /* Reset padding */
+  display: flex;
+  /* Flexbox for horizontal layout */
+  gap: var(--header-nav-gap); }
+
+header nav ul li {
+  display: inline-block;
+  /* Inline-block for individual items */ }
+
+header nav ul li a {
+  text-decoration: none;
+  /* Remove underline */
+  color: var(--header-nav-link-color);
+  font-size: 1rem;
+  /* Standard font size */
+  padding: var(--spacing-small) var(--spacing-medium);
+  /* Padding for clickable area */
+  border-radius: var(--border-radius);
+  /* Rounded corners */
+  transition: background-color 0.3s, color 0.3s;
+  /* Smooth hover effect */ }
+
+header nav ul li a:hover {
+  background-color: var(--header-nav-link-hover-bg);
+  /* Primary color background */
+  color: var(--header-nav-link-hover-color);
+  /* White text on hover */ }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  header nav {
+    flex-direction: column;
+    /* Stack items vertically */
+    align-items: flex-start;
+    /* Align items to the left */ }
+  header nav ul {
+    flex-direction: column;
+    /* Stack nav items vertically */
+    gap: 10px;
+    /* Adjust spacing */ } }

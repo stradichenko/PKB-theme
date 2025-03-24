@@ -1,0 +1,38 @@
+@import url("./global/variables.css");
+/* Import CSS variables */
+/* Footer container styling */
+footer {
+  background-color: var(--footer-bg-color);
+  /* Use CSS variable */
+  color: var(--footer-text-color);
+  /* Use CSS variable */
+  text-align: center;
+  /* Center-align text */
+  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal);
+  /* Use CSS variables for padding */
+  font-size: var(--footer-font-size);
+  /* Use CSS variable for font size */
+  font-family: var(--footer-font-family);
+  /* Use CSS variable for font family */
+  border-top: 1px solid var(--footer-border-color);
+  /* Use CSS variable for border color */ }
+
+/* Footer text styling */
+footer p {
+  margin: 0;
+  /* Remove default margin */
+  line-height: 1.5;
+  /* Improve readability */ }
+
+/* Add hover effect for links in the footer */
+footer a {
+  color: var(--footer-link-color);
+  /* Use CSS variable for link color */
+  text-decoration: none;
+  /* Remove underline */ }
+
+footer a:hover {
+  text-decoration: underline;
+  /* Add underline on hover */
+  color: var(--footer-link-hover-color);
+  /* Use CSS variable for hover color */ }
