@@ -2,6 +2,14 @@
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
 <head>
   {{ partial "head.html" . }}
+  {{ if eq hugo.Environment "development" }}
+    <!-- Load body.css directly in development -->
+    <link rel="stylesheet" href="{{ (resources.Get "css/body.css").RelPermalink }}">
+  {{ else }}
+    <!-- In production, minify and fingerprint body.css -->
+    {{ $bodyCSS := resources.Get "css/body.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $bodyCSS.RelPermalink }}" integrity="{{ $bodyCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
 </head>
 <body>
   <header>
