@@ -1,7 +1,10 @@
 {{ if eq hugo.Environment "development" }}
-  <!-- In development, load individual CSS files for easier debugging -->
-  <link rel="stylesheet" href="{{ (resources.Get "css/global/variables.css" | toCSS).RelPermalink }}">
-  <link rel="stylesheet" href="{{ (resources.Get "css/header.css" | toCSS).RelPermalink }}">
+  <!-- In development, load individual CSS files with SRI but without minification -->
+  {{ $variablesCSS := resources.Get "css/global/variables.css" | toCSS | fingerprint }}
+  <link rel="stylesheet" href="{{ $variablesCSS.RelPermalink }}" integrity="{{ $variablesCSS.Data.Integrity }}" crossorigin="anonymous">
+  
+  {{ $headerCSS := resources.Get "css/header.css" | toCSS | fingerprint }}
+  <link rel="stylesheet" href="{{ $headerCSS.RelPermalink }}" integrity="{{ $headerCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ else }}
   <!-- In production, combine, minify, and fingerprint the CSS files -->
   {{ $headerFiles := slice 
