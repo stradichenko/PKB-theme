@@ -1,58 +1,63 @@
 :root { /* Why use :root? It ensures the variables are globally scoped and available throughout the entire document. */
   /* General Colors */
-  --primary-color: #007bff;
-  --primary-color-hover: #0056b3;
-  --secondary-color: #f8f9fa;
-  --body-text-color: #222; /* Text color for the body */
-  --link-color: #00e;
-  --link-hover-color: #0056b3;
+  --primary-color: #4a90e2; /* Harmonized primary color */
+  --primary-color-hover: #357abd; /* Slightly darker for hover */
+  --secondary-color: #f4f4f4; /* Softer secondary color */
+  --body-text-color: #333; /* Neutral text color for better readability */
+  --link-color: #4a90e2; /* Match primary color */
+  --link-hover-color: #357abd; /* Match primary hover color */
 
   /* Fonts */
   --font-family-sans: 'Arial', sans-serif;
   --font-family-serif: 'Georgia', serif;
   --font-size-base: 16px;
-  --font-size-large: 1.5rem;
+  --font-size-large: 1.25rem; /* Slightly smaller for better balance */
   --font-size-small: 0.875rem;
 
   /* Spacing */
-  --spacing-small: 8px;
-  --spacing-medium: 16px;
+  --spacing-small: 0px;
+  --spacing-medium: 8px;
   --spacing-large: 24px;
 
   /* Borders */
-  --border-radius: 4px; /* Default border radius */
-  --border-color: #ddd;
+  --border-radius: 6px; /* Slightly rounded for modern look */
+  --border-color: #ccc; /* Softer border color */
 
   /* Footer Variables */
-  --footer-bg-color: #8247e0; /* Default background color */
-  --footer-text-color: #b93e3e; /* Default text color */
-  --footer-border-color: #6d2f2f; /* Default border color */
-  --footer-link-color: #5a7fa3; /* Default link color */
-  --footer-link-hover-color: #004080; /* Unique link hover color for better distinction */
-  --footer-font-family: var(--font-family-sans); /* Default font family */
-  --footer-font-size: 30px; /* Default font size */
-  --footer-padding-vertical: 20px; /* Vertical padding */
-  --footer-padding-horizontal: 10px; /* Horizontal padding */
+  --footer-bg-color: #2c3e50; /* Darker, cohesive background */
+  --footer-text-color: #ecf0f1; /* Light text for contrast */
+  --footer-border-color: #34495e; /* Subtle border color */
+  --footer-link-color: #4a90e2; /* Match primary color */
+  --footer-link-hover-color: #357abd; /* Match primary hover color */
+  --footer-font-family: var(--font-family-sans);
+  --footer-font-size: 1rem; /* Consistent font size */
+  --footer-padding-vertical: 16px; /* Balanced padding */
+  --footer-padding-horizontal: 16px;
 
   /* Header Variables */
-  --header-bg-color: #0a3d70; /* Light gray background */
-  --header-text-color: #333; /* Dark text color */
-  --header-logo-color: #007bff; /* Logo color */
-  --header-logo-hover-color: #0056b3; /* Logo hover color */
-  --header-font-family: var(--font-family-sans); /* Default font family */
-  --header-font-size: 1.5rem; /* Font size for header logo */
-  --header-padding: 20px; /* Padding around the header */
-  --header-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  --header-nav-gap: 15px; /* Spacing between navigation items */
-  --header-nav-link-color: #333; /* Navigation link color */
-  --header-nav-link-hover-bg: #007bff; /* Navigation link hover background */
-  --header-nav-link-hover-color: #fff; /* Navigation link hover text color */
+  --header-bg-color: #34495e; /* Cohesive with footer */
+  --header-text-color: #ecf0f1; /* Light text for contrast */
+  --header-logo-color: #4a90e2; /* Match primary color */
+  --header-logo-hover-color: #357abd; /* Match primary hover color */
+  --header-font-family: var(--font-family-sans);
+  --header-font-size: 1.25rem; /* Consistent font size */
+  --header-padding: 16px; /* Balanced padding */
+  --header-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Slightly deeper shadow */
+  --header-nav-gap: 12px; /* Balanced spacing */
+  --header-nav-link-color: #ecf0f1; /* Match header text color */
+  --header-nav-link-hover-bg: #4a90e2; /* Match primary color */
+  --header-nav-link-hover-color: #fff; /* White for contrast */
 
   /* Body Variables */
-  --body-bg-color: #922f2f; /* Background color for the body */
-  --body-font-family: var(--font-family-sans); /* Font family for the body */
-  --body-font-size: var(--font-size-base); /* Font size for the body */
-  --body-line-height: 1.5; /* Line height for the body */
-  --body-padding: var(--spacing-medium); /* Padding for the body */
-  --body-text-color: var(--body-text-color); /* Text color for the body */
+  --body-bg-color: #ecf0f1; /* Light, neutral background */
+  --body-font-family: var(--font-family-sans);
+  --body-font-size: var(--font-size-base);
+  --body-line-height: 1.6; /* Slightly increased for readability */
+  --body-padding: var(--spacing-small); /* Balanced padding */
+  --body-text-color: var(--body-text-color);
+
+  /* Main Variables */
+  --main-bg-color: var(--body-bg-color); /* Match body background */
+  --main-padding: var(--spacing-medium); /* Use medium spacing */
+  --main-text-color: var(--body-text-color); /* Match body text color */
 }

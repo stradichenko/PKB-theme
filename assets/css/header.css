@@ -1,11 +1,4 @@
-@import url('./global/variables.css'); /* Import CSS variables */
-
-/* ============================
-    Header Stylesheet
-    ============================
-    This stylesheet defines the styles for the header section of the website.
-    It includes layout, typography, and responsive design rules.
-*/
+@import url('./global/variables.css');
 
 /* General Header Styles */
 header {
