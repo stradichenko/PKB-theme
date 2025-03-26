@@ -2,15 +2,16 @@
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
 <head>
   {{ partial "head.html" . }}
+  
+  {{ $styles := resources.Get "css/main.css" }}
+  
   {{ if eq hugo.Environment "development" }}
-    <!-- In development, process CSS with toCSS and fingerprint for SRI but without minification -->
-    {{ $bodyCSS := resources.Get "css/body.css" | toCSS | fingerprint }}
-    <link rel="stylesheet" href="{{ $bodyCSS.RelPermalink }}" integrity="{{ $bodyCSS.Data.Integrity }}" crossorigin="anonymous">
+    {{ $styles = $styles | toCSS }}
   {{ else }}
-    <!-- In production, process CSS with toCSS, minify, and fingerprint -->
-    {{ $bodyCSS := resources.Get "css/body.css" | toCSS | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $bodyCSS.RelPermalink }}" integrity="{{ $bodyCSS.Data.Integrity }}" crossorigin="anonymous">
+    {{ $styles = $styles | toCSS | minify | fingerprint }}
   {{ end }}
+  
+  <link rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" crossorigin="anonymous">
 </head>
 <body>
   <header>

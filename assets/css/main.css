@@ -1,3 +1,11 @@
+@import "global/variables.css";
+@import "global/reset.css";
+@import "body.css";
+@import "header.css";
+@import "footer.css";
+
+/* General components */
+
 a {
   color: var(--link-color); /* Use variable for link color */
   text-decoration: none;
@@ -7,4 +15,25 @@ main {
   background-color: var(--main-bg-color); /* Use main background color */
   padding: var(--main-padding); /* Use main padding */
   color: var(--main-text-color); /* Use main text color */
+}
+
+/* Add sticky footer with flexbox */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensures body takes up at least the full viewport height */
+}
+
+main, .content {
+  flex: 1; /* Makes the content area expand to fill available space */
+}
+
+/* Ensures the footer doesn't flex/grow */
+footer {
+  flex-shrink: 0;
 }
