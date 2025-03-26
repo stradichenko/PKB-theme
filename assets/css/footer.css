@@ -1,29 +1,39 @@
-@import url('./global/variables.css'); /* Import CSS variables */
+@import url('./global/variables.css'); /* Ensure your variables are correctly defined */
 
 /* Footer container styling */
 footer {
-  background-color: var(--footer-bg-color); /* Use CSS variable */
-  color: var(--footer-text-color); /* Use CSS variable */
-  text-align: center; /* Center-align text */
-  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal); /* Use CSS variables for padding */
-  font-size: var(--footer-font-size); /* Use CSS variable for font size */
-  font-family: var(--footer-font-family); /* Use CSS variable for font family */
-  border-top: 1px solid var(--footer-border-color); /* Use CSS variable for border color */
+  background-color: var(--footer-bg-color);
+  color: var(--footer-text-color);
+  text-align: center;
+  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal);
+  font-size: var(--footer-font-size);
+  font-family: var(--footer-font-family);
+  border-top: 1px solid var(--footer-border-color);
 }
 
 /* Footer text styling */
 footer p {
-  margin: 0; /* Remove default margin */
-  line-height: 1.5; /* Improve readability */
+  margin: 0;
+  line-height: 1.5;
 }
 
-/* Add hover effect for links in the footer */
+/* Footer link styling with hover and focus states */
 footer a {
-  color: var(--footer-link-color); /* Use CSS variable for link color */
-  text-decoration: none; /* Remove underline */
+  color: var(--footer-link-color);
+  text-decoration: none;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
 }
 
-footer a:hover {
-  text-decoration: underline; /* Add underline on hover */
-  color: var(--footer-link-hover-color); /* Use CSS variable for hover color */
+footer a:hover,
+footer a:focus {
+  text-decoration: underline;
+  color: var(--footer-link-hover-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  footer {
+    padding: var(--footer-padding-vertical-small, 12px) var(--footer-padding-horizontal-small, 12px);
+    font-size: 0.9rem;
+  }
 }

@@ -1,5 +1,3 @@
-@import url('./global/variables.css');
-
 /* General Header Styles */
 header {
   background-color: var(--header-bg-color);
@@ -8,17 +6,25 @@ header {
   box-shadow: var(--header-shadow);
   position: relative;
   z-index: 1000; /* Ensure header is above other elements */
-  width: 100%; /* Make the header span the full width of the page */
-  margin: 0; /* Remove any default margins */
+  width: 100%; /* Span full width */
+  margin: 0; /* Remove default margins */
   font-family: var(--header-font-family);
+  max-width: 100%;
+  overflow-x: hidden;
+  
+  /* Flex container for logo and nav */
+  display: flex;
+  align-items: center;
 }
 
 /* Logo Styles */
 header .logo {
   font-size: var(--header-font-size);
-  font-weight: bold; /* Bold text for emphasis */
-  text-decoration: none; /* Remove underline */
+  font-weight: bold;
+  text-decoration: none;
   color: var(--header-logo-color);
+  flex-shrink: 0;
+  margin-right: auto; /* Push nav items to the right */
 }
 
 header .logo:hover {
@@ -27,50 +33,54 @@ header .logo:hover {
 
 /* Navigation Styles */
 header nav {
-  display: flex; /* Flexbox for layout */
-  justify-content: space-between; /* Space between logo and nav items */
+  display: flex; /* Flexbox layout for navigation */
   align-items: center; /* Center items vertically */
-  max-width: 1200px; /* Limit the content width */
-  margin: 0 auto; /* Center the content horizontally */
-  width: 100%; /* Ensure the nav spans the full width of the header */
+  max-width: 1200px;
+  margin: 0 auto; /* Center nav content */
+  width: 100%;
   gap: var(--header-nav-gap);
 }
 
+/* Nav List Styles */
 header nav ul {
-  list-style: none; /* Remove default list styling */
-  margin: 0; /* Reset margin */
-  padding: 0; /* Reset padding */
-  display: flex; /* Flexbox for horizontal layout */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
   gap: var(--header-nav-gap);
 }
 
 header nav ul li {
-  display: inline-block; /* Inline-block for individual items */
+  /* Inline-block removed since flex items don't need it */
 }
 
 header nav ul li a {
-  text-decoration: none; /* Remove underline */
+  text-decoration: none;
   color: var(--header-nav-link-color);
-  font-size: 1rem; /* Standard font size */
-  padding: var(--spacing-small) var(--spacing-medium); /* Padding for clickable area */
-  border-radius: var(--border-radius); /* Rounded corners */
-  transition: background-color 0.3s, color 0.3s; /* Smooth hover effect */
+  font-size: 1rem;
+  padding: var(--spacing-small) var(--spacing-medium);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, color 0.3s;
 }
 
-header nav ul li a:hover {
-  background-color: var(--header-nav-link-hover-bg); /* Primary color background */
-  color: var(--header-nav-link-hover-color); /* White text on hover */
+/* Hover and Focus States for Accessibility */
+header nav ul li a:hover,
+header nav ul li a:focus {
+  background-color: var(--header-nav-link-hover-bg);
+  color: var(--header-nav-link-hover-color);
+  outline: none;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   header nav {
-     flex-direction: column; /* Stack items vertically */
-     align-items: flex-start; /* Align items to the left */
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   header nav ul {
-     flex-direction: column; /* Stack nav items vertically */
-     gap: 10px; /* Adjust spacing */
+    flex-direction: column;
+    gap: var(--spacing-xs); /* Use variable for consistent spacing */
+    width: 100%;
   }
 }

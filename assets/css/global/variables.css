@@ -1,11 +1,23 @@
-:root { /* Why use :root? It ensures the variables are globally scoped and available throughout the entire document. */
+/* ------------------------------------------------------------------------- */
+/* RESET - Remove default browser padding/margins, set box-sizing globally   */
+/* ------------------------------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------------------- */
+/* GLOBAL VARIABLES - :root                                                 */
+/* ------------------------------------------------------------------------- */
+:root {
   /* Core Color Palette */
   --color-primary: #4a90e2;
-  --color-primary-dark: #357abd; /* For hover states */
-  --color-secondary: #f4f4f4;
+  --color-primary-dark: #a4bd35; /* For hover states */
+  --color-secondary: #df2d2d;
   --color-text: #cad6ff;
   --color-dark: #2c3e50; /* For headers/footers */
-  --color-dark-accent: #34495e;
+  --color-dark-accent: #5e345e;
   --color-light: #ecf0f1; /* For text on dark backgrounds */
   --color-white: #fff;
   
@@ -57,11 +69,11 @@
   --footer-padding-horizontal: var(--spacing-md);
   
   /* Layout - Body */
-  --body-bg-color: #3d53bd; /* Unique color kept as-is */
+  --body-bg-color: #275f85; /* Unique color kept as-is */
   --body-font-family: var(--font-family-sans);
   --body-font-size: var(--font-size-base);
   --body-line-height: var(--line-height-normal);
-  --body-padding: var(--spacing-sm);
+  --body-padding: var(--spacing-none);
   --body-text-color: var(--color-text);
   
   /* Layout - Main Content */
@@ -72,4 +84,81 @@
   /* Generic Elements */
   --link-color: var(--color-primary);
   --link-hover-color: var(--color-primary-dark);
+}
+
+/* ------------------------------------------------------------------------- */
+/* BASE STYLES                                                              */
+/* ------------------------------------------------------------------------- */
+html {
+  font-size: var(--font-size-base);
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--body-bg-color);
+  color: var(--body-text-color);
+  font-family: var(--body-font-family);
+  line-height: var(--body-line-height);
+  padding: var(--body-padding);
+}
+
+/* ------------------------------------------------------------------------- */
+/* HEADER                                                                    */
+/* ------------------------------------------------------------------------- */
+.site-header {
+  background-color: var(--header-bg-color);
+  color: var(--header-text-color);
+  font-family: var(--header-font-family);
+  font-size: var(--header-font-size);
+  padding: var(--header-padding);
+  width: 100%; /* Important: avoid 100vw to prevent overflow */
+  box-shadow: var(--header-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-header .logo {
+  margin-right: var(--spacing-md);
+  color: var(--header-logo-color);
+}
+
+.site-header .logo:hover {
+  color: var(--header-logo-hover-color);
+}
+
+.main-nav a {
+  margin-right: var(--header-nav-gap);
+  text-decoration: none;
+  color: var(--header-nav-link-color);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+}
+
+.main-nav a:hover {
+  background-color: var(--header-nav-link-hover-bg);
+  color: var(--header-nav-link-hover-color);
+}
+
+/* ------------------------------------------------------------------------- */
+/* MAIN CONTENT                                                              */
+/* ------------------------------------------------------------------------- */
+.site-main {
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+  padding: var(--main-padding);
+}
+
+/* ------------------------------------------------------------------------- */
+/* FOOTER                                                                    */
+/* ------------------------------------------------------------------------- */
+.site-footer {
+  background-color: var(--footer-bg-color);
+  color: var(--footer-text-color);
+  font-family: var(--footer-font-family);
+  font-size: var(--footer-font-size);
+  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal);
+  border-top: 1px solid var(--footer-border-color);
+  text-align: center;
 }
