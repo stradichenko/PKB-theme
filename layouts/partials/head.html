@@ -1,5 +1,16 @@
+<!-- Sets the character encoding for the document to UTF-8 -->
 <meta charset="utf-8">
+
+<!-- Ensures proper rendering and touch zooming on mobile devices -->
 <meta name="viewport" content="width=device-width">
+
+<!-- Dynamically sets the page title -->
+<!-- If the current page is the homepage, it uses the site title -->
+<!-- Otherwise, it combines the page title and site title with a separator -->
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+
+<!-- Includes the cached partial template for CSS files -->
 {{ partialCached "head/css.html" . }}
+
+<!-- Includes the cached partial template for JavaScript files -->
 {{ partialCached "head/js.html" . }}
