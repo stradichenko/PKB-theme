@@ -1,0 +1,23 @@
+{
+  "name": "pkb-theme",
+  "version": "1.0.0",
+  "description": "![CI Status](https://github.com/stradichenko/PKB-theme/actions/workflows/test.yml/badge.svg) ![GitHub License](https://img.shields.io/github/license/stradichenko/PKB-theme) ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/stradichenko/PKB-theme) ## About This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Stradichenko/PKB-theme.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Stradichenko/PKB-theme/issues"
+  },
+  "homepage": "https://github.com/Stradichenko/PKB-theme#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  }
+}
