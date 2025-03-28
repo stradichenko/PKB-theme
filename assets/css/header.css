@@ -50,10 +50,6 @@ header nav ul {
   gap: var(--header-nav-gap);
 }
 
-header nav ul li {
-  /* Inline-block removed since flex items don't need it */
-}
-
 header nav ul li a {
   text-decoration: none;
   color: var(--header-nav-link-color);

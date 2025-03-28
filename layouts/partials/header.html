@@ -1,7 +1,5 @@
-<header>
-  <h1>{{ site.Title }}</h1>
-  {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
-</header>
+<h1>{{ site.Title }}</h1>
+{{ partial "menu.html" (dict "menuID" "main" "page" .) }}
 
 {{ if eq hugo.Environment "development" }}
   <!-- In development, load individual CSS files with SRI but without minification -->
@@ -19,5 +17,3 @@
   {{ $headerCSS := $headerFiles | resources.Concat "css/header-combined.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $headerCSS.RelPermalink }}" integrity="{{ $headerCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ end }}
-
-

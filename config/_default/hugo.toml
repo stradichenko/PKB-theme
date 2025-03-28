@@ -1,6 +1,7 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
+
 [params]
   [params.contact]
     email = 'info@example.org'
@@ -10,25 +11,36 @@ title = 'My New Hugo Site'
   category = 'categories'
   tag = 'tags'
 
-[[menus.main]]
-    name = 'Home'
-    pageRef = '/'
-    weight = 10
+[menus]
+  [[menus.main]]
+      name = 'Home'
+      pageRef = '/'
+      weight = 10
 
-[[menus.main]]
-    name = 'Posts'
-    pageRef = '/posts'
-    weight = 20
+  [[menus.main]]
+      name = 'Posts'
+      pageRef = '/posts'
+      weight = 20
 
-[[menus.main]]
-    name = 'Tags'
-    pageRef = '/tags'
-    weight = 30
+  [[menus.main]]
+      name = 'Tags'
+      pageRef = '/tags'
+      weight = 30
 
-[[menus.main]]
-    name = 'About Me'
-    pageRef = '/posts/about.md'
-    weight = 40
+  [[menus.main]]
+      name = 'About'
+      pageRef = '/about'
+      weight = 40
+
+  [[menus.footer]]
+      name = 'Terms'
+      pageRef = '/terms'
+      weight = 80
+
+  [[menus.footer]]
+      name = 'Privacy'
+      pageRef = '/privacy'
+      weight = 90
 
 [module]
   noProxy = 'none'
@@ -37,8 +49,6 @@ title = 'My New Hugo Site'
   proxy = 'direct'
   vendorClosest = false
   workspace = 'off'
-
-
 
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
@@ -99,7 +109,7 @@ disableLanguages = []
   [caches.modules]
     dir = ':cacheDir/modules'
     maxAge = -1
-    
+
 [cascade]
 
 [contentTypes]
@@ -249,16 +259,6 @@ disableLanguages = []
   [mediaTypes.'video/x-msvideo']
     delimiter = '.'
     suffixes = ['avi']
-
-[menus]
-  [[menus.footer]]
-    name = 'Terms'
-    pageRef = '/terms'
-    weight = 80
-  [[menus.footer]]
-    name = 'Privacy'
-    pageRef = '/privacy'
-    weight = 90
 
 [minify]
   disableCSS = false
