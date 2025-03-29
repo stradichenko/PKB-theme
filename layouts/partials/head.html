@@ -14,3 +14,12 @@
 
 <!-- Includes the cached partial template for JavaScript files -->
 {{ partialCached "head/js.html" . }}
+
+<!-- Loads the main CSS file -->
+<!-- This file is processed with SASS and includes all necessary styles -->
+<!-- The resulting CSS is minified and fingerprinted for cache busting -->
+<!-- The fingerprinted CSS file is linked in the HTML -->
+<!-- The fingerprint ensures that the browser loads the latest version of the file -->
+<!-- The SASS file is processed with the Hugo SASS pipeline -->
+{{ $style := resources.Get "sass/main.scss" | toCSS }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}">

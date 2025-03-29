@@ -1,10 +1,10 @@
-// Import Bootstrap's SCSS
-@import "node_modules/bootstrap/scss/bootstrap";
+// Import your custom files
+@import "custom_variables";
+@import "styles";
 
-// Import your custom styles (overrides, additional rules)
-@import "custom-styles.scss";
-// Import any other SCSS files you may have
-// Import Bootstrap Icons
-@import "node_modules/bootstrap-icons/bootstrap-icons.scss";
-// Import Bootstrap Icons CSS
-@import "node_modules/bootstrap-icons/font/bootstrap-icons.css";
+// Import Bootstrap
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// Import Bootstrap Icons CSS directly
+@import "../../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+

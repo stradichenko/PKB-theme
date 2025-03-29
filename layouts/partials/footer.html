@@ -16,8 +16,3 @@
   <p>Current Environment: {{ hugo.Environment }}</p>
   <p>Copyright {{ now.Year }}. All rights reserved.</p>
 </footer>
-
-<!--This ensures that your Bootstrap bundle is processed and loaded at the end of your page, which is a best practice for performance.-->
-{{ $bootstrap := resources.Get "js/bootstrap.bundle.min.js" }}
-{{ $js := slice $bootstrap | resources.Concat "js/bundle.js" | resources.Minify }}
-<script src="{{$js.RelPermalink}}" defer></script>
