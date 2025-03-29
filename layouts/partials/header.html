@@ -1,5 +1,9 @@
+<!-- layouts/partials/header.html -->
 <h1>{{ site.Title }}</h1>
 {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+
+<!-- Include search partial -->
+{{ partial "search.html" . }}
 
 {{ if eq hugo.Environment "development" }}
   <!-- In development, load individual CSS files with SRI but without minification -->

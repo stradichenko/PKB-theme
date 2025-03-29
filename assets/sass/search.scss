@@ -1,0 +1,30 @@
+/* assets/css/search.css */
+.search-container {
+    position: relative;
+    max-width: 300px; /* adjust width as needed */
+  }
+  
+  .search-input {
+    padding-left: 2.5rem;  /* leave space for the search icon */
+    padding-right: 2.5rem; /* leave space for the clear icon */
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #af0b0b; /* adjust color to match header style */
+    pointer-events: none; /* icon is decorative */
+  }
+  
+  .clear-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #912a2a; /* adjust color to match header style */
+    cursor: pointer;
+    display: none; /* hidden until text is entered */
+  }
+  

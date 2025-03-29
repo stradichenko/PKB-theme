@@ -15,6 +15,10 @@
 <!-- Includes the cached partial template for JavaScript files -->
 {{ partialCached "head/js.html" . }}
 
+{{ $script := resources.Get "js/main.js" | minify | fingerprint }}
+<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" crossorigin="anonymous"></script>
+
+
 <!-- Loads the main CSS file -->
 <!-- This file is processed with SASS and includes all necessary styles -->
 <!-- The resulting CSS is minified and fingerprinted for cache busting -->
