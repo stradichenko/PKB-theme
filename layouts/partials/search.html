@@ -1,13 +1,6 @@
 <!-- layouts/partials/search.html -->
-<div class="search-container position-relative">
-  <!-- Magnifying glass icon on the left with increased size -->
-  <span class="search-icon position-absolute start-0 top-50 translate-middle-y ps-2">
-    <i class="bi bi-search fs-4"></i>
-  </span>
-  <!-- Search input with extra padding to make room for icons -->
-  <input type="search" class="form-control ps-5 pe-5" placeholder="Search..." aria-label="Search" name="q">
-  <!-- Clear (cancel) icon on the right with increased size -->
-  <span class="clear-icon position-absolute end-0 top-50 translate-middle-y pe-2" style="cursor: pointer; display: none;">
-    <i class="bi bi-x-circle fs-4"></i>
-  </span>
-</div>
+<form action="/search" method="get" class="position-relative" style="max-width: 300px;">
+  <span class="bi bi-search position-absolute start-0 top-50 translate-middle-y ps-3 text-muted"></span>
+  <input id="search-input" type="search" class="form-control ps-5 pe-5" placeholder="Search" aria-label="Search" name="q">
+  <span id="clear-search" class="bi bi-x-lg position-absolute end-0 top-50 translate-middle-y pe-3 text-muted" style="cursor: pointer; display: none;"></span>
+</form>
