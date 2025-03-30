@@ -1,4 +1,8 @@
-$bootstrap-icons-font-dir: "/fonts" !default;
+// Ensure the font directory matches the actual path Uses Bootstrap Icons as a web font (via bootstrap-icons.woff2)
+//$bootstrap-icons-font-dir: "../font/fonts" !default;
+// Import Bootstrap Icons SCSS AFTER overriding the path
+//@import "../../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+
 
 // Import your custom SCSS files
 @import "custom_variables";
@@ -7,7 +11,4 @@ $bootstrap-icons-font-dir: "/fonts" !default;
 
 // Import Bootstrap SCSS
 @import "../../node_modules/bootstrap/scss/bootstrap";
-
-// Import Bootstrap Icons SCSS (this uses the variable above to build correct font URLs)
-@import "../../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
 
