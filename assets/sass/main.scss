@@ -1,10 +1,13 @@
-// Import your custom files
+$bootstrap-icons-font-dir: "/fonts" !default;
+
+// Import your custom SCSS files
 @import "custom_variables";
 @import "styles";
+@import "search"; // if you have custom search styles
 
-// Import Bootstrap
+// Import Bootstrap SCSS
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
-// Import Bootstrap Icons CSS directly
-@import "../../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+// Import Bootstrap Icons SCSS (this uses the variable above to build correct font URLs)
+@import "../../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
 
