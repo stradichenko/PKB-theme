@@ -41,6 +41,7 @@
     "customList": []
   },
   "toc": true,
+  "sidenotes": true,
   "weight": 0,
   "summary": "",
   "readTime": 0,

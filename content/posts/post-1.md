@@ -1,27 +1,38 @@
 +++
-title = 'Post 1'
+title = "Post 1"
 date = 2023-01-15T09:00:00-07:00
 draft = false
-tags = ['red']
+tags = ["red"]
 toc = true
+sidenotes = true
 +++
 
 ## Introduction
 
-Tempor proident minim aliquip reprehenderit dolor et ad anim Lorem duis sint eiusmod. Labore ut ea duis dolor. Incididunt consectetur proident qui occaecat incididunt do nisi Lorem. 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
+
+{{< sidenote >}}
+This sidenote provides extra context for the introduction, elaborating on key points without interrupting the main flow of text.
+{{< /sidenote >}}
 
 ## Main Concepts
 
-Tempor do laborum elit laboris excepteur eiusmod do. Eiusmod nisi excepteur ut amet pariatur adipisicing Lorem.
+Suspendisse potenti. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.
+
+Mauris fermentum justo nec leo. {{< sidenote >}}
+A brief sidenote explaining the significance of fermentum in this context.
+{{< /sidenote >}}
 
 ### Sub-topic 1
 
-Occaecat nulla excepteur dolore excepteur duis eiusmod ullamco officia anim in voluptate ea occaecat officia. 
+Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla.
 
 ### Sub-topic 2
 
-Cillum sint esse velit ea officia minim fugiat. Elit ea esse id aliquip pariatur cupidatat id duis minim incididunt ea ea. 
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. {{< sidenote >}}
+Additional details for Sub-topic 2 can go here, offering extra insights or references.
+{{< /sidenote >}}
 
 ## Conclusion
 
-Anim ut duis sunt nisi. Culpa cillum sit voluptate voluptate eiusmod dolor. Enim nisi Lorem ipsum irure est excepteur voluptate eu in enim nisi. Nostrud ipsum Lorem anim sint labore consequat do.
+Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit.

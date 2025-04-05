@@ -1,0 +1,121 @@
+@charset "UTF-8";
+
+/* Sidenotes and Margin Notes styles (adapted from Tufte CSS) */
+.sidenote,
+.marginnote {
+  /* Remove float-based layout */
+  margin: 0;
+  padding: 0;
+}
+
+.sidenote-number {
+  counter-increment: sidenote-counter;
+}
+
+.sidenote-number:after,
+.sidenote:before {
+  font-family: et-book-roman-old-style;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.sidenote-number:after {
+  content: counter(sidenote-counter);
+  font-size: 1rem;
+  top: -0.5rem;
+  left: 0.1rem;
+}
+
+.sidenote:before {
+  content: counter(sidenote-counter) " ";
+  font-size: 1rem;
+  top: -0.5rem;
+}
+
+/* Sidenotes within blockquotes */
+blockquote .sidenote,
+blockquote .marginnote {
+  margin-right: -82%;
+  min-width: 59%;
+  text-align: left;
+}
+
+/* Optional: Toggle controls for margin notes */
+input.margin-toggle {
+  display: none;
+}
+
+label.sidenote-number {
+  display: inline-block;
+  max-height: 2rem; /* should be ≤ paragraph line-height */
+}
+
+label.margin-toggle:not(.sidenote-number) {
+  display: none;
+}
+
+/* Flex Container for Main Content & Sidenote */
+.sidenote-container {
+  display: flex;
+  align-items: flex-start; /* Align items at the top */
+  gap: var(--spacing-md);
+}
+
+/* Main content area inside the container */
+.sidenote-container .main-content {
+  flex: 1; /* Fill available space */
+  position: relative;
+}
+
+.sidenote-container .main-content aside.sidenote {
+  position: absolute;
+  right: 0;
+  width: 25%;
+  max-width: 250px;
+  background-color: #974545;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  margin-top: 1rem; /* Adjust this as needed for vertical alignment */
+}
+
+/* Sidenote as an aside element */
+.sidenote-container aside.sidenote {
+  flex: 0 0 auto;         /* Do not grow or shrink */
+  max-width: 250px;         /* Fixed maximum width */
+  padding: var(--spacing-sm);
+  font-size: 1.1rem;
+  line-height: 1.3;
+  position: relative;
+  background-color: #974545;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+}
+
+/* Responsive adjustments */
+@media (max-width: 760px) {
+  .sidenote-container {
+    flex-direction: column;
+  }
+  .sidenote-container aside.sidenote {
+    max-width: 100%;
+    margin-left: 0;
+  }
+  
+  .sidenote,
+  .marginnote {
+    display: none;
+  }
+  
+  .margin-toggle:checked + .sidenote,
+  .margin-toggle:checked + .marginnote {
+    display: block;
+    float: left;
+    left: 1rem;
+    clear: both;
+    width: 95%;
+    margin: 1rem 2.5%;
+    vertical-align: baseline;
+    position: relative;
+  }
+}
