@@ -78,7 +78,7 @@
   
   /* Layout - Main Content */
   --main-bg-color: var(--body-bg-color);
-  --main-padding: var(--spacing-lg);
+  --main-padding: var(--spacing-sm);
   --main-text-color: var(--body-text-color);
   
   /* Generic Elements */

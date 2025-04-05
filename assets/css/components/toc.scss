@@ -1,0 +1,56 @@
+/* General container to hold both sidebar and main content */
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh; /* Ensure full height */
+}
+
+.layout-container {
+  display: flex;
+  align-items: flex-start; /* Stops forced vertical alignment */
+}
+
+/* Sidebar Styles */
+.toc-sidebar {
+  width: 25%; /* Uses 25% of the container width */
+  max-width: 250px; /* Or cap at a fixed width */
+  padding: var(--spacing-none);
+  box-sizing: border-box;
+}
+
+/* Main Content Styles */
+.content {
+  width: 75%; /* 3/4 of the screen */
+  padding: var(--spacing-md);
+  box-sizing: border-box;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0 1rem;
+}
+
+/* Table of Contents Styles */
+.toc {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.toc h2 {
+  font-size: var(--font-size-large);
+  margin-bottom: var(--spacing-sm);
+}
+
+.toc nav#TableOfContents ul {
+  list-style-type: disc;
+  padding-left: var(--spacing-lg);
+}
+
+.toc nav#TableOfContents ul ul {
+  list-style-type: circle;
+}
+
+

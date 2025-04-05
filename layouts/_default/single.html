@@ -1,10 +1,23 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
+<div class="layout-container">
+  <aside class="toc-sidebar">
+    <nav id="TableOfContents" class="toc">
+      {{ .TableOfContents }}
+    </nav>
+  </aside>
+  <main class="main-content">
+    <h1>{{ .Title }}</h1>
+    {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
+    {{ $dateHuman := .Date | time.Format ":date_long" }}
+    <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+    {{ .Content }}
+    {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+  </main>
+</div>
 
-  {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
-  {{ $dateHuman := .Date | time.Format ":date_long" }}
-  <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
-
-  {{ .Content }}
-  {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+{{/* Conditionally include toc.js if TOC is enabled in front matter */}}
+{{ if .Params.toc }}
+  {{ $tocJS := resources.Get "js/toc.js" | minify | fingerprint }}
+  <script src="{{ $tocJS.RelPermalink }}" integrity="{{ $tocJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}
 {{ end }}
