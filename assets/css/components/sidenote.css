@@ -144,20 +144,19 @@ label.margin-toggle:not(.sidenote-number) {
   grid-area: main;
 }
 
-/* Sidenote Section Styles */
+/* Sidenote Section Styles - updated for better positioning */
 .sidenote-section {
   grid-area: sidenotes;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md, 1rem);
+  display: block; /* Change from flex to block for absolute positioning */
   width: 250px; /* Fixed width for sidenotes section */
   padding: var(--spacing-sm, 0.5rem);
-  align-self: start; /* Align to the top */
   position: sticky;
   top: var(--spacing-md, 1rem);
+  height: calc(100vh - 2rem); /* Set a height to contain absolute positioned elements */
+  overflow: visible; /* Allow sidenotes to be visible outside the container */
 }
 
-/* Individual Sidenote Styles */
+/* Individual Sidenote Styles - updated for positioning */
 .sidenote {
   background-color: var(--sidenote-bg-color);
   border: 1px solid #ddd;
@@ -166,6 +165,17 @@ label.margin-toggle:not(.sidenote-number) {
   font-size: 1rem;
   line-height: 1.5;
   margin-bottom: var(--spacing-md, 1rem);
+  max-width: 100%;
+  box-sizing: border-box;
+  /* The absolute positioning will be applied by JavaScript */
+}
+
+/* Placeholder for sidenotes */
+.sidenote-placeholder {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 /* Responsive adjustments */
@@ -208,5 +218,13 @@ label.margin-toggle:not(.sidenote-number) {
   .sidenote-section {
     width: 100%;
     position: static;
+    height: auto;
+    overflow: auto;
+  }
+  
+  .sidenote {
+    position: static !important; /* Override JavaScript positioning */
+    width: 100% !important;
+    margin-bottom: 1rem;
   }
 }
