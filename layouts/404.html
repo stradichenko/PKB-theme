@@ -1,0 +1,184 @@
+{{ define "main" }}
+  <h1>404 Not Found</h1>
+  <p>The page you requested cannot be found.</p>
+  <p>
+    <a href="{{ .Site.Home.RelPermalink }}">
+      Return to the home page
+    </a>
+  </p>
+  
+  <!-- Animation container -->
+  <div id="animation-container" style="width: 100%; height: 400px; margin-top: 30px;"></div>
+  
+  <!-- Scripts for animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+  <script>
+    // Set up the scene, camera, and renderer
+    const scene = new THREE.Scene();
+    const container = document.getElementById('animation-container');
+    
+    // Use orthographic camera instead of perspective camera
+    const aspect = container.clientWidth / container.clientHeight;
+    const viewSize = 10;
+    const camera = new THREE.OrthographicCamera(
+      -viewSize * aspect / 2, // left
+      viewSize * aspect / 2,  // right
+      viewSize / 2,           // top
+      -viewSize / 2,          // bottom
+      0.1,                    // near
+      1000                    // far
+    );
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    
+    // Set up lighting
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
+    
+    // Create the Blender-style cube
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const cubeMaterial = new THREE.MeshStandardMaterial({ 
+      color: 0x6495ED,
+      metalness: 0.3,
+      roughness: 0.5
+    });
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    scene.add(cube);
+    
+    // Create the floor
+    const floorGeometry = new THREE.PlaneGeometry(10, 10);
+    const floorMaterial = new THREE.MeshStandardMaterial({ 
+      color: 0xffffff, 
+      transparent: true, 
+      opacity: 0.3
+    });
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -2;
+    scene.add(floor);
+    
+    // Set up physics world
+    const world = new CANNON.World();
+    world.gravity.set(0, -9.82, 0);
+    
+    // Create physics body for the cube
+    const cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+    const cubeBody = new CANNON.Body({
+      mass: 1,
+      position: new CANNON.Vec3(0, 5, 0),
+      shape: cubeShape
+    });
+    cubeBody.linearDamping = 0.3;
+    cubeBody.angularDamping = 0.3;
+    world.addBody(cubeBody);
+    
+    // Create physics body for the floor
+    const floorShape = new CANNON.Plane();
+    const floorBody = new CANNON.Body({
+      mass: 0,
+      position: new CANNON.Vec3(0, -2, 0)
+    });
+    floorBody.addShape(floorShape);
+    floorBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+    world.addBody(floorBody);
+    
+    // Set up mouse control for dragging
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let isDragging = false;
+    let mouseJointBody;
+    let constraint;
+    
+    container.addEventListener('mousedown', (event) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(cube);
+      
+      if (intersects.length > 0) {
+        isDragging = true;
+        
+        // Create a body for the mouse joint
+        mouseJointBody = new CANNON.Body({ mass: 0 });
+        world.addBody(mouseJointBody);
+        
+        const hitPoint = intersects[0].point;
+        const localPoint = new CANNON.Vec3().copy(hitPoint).vsub(cubeBody.position);
+        
+        constraint = new CANNON.PointToPointConstraint(
+          cubeBody,
+          localPoint,
+          mouseJointBody,
+          new CANNON.Vec3(0, 0, 0)
+        );
+        
+        world.addConstraint(constraint);
+      }
+    });
+    
+    container.addEventListener('mousemove', (event) => {
+      if (!isDragging) return;
+      
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      
+      raycaster.setFromCamera(mouse, camera);
+      const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+      const worldPoint = new THREE.Vector3();
+      raycaster.ray.intersectPlane(planeZ, worldPoint);
+      
+      // Move the mouse joint body
+      mouseJointBody.position.copy(worldPoint);
+    });
+    
+    container.addEventListener('mouseup', () => {
+      if (isDragging) {
+        world.removeConstraint(constraint);
+        world.removeBody(mouseJointBody);
+        isDragging = false;
+      }
+    });
+    
+    // Position camera for orthographic view
+    camera.position.set(4, 4, 4);
+    camera.lookAt(0, 0, 0);
+    
+    // Animation loop
+    const timeStep = 1 / 60;
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      world.step(timeStep);
+      
+      // Update cube position and rotation
+      cube.position.copy(cubeBody.position);
+      cube.quaternion.copy(cubeBody.quaternion);
+      
+      renderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      const aspect = container.clientWidth / container.clientHeight;
+      camera.left = -viewSize * aspect / 2;
+      camera.right = viewSize * aspect / 2;
+      camera.top = viewSize / 2;
+      camera.bottom = -viewSize / 2;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+  </script>
+{{ end }}
