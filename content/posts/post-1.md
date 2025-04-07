@@ -12,7 +12,7 @@ sidenotes = true
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
 
 {{< sidenote >}}
-This sidenote provides extra context for the introduction, elaborating on key points without interrupting the main flow of text.
+This sidenote provides extra coasdasdas dasdntext for the introduction, elaborating on key points worating on key points without interrupting the main flowasdaas dasdntext for the introext for the introduction, elaborating on key points worating on key points without interrupting the main flowasdaas dasdntext for the introext for the introduction, elaborating on key points worating on key points without interrupting the main flowasdaas dasdntext for the introext for the introduction, elaborating on key points worating on key points without interrupting the main flowasdaas dasdntext for the introext for the introduction, elaborating on key points worating on key points without interrupting the main flowasdaas dasdntext for the introext for the introduction, elaborating on key points worating on key points without interrupting the main flowasdaas dasdntext for the introext for the introduction, elaborating on key points worating on key points without interrupting the main flowasdaas dasdntext for the introduction, elaborating on key points without interrupting the main flowasdasdasdasd asd asdasdas dasd asd asdasdasssdsdsdsdsdsdsdssdsd of text.
 {{< /sidenote >}}
 
 ## Main Concepts
@@ -30,7 +30,7 @@ Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu e
 ### Sub-topic 2
 
 Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. {{< sidenote >}}
-Additional details for Sub-topic 2 can go here, offering extra insights or references.
+Additional details for Sub-topicborating on key points without interrupting the main flowasdaada2 can go here, offering extra insights or references.
 {{< /sidenote >}}
 
 ## Conclusion

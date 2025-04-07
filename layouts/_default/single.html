@@ -10,13 +10,16 @@
     {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
     {{ $dateHuman := .Date | time.Format ":date_long" }}
     <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
-    <div class="sidenote-container">
-      <div class="main-content">
-        {{ .Content }}
-      </div>
+    <div class="content">
+      {{ .Content }}
     </div>
     {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
   </main>
+  
+  <!-- Separate sidenotes section -->
+  <aside class="sidenote-section">
+    <!-- Sidenotes will be collected and placed here -->
+  </aside>
 </div>
 
 {{/* Conditionally include toc.js if TOC is enabled in front matter */}}
@@ -29,5 +32,11 @@
 {{ if .Params.sidenotes }}
   {{ $sidenoteCSS := resources.Get "css/components/sidenote.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $sidenoteCSS.RelPermalink }}" integrity="{{ $sidenoteCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
+
+{{/* Include sidenotes.js if sidenotes are enabled in front matter */}}
+{{ if .Params.sidenotes }}
+  {{ $sidenotesJS := resources.Get "js/sidenotes.js" | minify | fingerprint }}
+  <script src="{{ $sidenotesJS.RelPermalink }}" integrity="{{ $sidenotesJS.Data.Integrity }}" crossorigin="anonymous"></script>
 {{ end }}
 {{ end }}
