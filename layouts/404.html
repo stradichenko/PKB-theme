@@ -20,7 +20,7 @@
     
     // Use orthographic camera instead of perspective camera
     const aspect = container.clientWidth / container.clientHeight;
-    const viewSize = 10;
+    const viewSize = 12; // Increased from 10 to 12 to show more of the floor
     const camera = new THREE.OrthographicCamera(
       -viewSize * aspect / 2, // left
       viewSize * aspect / 2,  // right
@@ -43,6 +43,11 @@
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
     
+    // Add purple-tinted point light
+    const purpleLight = new THREE.PointLight(0x9370DB, 1, 15);
+    purpleLight.position.set(-3, 5, -3);
+    scene.add(purpleLight);
+    
     // Create the Blender-style cube
     const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cubeMaterial = new THREE.MeshStandardMaterial({ 
@@ -58,16 +63,46 @@
     const floorMaterial = new THREE.MeshStandardMaterial({ 
       color: 0xffffff, 
       transparent: true, 
-      opacity: 0.3
+      opacity: 0.6
     });
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -2;
     scene.add(floor);
     
+    // Replace the existing createWallBody function with this improved version
+    function createWallBody(x, z, isXWall) {
+      // Create finite-sized box walls instead of infinite planes
+      // Use thin boxes aligned with the edges of the floor
+      const wallThickness = 0.5;
+      const wallHeight = 50; // Doubled from 10 to 20
+      
+      // Size depends on whether it's an X or Z aligned wall
+      const xSize = isXWall ? wallThickness : 10;
+      const zSize = isXWall ? 10 : wallThickness;
+      
+      const wallShape = new CANNON.Box(new CANNON.Vec3(xSize/2, wallHeight/2, zSize/2));
+      const wallBody = new CANNON.Body({
+        mass: 0, // Static body
+        position: new CANNON.Vec3(x, wallHeight/2 - 2, z) // Position adjusted for increased height
+      });
+      wallBody.addShape(wallShape);
+      world.addBody(wallBody);
+    }
+    
     // Set up physics world
     const world = new CANNON.World();
     world.gravity.set(0, -9.82, 0);
+    
+    // Update wall creation to use the new function properly
+    // North wall (positive Z)
+    createWallBody(0, 5 + 0.25, false);  // Add half thickness to position
+    // South wall (negative Z)
+    createWallBody(0, -5 - 0.25, false); // Subtract half thickness from position
+    // East wall (positive X)
+    createWallBody(5 + 0.25, 0, true);   // Add half thickness to position
+    // West wall (negative X)
+    createWallBody(-5 - 0.25, 0, true);  // Subtract half thickness from position
     
     // Create physics body for the cube
     const cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
@@ -137,6 +172,10 @@
       const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
       const worldPoint = new THREE.Vector3();
       raycaster.ray.intersectPlane(planeZ, worldPoint);
+      
+      // Prevent the cube from going below the floor
+      // Floor is at y = -2, cube height is 1, so min y position is -1.5
+      worldPoint.y = Math.max(worldPoint.y, -1.5);
       
       // Move the mouse joint body
       mouseJointBody.position.copy(worldPoint);
