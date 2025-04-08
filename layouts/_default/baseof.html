@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
   {{ partial "head.html" . }}
   
   {{ $styles := resources.Get "css/main.css" }}
@@ -12,6 +15,10 @@
   {{ end }}
   
   <link rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" crossorigin="anonymous">
+  
+  {{ $styles := resources.Get "css/list.css" | resources.ToCSS | resources.Minify }}
+  <link rel="stylesheet" href="{{ $styles.RelPermalink }}">
+  {{ block "head" . }}{{ end }}
 </head>
 <body>
   <header>

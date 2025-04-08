@@ -1,0 +1,99 @@
+/* List page styling */
+.content-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 1rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.page-content {
+  margin-bottom: 3rem;
+}
+
+.pages-list {
+  display: grid;
+  gap: 2rem;
+}
+
+.page-item {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.page-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-item-title {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.page-link {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.page-link:hover {
+  color: #004080;
+  text-decoration: underline;
+}
+
+/* Metadata styling */
+.page-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.page-date, .page-categories, .page-tags {
+  display: inline-flex;
+  align-items: center;
+}
+
+.page-date i, .page-categories i, .page-tags i {
+  margin-right: 0.3rem;
+}
+
+.category-link, .tag-link {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.category-link:hover, .tag-link:hover {
+  color: #004080;
+  text-decoration: underline;
+}
+
+.tag-link {
+  background-color: #e6f0fa;
+  border-radius: 3px;
+  padding: 0.1rem 0.4rem;
+}
+
+.page-summary {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

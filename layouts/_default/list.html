@@ -1,8 +1,53 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
-  {{ range .Pages }}
-    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-    {{ .Summary }}
-  {{ end }}
+  <div class="content-container">
+    <header class="page-header">
+      <h1 class="page-title">{{ .Title }}</h1>
+    </header>
+    
+    <div class="page-content">
+      {{ .Content }}
+    </div>
+
+    <div class="pages-list">
+      {{ range .Pages }}
+        <article class="page-item">
+          <h2 class="page-item-title">
+            <a href="{{ .RelPermalink }}" class="page-link">{{ .LinkTitle }}</a>
+          </h2>
+          
+          <div class="page-metadata">
+            {{ if .Date }}
+            <span class="page-date">
+              <i class="icon-calendar"></i> {{ .Date.Format "January 2, 2006" }}
+            </span>
+            {{ end }}
+            
+            {{ if .Params.categories }}
+            <span class="page-categories">
+              <i class="icon-folder"></i>
+              {{ range $index, $category := .Params.categories }}
+                {{- if gt $index 0 }}, {{ end -}}
+                <a href="{{ "categories/" | relLangURL }}{{ $category | urlize }}" class="category-link">{{ $category }}</a>
+              {{- end -}}
+            </span>
+            {{ end }}
+            
+            {{ if .Params.tags }}
+            <span class="page-tags">
+              <i class="icon-tag"></i>
+              {{ range $index, $tag := .Params.tags }}
+                {{- if gt $index 0 }}, {{ end -}}
+                <a href="{{ "tags/" | relLangURL }}{{ $tag | urlize }}" class="tag-link">{{ $tag }}</a>
+              {{- end -}}
+            </span>
+            {{ end }}
+          </div>
+          
+          <div class="page-summary">
+            {{ .Summary }}
+          </div>
+        </article>
+      {{ end }}
+    </div>
+  </div>
 {{ end }}
