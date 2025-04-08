@@ -1,11 +1,48 @@
 {{ define "main" }}
-  <h1>404 Not Found</h1>
-  <p>The page you requested cannot be found.</p>
-  <p>
-    <a href="{{ .Site.Home.RelPermalink }}">
-      Return to the home page
-    </a>
-  </p>
+  <style>
+    .error-content {
+      text-align: center;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 600px;
+    }
+    
+    .error-content h1 {
+      font-size: 4rem;
+      color: #e4dcdc;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      margin-bottom: 1rem;
+    }
+    
+    .error-content p {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #dbd6d6;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .error-content a {
+      color: #e0e4eb;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    
+    .error-content a:hover {
+      color: #ced3e2;
+      text-shadow: 1px 1px 3px rgba(100, 149, 237, 0.3);
+    }
+  </style>
+
+  <div class="error-content">
+    <h1>404 Not Found</h1>
+    <p>The page you requested cannot be found. <br> But hey! you found the Default Cube.</p>
+    <p>
+      <a href="{{ .Site.Home.RelPermalink }}">
+        Return to the home page
+      </a>
+    </p>
+  </div>
   
   <!-- Animation container -->
   <div id="animation-container" style="width: 100%; height: 400px; margin-top: 30px;"></div>
@@ -173,9 +210,16 @@
       const worldPoint = new THREE.Vector3();
       raycaster.ray.intersectPlane(planeZ, worldPoint);
       
-      // Prevent the cube from going below the floor
-      // Floor is at y = -2, cube height is 1, so min y position is -1.5
-      worldPoint.y = Math.max(worldPoint.y, -1.5);
+      // Constrain the cube position to stay within wall boundaries
+      // Cube has size 1, so its center needs to be 0.5 units away from walls
+      const wallOffset = 5.25; // Wall position (5 + 0.25)
+      const cubeRadius = 0.5;  // Half of cube size
+      const maxPos = wallOffset - cubeRadius; // Maximum position in any direction
+
+      // Apply constraints on all axes
+      worldPoint.x = Math.max(Math.min(worldPoint.x, maxPos), -maxPos);
+      worldPoint.y = Math.max(worldPoint.y, -1.5); // Original floor constraint
+      worldPoint.z = Math.max(Math.min(worldPoint.z, maxPos), -maxPos);
       
       // Move the mouse joint body
       mouseJointBody.position.copy(worldPoint);
