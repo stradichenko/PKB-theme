@@ -1,7 +1,12 @@
 {{ define "main" }}
   {{ .Content }}
+  
+  <h2>Recent Posts</h2>
+  {{ partial "recent-posts-grid.html" . }}
+  
+  <h2>All Pages</h2>
   {{ range site.RegularPages }}
-    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+    <h3><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h3>
     {{ .Summary }}
   {{ end }}
 {{ end }}

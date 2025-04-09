@@ -18,6 +18,10 @@
   
   {{ $styles := resources.Get "css/list.css" | resources.ToCSS | resources.Minify }}
   <link rel="stylesheet" href="{{ $styles.RelPermalink }}">
+  
+  {{ $css := resources.Get "css/components/recent-posts-grid.css" | resources.Minify }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  
   {{ block "head" . }}{{ end }}
 </head>
 <body>
