@@ -6,6 +6,14 @@ title = 'My New Hugo Site'
   [params.contact]
     email = 'info@example.org'
     phone = '+1 206-555-1212'
+    
+  [params.social]
+    linkedin = "https://linkedin.com/in/your-profile"
+    twitter = "https://twitter.com/your-profile"
+    instagram = "https://instagram.com/your-profile"
+    orcid = "https://orcid.org/your-id"
+    github = "https://github.com/your-profile"
+    email = "your-email@example.com"
 
 [taxonomies]
   category = 'categories'

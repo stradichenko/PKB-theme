@@ -1,0 +1,100 @@
+/* About Profile Styles */
+
+.about-profile-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.about-left-column {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-right-column {
+  flex: 3;
+  min-width: 300px;
+}
+
+.profile-image img {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Fixed social links styling */
+.social-links {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color, #333);
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,0.05);
+  overflow: visible; /* Ensure SVGs aren't cut off */
+}
+
+.social-links a:hover {
+  transform: translateY(-3px);
+  color: var(--primary-color, #0066cc);
+  background-color: rgba(0,0,0,0.1);
+}
+
+/* Simplified SVG styling */
+.social-links svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* Screen reader only class for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.interests-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.column-1, .column-2 {
+  flex: 1;
+  min-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .about-profile-container {
+    flex-direction: column;
+  }
+  
+  .social-links {
+    max-width: 320px;
+  }
+}
