@@ -14,6 +14,15 @@
     <div class="content">
       {{ .Content }}
     </div>
+    <div class="post-content">
+      {{ .Content }}
+    </div>
+    <!-- Add comments section -->
+    {{ if ne .Params.comments false }}
+      {{ if .Site.Params.comments.remark42.enabled }}
+        {{ partial "comments/remark42.html" . }}
+      {{ end }}
+    {{ end }}
   </main>
   <aside class="sidenote-section">
     <!-- Sidenotes will be collected and placed here -->

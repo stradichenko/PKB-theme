@@ -1,11 +1,14 @@
-[contact]
-  email = 'info@example.org'
-  phone = '+1 206-555-1212'
-  
-[social]
-  linkedin = "https://linkedin.com/in/your-profile"
-  twitter = "https://twitter.com/your-profile"
-  instagram = "https://instagram.com/your-profile"
-  orcid = "https://orcid.org/your-id"
-  github = "https://github.com/your-profile"
-  email = "your-email@example.com"
+[params]
+  title = "My Website"
+  description = "A description of my website"
+  author = "Author Name"
+
+[comments]
+  [comments.remark42]
+    enabled = true
+    host = "https://your-remark-domain.com"  # Must be a full URL with https://
+    site_id = "your-site-id"                 # Choose a unique identifier for your site
+    theme = "light"
+    locale = "en"
+    show_email_subscription = false
+    max_shown_comments = 15

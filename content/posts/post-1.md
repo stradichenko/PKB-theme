@@ -5,6 +5,7 @@ draft = false
 tags = ["red"]
 toc = true
 sidenotes = true
+comments = true
 +++
 
 ## Introduction

@@ -1,0 +1,38 @@
+{{ if .Site.Params.comments.remark42.enabled }}
+<div class="remark42-container">
+  <div id="remark42"></div>
+  <div class="remark42-debug" style="display: none;">
+    <p>Remark42 Debug Info:</p>
+    <ul>
+      <li>Host: {{ .Site.Params.comments.remark42.host }}</li>
+      <li>Site ID: {{ .Site.Params.comments.remark42.site_id }}</li>
+      <li>URL: {{ .RelPermalink }}</li>
+    </ul>
+  </div>
+</div>
+<script>
+  var remark_config = {
+    host: '{{ .Site.Params.comments.remark42.host }}',
+    site_id: '{{ .Site.Params.comments.remark42.site_id }}',
+    url: window.location.origin + '{{ .RelPermalink }}',
+    theme: '{{ .Site.Params.comments.remark42.theme | default "light" }}',
+    locale: '{{ .Site.Params.comments.remark42.locale | default "en" }}'
+  };
+
+  // Add console logs to debug
+  console.log("Remark42 config:", remark_config);
+</script>
+<script>
+  (function(c) {
+    for(var i = 0; i < c.length; i++){
+      var d = document, s = d.createElement('script');
+      s.src = remark_config.host + '/web/' + c[i] + '.js';
+      s.defer = true;
+      // Log when script is loaded or fails
+      s.onload = function() { console.log("Remark42 script loaded successfully"); };
+      s.onerror = function() { console.log("Failed to load Remark42 script", this.src); };
+      (d.head || d.body).appendChild(s);
+    }
+  })(['embed']);
+</script>
+{{ end }}
