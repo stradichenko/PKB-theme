@@ -4,9 +4,43 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
-  {{ partial "head.html" . }}
   
-  <!-- CSS is now centralized in head.html -->
+  <!-- Critical theme initialization script -->
+  <script>
+    (function() {
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      const currentTheme = localStorage.getItem('theme') || 
+                         (prefersDarkScheme.matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      // Apply critical color directly to prevent flash
+      document.documentElement.style.backgroundColor = 
+        currentTheme === 'dark' ? '#1a202c' : '#275f85';
+      document.documentElement.style.color = 
+        currentTheme === 'dark' ? '#e2e8ff' : '#cad6ff';
+    })();
+  </script>
+  
+  <!-- Inline critical theme styles -->
+  <style>
+    /* Force the background color with maximum specificity */
+    html[data-theme="dark"],
+    html[data-theme="dark"] body,
+    html[data-theme="dark"] main,
+    html[data-theme="dark"] .content {
+      background-color: #1a202c !important;
+      color: #e2e8ff !important;
+    }
+    
+    html[data-theme="light"],
+    html[data-theme="light"] body,
+    html[data-theme="light"] main,
+    html[data-theme="light"] .content {
+      background-color: #275f85 !important;
+      color: #cad6ff !important;
+    }
+  </style>
+  
+  {{ partial "head.html" . }}
   
   {{ block "head" . }}{{ end }}
 </head>
@@ -20,5 +54,20 @@
   <footer>
     {{ partial "footer.html" . }}
   </footer>
+  
+  <!-- Force theme application -->
+  <script>
+    // Ensure theme is consistently applied after all content loads
+    window.addEventListener('load', function() {
+      const theme = document.documentElement.getAttribute('data-theme') || 'light';
+      if (theme === 'dark') {
+        document.documentElement.style.backgroundColor = '#1a202c';
+        document.body.style.backgroundColor = '#1a202c';
+        document.querySelectorAll('main, .layout-container, .container, .main-content').forEach(el => {
+          el.style.backgroundColor = '#1a202c';
+        });
+      }
+    });
+  </script>
 </body>
 </html>

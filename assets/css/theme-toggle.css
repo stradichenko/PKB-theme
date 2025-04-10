@@ -88,6 +88,24 @@
   --sidenote-bg-color: #1e2a38;
   --sidenote-border-color: var(--border-color);
   --sidenote-text-color: var(--color-text);
+
+  /* List Page Component Variables - NEW */
+  --page-item-bg: #1e2a38;
+  --page-item-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  --page-link-color: var(--color-primary);
+  --page-link-hover-color: var(--color-primary-dark);
+  --page-metadata-color: #a0aec0;
+  --page-summary-color: #cbd5e0;
+  --tag-link-bg: #2d4a63;
+  --tag-link-color: var(--color-light);
+
+  /* Search Component - NEW */
+  --search-bg-color: var(--header-bg-color);
+  --search-text-color: var(--header-text-color);
+  --search-border-color: var(--border-color);
+  --search-placeholder-color: var(--header-text-color);
+  --search-icon-color: var(--header-text-color);
+  --search-focus-shadow: 0 0 0 0.25rem rgba(233, 153, 107, 0.25);
 }
 
 /* Ensure the theme applies to the entire document - IMPROVED SPECIFICITY */
@@ -185,6 +203,134 @@ html[data-theme="dark"] .sidenote {
   background-color: var(--sidenote-bg-color);
   border-color: var(--sidenote-border-color);
   color: var(--sidenote-text-color);
+}
+
+/* Specific rules for sidenotes with highest specificity */
+html[data-theme="dark"] .sidenote,
+html[data-theme="dark"] .sidenote-section .sidenote,
+html[data-theme="dark"] [id^="sidenote-"] {
+  background-color: #1e2a38 !important;
+  color: #e2e8ff !important;
+  border-color: #3a4755 !important;
+}
+
+html[data-theme="dark"] .sidenote a,
+html[data-theme="dark"] .sidenote-section .sidenote a {
+  color: var(--color-primary, #e9996b) !important;
+}
+
+/* Force background colors on specific layout containers */
+html[data-theme="dark"] .layout-container,
+html[data-theme="dark"] .main-content,
+html[data-theme="dark"] .toc-sidebar,
+html[data-theme="dark"] .sidenote-section {
+  background-color: #1a202c !important;
+}
+
+/* Dark mode overrides for lists */
+html[data-theme="dark"] .page-item {
+  background-color: var(--page-item-bg, #1e2a38) !important;
+  box-shadow: var(--page-item-shadow, 0 4px 10px rgba(0, 0, 0, 0.5)) !important;
+  border: 1px solid var(--border-color, #3a4755);
+}
+
+html[data-theme="dark"] .page-item-title {
+  color: var(--color-light, #ebefe9) !important;
+}
+
+html[data-theme="dark"] .page-link {
+  color: var(--page-link-color, #e9996b) !important;
+}
+
+html[data-theme="dark"] .page-link:hover {
+  color: var(--page-link-hover-color, #57d89c) !important;
+  text-decoration: underline;
+}
+
+html[data-theme="dark"] .page-metadata {
+  color: var(--page-metadata-color, #a0aec0) !important;
+}
+
+html[data-theme="dark"] .category-link,
+html[data-theme="dark"] .tag-link {
+  color: var(--page-link-color, #e9996b) !important;
+}
+
+html[data-theme="dark"] .category-link:hover,
+html[data-theme="dark"] .tag-link:hover {
+  color: var(--page-link-hover-color, #57d89c) !important;
+}
+
+html[data-theme="dark"] .tag-link {
+  background-color: var(--tag-link-bg, #2d4a63) !important;
+  color: var(--tag-link-color, #ebefe9) !important;
+}
+
+html[data-theme="dark"] .page-summary {
+  color: var(--page-summary-color, #cbd5e0) !important;
+}
+
+/* Search component dark mode overrides */
+html[data-theme="dark"] .search-form .search-input {
+  background-color: var(--search-bg-color, #1a2633) !important;
+  color: var(--search-text-color, #ebefe9) !important;
+  border-color: var(--search-border-color, #3a4755) !important;
+}
+
+html[data-theme="dark"] .search-form .search-input::placeholder {
+  color: var(--search-placeholder-color, #ebefe9) !important;
+  opacity: 0.7 !important;
+}
+
+html[data-theme="dark"] .search-form .search-input:focus {
+  box-shadow: var(--search-focus-shadow) !important;
+  border-color: var(--color-primary, #e9996b) !important;
+}
+
+html[data-theme="dark"] .search-form .search-icon,
+html[data-theme="dark"] .search-form .clear-icon {
+  color: var(--search-icon-color, #ebefe9) !important;
+}
+
+html[data-theme="dark"] .search-form .clear-icon:hover {
+  color: var(--color-primary, #e9996b) !important;
+}
+
+/* CRITICAL COLOR ENFORCEMENT */
+/* These rules are duplicated inline in baseof.html for immediate application */
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] main,
+html[data-theme="dark"] .content,
+html[data-theme="dark"] .container,
+html[data-theme="dark"] article,
+html[data-theme="dark"] section,
+html[data-theme="dark"] .layout-container,
+html[data-theme="dark"] .main-content,
+html[data-theme="dark"] .site-main,
+html[data-theme="dark"] div[class^="content"] {
+  background-color: #1a202c !important;
+  color: #e2e8ff !important;
+}
+
+/* Force background colors on specific containers */
+html[data-theme="dark"] .content-container,
+html[data-theme="dark"] .page-content,
+html[data-theme="dark"] .pages-list,
+html[data-theme="dark"] .page-header {
+  background-color: #1a202c !important; 
+}
+
+/* Force specific colors for search elements */
+html[data-theme="dark"] .search-form .search-input {
+  background-color: #1a2633 !important;
+  color: #ebefe9 !important;
+  border-color: #3a4755 !important;
+}
+
+html[data-theme="dark"] .search-form .search-input::placeholder {
+  color: #ebefe9 !important;
+  opacity: 0.7 !important;
 }
 
 /* Theme toggle button styling */

@@ -30,30 +30,63 @@ document.addEventListener('DOMContentLoaded', () => {
     positionSidenote(placeholder, sidenote);
   });
   
-  // Add scroll event listener to reposition sidenotes during scrolling
-  window.addEventListener('scroll', () => {
+  // Position sidenotes whenever relevant events occur
+  const positionAllSidenotes = () => {
     document.querySelectorAll('.sidenote-placeholder').forEach(placeholder => {
       const sidenoteId = placeholder.dataset.sidenoteId;
       const sidenote = document.getElementById(sidenoteId);
       
       if (sidenote) {
         positionSidenote(placeholder, sidenote);
+      }
+    });
+  };
+  
+  // Add scroll event listener to reposition sidenotes during scrolling
+  window.addEventListener('scroll', positionAllSidenotes);
+  
+  // Also reposition on window resize
+  window.addEventListener('resize', positionAllSidenotes);
+  
+  // NEW: Listen for theme changes and update sidenotes styling
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-theme') {
+        // Force theme update on sidenotes
+        updateSidenoteThemes();
+        // Reposition in case theme change affected layout
+        positionAllSidenotes();
       }
     });
   });
   
-  // Also reposition on window resize
-  window.addEventListener('resize', () => {
-    document.querySelectorAll('.sidenote-placeholder').forEach(placeholder => {
-      const sidenoteId = placeholder.dataset.sidenoteId;
-      const sidenote = document.getElementById(sidenoteId);
-      
-      if (sidenote) {
-        positionSidenote(placeholder, sidenote);
-      }
-    });
-  });
+  // Start observing the html element for theme changes
+  observer.observe(document.documentElement, { attributes: true });
 });
+
+// Function to force theme application to sidenotes
+function updateSidenoteThemes() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  const sidenotes = document.querySelectorAll('.sidenote');
+  
+  sidenotes.forEach(sidenote => {
+    // Clear any inline background/color styling that might interfere
+    sidenote.style.removeProperty('background-color');
+    sidenote.style.removeProperty('color');
+    sidenote.style.removeProperty('border-color');
+    
+    // Apply theme-specific styling directly
+    if (currentTheme === 'dark') {
+      sidenote.style.backgroundColor = '#1e2a38';
+      sidenote.style.color = '#e2e8ff';
+      sidenote.style.borderColor = '#3a4755';
+    } else {
+      sidenote.style.backgroundColor = '';  // Use the CSS default
+      sidenote.style.color = '';           // Use the CSS default
+      sidenote.style.borderColor = '';     // Use the CSS default
+    }
+  });
+}
 
 // Function to position a sidenote relative to its placeholder
 function positionSidenote(placeholder, sidenote) {
@@ -70,4 +103,7 @@ function positionSidenote(placeholder, sidenote) {
   sidenote.style.position = 'absolute';
   sidenote.style.top = `${Math.max(0, topPosition)}px`;
   sidenote.style.width = 'calc(100% - 20px)'; // Allow for padding
+  
+  // Make sure theme styling is properly applied
+  updateSidenoteThemes();
 }

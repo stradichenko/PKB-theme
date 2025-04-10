@@ -76,21 +76,3 @@
     display: none; /* Hidden by default, shown via JS when input has text */
   }
 }
-
-/* Additional styles for dark mode compatibility */
-html[data-theme="dark"] .search-form {
-  .search-input {
-    background-color: var(--header-bg-color);
-    color: var(--header-text-color);
-    border-color: var(--border-color);
-    
-    &::placeholder {
-      color: var(--header-text-color);
-      opacity: 0.7;
-    }
-  }
-  
-  .search-icon, .clear-icon {
-    color: var(--header-text-color) !important;
-  }
-}

@@ -26,10 +26,11 @@
   gap: 2rem;
 }
 
+/* Make sure these styles don't use !important so they can be overridden by theme */
 .page-item {
   padding: 1.5rem;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9; /* Will be overridden in dark mode */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -54,6 +55,19 @@
 .page-link:hover {
   color: #004080;
   text-decoration: underline;
+}
+
+/* Apply light mode styles with specificity to light mode only */
+html:not([data-theme="dark"]) .page-item {
+  background-color: #f9f9f9;
+}
+
+html:not([data-theme="dark"]) .page-link {
+  color: #0066cc;
+}
+
+html:not([data-theme="dark"]) .tag-link {
+  background-color: #e6f0fa;
 }
 
 /* Metadata styling */

@@ -102,7 +102,6 @@
       (resources.Get "css/list.css")
       (resources.Get "css/components/recent-posts-grid.css")
       (resources.Get "css/about-profile.css")
-      (resources.Get "css/theme-toggle.css") 
   }}
   {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
@@ -110,6 +109,10 @@
   <!-- Include SCSS files separately - they need special processing -->
   {{ $searchSCSS := resources.Get "sass/search.scss" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $searchSCSS.RelPermalink }}" integrity="{{ $searchSCSS.Data.Integrity }}" crossorigin="anonymous">
+  
+  <!-- Load theme-toggle CSS last to ensure it overrides all other styles -->
+  {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
   
   <!-- Include any additional SASS files, if needed -->
   {{ $mainSass := resources.Get "sass/main.scss" | toCSS | minify | fingerprint }}

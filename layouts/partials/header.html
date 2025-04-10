@@ -32,38 +32,6 @@
 <!-- Include search partial -->
 {{ partial "search.html" . }}
 
-<!-- CSS loading moved to head.html -->
-
-<!-- Theme toggle script -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('theme-toggle');
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    // Get theme from localStorage or use system preference as default
-    const currentTheme = localStorage.getItem('theme') || 
-                         (prefersDarkScheme.matches ? 'dark' : 'light');
-    
-    // Apply theme to HTML element for maximum CSS specificity
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    updateThemeToggleIcon(currentTheme);
-    
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      updateThemeToggleIcon(newTheme);
-    });
-    
-    // Update the visible icon based on current theme
-    function updateThemeToggleIcon(theme) {
-      if (theme === 'dark') {
-        themeToggle.classList.add('dark-mode');
-      } else {
-        themeToggle.classList.remove('dark-mode');
-      }
-    }
-  });
-</script>
+<!-- Use external theme toggle script instead of inline -->
+{{ $themeToggleJS := resources.Get "js/theme-toggle.js" | minify | fingerprint }}
+<script src="{{ $themeToggleJS.RelPermalink }}" integrity="{{ $themeToggleJS.Data.Integrity }}" crossorigin="anonymous"></script>
