@@ -6,21 +6,7 @@
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
   {{ partial "head.html" . }}
   
-  {{ $styles := resources.Get "css/main.css" }}
-  
-  {{ if eq hugo.Environment "development" }}
-    {{ $styles = $styles | toCSS }}
-  {{ else }}
-    {{ $styles = $styles | toCSS | minify | fingerprint }}
-  {{ end }}
-  
-  <link rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" crossorigin="anonymous">
-  
-  {{ $styles := resources.Get "css/list.css" | resources.ToCSS | resources.Minify }}
-  <link rel="stylesheet" href="{{ $styles.RelPermalink }}">
-  
-  {{ $css := resources.Get "css/components/recent-posts-grid.css" | resources.Minify }}
-  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  <!-- CSS is now centralized in head.html -->
   
   {{ block "head" . }}{{ end }}
 </head>

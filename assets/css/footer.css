@@ -9,6 +9,10 @@ footer {
   font-size: var(--footer-font-size);
   font-family: var(--footer-font-family);
   border-top: 1px solid var(--footer-border-color);
+  width: 100%;
+  /* These properties ensure proper sticky footer behavior */
+  flex-shrink: 0;
+  margin-top: auto; /* Push footer down when content is short */
 }
 
 /* Footer text styling */

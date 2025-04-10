@@ -5,6 +5,7 @@
 @import "footer.css";
 @import "components/sidenote.css";
 @import "components/toc.scss";
+@import "theme-toggle.css";
 
 /* General components */
 
@@ -13,33 +14,35 @@ a {
   text-decoration: none;
 }
 
-main {
-  background-color: var(--main-bg-color); /* Use main background color */
-  padding: var(--main-padding); /* Use main padding */
-  color: var(--main-text-color); /* Use main text color */
-}
-
-/* Add sticky footer with flexbox */
-html, body {
-  height: 100%;
-  margin: 0;
+/* Sticky footer setup - UPDATED */
+html {
+  height: 100%; /* Required for proper sticky footer */
 }
 
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensures body takes up at least the full viewport height */
+  min-height: 100vh; /* Minimum full viewport height */
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  flex: 1 0 auto; /* grow, don't shrink, respect initial size */
+  background-color: var(--main-bg-color); /* Use main background color */
+  padding: var(--main-padding); /* Use main padding */
+  color: var(--main-text-color); /* Use main text color */
+}
+
+footer {
+  flex-shrink: 0; /* Prevent footer from shrinking */
+  width: 100%;
+  margin-top: auto; /* Push to bottom when content is short */
 }
 
 main, .content {
   flex: 1; /* Makes the content area expand to fill available space */
 }
-
-/* Ensures the footer doesn't flex/grow */
-footer {
-  flex-shrink: 0;
-}
-
 
 .toc-toggle {
   color: #4a90e2; /* This will force the chevron fill through currentColor */

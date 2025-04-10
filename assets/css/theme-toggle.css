@@ -1,0 +1,256 @@
+/* Theme toggle button styling */
+:root {
+  /* Light mode is already defined in global/variables.css */
+}
+
+/* Dark Theme - Comprehensive variable overrides */
+[data-theme="dark"] {
+  /* Core Color Palette */
+  --color-primary: #e9996b;         /* Brighter blue for dark mode */
+  --color-primary-dark: #57d89c;    /* Brighter accent for dark mode */
+  --color-secondary: #ff5252;       /* Brighter red for dark mode */
+  --color-text: #e2e8ff;            /* Light text for dark backgrounds */
+  --color-dark: #1a2633;            /* Darker headers/footers */
+  --color-dark-accent: #6d4170;     /* Brighter accent for dark mode */
+  --color-light: #ebefe9;           /* Off-white for light elements */
+  --color-white: #f5f5f5;           /* Not pure white - easier on the eyes */
+  --border-color: #3a4755;          /* Darker border color for dark mode */
+  
+  /* Typography - No changes needed for font families, but adjusting font scaling */
+  /* Typography is inherited from global variables, only override if needed */
+  
+  /* Border variables */
+  --border-radius: 6px;             /* Keep consistent with light mode */
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3); /* Darker shadow for dark mode */
+  
+  /* Layout - Header - Using more specific variable names and !important where needed */
+  --header-bg-color: var(--color-dark) !important; 
+  --header-text-color: var(--color-light) !important;
+  --header-logo-color: var(--color-primary) !important;
+  --header-logo-hover-color: var(--color-primary-dark) !important;
+  --header-nav-link-color: var(--color-light) !important;
+  --header-nav-link-hover-bg: var(--color-primary) !important;
+  --header-nav-link-hover-color: var(--color-dark) !important;
+  --header-shadow: var(--shadow-light) !important;
+  --header-font-family: var(--font-family-sans); /* Inheriting from global */
+  --header-font-size: var(--font-size-large); /* Inheriting from global */
+  --header-padding: var(--spacing-md); /* Inheriting spacing from global */
+  --header-nav-gap: 12px; /* Consistent with light mode */
+  
+  /* Layout - Footer */
+  --footer-bg-color: var(--color-dark);
+  --footer-text-color: var(--color-light);
+  --footer-border-color: var(--color-dark-accent);
+  --footer-link-color: var(--color-primary);
+  --footer-link-hover-color: var(--color-primary-dark);
+  --footer-font-family: var(--font-family-sans);
+  --footer-font-size: var(--font-size-medium);
+  --footer-padding-vertical: var(--spacing-md);
+  --footer-padding-horizontal: var(--spacing-md);
+  
+  /* Layout - Body */
+  --body-bg-color: #1a202c;         /* Dark blue-gray background */
+  --body-text-color: var(--color-text);
+  --body-font-family: var(--font-family-sans);
+  --body-font-size: var(--font-size-base);
+  --body-line-height: var(--line-height-normal);
+  --body-padding: var(--spacing-none);
+  
+  /* Layout - Main Content */
+  --main-bg-color: var(--body-bg-color);
+  --main-text-color: var(--body-text-color);
+  --main-padding: var(--spacing-sm);
+  
+  /* Generic Elements */
+  --link-color: var(--color-primary);
+  --link-hover-color: var(--color-primary-dark);
+  
+  /* Component overrides - Important for separately loaded CSS files */
+  /* About Profile Component */
+  --about-profile-bg: var(--body-bg-color);
+  --about-text-color: var(--body-text-color);
+  --profile-name-color: var(--color-primary);
+  
+  /* Recent Posts Grid Component */
+  --post-card-bg: #223243;
+  --post-title-color: var(--color-light);
+  --post-meta-color: #a0aec0;
+  --post-summary-color: #cbd5e0;
+  --tag-bg-color: #2d4a63;
+  --tag-text-color: var(--color-light);
+  
+  /* TOC Component */
+  --toc-bg-color: #1e2a38;
+  --toc-border-color: var(--border-color);
+  --toc-link-color: var(--link-color);
+  
+  /* Sidenote Component */
+  --sidenote-bg-color: #1e2a38;
+  --sidenote-border-color: var(--border-color);
+  --sidenote-text-color: var(--color-text);
+}
+
+/* Ensure the theme applies to the entire document */
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background-color: var(--body-bg-color) !important;
+  color: var(--body-text-color) !important;
+}
+
+html[data-theme="dark"] a {
+  color: var(--link-color);
+}
+
+html[data-theme="dark"] a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Direct element overrides for dark theme with very high specificity
+   Using !important and very specific selectors to ensure these styles take precedence */
+html[data-theme="dark"] body > header,
+html[data-theme="dark"] .site-header,
+html[data-theme="dark"] header {
+  background-color: var(--header-bg-color) !important;
+  color: var(--header-text-color) !important;
+  box-shadow: var(--header-shadow) !important;
+}
+
+html[data-theme="dark"] header h1,
+html[data-theme="dark"] header .logo,
+html[data-theme="dark"] .site-header .logo {
+  color: var(--header-logo-color) !important;
+}
+
+/* Additional header styling with more specific selectors */
+html[data-theme="dark"] header .logo:hover {
+  color: var(--header-logo-hover-color) !important;
+}
+
+html[data-theme="dark"] header nav,
+html[data-theme="dark"] .site-header nav {
+  color: var(--header-text-color) !important;
+}
+
+html[data-theme="dark"] header nav ul li a,
+html[data-theme="dark"] .site-header nav ul li a,
+html[data-theme="dark"] .main-nav a {
+  color: var(--header-nav-link-color) !important;
+}
+
+html[data-theme="dark"] header nav ul li a:hover,
+html[data-theme="dark"] header nav ul li a:focus,
+html[data-theme="dark"] .site-header nav ul li a:hover,
+html[data-theme="dark"] .site-header nav ul li a:focus,
+html[data-theme="dark"] .main-nav a:hover,
+html[data-theme="dark"] .main-nav a:focus {
+  background-color: var(--header-nav-link-hover-bg) !important;
+  color: var(--header-nav-link-hover-color) !important;
+}
+
+/* Component-specific dark theme overrides with higher specificity */
+html[data-theme="dark"] .about-profile-container {
+  background-color: var(--about-profile-bg);
+  color: var(--about-text-color);
+}
+
+html[data-theme="dark"] .profile-name {
+  color: var(--profile-name-color);
+}
+
+html[data-theme="dark"] .post-card {
+  background-color: var(--post-card-bg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .post-title a {
+  color: var(--post-title-color);
+}
+
+html[data-theme="dark"] .post-meta {
+  color: var(--post-meta-color);
+}
+
+html[data-theme="dark"] .post-summary {
+  color: var(--post-summary-color);
+}
+
+html[data-theme="dark"] .tag {
+  background-color: var(--tag-bg-color);
+  color: var(--tag-text-color);
+}
+
+html[data-theme="dark"] .toc {
+  background-color: var(--toc-bg-color);
+  border-color: var(--toc-border-color);
+}
+
+html[data-theme="dark"] .sidenote {
+  background-color: var(--sidenote-bg-color);
+  border-color: var(--sidenote-border-color);
+  color: var(--sidenote-text-color);
+}
+
+/* Theme toggle button styling */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  height: 24px;
+  width: 24px;
+  margin: 0 8px;
+  position: relative;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:focus {
+  outline: none;
+}
+
+.theme-toggle:hover {
+  opacity: 0.7;
+}
+
+/* Icon display logic */
+.theme-toggle .sun-icon,
+.theme-toggle .moon-icon {
+  position: absolute;
+  transition: opacity 0.3s ease, transform 0.5s ease;
+}
+
+/* Show sun icon when in dark mode (to switch to light) */
+.theme-toggle.dark-mode .sun-icon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-toggle.dark-mode .moon-icon {
+  opacity: 0;
+  transform: rotate(100deg) scale(0);
+}
+
+/* Show moon icon when in light mode (to switch to dark) */
+.theme-toggle:not(.dark-mode) .moon-icon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-toggle:not(.dark-mode) .sun-icon {
+  opacity: 0;
+  transform: rotate(-100deg) scale(0);
+}
+
+/* Header social section layout */
+.header-social {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.header-social a {
+  color: inherit;
+  margin-right: 8px;
+}

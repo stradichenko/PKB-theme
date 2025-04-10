@@ -12,6 +12,7 @@
 // Search form styling that matches header
 .search-form {
   max-width: 250px;
+  position: relative; /* Ensure relative positioning for the form */
   
   .search-input {
     // Use header variables for consistent styling
@@ -41,20 +42,55 @@
     }
   }
   
-  // Updated SVG icon styles for WHITE color with better contrast
+  // Updated SVG icon styles with proper positioning
   .search-icon, .clear-icon {
     color: #ffffff; // Pure white for maximum contrast
     opacity: 1; // Full opacity for better visibility
+    position: absolute; /* Position absolutely within the form */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Perfect vertical centering */
+    display: flex; /* Use flexbox for better SVG alignment */
+    align-items: center;
+    justify-content: center;
+    z-index: 2; /* Ensure icons stay above input */
     
-    // Make SVG color white even if text-muted class is applied in HTML
     &.text-muted {
       color: #ffffff !important;
     }
     
-    // Make SVGs slightly larger for better visibility
     svg {
       width: 18px;
       height: 18px;
     }
+  }
+  
+  /* Position search icon on the left */
+  .search-icon {
+    left: 0.75rem;
+  }
+  
+  /* Position clear icon on the right */
+  .clear-icon {
+    right: 0.75rem;
+    cursor: pointer; /* Show pointer cursor for better UX */
+    display: none; /* Hidden by default, shown via JS when input has text */
+  }
+}
+
+/* Additional styles for dark mode compatibility */
+html[data-theme="dark"] .search-form {
+  .search-input {
+    background-color: var(--header-bg-color);
+    color: var(--header-text-color);
+    border-color: var(--border-color);
+    
+    &::placeholder {
+      color: var(--header-text-color);
+      opacity: 0.7;
+    }
+  }
+  
+  .search-icon, .clear-icon {
+    color: var(--header-text-color) !important;
   }
 }

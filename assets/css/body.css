@@ -1,18 +1,22 @@
-@import url('./global/variables.css'); /* Import CSS variables */
+@import url('./global/variables.css');
 
-/* Body styling */
+/* Body styling - UPDATED */
 body {
-  background-color: var(--body-bg-color); /* Use the body background color */
-  color: var(--body-text-color); /* Use the body text color */
-  font-family: var(--body-font-family); /* Use the body font family */
-  font-size: var(--body-font-size); /* Use the body font size */
-  line-height: var(--body-line-height); /* Use the body line height */
-  margin: 0; /* Remove default margins */
-  width: 100%; /* Ensure the body spans the full width of the page */
-  display: flex; /* Use flexbox for alignment */
-  flex-direction: column; /* Stack content vertically */
-  align-items: stretch; /* Stretch content to fill the full width */
-  justify-content: flex-start; /* Align content to the top */
-  min-height: 100vh; /* Ensure the body takes up the full viewport height */
-  padding: var(--body-padding); /* Use the body padding */
+  background-color: var(--body-bg-color);
+  color: var(--body-text-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size);
+  line-height: var(--body-line-height);
+  margin: 0;
+  padding: var(--body-padding);
+  
+  /* Sticky footer setup - ensure these aren't overridden */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+main {
+  flex: 1 0 auto; /* grow, don't shrink, respect initial size */
 }
