@@ -1,0 +1,107 @@
+/* Table of Contents Styling */
+
+/* General container to hold both sidebar and main content */
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Layout container with Grid for better control */
+.layout-container {
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) 3fr auto;
+  grid-template-areas: "toc main sidenotes";
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Sidebar Styles - more specific */
+.toc-sidebar {
+  grid-area: toc;
+  width: 100%;
+  max-width: 250px;
+  padding: 0;
+  box-sizing: border-box;
+  position: sticky;
+  top: 1rem;
+  align-self: flex-start;
+}
+
+/* Main Content Styles */
+.main-content {
+  grid-area: main;
+  width: 100%;
+  padding: 0 1rem;
+  flex: 1;
+}
+
+/* Table of Contents Styles - with improved specificity */
+.toc {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+}
+
+.toc h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.toc nav#TableOfContents ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem;
+}
+
+.toc nav#TableOfContents ul ul {
+  list-style-type: circle !important;
+  margin-top: 0.25rem;
+}
+
+.toc nav#TableOfContents li {
+  margin-bottom: 0.25rem;
+}
+
+.toc nav#TableOfContents a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.toc nav#TableOfContents a:hover {
+  text-decoration: underline;
+  color: #a4bd35;
+}
+
+/* Dark mode specific styles */
+html[data-theme="dark"] .toc {
+  background-color: #1e2a38;
+  border-color: #3a4755;
+}
+
+html[data-theme="dark"] .toc a {
+  color: #e9996b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .layout-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "toc"
+      "main"
+      "sidenotes";
+  }
+  
+  .toc-sidebar {
+    max-width: 100%;
+    position: relative;
+    top: 0;
+  }
+}

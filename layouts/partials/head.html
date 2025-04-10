@@ -17,6 +17,33 @@
   })();
 </script>
 
+<!-- INLINE CRITICAL SELECTION STYLES FOR IMMEDIATE APPLICATION -->
+<style>
+  /* Text selection highlighting with maximum specificity */
+  *::selection {
+    background-color: var(--color-primary, #4a90e2) !important;
+    color: var(--color-white, #ffffff) !important;
+    text-shadow: none !important;
+  }
+  
+  *::-moz-selection {
+    background-color: var(--color-primary, #4a90e2) !important;
+    color: var(--color-white, #ffffff) !important;
+    text-shadow: none !important;
+  }
+  
+  /* Dark mode needs separate rules */
+  html[data-theme="dark"] *::selection {
+    background-color: #e9996b !important;
+    color: #1a2633 !important;
+  }
+  
+  html[data-theme="dark"] *::-moz-selection {
+    background-color: #e9996b !important;
+    color: #1a2633 !important;
+  }
+</style>
+
 <!-- CENTRALIZED CSS LOADING - Proper cascade order -->
 {{ if eq hugo.Environment "development" }}
   <!-- Development mode - Individual CSS files with source maps -->
@@ -42,7 +69,8 @@
   {{ $sidenotesCSS := resources.Get "css/components/sidenote.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $sidenotesCSS.RelPermalink }}" integrity="{{ $sidenotesCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  {{ $tocCSS := resources.Get "css/components/toc.scss" | toCSS | fingerprint }}
+  <!-- Use the regular CSS version of TOC instead of SCSS -->
+  {{ $tocCSS := resources.Get "css/components/toc.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $tocCSS.RelPermalink }}" integrity="{{ $tocCSS.Data.Integrity }}" crossorigin="anonymous">
   
   {{ $listCSS := resources.Get "css/list.css" | toCSS | fingerprint }}
@@ -70,7 +98,7 @@
       (resources.Get "css/header.css") 
       (resources.Get "css/footer.css")
       (resources.Get "css/components/sidenote.css")
-      (resources.Get "css/components/toc.scss")
+      (resources.Get "css/components/toc.css")
       (resources.Get "css/list.css")
       (resources.Get "css/components/recent-posts-grid.css")
       (resources.Get "css/about-profile.css")
@@ -89,6 +117,5 @@
 {{ end }}
 
 <!-- JavaScript loading -->
-{{ partialCached "head/js.html" . }}
 {{ $script := resources.Get "js/main.js" | minify | fingerprint }}
 <script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" crossorigin="anonymous"></script>

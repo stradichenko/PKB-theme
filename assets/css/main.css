@@ -4,7 +4,7 @@
 @import "header.css";
 @import "footer.css";
 @import "components/sidenote.css";
-@import "components/toc.scss";
+@import "components/toc.css"; /* Use CSS version instead of SCSS */
 @import "theme-toggle.css";
 
 /* General components */
@@ -46,4 +46,80 @@ main, .content {
 
 .toc-toggle {
   color: #4a90e2; /* This will force the chevron fill through currentColor */
+}
+
+/* Text selection highlight styles with ultimate specificity 
+   NOTE: These are duplicated in head.html for immediate application */
+html body *::selection,
+*:not(html):not(body)::selection,
+p::selection,
+h1::selection,
+h2::selection,
+h3::selection,
+h4::selection,
+h5::selection,
+h6::selection,
+li::selection,
+span::selection,
+div::selection,
+a::selection {
+  background-color: var(--color-primary, #4a90e2) !important;
+  color: var(--color-white, #ffffff) !important;
+  text-shadow: none !important;
+}
+
+html body *::-moz-selection,
+*:not(html):not(body)::-moz-selection,
+p::-moz-selection,
+h1::-moz-selection,
+h2::-moz-selection,
+h3::-moz-selection,
+h4::-moz-selection,
+h5::-moz-selection,
+h6::-moz-selection,
+li::-moz-selection,
+span::-moz-selection,
+div::-moz-selection,
+a::-moz-selection {
+  background-color: var(--color-primary, #4a90e2) !important;
+  color: var(--color-white, #ffffff) !important;
+  text-shadow: none !important;
+}
+
+/* Dark mode selection - Target all elements directly */
+html[data-theme="dark"] *::selection {
+  background-color: var(--color-primary, #e9996b) !important;
+  color: var(--color-dark, #1a2633) !important;
+}
+
+html[data-theme="dark"] *::-moz-selection {
+  background-color: var(--color-primary, #e9996b) !important;
+  color: var(--color-dark, #1a2633) !important;
+}
+
+/* Component-specific styling with even higher specificity */
+.sidenote *::selection,
+html .sidenote *::selection {
+  background-color: rgba(151, 69, 69, 0.7) !important;
+}
+
+.sidenote *::-moz-selection,
+html .sidenote *::-moz-selection {
+  background-color: rgba(151, 69, 69, 0.7) !important;
+}
+
+code::selection,
+pre *::selection,
+.code *::selection,
+html code::selection {
+  background-color: var(--color-secondary, #df2d2d) !important;
+  color: white !important;
+}
+
+code::-moz-selection,
+pre *::-moz-selection,
+.code *::-moz-selection,
+html code::-moz-selection {
+  background-color: var(--color-secondary, #df2d2d) !important;
+  color: white !important;
 }
