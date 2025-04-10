@@ -1,0 +1,5 @@
+{{ $url := .Get "url" | default (.Page.Permalink) }}
+{{ $alt := .Get "alt" | default "QR code for this page" }}
+{{ $scale := .Get "scale" | default 3 }}
+{{ $qrImage := images.QR $url (dict "size" 200 "level" "medium") }}
+<img src="{{ $qrImage.RelPermalink }}" alt="{{ $alt }}" width="200" height="200" class="page-qr-code">

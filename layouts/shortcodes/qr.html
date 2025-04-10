@@ -1,0 +1,20 @@
+{{/* QR shortcode - Adapted from Hugo's built-in shortcode */}}
+{{ $text := .Get "text" | default (.Inner | .Page.RenderString) }}
+{{ $level := .Get "level" | default "medium" }}
+{{ $size := .Get "size" | default 200 }}
+{{ $alt := .Get "alt" | default "QR code" }}
+{{ $class := .Get "class" | default "qr-code" }}
+{{ $id := .Get "id" }}
+{{ $loading := .Get "loading" | default "lazy" }}
+
+<div class="qr-code-wrapper">
+  <img 
+    src="https://api.qrserver.com/v1/create-qr-code/?size={{ $size }}x{{ $size }}&data={{ $text | urlquery }}" 
+    alt="{{ $alt }}" 
+    {{ with $id }}id="{{ . }}"{{ end }}
+    class="{{ $class }}"
+    loading="{{ $loading }}"
+    width="{{ $size }}"
+    height="{{ $size }}"
+  />
+</div>

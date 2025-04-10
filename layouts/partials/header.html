@@ -27,11 +27,214 @@
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
     </svg>
   </button>
+  
+  <!-- Share link button -->
+  <button id="share-link-btn" class="share-link-btn" title="Share this page">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+  </button>
 </div>
 
 <!-- Include search partial -->
 {{ partial "search.html" . }}
 
+<!-- Share Link Modal -->
+<div id="share-modal" class="share-modal">
+  <div class="share-modal-content">
+    <span class="share-modal-close">&times;</span>
+    <h3>Share this page</h3>
+    
+    <!-- QR code first -->
+    <div class="qrcode-container">
+      <!-- Use an external QR code API instead of Hugo's images.QR -->
+      <img 
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ .Permalink | urlquery }}" 
+        alt="QR code for {{ .Title }}" 
+        class="page-qr-code"
+        loading="lazy"
+        width="200"
+        height="200"
+      />
+    </div>
+    
+    <!-- URL and copy button underneath -->
+    <div class="share-url-container">
+      <input type="text" id="share-url" value="{{ .Permalink }}" readonly>
+      <button id="copy-url-btn" class="copy-url-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1-2 2v1"></path>
+        </svg>
+        Copy
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Use external theme toggle script instead of inline -->
 {{ $themeToggleJS := resources.Get "js/theme-toggle.js" | minify | fingerprint }}
 <script src="{{ $themeToggleJS.RelPermalink }}" integrity="{{ $themeToggleJS.Data.Integrity }}" crossorigin="anonymous"></script>
+
+<!-- Share link script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('share-modal');
+    const btn = document.getElementById('share-link-btn');
+    const closeBtn = document.querySelector('.share-modal-close');
+    const copyBtn = document.getElementById('copy-url-btn');
+    const urlInput = document.getElementById('share-url');
+    
+    // Open modal when the share button is clicked
+    btn.onclick = function() {
+      modal.style.display = 'block';
+    }
+    
+    // Close modal when the X is clicked
+    closeBtn.onclick = function() {
+      modal.style.display = 'none';
+    }
+    
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && modal.style.display === 'block') {
+        modal.style.display = 'none';
+      }
+    });
+    
+    // Copy URL functionality
+    copyBtn.addEventListener('click', function() {
+      urlInput.select();
+      document.execCommand('copy');
+      
+      // Show feedback
+      copyBtn.textContent = 'Copied!';
+      
+      setTimeout(function() {
+        copyBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1-2 2v1"></path>
+          </svg>
+          Copy`;
+      }, 2000);
+    });
+  });
+</script>
+
+<style>
+  .share-link-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+  }
+  
+  .share-link-btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  .share-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    overflow: auto;
+  }
+  
+  .share-modal-content {
+    position: relative;
+    background-color: var(--bg-color, #fff);
+    color: var(--text-color, #333);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 260px; /* Reduced from 350px to match QR code width more closely */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  .share-modal-close {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .qrcode-container {
+    margin: 15px 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .page-qr-code {
+    max-width: 200px;
+    height: auto;
+    margin: 0 auto;
+  }
+  
+  .share-url-container {
+    display: flex;
+    flex-direction: column;
+    margin: 15px auto;
+    gap: 10px;
+    max-width: 210px; /* Match QR code width plus small margin */
+  }
+  
+  .share-url-container input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .copy-url-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background-color: var(--primary-color, #4a90e2);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  /* Dark mode adjustments */
+  html[data-theme="dark"] .share-modal-content {
+    background-color: var(--bg-color, #1a202c);
+    color: var(--text-color, #e2e8ff);
+  }
+  
+  html[data-theme="dark"] .share-url-container input {
+    background-color: #2d3748;
+    color: #e2e8ff;
+    border-color: #4a5568;
+  }
+</style>

@@ -1,0 +1,13 @@
+{{ $url := .url }}
+{{ $alt := .alt | default "QR code" }}
+
+<div class="qr-code-wrapper">
+  <img 
+    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ $url | urlquery }}" 
+    alt="{{ $alt }}" 
+    class="page-qr-code"
+    loading="lazy"
+    width="200"
+    height="200"
+  />
+</div>
