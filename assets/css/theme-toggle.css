@@ -48,17 +48,17 @@
   --footer-padding-vertical: var(--spacing-md);
   --footer-padding-horizontal: var(--spacing-md);
   
-  /* Layout - Body */
-  --body-bg-color: #1a202c;         /* Dark blue-gray background */
-  --body-text-color: var(--color-text);
+  /* Layout - Body - With !important flags */
+  --body-bg-color: #1a202c !important;         /* Dark blue-gray background */
+  --body-text-color: var(--color-text) !important;
   --body-font-family: var(--font-family-sans);
   --body-font-size: var(--font-size-base);
   --body-line-height: var(--line-height-normal);
   --body-padding: var(--spacing-none);
   
   /* Layout - Main Content */
-  --main-bg-color: var(--body-bg-color);
-  --main-text-color: var(--body-text-color);
+  --main-bg-color: var(--body-bg-color) !important;
+  --main-text-color: var(--body-text-color) !important;
   --main-padding: var(--spacing-sm);
   
   /* Generic Elements */
@@ -90,19 +90,16 @@
   --sidenote-text-color: var(--color-text);
 }
 
-/* Ensure the theme applies to the entire document */
+/* Ensure the theme applies to the entire document - IMPROVED SPECIFICITY */
 html[data-theme="dark"],
 html[data-theme="dark"] body {
-  background-color: var(--body-bg-color) !important;
+  background-color: #1a202c !important; /* Direct color instead of var */
   color: var(--body-text-color) !important;
 }
 
-html[data-theme="dark"] a {
-  color: var(--link-color);
-}
-
-html[data-theme="dark"] a:hover {
-  color: var(--link-hover-color);
+/* Add direct styling to override any imported backgrounds */
+html[data-theme="dark"] main {
+  background-color: #1a202c !important;
 }
 
 /* Direct element overrides for dark theme with very high specificity

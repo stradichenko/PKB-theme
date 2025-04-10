@@ -1,3 +1,17 @@
+<!-- Theme initialization script - must run BEFORE CSS loads -->
+<script>
+  (function() {
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const currentTheme = localStorage.getItem('theme') || 
+                       (prefersDarkScheme.matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    
+    // Prevent flash of incorrect theme
+    document.documentElement.style.backgroundColor = 
+      currentTheme === 'dark' ? '#1a202c' : '#275f85';
+  })();
+</script>
+
 {{- with resources.Get "js/main.js" }}
   {{- if eq hugo.Environment "development" }}
     {{- with . | js.Build }}
