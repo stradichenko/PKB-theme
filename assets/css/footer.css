@@ -8,22 +8,13 @@ footer {
   width: 100%;
   min-height: var(--footer-height);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal);
+  padding: var(--footer-padding-vertical) 0; /* Removed horizontal padding */
   border-top: 1px solid var(--footer-border-color);
   flex-shrink: 0;
   margin-top: auto; /* Push footer to bottom when content is short */
-}
-
-/* Footer content container */
-.footer-content {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: var(--spacing-md);
 }
 
@@ -68,14 +59,14 @@ footer {
   color: var(--footer-text-color);
   border-radius: 50%;
   transition: all 0.2s ease;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--footer-social-bg);
 }
 
 .social-link:hover,
 .social-link:focus {
   color: var(--footer-link-color);
   transform: translateY(-3px);
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: var(--footer-social-bg-hover);
   text-decoration: none;
 }
 
@@ -85,11 +76,11 @@ footer {
 }
 
 /* Social link specific colors on hover */
-.social-link.linkedin:hover { color: #0077b5; }
-.social-link.twitter:hover { color: #1DA1F2; }
-.social-link.instagram:hover { color: #E1306C; }
-.social-link.github:hover { color: #6e5494; }
-.social-link.orcid:hover { color: #A6CE39; }
+.social-link.linkedin:hover { color: var(--color-linkedin); }
+.social-link.twitter:hover { color: var(--color-twitter); }
+.social-link.instagram:hover { color: var(--color-instagram); }
+.social-link.github:hover { color: var(--color-github); }
+.social-link.orcid:hover { color: var(--color-orcid); }
 .social-link.email:hover { color: var(--color-primary); }
 
 /* Footer link styling */
@@ -108,10 +99,7 @@ footer {
 /* Responsive adjustments */
 @media (max-width: 600px) {
   footer {
-    padding: var(--footer-padding-vertical-small) var(--footer-padding-horizontal-small);
-  }
-  
-  .footer-content {
+    padding: var(--footer-padding-vertical-small) 0; /* Removed horizontal padding */
     gap: var(--spacing-sm);
   }
   

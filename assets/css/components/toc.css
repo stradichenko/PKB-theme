@@ -12,7 +12,7 @@
   display: grid;
   grid-template-columns: minmax(250px, 1fr) 3fr auto;
   grid-template-areas: "toc main sidenotes";
-  gap: 1rem;
+  gap: var(--spacing-md);
   width: 100%;
 }
 
@@ -24,15 +24,16 @@
   padding: 0;
   box-sizing: border-box;
   position: sticky;
-  top: 1rem;
+  top: var(--spacing-md);
   align-self: flex-start;
+  z-index: var(--z-index-sticky);
 }
 
 /* Main Content Styles */
 .main-content {
   grid-area: main;
   width: 100%;
-  padding: 0 1rem;
+  padding: 0 var(--spacing-md);
   flex: 1;
 }
 
@@ -40,33 +41,33 @@
 .toc {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-small);
   overflow-y: auto;
   max-height: calc(100vh - 100px);
 }
 
 .toc h2 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-size: var(--font-size-large);
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-bold);
 }
 
 .toc nav#TableOfContents ul {
   list-style-type: disc !important;
   padding-left: 1.5rem !important;
-  margin-top: 0.5rem;
+  margin-top: var(--spacing-sm);
 }
 
 .toc nav#TableOfContents ul ul {
   list-style-type: circle !important;
-  margin-top: 0.25rem;
+  margin-top: var(--spacing-xs);
 }
 
 .toc nav#TableOfContents li {
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .toc nav#TableOfContents a {
@@ -79,8 +80,14 @@
   color: var(--color-primary-variant);
 }
 
+/* Toggle button for TOC items */
+.toc-toggle {
+  color: var(--color-primary) !important;
+  transition: transform 0.3s ease;
+}
+
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-md)) {
   .layout-container {
     grid-template-columns: 1fr;
     grid-template-areas:

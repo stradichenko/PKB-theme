@@ -1,0 +1,79 @@
+/* Sidenotes styling using semantic variables */
+
+/* Sidenote section within the layout */
+.sidenote-section {
+  grid-area: sidenotes;
+  position: sticky;
+  top: var(--spacing-md);
+  width: 250px;
+  padding: var(--spacing-sm);
+  display: block;
+  height: calc(100vh - var(--header-height) - var(--spacing-md) * 2);
+  overflow: visible;
+  z-index: var(--z-index-sticky);
+  transform: translateZ(0);
+}
+
+/* Individual sidenote styling */
+.sidenote {
+  position: absolute;
+  background-color: var(--sidenote-bg-color);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  width: calc(100% - var(--spacing-sm)*2);
+  opacity: 0.8;
+  transition: opacity 0.2s ease, top 0.2s ease;
+  box-sizing: border-box;
+  z-index: var(--z-index-dropdown);
+  left: var(--spacing-sm);
+  
+  /* Typography improvements */
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-tight);
+  
+  /* Text hyphenation */
+  hyphens: auto;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Placeholder for positioning reference */
+.sidenote-placeholder {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  position: relative;
+  vertical-align: middle;
+}
+
+/* Hover state enhancement */
+.sidenote:hover {
+  opacity: 1;
+  z-index: var(--z-index-popover);
+}
+
+/* Dark mode handling through variables */
+[data-theme="dark"] .sidenote {
+  background-color: var(--dark-surface);
+  color: var(--dark-text-primary);
+  border-color: var(--dark-border);
+}
+
+/* Responsive adjustments */
+@media (max-width: var(--breakpoint-md)) {
+  .sidenote-section {
+    width: 100%;
+    position: static;
+    height: auto;
+    overflow: auto;
+  }
+  
+  .sidenote {
+    position: static !important;
+    width: 100% !important;
+    margin-bottom: var(--spacing-md);
+    left: auto;
+  }
+}

@@ -39,12 +39,12 @@ main, .content {
   flex: 1; /* Makes the content area expand to fill available space */
 }
 
+/* Update TOC toggle color to use variable */
 .toc-toggle {
-  color: #4a90e2; /* This will force the chevron fill through currentColor */
+  color: var(--color-primary); /* Use semantic color */
 }
 
-/* Text selection highlight styles with ultimate specificity 
-   NOTE: These are duplicated in head.html for immediate application */
+/* Text selection highlight styles with semantic colors */
 html body *::selection,
 *:not(html):not(body)::selection,
 p::selection,
@@ -59,7 +59,7 @@ span::selection,
 div::selection,
 a::selection {
   background-color: var(--color-primary) !important;
-  color: white !important;
+  color: var(--text-color-inverse) !important;
   text-shadow: none !important;
 }
 
@@ -77,7 +77,7 @@ span::-moz-selection,
 div::-moz-selection,
 a::-moz-selection {
   background-color: var(--color-primary) !important;
-  color: white !important;
+  color: var(--text-color-inverse) !important;
   text-shadow: none !important;
 }
 
@@ -92,29 +92,19 @@ html[data-theme="dark"] *::-moz-selection {
   color: var(--color-text-primary) !important;
 }
 
-/* Component-specific styling with even higher specificity */
-.sidenote *::selection,
-html .sidenote *::selection {
-  background-color: rgba(151, 69, 69, 0.7) !important;
-}
-
-.sidenote *::-moz-selection,
-html .sidenote *::-moz-selection {
-  background-color: rgba(151, 69, 69, 0.7) !important;
-}
-
+/* Use semantic error color for code selection */
 code::selection,
 pre *::selection,
 .code *::selection,
 html code::selection {
-  background-color: var(--color-secondary, #df2d2d) !important;
-  color: white !important;
+  background-color: var(--color-secondary) !important;
+  color: var(--text-color-inverse) !important;
 }
 
 code::-moz-selection,
 pre *::-moz-selection,
 .code *::-moz-selection,
 html code::-moz-selection {
-  background-color: var(--color-secondary, #df2d2d) !important;
-  color: white !important;
+  background-color: var(--color-secondary) !important;
+  color: var(--text-color-inverse) !important;
 }

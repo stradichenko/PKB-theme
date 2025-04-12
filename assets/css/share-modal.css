@@ -3,7 +3,7 @@
 .share-modal {
   display: none;
   position: fixed;
-  z-index: 1100;
+  z-index: var(--z-index-modal);
   left: 0;
   top: 0;
   width: 100%;
@@ -14,11 +14,11 @@
 
 .share-modal-content {
   position: relative;
-  background-color: var(--color-surface, #fff);
-  color: var(--text-color-body, #333);
+  background-color: var(--color-surface);
+  color: var(--text-color-body);
   margin: 15% auto;
-  padding: var(--spacing-lg, 24px);
-  border-radius: var(--border-radius, 6px);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
   width: 90%;
   max-width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -26,10 +26,10 @@
 
 .share-modal-close {
   position: absolute;
-  right: var(--spacing-sm, 8px);
-  top: var(--spacing-sm, 8px);
-  font-size: 24px;
-  font-weight: bold;
+  right: var(--spacing-sm);
+  top: var(--spacing-sm);
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
   width: 30px;
   height: 30px;
@@ -46,12 +46,12 @@
 
 .share-modal h3 {
   margin-top: 0;
-  margin-bottom: var(--spacing-md, 16px);
+  margin-bottom: var(--spacing-md);
   text-align: center;
 }
 
 .qrcode-container {
-  margin: var(--spacing-md, 16px) 0;
+  margin: var(--spacing-md) 0;
   display: flex;
   justify-content: center;
 }
@@ -64,35 +64,40 @@
 .share-url-container {
   display: flex;
   flex-direction: column;
-  margin: var(--spacing-md, 16px) 0 0;
-  gap: var(--spacing-sm, 8px);
+  margin: var(--spacing-md) 0 0;
+  gap: var(--spacing-sm);
 }
 
 .share-url-container input {
   width: 100%;
-  padding: var(--spacing-sm, 8px);
-  border: 1px solid var(--color-border, #ddd);
-  border-radius: var(--border-radius, 6px);
-  font-size: 14px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
 }
 
 .copy-url-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm, 8px);
-  padding: var(--spacing-sm, 8px);
-  background-color: var(--color-primary, #4a90e2);
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--color-primary);
   color: white;
   border: none;
-  border-radius: var(--border-radius, 6px);
+  border-radius: var(--border-radius);
   cursor: pointer;
   width: 100%;
   transition: background-color 0.2s;
 }
 
 .copy-url-btn:hover {
-  background-color: var(--color-primary-variant, #3a80d2);
+  background-color: var(--color-primary-variant);
+}
+
+/* Success state for copy button */
+.copy-url-btn.success {
+  background-color: var(--color-success);
 }
 
 /* Dark mode adaptations */

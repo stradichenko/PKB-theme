@@ -7,7 +7,7 @@ header {
   padding: 0;
   box-shadow: var(--header-shadow);
   position: relative;
-  z-index: 1000;
+  z-index: var(--z-index-fixed);
   width: 100%;
   height: var(--header-height, 60px);
   border-bottom: var(--header-border);
@@ -130,7 +130,7 @@ header {
 }
 
 .header-button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--toggle-btn-bg-hover);
   transform: translateY(-2px);
 }
 
@@ -175,7 +175,7 @@ html[data-theme="dark"] .moon-icon {
 }
 
 /* Responsive adaptations */
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-md)) {
   header {
     height: auto;
   }

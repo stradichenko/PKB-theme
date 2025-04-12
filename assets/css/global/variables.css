@@ -48,7 +48,16 @@
   --font-size-small: 0.875rem;
   --font-size-medium: 1rem;
   --font-size-large: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.875rem;
+  --font-size-3xl: 2.25rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   --line-height-normal: 1.6;
+  --line-height-tight: 1.25;
+  --line-height-relaxed: 1.75;
   
   /* Font colors - consolidated system */
   --text-color-heading: var(--color-text-primary);
@@ -65,6 +74,35 @@
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 36px;
+
+  /* Semantic colors */
+  --color-success: #48bb78;
+  --color-success-light: #9ae6b4;
+  --color-warning: #ed8936;
+  --color-warning-light: #fbd38d;
+  --color-error: #e53e3e;
+  --color-error-light: #feb2b2;
+  --color-info: #4299e1;
+  --color-info-light: #bee3f8;
+  
+  /* Responsive breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  
+  /* Z-index system */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
   
   /* Borders */
   --border-radius: 6px;
@@ -126,6 +164,17 @@
   /* Theme variables for shared use */
   --theme-bg: var(--color-background);
   --theme-text: var(--text-color-body);
+
+  /* Social media colors - derived from core colors */
+  --color-linkedin: var(--color-primary);        /* Using primary blue */
+  --color-twitter: var(--color-primary);         /* Using primary blue */
+  --color-instagram: var(--color-secondary);     /* Using secondary red */
+  --color-github: var(--color-text-primary);     /* Using text primary */
+  --color-orcid: var(--color-primary-variant);   /* Using primary variant green */
+
+  /* Footer specific variables */
+  --footer-social-bg: rgba(255, 255, 255, 0.1);
+  --footer-social-bg-hover: rgba(255, 255, 255, 0.15);
 }
 
 /* Dark Theme CSS Variable Overrides */
@@ -164,6 +213,16 @@
   --footer-link-color: var(--color-primary);
   --footer-link-hover-color: var(--color-primary-variant);
   --footer-border-color: rgba(255, 255, 255, 0.05);
+
+  /* Semantic colors - dark theme */
+  --color-success: #68d391;
+  --color-success-light: #2f855a;
+  --color-warning: #f6ad55;
+  --color-warning-light: #c05621;
+  --color-error: #fc8181;
+  --color-error-light: #c53030;
+  --color-info: #63b3ed;
+  --color-info-light: #2b6cb0;
 }
 
 /* ------------------------------------------------------------------------- */
