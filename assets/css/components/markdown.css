@@ -1,0 +1,75 @@
+/* Markdown content styling */
+.post-content h1,
+.page-content h1 {
+  font-size: 2.25rem;
+  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.post-content h2,
+.page-content h2 {
+  font-size: 1.8rem;
+  margin-top: 1.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.post-content h3,
+.page-content h3 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-primary);
+}
+
+.post-content h4,
+.page-content h4 {
+  font-size: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.post-content h5,
+.page-content h5 {
+  font-size: 1.1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.post-content h6,
+.page-content h6 {
+  font-size: 1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--text-color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Ensure headings in dark mode have proper styling */
+[data-theme="dark"] .post-content h1,
+[data-theme="dark"] .page-content h1 {
+  border-bottom-color: var(--color-primary);
+}
+
+[data-theme="dark"] .post-content h2,
+[data-theme="dark"] .page-content h2 {
+  border-bottom-color: var(--dark-border, var(--color-border));
+}
+
+[data-theme="dark"] .post-content h3,
+[data-theme="dark"] .page-content h3 {
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .post-content h6,
+[data-theme="dark"] .page-content h6 {
+  color: var(--dark-text-secondary, var(--text-color-muted));
+}

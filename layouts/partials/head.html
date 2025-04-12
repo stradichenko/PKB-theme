@@ -98,8 +98,15 @@
   {{ $blockquoteCSS := resources.Get "css/components/blockquote.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $blockquoteCSS.RelPermalink }}" integrity="{{ $blockquoteCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  {{ $codeCSS := resources.Get "css/components/code.css" | fingerprint }}
-  <link rel="stylesheet" href="{{ $codeCSS.RelPermalink }}" integrity="{{ $codeCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/components/code.css" }}
+    {{ $codeCSS := . | fingerprint }}
+    <link rel="stylesheet" href="{{ $codeCSS.RelPermalink }}" integrity="{{ $codeCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
+  
+  {{ with resources.Get "css/components/markdown.css" }}
+    {{ $markdownCSS := . | fingerprint }}
+    <link rel="stylesheet" href="{{ $markdownCSS.RelPermalink }}" integrity="{{ $markdownCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
   {{ $listCSS := resources.Get "css/list.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $listCSS.RelPermalink }}" integrity="{{ $listCSS.Data.Integrity }}" crossorigin="anonymous">
@@ -136,6 +143,7 @@
       (resources.Get "css/components/table.css")
       (resources.Get "css/components/blockquote.css")
       (resources.Get "css/components/code.css")
+      (resources.Get "css/components/markdown.css")
       (resources.Get "css/list.css")
       (resources.Get "css/components/recent-posts-grid.css")
       (resources.Get "css/about-profile.css")
