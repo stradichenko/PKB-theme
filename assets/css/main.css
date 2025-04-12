@@ -58,8 +58,8 @@ li::selection,
 span::selection,
 div::selection,
 a::selection {
-  background-color: var(--color-primary, #4a90e2) !important;
-  color: var(--color-white, #ffffff) !important;
+  background-color: var(--color-primary) !important;
+  color: white !important;
   text-shadow: none !important;
 }
 
@@ -76,20 +76,20 @@ li::-moz-selection,
 span::-moz-selection,
 div::-moz-selection,
 a::-moz-selection {
-  background-color: var(--color-primary, #4a90e2) !important;
-  color: var(--color-white, #ffffff) !important;
+  background-color: var(--color-primary) !important;
+  color: white !important;
   text-shadow: none !important;
 }
 
 /* Dark mode selection - Target all elements directly */
 html[data-theme="dark"] *::selection {
-  background-color: var(--color-primary, #e9996b) !important;
-  color: var(--color-dark, #1a2633) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-primary) !important;
 }
 
 html[data-theme="dark"] *::-moz-selection {
-  background-color: var(--color-primary, #e9996b) !important;
-  color: var(--color-dark, #1a2633) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-primary) !important;
 }
 
 /* Component-specific styling with even higher specificity */

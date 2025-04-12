@@ -1,43 +1,135 @@
 @import url('./global/variables.css'); /* Ensure your variables are correctly defined */
 
-/* Footer container styling */
+/* Footer styling - completely refactored */
+
 footer {
   background-color: var(--footer-bg-color);
   color: var(--footer-text-color);
-  text-align: center;
-  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal);
-  font-size: var(--footer-font-size);
-  font-family: var(--footer-font-family);
-  border-top: 1px solid var(--footer-border-color);
   width: 100%;
-  /* These properties ensure proper sticky footer behavior */
+  min-height: var(--footer-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--footer-padding-vertical) var(--footer-padding-horizontal);
+  border-top: 1px solid var(--footer-border-color);
   flex-shrink: 0;
-  margin-top: auto; /* Push footer down when content is short */
+  margin-top: auto; /* Push footer to bottom when content is short */
+}
+
+/* Footer content container */
+.footer-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
 }
 
 /* Footer text styling */
-footer p {
+.footer-info {
+  text-align: center;
+  font-size: var(--footer-font-size);
+  font-family: var(--footer-font-family);
+}
+
+.footer-info p {
   margin: 0;
   line-height: 1.5;
+  color: var(--footer-text-color);
 }
 
-/* Footer link styling with hover and focus states */
-footer a {
+.footer-info p + p {
+  margin-top: var(--spacing-xs);
+}
+
+.footer-environment {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+/* Social links container */
+.footer-social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Individual social link styling */
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--footer-text-color);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.social-link:hover,
+.social-link:focus {
+  color: var(--footer-link-color);
+  transform: translateY(-3px);
+  background-color: rgba(255, 255, 255, 0.15);
+  text-decoration: none;
+}
+
+.social-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Social link specific colors on hover */
+.social-link.linkedin:hover { color: #0077b5; }
+.social-link.twitter:hover { color: #1DA1F2; }
+.social-link.instagram:hover { color: #E1306C; }
+.social-link.github:hover { color: #6e5494; }
+.social-link.orcid:hover { color: #A6CE39; }
+.social-link.email:hover { color: var(--color-primary); }
+
+/* Footer link styling */
+.footer-info a {
   color: var(--footer-link-color);
   text-decoration: none;
-  transition: color 0.3s ease, text-decoration 0.3s ease;
+  transition: color 0.3s ease;
 }
 
-footer a:hover,
-footer a:focus {
-  text-decoration: underline;
+.footer-info a:hover,
+.footer-info a:focus {
   color: var(--footer-link-hover-color);
+  text-decoration: underline;
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
   footer {
-    padding: var(--footer-padding-vertical-small, 12px) var(--footer-padding-horizontal-small, 12px);
+    padding: var(--footer-padding-vertical-small) var(--footer-padding-horizontal-small);
+  }
+  
+  .footer-content {
+    gap: var(--spacing-sm);
+  }
+  
+  .footer-social-links {
+    gap: var(--spacing-sm);
+  }
+  
+  .social-link {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .social-link svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .footer-info {
     font-size: 0.9rem;
   }
 }

@@ -28,21 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('theme', theme);
       
-      // Force critical colors directly
+      // Force critical colors directly based on core theme colors
       if (theme === 'dark') {
-        document.documentElement.style.setProperty('--body-bg-color', '#1a202c', 'important');
-        document.documentElement.style.setProperty('--main-bg-color', '#1a202c', 'important');
-        document.documentElement.style.backgroundColor = '#1a202c';
+        document.documentElement.style.setProperty('--body-bg-color', 'var(--dark-background)', 'important');
+        document.documentElement.style.setProperty('--main-bg-color', 'var(--dark-background)', 'important');
+        document.documentElement.style.backgroundColor = 'var(--dark-background)';
         
         // Force critical container elements
         document.querySelectorAll('.container, .main-content, .layout-container, .content-container').forEach(el => {
-          el.style.backgroundColor = '#1a202c';
-          el.style.color = '#e2e8ff';
+          el.style.backgroundColor = 'var(--dark-background)';
+          el.style.color = 'var(--dark-text-primary)';
         });
       } else {
-        document.documentElement.style.setProperty('--body-bg-color', '#275f85', 'important');
-        document.documentElement.style.setProperty('--main-bg-color', '#275f85', 'important');
-        document.documentElement.style.backgroundColor = '#275f85';
+        document.documentElement.style.setProperty('--body-bg-color', 'var(--light-background)', 'important');
+        document.documentElement.style.setProperty('--main-bg-color', 'var(--light-background)', 'important');
+        document.documentElement.style.backgroundColor = 'var(--light-background)';
         
         // Reset forced styling
         document.querySelectorAll('.container, .main-content, .layout-container, .content-container').forEach(el => {

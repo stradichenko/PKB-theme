@@ -1,103 +1,11 @@
-/* Theme toggle button styling */
+/* Theme toggle button styling - updated to use consolidated font colors */
 :root {
-  /* Light mode theme variables are already defined in global/variables.css */
-  --theme-bg: #275f85;
-  --theme-text: #cad6ff;
-  
-  /* Theme toggle button colors - light mode */
-  --toggle-btn-color: #cad6ff;
-  --toggle-btn-bg-hover: rgba(255, 255, 255, 0.15);
-  --toggle-btn-outline: #4a90e2;
+  /* Light mode theme variables now come from variables.css */
 }
 
-/* Dark Theme - Using CSS variables properly */
+/* Dark Theme - All theme colors moved to variables.css */
 [data-theme="dark"] {
-  /* Theme colors */
-  --theme-bg: #1a202c;
-  --theme-text: #e2e8ff;
-  
-  /* Core Color Palette */
-  --color-primary: #e9996b;
-  --color-primary-dark: #57d89c;
-  --color-secondary: #ff5252;
-  --color-text: var(--theme-text);
-  --color-dark: #1a2633;
-  --color-dark-accent: #6d4170;
-  --color-light: #ebefe9;
-  --color-white: #f5f5f5;
-  --border-color: #3a4755;
-  
-  /* Border variables */
-  --border-radius: 6px;
-  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
-  
-  /* Layout - Header */
-  --header-bg-color: var(--color-dark);
-  --header-text-color: var(--color-light);
-  --header-logo-color: var(--color-primary);
-  --header-logo-hover-color: var(--color-primary-dark);
-  --header-nav-link-color: var(--color-light);
-  --header-nav-link-hover-bg: var(--color-primary);
-  --header-nav-link-hover-color: var(--color-dark);
-  --header-shadow: var(--shadow-light);
-  
-  /* Layout - Footer */
-  --footer-bg-color: var(--color-dark);
-  --footer-text-color: var(--color-light);
-  --footer-border-color: var(--color-dark-accent);
-  --footer-link-color: var(--color-primary);
-  --footer-link-hover-color: var(--color-primary-dark);
-  
-  /* Layout - Body */
-  --body-bg-color: var(--theme-bg);
-  --body-text-color: var(--theme-text);
-  
-  /* Layout - Main Content */
-  --main-bg-color: var(--theme-bg);
-  --main-text-color: var(--theme-text);
-  
-  /* Generic Elements */
-  --link-color: var(--color-primary);
-  --link-hover-color: var(--color-primary-dark);
-  
-  /* Component variables */
-  --about-profile-bg: var(--theme-bg);
-  --about-text-color: var(--theme-text);
-  --profile-name-color: var(--color-primary);
-  
-  --post-card-bg: #223243;
-  --post-title-color: var(--color-light);
-  --post-meta-color: #a0aec0;
-  --post-summary-color: #cbd5e0;
-  
-  --toc-bg-color: #1e2a38;
-  --toc-border-color: var(--border-color);
-  --toc-link-color: var(--link-color);
-  
-  --sidenote-bg-color: #1e2a38;
-  --sidenote-border-color: var(--border-color);
-  --sidenote-text-color: var(--theme-text);
-
-  --page-item-bg: #1e2a38;
-  --page-item-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  --page-link-color: var(--color-primary);
-  --page-link-hover-color: var(--color-primary-dark);
-  --page-metadata-color: #a0aec0;
-  --page-summary-color: #cbd5e0;
-  --tag-link-bg: #2d4a63;
-  --tag-link-color: var(--color-light);
-  
-  --search-bg-color: var(--header-bg-color);
-  --search-text-color: var(--header-text-color);
-  --search-border-color: var(--border-color);
-  --search-placeholder-color: var(--header-text-color);
-  --search-icon-color: var(--header-text-color);
-  --search-focus-shadow: 0 0 0 0.25rem rgba(233, 153, 107, 0.25);
-  
-  /* Theme toggle button colors - dark mode */
-  --toggle-btn-color: #e9996b;
-  --toggle-btn-bg-hover: rgba(233, 153, 107, 0.15);
-  --toggle-btn-outline: #e9996b;
+  /* Theme-specific variables moved to variables.css */
 }
 
 /* Theme toggle button specific styling */
@@ -213,4 +121,25 @@ site-main,
 div[class^="content"] {
   background-color: var(--theme-bg);
   color: var(--theme-text);
+}
+
+/* Typography overrides */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color-heading);
+}
+
+p, li, span, div {
+  color: var(--text-color-body);
+}
+
+a {
+  color: var(--text-color-link);
+}
+
+a:hover, a:focus {
+  color: var(--text-color-link-hover);
+}
+
+.text-muted {
+  color: var(--text-color-muted) !important;
 }

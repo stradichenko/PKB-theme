@@ -1,4 +1,4 @@
-/* General Header Styles */
+/* General Header Styles - updated to use core font color variables */
 header {
   background-color: var(--header-bg-color);
   color: var(--header-text-color);
@@ -9,6 +9,8 @@ header {
   width: 100%; /* Span full width */
   margin: 0; /* Remove default margins */
   font-family: var(--header-font-family);
+  height: var(--header-height);
+  border-bottom: var(--header-border);
   
   /* Better container model */
   max-width: 100vw; /* Prevent horizontal overflow issues */
@@ -56,8 +58,8 @@ header nav ul {
 header nav ul li a {
   text-decoration: none;
   color: var(--header-nav-link-color);
-  font-size: 1rem;
-  padding: var(--spacing-small) var(--spacing-medium);
+  font-size: var(--font-size-medium);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius);
   transition: background-color 0.3s, color 0.3s;
 }

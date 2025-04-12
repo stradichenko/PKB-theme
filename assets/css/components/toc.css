@@ -38,8 +38,8 @@
 
 /* Table of Contents Styles - with improved specificity */
 .toc {
-  background-color: #f8f8f8;
-  border: 1px solid #ddd;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 1rem;
   margin-bottom: 1.5rem;
@@ -70,23 +70,13 @@
 }
 
 .toc nav#TableOfContents a {
-  color: #4a90e2;
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 .toc nav#TableOfContents a:hover {
   text-decoration: underline;
-  color: #a4bd35;
-}
-
-/* Dark mode specific styles */
-html[data-theme="dark"] .toc {
-  background-color: #1e2a38;
-  border-color: #3a4755;
-}
-
-html[data-theme="dark"] .toc a {
-  color: #e9996b;
+  color: var(--color-primary-variant);
 }
 
 /* Responsive adjustments */
