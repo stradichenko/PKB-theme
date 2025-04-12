@@ -1,0 +1,112 @@
+/* Share modal styling */
+
+.share-modal {
+  display: none;
+  position: fixed;
+  z-index: 1100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+}
+
+.share-modal-content {
+  position: relative;
+  background-color: var(--color-surface, #fff);
+  color: var(--text-color-body, #333);
+  margin: 15% auto;
+  padding: var(--spacing-lg, 24px);
+  border-radius: var(--border-radius, 6px);
+  width: 90%;
+  max-width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.share-modal-close {
+  position: absolute;
+  right: var(--spacing-sm, 8px);
+  top: var(--spacing-sm, 8px);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.share-modal-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.share-modal h3 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md, 16px);
+  text-align: center;
+}
+
+.qrcode-container {
+  margin: var(--spacing-md, 16px) 0;
+  display: flex;
+  justify-content: center;
+}
+
+.page-qr-code {
+  max-width: 200px;
+  height: auto;
+}
+
+.share-url-container {
+  display: flex;
+  flex-direction: column;
+  margin: var(--spacing-md, 16px) 0 0;
+  gap: var(--spacing-sm, 8px);
+}
+
+.share-url-container input {
+  width: 100%;
+  padding: var(--spacing-sm, 8px);
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: var(--border-radius, 6px);
+  font-size: 14px;
+}
+
+.copy-url-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm, 8px);
+  padding: var(--spacing-sm, 8px);
+  background-color: var(--color-primary, #4a90e2);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius, 6px);
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.copy-url-btn:hover {
+  background-color: var(--color-primary-variant, #3a80d2);
+}
+
+/* Dark mode adaptations */
+[data-theme="dark"] .share-modal-content {
+  background-color: var(--color-surface);
+  color: var(--text-color-body);
+}
+
+[data-theme="dark"] .share-url-container input {
+  background-color: var(--dark-surface);
+  color: var(--dark-text-primary);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .share-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}

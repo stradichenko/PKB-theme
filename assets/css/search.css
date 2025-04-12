@@ -1,0 +1,96 @@
+/* Search styling - converted from SCSS to CSS for consistency */
+
+/* Search container */
+.search-container {
+  position: relative;
+  max-width: 300px; /* adjust width as needed */
+}
+
+/* Search component styling - positioned as rightmost element */
+
+/* Search form */
+.search-form {
+  position: relative;
+  max-width: 250px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+}
+
+/* Search input */
+.search-input {
+  width: 100%;
+  height: 38px;
+  border-radius: 20px;
+  background-color: var(--header-bg-color, #2c3e50);
+  color: var(--header-text-color, #ecf0f1);
+  border: 1px solid var(--header-border-color, rgba(255,255,255,0.2));
+  padding: 0 36px 0 36px; /* Space for icons on both sides */
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: var(--header-text-color, #ecf0f1);
+  opacity: 0.7;
+}
+
+.search-input:focus {
+  background-color: var(--header-bg-color, #2c3e50);
+  color: var(--header-text-color, #ecf0f1);
+  border-color: var(--header-link-color, #4a90e2);
+  box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.25);
+  outline: none;
+}
+
+/* Icon containers */
+.search-icon,
+.clear-icon {
+  color: #ffffff;
+  opacity: 1;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  width: 38px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Fix the search icon to be visible on the left */
+.search-icon {
+  left: 0;
+}
+
+/* Position clear icon on the right */
+.clear-icon {
+  right: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  display: none; /* Hidden by default, shown via JS */
+}
+
+.search-icon svg,
+.clear-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Ensure text-muted class doesn't override our colors */
+.search-icon.text-muted,
+.clear-icon.text-muted {
+  color: #ffffff !important;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .search-form {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Dark mode adaptations - automatically handled by variables */

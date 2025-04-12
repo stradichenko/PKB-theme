@@ -105,9 +105,11 @@
   {{ $mainCSS := resources.Get "css/main.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $mainCSS.RelPermalink }}" integrity="{{ $mainCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  <!-- 5. SCSS files that need compilation -->
-  {{ $searchSCSS := resources.Get "sass/search.scss" | toCSS | fingerprint }}
-  <link rel="stylesheet" href="{{ $searchSCSS.RelPermalink }}" integrity="{{ $searchSCSS.Data.Integrity }}" crossorigin="anonymous">
+  <!-- 5. Replace SCSS with regular CSS -->
+  {{ with resources.Get "css/search.css" }}
+    {{ $searchCSS := . | toCSS | fingerprint }}
+    <link rel="stylesheet" href="{{ $searchCSS.RelPermalink }}" integrity="{{ $searchCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
   <!-- 6. Theme toggle CSS - LOAD LAST to ensure overrides work -->
   {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | fingerprint }}
@@ -130,9 +132,11 @@
   {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  <!-- Include SASS files separately -->
-  {{ $searchSCSS := resources.Get "sass/search.scss" | toCSS | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $searchSCSS.RelPermalink }}" integrity="{{ $searchSCSS.Data.Integrity }}" crossorigin="anonymous">
+  <!-- Include regular CSS -->
+  {{ with resources.Get "css/search.css" }}
+    {{ $searchCSS := . | toCSS | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $searchCSS.RelPermalink }}" integrity="{{ $searchCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
   <!-- Load theme-toggle CSS last to ensure it overrides all other styles -->
   {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | minify | fingerprint }}

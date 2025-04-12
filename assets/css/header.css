@@ -1,105 +1,212 @@
-/* General Header Styles - updated to use core font color variables */
+/* Header styling - Updated for right-aligned search */
+
+/* Header container - full width */
 header {
   background-color: var(--header-bg-color);
   color: var(--header-text-color);
-  padding: var(--header-padding);
+  padding: 0;
   box-shadow: var(--header-shadow);
   position: relative;
-  z-index: 1000; /* Ensure header is above other elements */
-  width: 100%; /* Span full width */
-  margin: 0; /* Remove default margins */
-  font-family: var(--header-font-family);
-  height: var(--header-height);
+  z-index: 1000;
+  width: 100%;
+  height: var(--header-height, 60px);
   border-bottom: var(--header-border);
-  
-  /* Better container model */
-  max-width: 100vw; /* Prevent horizontal overflow issues */
-  overflow-x: visible; /* Changed from hidden to allow dropdowns to extend */
-  
-  /* Improved flex container */
+}
+
+/* Main header container */
+.header-container {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Better distribution of space */
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--spacing-md);
 }
 
-/* Logo Styles */
-header .logo {
-  font-size: var(--header-font-size);
-  font-weight: bold;
-  text-decoration: none;
+/* Left section with title and nav */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg, 24px);
+  height: 100%;
+  flex: 1; /* Allow left section to grow */
+}
+
+/* Right section - updated to put search last */
+.header-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: var(--spacing-md, 16px);
+}
+
+/* Site title */
+.site-title {
+  margin: 0;
+  font-size: var(--font-size-large, 1.25rem);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.site-title a {
   color: var(--header-logo-color);
-  flex-shrink: 0;
-  margin-right: auto; /* Push nav items to the right */
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-header .logo:hover {
+.site-title a:hover {
   color: var(--header-logo-hover-color);
 }
 
-/* Navigation Styles */
-header nav {
-  display: flex; /* Flexbox layout for navigation */
-  align-items: center; /* Center items vertically */
-  max-width: 1200px;
-  margin: 0 auto; /* Center nav content */
-  width: 100%;
-  gap: var(--header-nav-gap);
+/* Navigation */
+.main-nav {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
-/* Nav List Styles */
-header nav ul {
+.main-nav ul {
+  display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
+  gap: var(--spacing-md, 16px);
+  height: 100%;
+}
+
+.main-nav li {
   display: flex;
-  gap: var(--header-nav-gap);
+  align-items: center;
+  height: 100%;
 }
 
-header nav ul li a {
+.main-nav a {
+  color: var(--header-text-color);
   text-decoration: none;
-  color: var(--header-nav-link-color);
-  font-size: var(--font-size-medium);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius);
-  transition: background-color 0.3s, color 0.3s;
+  font-size: var(--font-size-medium, 1rem);
+  padding: 6px 12px;
+  border-radius: var(--border-radius, 6px);
+  transition: background-color 0.2s, color 0.2s;
 }
 
-/* Hover and Focus States for Accessibility */
-header nav ul li a:hover,
-header nav ul li a:focus {
+.main-nav a:hover,
+.main-nav a:focus {
   background-color: var(--header-nav-link-hover-bg);
   color: var(--header-nav-link-hover-color);
   outline: none;
 }
 
-/* Responsive Design - Enhanced */
-@media (max-width: 768px) {
-  header {
-    padding: var(--spacing-sm); /* Smaller padding on mobile */
-    flex-wrap: wrap; /* Allow wrapping on small screens */
-  }
-  
-  header .logo {
-    margin-bottom: var(--spacing-sm); /* Space between logo and nav on mobile */
-    width: 100%; /* Full width on mobile */
-    text-align: center;
-  }
-
-  header nav {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  header nav ul {
-    flex-direction: column;
-    gap: var(--spacing-xs); /* Use variable for consistent spacing */
-    width: 100%;
-  }
+/* Header controls - now before search */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  height: 100%;
+  order: 1; /* Ensure controls come first */
 }
 
-/* Add support for larger screens */
-@media (min-width: 1200px) {
+/* Search section - now last */
+.header-search {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  order: 2; /* Ensure search is last */
+}
+
+/* Shared button/icon styling */
+.header-button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--header-text-color);
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  padding: 0;
+}
+
+.header-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.header-button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Theme toggle specific styles */
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+}
+
+.toggle-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Control icon visibility */
+.sun-icon, .moon-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+html:not([data-theme="dark"]) .sun-icon {
+  display: none;
+}
+
+html:not([data-theme="dark"]) .moon-icon {
+  display: block;
+}
+
+html[data-theme="dark"] .sun-icon {
+  display: block;
+}
+
+html[data-theme="dark"] .moon-icon {
+  display: none;
+}
+
+/* Responsive adaptations */
+@media (max-width: 768px) {
   header {
-    padding: var(--spacing-md) var(--spacing-lg);
+    height: auto;
+  }
+  
+  .header-container {
+    flex-direction: column;
+    padding: var(--spacing-sm, 8px);
+    gap: var(--spacing-md, 16px);
+  }
+  
+  .header-left {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--spacing-sm, 8px);
+  }
+  
+  .header-right {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  /* On mobile, put controls above search */
+  .header-controls {
+    width: 100%;
+    justify-content: center;
+    order: 1;
+  }
+  
+  .header-search {
+    width: 100%;
+    order: 2;
   }
 }
