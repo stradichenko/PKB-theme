@@ -7,6 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Get all sidenotes from the content
   const sidenotes = document.querySelectorAll('.sidenote');
   
+  // Make sure all sidenotes are hidden initially
+  sidenotes.forEach(sidenote => {
+    if (!sidenote.classList.contains('sidenote-hidden')) {
+      sidenote.classList.add('sidenote-hidden');
+    }
+  });
+  
   // Process each sidenote
   sidenotes.forEach((sidenote, index) => {
     // Create a unique ID for this sidenote if it doesn't have one
@@ -30,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Configuration for positioning
   const minSpacingBetweenNotes = 20; // Minimum space between sidenotes in pixels
   let isPositioning = false; // Lock to prevent concurrent repositioning
+  let initialPositioningComplete = false; // Track initial positioning
   
   // Position sidenotes with improved algorithm
   const positionAllSidenotes = () => {
@@ -37,6 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set positioning lock
     isPositioning = true;
+    
+    // Make sure all sidenotes are hidden during positioning if this is initial positioning
+    if (!initialPositioningComplete) {
+      sidenotes.forEach(sidenote => {
+        if (!sidenote.classList.contains('sidenote-hidden')) {
+          sidenote.classList.add('sidenote-hidden');
+        }
+      });
+    }
     
     // Get sidenote section position
     const sectionRect = sidenoteSection.getBoundingClientRect();
@@ -94,10 +111,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Release positioning lock
     isPositioning = false;
+    
+    // Reveal sidenotes after a shorter delay to ensure all positioning is complete
+    if (!initialPositioningComplete) {
+      setTimeout(() => {
+        sidenotes.forEach(sidenote => {
+          sidenote.classList.remove('sidenote-hidden');
+        });
+        initialPositioningComplete = true;
+      }, 150); // Faster reveal (was 300ms)
+    }
   };
   
-  // Position initially with a slight delay to ensure all styles are applied
-  setTimeout(positionAllSidenotes, 200);
+  // Position initially with a shorter delay to ensure all styles are applied
+  setTimeout(positionAllSidenotes, 200); // Faster initial positioning (was 300ms)
   
   // Handle scroll events efficiently
   let scrollTimeout = null;
@@ -132,13 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
   
-  // Handle window resize
-  window.addEventListener('resize', debounce(positionAllSidenotes, 200));
+  // Handle window resize with faster response
+  window.addEventListener('resize', debounce(positionAllSidenotes, 150)); // Faster resize handling (was 200ms)
   
   // Handle image loading
   document.querySelectorAll('img, video, iframe').forEach(media => {
     if (!media.complete) {
-      media.addEventListener('load', debounce(positionAllSidenotes, 200));
+      media.addEventListener('load', debounce(positionAllSidenotes, 150)); // Faster load handling (was 200ms)
     }
   });
   
@@ -147,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mutations.forEach((mutation) => {
       if (mutation.attributeName === 'data-theme') {
         updateSidenoteThemes();
-        debounce(positionAllSidenotes, 300)();
+        debounce(positionAllSidenotes, 150)(); // Faster theme change handling (was 300ms)
       }
     });
   });

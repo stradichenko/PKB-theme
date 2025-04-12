@@ -35,10 +35,12 @@
   <script src="{{ $tocJS.RelPermalink }}" integrity="{{ $tocJS.Data.Integrity }}" crossorigin="anonymous"></script>
 {{ end }}
 
-{{/* Conditionally include sidenote.css if sidenotes are enabled in front matter */}}
+{{/* Conditionally include sidenotes.css if sidenotes are enabled in front matter */}}
 {{ if .Params.sidenotes }}
-  {{ $sidenoteCSS := resources.Get "css/components/sidenote.css" | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $sidenoteCSS.RelPermalink }}" integrity="{{ $sidenoteCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/sidenotes.css" }}
+    {{ $sidenoteCSS := . | resources.Minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $sidenoteCSS.RelPermalink }}" integrity="{{ $sidenoteCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
 {{ end }}
 
 {{/* Include sidenotes.js if sidenotes are enabled in front matter */}}

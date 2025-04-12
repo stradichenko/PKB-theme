@@ -23,7 +23,7 @@
   padding: var(--spacing-sm);
   width: calc(100% - var(--spacing-sm)*2);
   opacity: 0.8;
-  transition: opacity 0.2s ease, top 0.2s ease;
+  transition: opacity 0.15s ease, top 0.15s ease; /* Faster transition */
   box-sizing: border-box;
   z-index: var(--z-index-dropdown);
   left: var(--spacing-sm);
@@ -36,6 +36,12 @@
   hyphens: auto;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+/* Hidden state for sidenotes during positioning */
+.sidenote-hidden {
+  opacity: 0 !important;
+  pointer-events: none;
 }
 
 /* Placeholder for positioning reference */
