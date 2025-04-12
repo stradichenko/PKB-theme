@@ -123,6 +123,7 @@
   --header-nav-link-hover-bg: var(--color-primary);
   --header-nav-link-hover-color: var(--text-color-inverse);
   --header-border: 1px solid rgba(255, 255, 255, 0.1);
+  --search-bg-color: #3d5269; /* New variable: slightly lighter than header for search input */
   
   /* Layout - Footer - consolidated with core colors */
   --footer-height: 50px;
