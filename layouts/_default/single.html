@@ -45,5 +45,11 @@
 {{ if .Params.sidenotes }}
   {{ $sidenotesJS := resources.Get "js/sidenotes.js" | minify | fingerprint }}
   <script src="{{ $sidenotesJS.RelPermalink }}" integrity="{{ $sidenotesJS.Data.Integrity }}" crossorigin="anonymous"></script>
+
+  {{/* Remove or comment out the sidenotes-positioning.js inclusion */}}
+  {{/* 
+  {{ $sidenotesPositionJS := resources.Get "js/sidenotes-positioning.js" | minify | fingerprint }}
+  <script src="{{ $sidenotesPositionJS.RelPermalink }}" integrity="{{ $sidenotesPositionJS.Data.Integrity }}" crossorigin="anonymous"></script>
+  */}}
 {{ end }}
 {{ end }}

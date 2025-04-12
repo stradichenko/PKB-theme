@@ -1,41 +1,40 @@
 /* Theme toggle button styling */
 :root {
-  /* Light mode is already defined in global/variables.css */
+  /* Light mode theme variables are already defined in global/variables.css */
+  --theme-bg: #275f85;
+  --theme-text: #cad6ff;
 }
 
-/* Dark Theme - Comprehensive variable overrides */
+/* Dark Theme - Using CSS variables properly */
 [data-theme="dark"] {
-  /* Core Color Palette */
-  --color-primary: #e9996b;         /* Brighter blue for dark mode */
-  --color-primary-dark: #57d89c;    /* Brighter accent for dark mode */
-  --color-secondary: #ff5252;       /* Brighter red for dark mode */
-  --color-text: #e2e8ff;            /* Light text for dark backgrounds */
-  --color-dark: #1a2633;            /* Darker headers/footers */
-  --color-dark-accent: #6d4170;     /* Brighter accent for dark mode */
-  --color-light: #ebefe9;           /* Off-white for light elements */
-  --color-white: #f5f5f5;           /* Not pure white - easier on the eyes */
-  --border-color: #3a4755;          /* Darker border color for dark mode */
+  /* Theme colors */
+  --theme-bg: #1a202c;
+  --theme-text: #e2e8ff;
   
-  /* Typography - No changes needed for font families, but adjusting font scaling */
-  /* Typography is inherited from global variables, only override if needed */
+  /* Core Color Palette */
+  --color-primary: #e9996b;
+  --color-primary-dark: #57d89c;
+  --color-secondary: #ff5252;
+  --color-text: var(--theme-text);
+  --color-dark: #1a2633;
+  --color-dark-accent: #6d4170;
+  --color-light: #ebefe9;
+  --color-white: #f5f5f5;
+  --border-color: #3a4755;
   
   /* Border variables */
-  --border-radius: 6px;             /* Keep consistent with light mode */
-  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3); /* Darker shadow for dark mode */
+  --border-radius: 6px;
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3);
   
-  /* Layout - Header - Using more specific variable names and !important where needed */
-  --header-bg-color: var(--color-dark) !important; 
-  --header-text-color: var(--color-light) !important;
-  --header-logo-color: var(--color-primary) !important;
-  --header-logo-hover-color: var(--color-primary-dark) !important;
-  --header-nav-link-color: var(--color-light) !important;
-  --header-nav-link-hover-bg: var(--color-primary) !important;
-  --header-nav-link-hover-color: var(--color-dark) !important;
-  --header-shadow: var(--shadow-light) !important;
-  --header-font-family: var(--font-family-sans); /* Inheriting from global */
-  --header-font-size: var(--font-size-large); /* Inheriting from global */
-  --header-padding: var(--spacing-md); /* Inheriting spacing from global */
-  --header-nav-gap: 12px; /* Consistent with light mode */
+  /* Layout - Header */
+  --header-bg-color: var(--color-dark);
+  --header-text-color: var(--color-light);
+  --header-logo-color: var(--color-primary);
+  --header-logo-hover-color: var(--color-primary-dark);
+  --header-nav-link-color: var(--color-light);
+  --header-nav-link-hover-bg: var(--color-primary);
+  --header-nav-link-hover-color: var(--color-dark);
+  --header-shadow: var(--shadow-light);
   
   /* Layout - Footer */
   --footer-bg-color: var(--color-dark);
@@ -43,53 +42,37 @@
   --footer-border-color: var(--color-dark-accent);
   --footer-link-color: var(--color-primary);
   --footer-link-hover-color: var(--color-primary-dark);
-  --footer-font-family: var(--font-family-sans);
-  --footer-font-size: var(--font-size-medium);
-  --footer-padding-vertical: var(--spacing-md);
-  --footer-padding-horizontal: var(--spacing-md);
   
-  /* Layout - Body - With !important flags */
-  --body-bg-color: #1a202c !important;         /* Dark blue-gray background */
-  --body-text-color: var(--color-text) !important;
-  --body-font-family: var(--font-family-sans);
-  --body-font-size: var(--font-size-base);
-  --body-line-height: var(--line-height-normal);
-  --body-padding: var(--spacing-none);
+  /* Layout - Body */
+  --body-bg-color: var(--theme-bg);
+  --body-text-color: var(--theme-text);
   
   /* Layout - Main Content */
-  --main-bg-color: var(--body-bg-color) !important;
-  --main-text-color: var(--body-text-color) !important;
-  --main-padding: var(--spacing-sm);
+  --main-bg-color: var(--theme-bg);
+  --main-text-color: var(--theme-text);
   
   /* Generic Elements */
   --link-color: var(--color-primary);
   --link-hover-color: var(--color-primary-dark);
   
-  /* Component overrides - Important for separately loaded CSS files */
-  /* About Profile Component */
-  --about-profile-bg: var(--body-bg-color);
-  --about-text-color: var(--body-text-color);
+  /* Component variables */
+  --about-profile-bg: var(--theme-bg);
+  --about-text-color: var(--theme-text);
   --profile-name-color: var(--color-primary);
   
-  /* Recent Posts Grid Component */
   --post-card-bg: #223243;
   --post-title-color: var(--color-light);
   --post-meta-color: #a0aec0;
   --post-summary-color: #cbd5e0;
-  --tag-bg-color: #2d4a63;
-  --tag-text-color: var(--color-light);
   
-  /* TOC Component */
   --toc-bg-color: #1e2a38;
   --toc-border-color: var(--border-color);
   --toc-link-color: var(--link-color);
   
-  /* Sidenote Component */
   --sidenote-bg-color: #1e2a38;
   --sidenote-border-color: var(--border-color);
-  --sidenote-text-color: var(--color-text);
+  --sidenote-text-color: var(--theme-text);
 
-  /* List Page Component Variables - NEW */
   --page-item-bg: #1e2a38;
   --page-item-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   --page-link-color: var(--color-primary);
@@ -98,263 +81,13 @@
   --page-summary-color: #cbd5e0;
   --tag-link-bg: #2d4a63;
   --tag-link-color: var(--color-light);
-
-  /* Search Component - NEW */
+  
   --search-bg-color: var(--header-bg-color);
   --search-text-color: var(--header-text-color);
   --search-border-color: var(--border-color);
   --search-placeholder-color: var(--header-text-color);
   --search-icon-color: var(--header-text-color);
   --search-focus-shadow: 0 0 0 0.25rem rgba(233, 153, 107, 0.25);
-}
-
-/* Ensure the theme applies to the entire document - IMPROVED SPECIFICITY */
-html[data-theme="dark"],
-html[data-theme="dark"] body {
-  background-color: #1a202c !important; /* Direct color instead of var */
-  color: var(--body-text-color) !important;
-}
-
-/* Add direct styling to override any imported backgrounds */
-html[data-theme="dark"] main {
-  background-color: #1a202c !important;
-}
-
-/* Direct element overrides for dark theme with very high specificity
-   Using !important and very specific selectors to ensure these styles take precedence */
-html[data-theme="dark"] body > header,
-html[data-theme="dark"] .site-header,
-html[data-theme="dark"] header {
-  background-color: var(--header-bg-color) !important;
-  color: var(--header-text-color) !important;
-  box-shadow: var(--header-shadow) !important;
-}
-
-html[data-theme="dark"] header h1,
-html[data-theme="dark"] header .logo,
-html[data-theme="dark"] .site-header .logo {
-  color: var(--header-logo-color) !important;
-}
-
-/* Additional header styling with more specific selectors */
-html[data-theme="dark"] header .logo:hover {
-  color: var(--header-logo-hover-color) !important;
-}
-
-html[data-theme="dark"] header nav,
-html[data-theme="dark"] .site-header nav {
-  color: var(--header-text-color) !important;
-}
-
-html[data-theme="dark"] header nav ul li a,
-html[data-theme="dark"] .site-header nav ul li a,
-html[data-theme="dark"] .main-nav a {
-  color: var(--header-nav-link-color) !important;
-}
-
-html[data-theme="dark"] header nav ul li a:hover,
-html[data-theme="dark"] header nav ul li a:focus,
-html[data-theme="dark"] .site-header nav ul li a:hover,
-html[data-theme="dark"] .site-header nav ul li a:focus,
-html[data-theme="dark"] .main-nav a:hover,
-html[data-theme="dark"] .main-nav a:focus {
-  background-color: var(--header-nav-link-hover-bg) !important;
-  color: var(--header-nav-link-hover-color) !important;
-}
-
-/* Component-specific dark theme overrides with higher specificity */
-html[data-theme="dark"] .about-profile-container {
-  background-color: var(--about-profile-bg);
-  color: var(--about-text-color);
-}
-
-html[data-theme="dark"] .profile-name {
-  color: var(--profile-name-color);
-}
-
-html[data-theme="dark"] .post-card {
-  background-color: var(--post-card-bg);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-html[data-theme="dark"] .post-title a {
-  color: var(--post-title-color);
-}
-
-html[data-theme="dark"] .post-meta {
-  color: var(--post-meta-color);
-}
-
-html[data-theme="dark"] .post-summary {
-  color: var(--post-summary-color);
-}
-
-html[data-theme="dark"] .tag {
-  background-color: var(--tag-bg-color);
-  color: var(--tag-text-color);
-}
-
-html[data-theme="dark"] .toc {
-  background-color: var(--toc-bg-color);
-  border-color: var(--toc-border-color);
-}
-
-html[data-theme="dark"] .sidenote {
-  background-color: var(--sidenote-bg-color);
-  border-color: var(--sidenote-border-color);
-  color: var(--sidenote-text-color);
-}
-
-/* Specific rules for sidenotes with highest specificity */
-html[data-theme="dark"] .sidenote,
-html[data-theme="dark"] .sidenote-section .sidenote,
-html[data-theme="dark"] [id^="sidenote-"] {
-  background-color: #1e2a38 !important;
-  color: #e2e8ff !important;
-  border-color: #3a4755 !important;
-}
-
-html[data-theme="dark"] .sidenote a,
-html[data-theme="dark"] .sidenote-section .sidenote a {
-  color: var(--color-primary, #e9996b) !important;
-}
-
-/* Force background colors on specific layout containers */
-html[data-theme="dark"] .layout-container,
-html[data-theme="dark"] .main-content,
-html[data-theme="dark"] .toc-sidebar,
-html[data-theme="dark"] .sidenote-section {
-  background-color: #1a202c !important;
-}
-
-/* Dark mode overrides for lists */
-html[data-theme="dark"] .page-item {
-  background-color: var(--page-item-bg, #1e2a38) !important;
-  box-shadow: var(--page-item-shadow, 0 4px 10px rgba(0, 0, 0, 0.5)) !important;
-  border: 1px solid var(--border-color, #3a4755);
-}
-
-html[data-theme="dark"] .page-item-title {
-  color: var(--color-light, #ebefe9) !important;
-}
-
-html[data-theme="dark"] .page-link {
-  color: var(--page-link-color, #e9996b) !important;
-}
-
-html[data-theme="dark"] .page-link:hover {
-  color: var(--page-link-hover-color, #57d89c) !important;
-  text-decoration: underline;
-}
-
-html[data-theme="dark"] .page-metadata {
-  color: var(--page-metadata-color, #a0aec0) !important;
-}
-
-html[data-theme="dark"] .category-link,
-html[data-theme="dark"] .tag-link {
-  color: var(--page-link-color, #e9996b) !important;
-}
-
-html[data-theme="dark"] .category-link:hover,
-html[data-theme="dark"] .tag-link:hover {
-  color: var(--page-link-hover-color, #57d89c) !important;
-}
-
-html[data-theme="dark"] .tag-link {
-  background-color: var(--tag-link-bg, #2d4a63) !important;
-  color: var(--tag-link-color, #ebefe9) !important;
-}
-
-html[data-theme="dark"] .page-summary {
-  color: var(--page-summary-color, #cbd5e0) !important;
-}
-
-/* Search component dark mode overrides */
-html[data-theme="dark"] .search-form .search-input {
-  background-color: var(--search-bg-color, #1a2633) !important;
-  color: var(--search-text-color, #ebefe9) !important;
-  border-color: var(--search-border-color, #3a4755) !important;
-}
-
-html[data-theme="dark"] .search-form .search-input::placeholder {
-  color: var(--search-placeholder-color, #ebefe9) !important;
-  opacity: 0.7 !important;
-}
-
-html[data-theme="dark"] .search-form .search-input:focus {
-  box-shadow: var(--search-focus-shadow) !important;
-  border-color: var(--color-primary, #e9996b) !important;
-}
-
-html[data-theme="dark"] .search-form .search-icon,
-html[data-theme="dark"] .search-form .clear-icon {
-  color: var(--search-icon-color, #ebefe9) !important;
-}
-
-html[data-theme="dark"] .search-form .clear-icon:hover {
-  color: var(--color-primary, #e9996b) !important;
-}
-
-/* CRITICAL COLOR ENFORCEMENT */
-/* These rules are duplicated inline in baseof.html for immediate application */
-html[data-theme="dark"],
-html[data-theme="dark"] body,
-html[data-theme="dark"] main,
-html[data-theme="dark"] .content,
-html[data-theme="dark"] .container,
-html[data-theme="dark"] article,
-html[data-theme="dark"] section,
-html[data-theme="dark"] .layout-container,
-html[data-theme="dark"] .main-content,
-html[data-theme="dark"] .site-main,
-html[data-theme="dark"] div[class^="content"] {
-  background-color: #1a202c !important;
-  color: #e2e8ff !important;
-}
-
-/* Force background colors on specific containers */
-html[data-theme="dark"] .content-container,
-html[data-theme="dark"] .page-content,
-html[data-theme="dark"] .pages-list,
-html[data-theme="dark"] .page-header {
-  background-color: #1a202c !important; 
-}
-
-/* Force specific colors for search elements */
-html[data-theme="dark"] .search-form .search-input {
-  background-color: #1a2633 !important;
-  color: #ebefe9 !important;
-  border-color: #3a4755 !important;
-}
-
-html[data-theme="dark"] .search-form .search-input::placeholder {
-  color: #ebefe9 !important;
-  opacity: 0.7 !important;
-}
-
-/* Theme toggle button styling */
-.theme-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  height: 24px;
-  width: 24px;
-  margin: 0 8px;
-  position: relative;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.theme-toggle:focus {
-  outline: none;
-}
-
-.theme-toggle:hover {
-  opacity: 0.7;
 }
 
 /* Icon display logic */
@@ -396,4 +129,20 @@ html[data-theme="dark"] .search-form .search-input::placeholder {
 .header-social a {
   color: inherit;
   margin-right: 8px;
+}
+
+/* Apply base styles using CSS variables */
+html, 
+body, 
+main, 
+.content, 
+.container, 
+article, 
+section, 
+.layout-container, 
+.main-content, 
+.site-main, 
+div[class^="content"] {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
 }

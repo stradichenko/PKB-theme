@@ -20,7 +20,7 @@
     })();
   </script>
   
-  <!-- Inline critical theme styles -->
+  <!-- Critical CSS for immediate theme application -->
   <style>
     /* Force the background color with maximum specificity */
     html[data-theme="dark"],
@@ -55,9 +55,8 @@
     {{ partial "footer.html" . }}
   </footer>
   
-  <!-- Force theme application -->
+  <!-- Ensure theme is consistently applied -->
   <script>
-    // Ensure theme is consistently applied after all content loads
     window.addEventListener('load', function() {
       const theme = document.documentElement.getAttribute('data-theme') || 'light';
       if (theme === 'dark') {

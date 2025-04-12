@@ -134,48 +134,90 @@ label.margin-toggle:not(.sidenote-number) {
   grid-template-areas: 
     "toc main sidenotes";
   gap: var(--spacing-md, 1rem);
+  min-height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 50px));
+  height: auto; /* Grow as needed */
+  margin-bottom: auto; /* Push footer down when needed */
+  align-items: start; /* Align grid items at the top */
+}
+
+/* Create additional space after content to ensure footer doesn't overlap */
+.main-content::after {
+  content: "";
+  display: block;
+  height: 100px; /* Extra space at bottom */
+  width: 100%;
 }
 
 .toc-sidebar {
   grid-area: toc;
+  position: sticky;
+  top: var(--spacing-md, 1rem);
+  max-height: calc(100vh - var(--header-height, 60px) - var(--spacing-md, 1rem));
+  overflow-y: auto;
 }
 
 .main-content {
   grid-area: main;
 }
 
-/* Sidenote Section Styles - updated for better positioning */
+/* Sidenote Section Styles - improved for reference-based positioning */
 .sidenote-section {
   grid-area: sidenotes;
-  display: block; /* Change from flex to block for absolute positioning */
-  width: 250px; /* Fixed width for sidenotes section */
-  padding: var(--spacing-sm, 0.5rem);
   position: sticky;
   top: var(--spacing-md, 1rem);
-  height: calc(100vh - 2rem); /* Set a height to contain absolute positioned elements */
-  overflow: visible; /* Allow sidenotes to be visible outside the container */
+  width: 250px;
+  padding: var(--spacing-sm);
+  display: block;
+  height: calc(100vh - var(--header-height, 60px) - var(--spacing-md, 1rem) * 2);
+  overflow: visible;
+  z-index: 5;
+  /* Establish containing block for absolute positioning */
+  transform: translateZ(0);
 }
 
-/* Individual Sidenote Styles - updated for positioning */
+/* Individual Sidenote Styles - reference-aligned positioning */
 .sidenote {
+  position: absolute;
   background-color: var(--sidenote-bg-color);
   border: 1px solid #ddd;
   border-radius: var(--border-radius);
-  padding: var(--spacing-sm, 0.5rem);
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: var(--spacing-md, 1rem);
-  max-width: 100%;
+  padding: var(--spacing-sm);
+  width: calc(100% - var(--spacing-sm)*2);
+  opacity: 0.8;
+  transition: opacity 0.2s ease, top 0.2s ease; /* Smooth transition when repositioning */
   box-sizing: border-box;
-  /* The absolute positioning will be applied by JavaScript */
+  z-index: 10;
+  left: var(--spacing-sm);
+  
+  /* Text hyphenation and word breaking */
+  hyphens: auto;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-align: justify; /* For better text distribution */
 }
 
-/* Placeholder for sidenotes */
+/* Support hyphenation across browsers */
+@supports (hanging-punctuation: first) {
+  .sidenote {
+    hanging-punctuation: first last;
+  }
+}
+
+/* Ensure consistent hyphenation across browsers */
+html:lang(en) .sidenote {
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+/* Placeholder for sidenotes - important for reference positioning */
 .sidenote-placeholder {
   display: inline-block;
   width: 0;
   height: 0;
   overflow: hidden;
+  position: relative;
+  vertical-align: middle;
 }
 
 /* Responsive adjustments */
@@ -223,8 +265,16 @@ label.margin-toggle:not(.sidenote-number) {
   }
   
   .sidenote {
-    position: static !important; /* Override JavaScript positioning */
+    position: static !important; /* Override absolute positioning */
     width: 100% !important;
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-md); /* Restore margin for spacing */
+    left: auto;
+  }
+  
+  /* Fix for extremely long sidenotes */
+  main, .content, .layout-container {
+    overflow-x: hidden;
+    overflow-y: visible; /* Allow vertical expansion */
+    height: auto;
   }
 }

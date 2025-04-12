@@ -7,15 +7,23 @@
 <!-- Dynamically sets the page title -->
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
 
-<!-- Theme initialization script - place as early as possible -->
+<!-- Critical theme initialization script -->
 <script>
   (function() {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
     const currentTheme = localStorage.getItem('theme') || 
                        (prefersDarkScheme.matches ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', currentTheme);
+    document.documentElement.style.backgroundColor = 
+      currentTheme === 'dark' ? '#1a202c' : '#275f85';
+    document.documentElement.style.color = 
+      currentTheme === 'dark' ? '#e2e8ff' : '#cad6ff';
   })();
 </script>
+
+<!-- Include critical JS first -->
+{{ $criticalJS := resources.Get "js/critical.js" | js.Build | minify }}
+<script>{{ $criticalJS.Content | safeJS }}</script>
 
 <!-- INLINE CRITICAL SELECTION STYLES FOR IMMEDIATE APPLICATION -->
 <style>
@@ -49,27 +57,38 @@
   <!-- Development mode - Individual CSS files with source maps -->
   
   <!-- 1. Core styles - variables and reset first -->
-  {{ $variablesCSS := resources.Get "css/global/variables.css" | toCSS | fingerprint }}
-  <link rel="stylesheet" href="{{ $variablesCSS.RelPermalink }}" integrity="{{ $variablesCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/global/variables.css" }}
+    {{ $variablesCSS := . | toCSS | fingerprint }}
+    <link rel="stylesheet" href="{{ $variablesCSS.RelPermalink }}" integrity="{{ $variablesCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
-  {{ $resetCSS := resources.Get "css/global/reset.css" | toCSS | fingerprint }}
-  <link rel="stylesheet" href="{{ $resetCSS.RelPermalink }}" integrity="{{ $resetCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/global/reset.css" }}
+    {{ $resetCSS := . | toCSS | fingerprint }}
+    <link rel="stylesheet" href="{{ $resetCSS.RelPermalink }}" integrity="{{ $resetCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
 
   <!-- 2. Layout components -->
-  {{ $bodyCSS := resources.Get "css/body.css" | toCSS | fingerprint }}
-  <link rel="stylesheet" href="{{ $bodyCSS.RelPermalink }}" integrity="{{ $bodyCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/body.css" }}
+    {{ $bodyCSS := . | toCSS | fingerprint }}
+    <link rel="stylesheet" href="{{ $bodyCSS.RelPermalink }}" integrity="{{ $bodyCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
-  {{ $headerCSS := resources.Get "css/header.css" | toCSS | fingerprint }}
-  <link rel="stylesheet" href="{{ $headerCSS.RelPermalink }}" integrity="{{ $headerCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/header.css" }}
+    {{ $headerCSS := . | toCSS | fingerprint }}
+    <link rel="stylesheet" href="{{ $headerCSS.RelPermalink }}" integrity="{{ $headerCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
-  {{ $footerCSS := resources.Get "css/footer.css" | toCSS | fingerprint }}
-  <link rel="stylesheet" href="{{ $footerCSS.RelPermalink }}" integrity="{{ $footerCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/footer.css" }}
+    {{ $footerCSS := . | toCSS | fingerprint }}
+    <link rel="stylesheet" href="{{ $footerCSS.RelPermalink }}" integrity="{{ $footerCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
   <!-- 3. Component styles -->
-  {{ $sidenotesCSS := resources.Get "css/components/sidenote.css" | toCSS | fingerprint }}
-  <link rel="stylesheet" href="{{ $sidenotesCSS.RelPermalink }}" integrity="{{ $sidenotesCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ with resources.Get "css/components/sidenote.css" }}
+    {{ $sidenotesCSS := . | toCSS | fingerprint }}
+    <link rel="stylesheet" href="{{ $sidenotesCSS.RelPermalink }}" integrity="{{ $sidenotesCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
   
-  <!-- Use the regular CSS version of TOC instead of SCSS -->
   {{ $tocCSS := resources.Get "css/components/toc.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $tocCSS.RelPermalink }}" integrity="{{ $tocCSS.Data.Integrity }}" crossorigin="anonymous">
   
@@ -82,11 +101,15 @@
   {{ $aboutProfileCSS := resources.Get "css/about-profile.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $aboutProfileCSS.RelPermalink }}" integrity="{{ $aboutProfileCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  <!-- 4. SCSS files that need compilation -->
+  <!-- 4. Main CSS for global styles -->
+  {{ $mainCSS := resources.Get "css/main.css" | toCSS | fingerprint }}
+  <link rel="stylesheet" href="{{ $mainCSS.RelPermalink }}" integrity="{{ $mainCSS.Data.Integrity }}" crossorigin="anonymous">
+  
+  <!-- 5. SCSS files that need compilation -->
   {{ $searchSCSS := resources.Get "sass/search.scss" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $searchSCSS.RelPermalink }}" integrity="{{ $searchSCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  <!-- 5. Theme toggle CSS - LOAD LAST to ensure overrides work -->
+  <!-- 6. Theme toggle CSS - LOAD LAST to ensure overrides work -->
   {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ else }}
@@ -102,23 +125,22 @@
       (resources.Get "css/list.css")
       (resources.Get "css/components/recent-posts-grid.css")
       (resources.Get "css/about-profile.css")
+      (resources.Get "css/main.css")
   }}
   {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  <!-- Include SCSS files separately - they need special processing -->
+  <!-- Include SASS files separately -->
   {{ $searchSCSS := resources.Get "sass/search.scss" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $searchSCSS.RelPermalink }}" integrity="{{ $searchSCSS.Data.Integrity }}" crossorigin="anonymous">
   
   <!-- Load theme-toggle CSS last to ensure it overrides all other styles -->
   {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
-  
-  <!-- Include any additional SASS files, if needed -->
-  {{ $mainSass := resources.Get "sass/main.scss" | toCSS | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $mainSass.RelPermalink }}" integrity="{{ $mainSass.Data.Integrity }}" crossorigin="anonymous">
 {{ end }}
 
 <!-- JavaScript loading -->
-{{ $script := resources.Get "js/main.js" | minify | fingerprint }}
-<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ with resources.Get "js/main.js" }}
+  {{ $mainJS := . | js.Build | minify | fingerprint }}
+  <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}

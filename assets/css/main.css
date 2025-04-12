@@ -1,11 +1,6 @@
-@import "global/variables.css";
-@import "global/reset.css";
-@import "body.css";
-@import "header.css";
-@import "footer.css";
-@import "components/sidenote.css";
-@import "components/toc.css"; /* Use CSS version instead of SCSS */
-@import "theme-toggle.css";
+/* Replace multiple imports with Hugo bundling */
+/* Current approach: */
+/* Imports removed as per suggestion to use Hugo's resource bundling in head.html */
 
 /* General components */
 

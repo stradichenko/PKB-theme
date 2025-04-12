@@ -25,42 +25,134 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add ID to the sidenote for reference
     sidenote.id = sidenoteId;
-    
-    // Position the sidenote based on placeholder
-    positionSidenote(placeholder, sidenote);
   });
   
-  // Position sidenotes whenever relevant events occur
+  // Configuration for positioning
+  const minSpacingBetweenNotes = 20; // Minimum space between sidenotes in pixels
+  let isPositioning = false; // Lock to prevent concurrent repositioning
+  
+  // Position sidenotes with improved algorithm
   const positionAllSidenotes = () => {
+    if (!sidenoteSection || isPositioning) return;
+    
+    // Set positioning lock
+    isPositioning = true;
+    
+    // Get sidenote section position
+    const sectionRect = sidenoteSection.getBoundingClientRect();
+    
+    // First, gather all sidenotes with their ideal positions
+    const notesWithInfo = [];
+    
     document.querySelectorAll('.sidenote-placeholder').forEach(placeholder => {
       const sidenoteId = placeholder.dataset.sidenoteId;
       const sidenote = document.getElementById(sidenoteId);
       
       if (sidenote) {
-        positionSidenote(placeholder, sidenote);
+        // Calculate the ideal position where this note would appear without adjustments
+        const placeholderRect = placeholder.getBoundingClientRect();
+        const idealTop = placeholderRect.top - sectionRect.top;
+        
+        notesWithInfo.push({
+          sidenote,
+          idealTop,
+          height: sidenote.offsetHeight
+        });
       }
     });
+    
+    // Sort by ideal position to process from top to bottom
+    notesWithInfo.sort((a, b) => a.idealTop - b.idealTop);
+    
+    // Position each sidenote, adjusting only when needed
+    let lastBottom = -Infinity;
+    
+    notesWithInfo.forEach(({ sidenote, idealTop, height }) => {
+      // The note should appear at its ideal position unless it would overlap
+      let finalTop = idealTop;
+      
+      // If this would overlap with a previous note, move down
+      if (lastBottom != -Infinity && finalTop < lastBottom + minSpacingBetweenNotes) {
+        finalTop = lastBottom + minSpacingBetweenNotes;
+      }
+      
+      // Apply positioning
+      sidenote.style.position = 'absolute';
+      sidenote.style.top = `${Math.max(0, finalTop)}px`;
+      
+      // Update the bottom position for next note
+      lastBottom = finalTop + height;
+    });
+    
+    // Ensure the sidenote section is tall enough
+    if (lastBottom > 0) {
+      sidenoteSection.style.minHeight = `${lastBottom + 50}px`;
+    }
+    
+    // Apply theme styling
+    updateSidenoteThemes();
+    
+    // Release positioning lock
+    isPositioning = false;
   };
   
-  // Add scroll event listener to reposition sidenotes during scrolling
-  window.addEventListener('scroll', positionAllSidenotes);
+  // Position initially with a slight delay to ensure all styles are applied
+  setTimeout(positionAllSidenotes, 200);
   
-  // Also reposition on window resize
-  window.addEventListener('resize', positionAllSidenotes);
+  // Handle scroll events efficiently
+  let scrollTimeout = null;
+  let lastScrollY = window.scrollY;
   
-  // NEW: Listen for theme changes and update sidenotes styling
+  window.addEventListener('scroll', () => {
+    // Skip if already processing or minimal scroll change
+    if (isPositioning || Math.abs(lastScrollY - window.scrollY) < 10) return;
+    
+    lastScrollY = window.scrollY;
+    
+    if (scrollTimeout) {
+      window.cancelAnimationFrame(scrollTimeout);
+    }
+    
+    // Only reposition if section is in viewport
+    scrollTimeout = window.requestAnimationFrame(() => {
+      const sectionRect = sidenoteSection.getBoundingClientRect();
+      if (sectionRect.top < window.innerHeight && sectionRect.bottom > 0) {
+        positionAllSidenotes();
+      }
+      scrollTimeout = null;
+    });
+  });
+  
+  // Debounce function for handling events efficiently
+  function debounce(func, wait) {
+    let timeout;
+    return function() {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, arguments), wait);
+    };
+  }
+  
+  // Handle window resize
+  window.addEventListener('resize', debounce(positionAllSidenotes, 200));
+  
+  // Handle image loading
+  document.querySelectorAll('img, video, iframe').forEach(media => {
+    if (!media.complete) {
+      media.addEventListener('load', debounce(positionAllSidenotes, 200));
+    }
+  });
+  
+  // Theme changes listener
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.attributeName === 'data-theme') {
-        // Force theme update on sidenotes
         updateSidenoteThemes();
-        // Reposition in case theme change affected layout
-        positionAllSidenotes();
+        debounce(positionAllSidenotes, 300)();
       }
     });
   });
   
-  // Start observing the html element for theme changes
+  // Start observing theme changes
   observer.observe(document.documentElement, { attributes: true });
 });
 
@@ -86,24 +178,4 @@ function updateSidenoteThemes() {
       sidenote.style.borderColor = '';     // Use the CSS default
     }
   });
-}
-
-// Function to position a sidenote relative to its placeholder
-function positionSidenote(placeholder, sidenote) {
-  // Get the vertical position of the placeholder
-  const placeholderRect = placeholder.getBoundingClientRect();
-  const sidenoteSection = document.querySelector('.sidenote-section');
-  const sidenoteSectionRect = sidenoteSection.getBoundingClientRect();
-  
-  // Calculate the top position for the sidenote
-  // This positions it at the same vertical level as the placeholder
-  const topPosition = placeholderRect.top - sidenoteSectionRect.top;
-  
-  // Apply positioning to the sidenote
-  sidenote.style.position = 'absolute';
-  sidenote.style.top = `${Math.max(0, topPosition)}px`;
-  sidenote.style.width = 'calc(100% - 20px)'; // Allow for padding
-  
-  // Make sure theme styling is properly applied
-  updateSidenoteThemes();
 }
