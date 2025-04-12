@@ -3,6 +3,11 @@
   /* Light mode theme variables are already defined in global/variables.css */
   --theme-bg: #275f85;
   --theme-text: #cad6ff;
+  
+  /* Theme toggle button colors - light mode */
+  --toggle-btn-color: #cad6ff;
+  --toggle-btn-bg-hover: rgba(255, 255, 255, 0.15);
+  --toggle-btn-outline: #4a90e2;
 }
 
 /* Dark Theme - Using CSS variables properly */
@@ -88,12 +93,72 @@
   --search-placeholder-color: var(--header-text-color);
   --search-icon-color: var(--header-text-color);
   --search-focus-shadow: 0 0 0 0.25rem rgba(233, 153, 107, 0.25);
+  
+  /* Theme toggle button colors - dark mode */
+  --toggle-btn-color: #e9996b;
+  --toggle-btn-bg-hover: rgba(233, 153, 107, 0.15);
+  --toggle-btn-outline: #e9996b;
 }
 
-/* Icon display logic */
+/* Theme toggle button specific styling */
+.theme-toggle {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 10px;
+  overflow: hidden;
+  color: var(--toggle-btn-color); /* Use theme-specific color */
+}
+
+.theme-toggle:hover {
+  background-color: var(--toggle-btn-bg-hover);
+}
+
+.theme-toggle:focus {
+  outline: 2px solid var(--toggle-btn-outline);
+  outline-offset: 2px;
+}
+
+/* Icon styling */
+.theme-toggle .toggle-icon {
+  display: block;
+  color: inherit;
+  width: 24px;
+  height: 24px;
+}
+
+/* Only add transitions during theme changes initiated by user */
+.theme-transition .toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.theme-transition .theme-toggle .toggle-icon {
+  animation: spin 0.5s ease;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Icon display logic - No transitions initially */
 .theme-toggle .sun-icon,
 .theme-toggle .moon-icon {
   position: absolute;
+  stroke: currentColor; /* Inherit color from parent */
+}
+
+/* Add transitions only after page load, when ready for user interaction */
+.ready-for-interaction .theme-toggle .sun-icon,
+.ready-for-interaction .theme-toggle .moon-icon {
   transition: opacity 0.3s ease, transform 0.5s ease;
 }
 
@@ -119,16 +184,19 @@
   transform: rotate(-100deg) scale(0);
 }
 
-/* Header social section layout */
+/* Header social section layout - Fixed positioning */
 .header-social {
   display: flex;
   align-items: center;
-  margin-right: 15px;
+  margin-left: auto; /* Push to the right side of header */
+  gap: 12px; /* Space between elements */
 }
 
 .header-social a {
   color: inherit;
-  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Apply base styles using CSS variables */
@@ -141,7 +209,7 @@ article,
 section, 
 .layout-container, 
 .main-content, 
-.site-main, 
+site-main, 
 div[class^="content"] {
   background-color: var(--theme-bg);
   color: var(--theme-text);

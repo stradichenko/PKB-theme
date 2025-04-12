@@ -1,22 +1,33 @@
 <!DOCTYPE html>
-<html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+<html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" class="interaction">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
   
-  <!-- Critical theme initialization script -->
+  <!-- Critical theme initialization script - improved for persistence -->
   <script>
     (function() {
+      // Always prioritize localStorage first for persistence
+      const savedTheme = localStorage.getItem('theme');
       const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-      const currentTheme = localStorage.getItem('theme') || 
-                         (prefersDarkScheme.matches ? 'dark' : 'light');
+      
+      // Use the saved theme if available, otherwise check system preference
+      const currentTheme = savedTheme || (prefersDarkScheme.matches ? 'dark' : 'light');
+      
+      // Set theme attribute for CSS
       document.documentElement.setAttribute('data-theme', currentTheme);
+      
       // Apply critical color directly to prevent flash
       document.documentElement.style.backgroundColor = 
         currentTheme === 'dark' ? '#1a202c' : '#275f85';
       document.documentElement.style.color = 
         currentTheme === 'dark' ? '#e2e8ff' : '#cad6ff';
+        
+      // Update localStorage to ensure persistence
+      if (!savedTheme) {
+        localStorage.setItem('theme', currentTheme);
+      }
     })();
   </script>
   
@@ -58,7 +69,10 @@
   <!-- Ensure theme is consistently applied -->
   <script>
     window.addEventListener('load', function() {
-      const theme = document.documentElement.getAttribute('data-theme') || 'light';
+      const theme = localStorage.getItem('theme') || 
+                    document.documentElement.getAttribute('data-theme') || 
+                    'light';
+      
       if (theme === 'dark') {
         document.documentElement.style.backgroundColor = '#1a202c';
         document.body.style.backgroundColor = '#1a202c';

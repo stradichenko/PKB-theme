@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  remark42:
+    image: umputun/remark42:latest
+    container_name: remark42
+    restart: always
+    environment:
+      - REMARK_URL=https://your-remark-domain.com  # Your domain for Remark42
+      - SECRET=some-random-string-for-security     # Generate a random secret
+      - STORE_BOLT_PATH=/srv/var/db
+      - BACKUP_PATH=/srv/var/backup
+      - AUTH_ANON=true                             # Allow anonymous comments
+      - AUTH_GOOGLE_CID=your_google_client_id      # Optional
+      - AUTH_GOOGLE_CSEC=your_google_client_secret # Optional
+      - AUTH_GITHUB_CID=your_github_client_id      # Optional
+      - AUTH_GITHUB_CSEC=your_github_client_secret # Optional
+    volumes:
+      - ./remark42-data:/srv/var
+    ports:
+      - "8080:8080"
