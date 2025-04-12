@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Get sidenote section position
     const sectionRect = sidenoteSection.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
     
     // First, gather all sidenotes with their ideal positions
     const notesWithInfo = [];
@@ -70,11 +71,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const placeholderRect = placeholder.getBoundingClientRect();
         const idealTop = placeholderRect.top - sectionRect.top;
         
+        // Check if placeholder is in the viewport
+        const isPlaceholderVisible = 
+          placeholderRect.top < viewportHeight && 
+          placeholderRect.bottom > 0;
+        
         notesWithInfo.push({
           sidenote,
           idealTop,
-          height: sidenote.offsetHeight
+          height: sidenote.offsetHeight,
+          isVisible: isPlaceholderVisible
         });
+        
+        // Hide sidenote if reference point is not visible
+        if (!isPlaceholderVisible && !sidenote.classList.contains('sidenote-hidden')) {
+          sidenote.classList.add('sidenote-hidden');
+        } else if (isPlaceholderVisible && initialPositioningComplete && 
+                  sidenote.classList.contains('sidenote-hidden')) {
+          sidenote.classList.remove('sidenote-hidden');
+        }
       }
     });
     

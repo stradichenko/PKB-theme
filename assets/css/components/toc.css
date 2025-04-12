@@ -80,6 +80,49 @@
   color: var(--color-primary-variant);
 }
 
+/* Active state for current heading */
+.toc nav#TableOfContents a.active {
+  color: var(--color-secondary);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  position: relative;
+  animation: tocHighlight 0.5s ease;
+}
+
+/* Remove the arrow indicator */
+.toc nav#TableOfContents a.active::before {
+  content: none;
+}
+
+/* Keyframe animation for the highlight effect - theme responsive */
+@keyframes tocHighlight {
+  0% {
+    border-left: 2px solid var(--color-secondary);
+    padding-left: var(--spacing-xs);
+  }
+  100% {
+    background-color: transparent;
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+/* Dark theme highlight adjustment */
+[data-theme="dark"] .toc nav#TableOfContents a.active {
+  color: var(--color-secondary);
+}
+
+[data-theme="dark"] @keyframes tocHighlight {
+  0% {
+    border-left: 2px solid var(--color-secondary);
+    padding-left: var(--spacing-xs);
+  }
+  100% {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
 /* Toggle button for TOC items */
 .toc-toggle {
   color: var(--color-primary) !important;

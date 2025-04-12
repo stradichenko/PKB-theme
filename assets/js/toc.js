@@ -44,4 +44,103 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
   });
+
+  // Initialize heading tracking functionality
+  initHeadingTracking();
 });
+
+// Function to track current headings and update the TOC
+function initHeadingTracking() {
+  // Get all headings in the content
+  const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+  if (!headings.length) return;
+  
+  // Get all links in the TOC
+  const tocLinks = document.querySelectorAll('nav#TableOfContents a');
+  if (!tocLinks.length) return;
+  
+  // Create a mapping of heading IDs to TOC links
+  const idToTOCLink = {};
+  tocLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const id = href.substring(1);
+      idToTOCLink[id] = link;
+    }
+  });
+  
+  // Function to update active TOC item
+  const updateActiveTOC = () => {
+    // Find which heading is currently in view
+    let currentHeading = null;
+    const viewportHeight = window.innerHeight;
+    const scrollPosition = window.scrollY;
+    
+    // Consider a heading "active" if it's in the top third of the viewport
+    const activeZoneTop = scrollPosition;
+    const activeZoneBottom = scrollPosition + (viewportHeight / 3);
+    
+    // Check each heading to see if it's in the active zone
+    for (const heading of headings) {
+      const rect = heading.getBoundingClientRect();
+      const headingTop = rect.top + scrollPosition;
+      
+      // If heading is in active zone, or we've passed it and no other heading is active
+      if ((headingTop >= activeZoneTop && headingTop <= activeZoneBottom) || 
+          (headingTop < activeZoneTop && !currentHeading)) {
+        currentHeading = heading;
+      }
+    }
+    
+    // Remove active class from all TOC links
+    tocLinks.forEach(link => link.classList.remove('active'));
+    
+    // Add active class to the matching TOC link
+    if (currentHeading && currentHeading.id) {
+      const activeLink = idToTOCLink[currentHeading.id];
+      if (activeLink) {
+        activeLink.classList.add('active');
+        
+        // Expand parent items if they're collapsed
+        expandParentItems(activeLink);
+      }
+    }
+  };
+  
+  // Function to expand parent TOC items for the active link
+  const expandParentItems = (activeLink) => {
+    let parent = activeLink.parentElement;
+    while (parent) {
+      // If this is a list item with a toggle button
+      if (parent.tagName === 'LI') {
+        const toggleBtn = parent.querySelector('.toc-toggle');
+        if (toggleBtn && toggleBtn.getAttribute('aria-expanded') === 'false') {
+          // Simulate a click to expand
+          toggleBtn.click();
+        }
+      }
+      
+      // If we found a ul that's hidden, make it visible
+      if (parent.tagName === 'UL' && parent.style.display === 'none') {
+        parent.style.display = 'block';
+      }
+      
+      parent = parent.parentElement;
+    }
+  };
+  
+  // Use a throttled scroll event to improve performance
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateActiveTOC();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+  
+  // Initialize on page load
+  updateActiveTOC();
+}
