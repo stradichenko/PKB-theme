@@ -119,6 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
           sidenote.classList.remove('sidenote-hidden');
         });
         initialPositioningComplete = true;
+        
+        // Explicitly dispatch an event when sidenotes are processed
+        console.log('Dispatching sidenotesProcessed event');
+        document.dispatchEvent(new CustomEvent('sidenotesProcessed'));
       }, 150); // Faster reveal (was 300ms)
     }
   };

@@ -1,0 +1,72 @@
+/* References list styling for sidenotes */
+
+.references-container {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+  display: block !important; /* Force display */
+  visibility: visible !important; /* Ensure visibility */
+  clear: both; /* Clear any floats */
+  width: 100%; /* Ensure full width */
+}
+
+.references-title {
+  font-size: var(--font-size-xl);
+  color: var(--text-color-heading);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.references-list {
+  list-style-position: outside;
+  padding-left: var(--spacing-xl);
+  margin: 0;
+}
+
+.references-list li {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color-body);
+  line-height: var(--line-height-normal);
+  display: list-item !important; /* Force display as list item */
+}
+
+.references-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Dark theme handling through CSS variables */
+[data-theme="dark"] .references-container {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .references-title {
+  color: var(--dark-text-primary);
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .references-list li {
+  color: var(--dark-text-primary);
+}
+
+/* Debug styles - add a distinctive border */
+.references-container {
+  border-left: 4px solid var(--color-primary) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: var(--breakpoint-md)) {
+  .references-container {
+    padding: var(--spacing-md);
+  }
+  
+  .references-list {
+    padding-left: var(--spacing-lg);
+  }
+}

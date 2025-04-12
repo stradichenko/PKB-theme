@@ -11,12 +11,14 @@
     {{ $dateHuman := .Date | time.Format ":date_long" }}
     <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
     {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
-    <div class="content">
-      {{ .Content }}
-    </div>
+    
+    <!-- Keep only one content div -->
     <div class="post-content">
       {{ .Content }}
     </div>
+    
+    <!-- References will be inserted here by JavaScript -->
+    
     <!-- Add comments section -->
     {{ if ne .Params.comments false }}
       {{ if .Site.Params.comments.remark42.enabled }}
@@ -41,12 +43,22 @@
     {{ $sidenoteCSS := . | resources.Minify | fingerprint }}
     <link rel="stylesheet" href="{{ $sidenoteCSS.RelPermalink }}" integrity="{{ $sidenoteCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
+  
+  {{/* Include references.css for the sidenote references list */}}
+  {{ with resources.Get "css/references.css" }}
+    {{ $referencesCSS := . | resources.Minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $referencesCSS.RelPermalink }}" integrity="{{ $referencesCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
 {{ end }}
 
 {{/* Include sidenotes.js if sidenotes are enabled in front matter */}}
 {{ if .Params.sidenotes }}
   {{ $sidenotesJS := resources.Get "js/sidenotes.js" | minify | fingerprint }}
   <script src="{{ $sidenotesJS.RelPermalink }}" integrity="{{ $sidenotesJS.Data.Integrity }}" crossorigin="anonymous"></script>
+
+  {{/* Include references.js for generating the references list */}}
+  {{ $referencesJS := resources.Get "js/references.js" | minify | fingerprint }}
+  <script src="{{ $referencesJS.RelPermalink }}" integrity="{{ $referencesJS.Data.Integrity }}" crossorigin="anonymous"></script>
 
   {{/* Remove or comment out the sidenotes-positioning.js inclusion */}}
   {{/* 
