@@ -92,6 +92,12 @@
   {{ $tocCSS := resources.Get "css/components/toc.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $tocCSS.RelPermalink }}" integrity="{{ $tocCSS.Data.Integrity }}" crossorigin="anonymous">
   
+  {{ $tableCSS := resources.Get "css/components/table.css" | fingerprint }}
+  <link rel="stylesheet" href="{{ $tableCSS.RelPermalink }}" integrity="{{ $tableCSS.Data.Integrity }}" crossorigin="anonymous">
+  
+  {{ $codeCSS := resources.Get "css/components/code.css" | fingerprint }}
+  <link rel="stylesheet" href="{{ $codeCSS.RelPermalink }}" integrity="{{ $codeCSS.Data.Integrity }}" crossorigin="anonymous">
+  
   {{ $listCSS := resources.Get "css/list.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $listCSS.RelPermalink }}" integrity="{{ $listCSS.Data.Integrity }}" crossorigin="anonymous">
   
@@ -124,6 +130,8 @@
       (resources.Get "css/footer.css")
       (resources.Get "css/components/sidenote.css")
       (resources.Get "css/components/toc.css")
+      (resources.Get "css/components/table.css")
+      (resources.Get "css/components/code.css")
       (resources.Get "css/list.css")
       (resources.Get "css/components/recent-posts-grid.css")
       (resources.Get "css/about-profile.css")

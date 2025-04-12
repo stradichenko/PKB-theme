@@ -1,0 +1,75 @@
+/* Table styling */
+table {
+  width: 100%;
+  margin: var(--spacing-md) 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-light);
+}
+
+/* Header styling */
+thead {
+  background-color: var(--color-primary);
+  color: var(--text-color-inverse);
+}
+
+th {
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  font-size: 0.85em;
+  letter-spacing: 0.05em;
+}
+
+/* Cell padding */
+th, td {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+}
+
+/* Zebra striping for better readability */
+tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Row hover effect */
+tbody tr:hover {
+  background-color: rgba(74, 144, 226, 0.1); /* Using color value from --light-primary */
+}
+
+/* Dark mode support */
+html[data-theme="dark"] table {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Using standard shadow since --shadow-dark isn't defined */
+}
+
+html[data-theme="dark"] thead {
+  background-color: var(--color-primary); /* This will automatically use dark-primary in dark mode */
+}
+
+html[data-theme="dark"] th, 
+html[data-theme="dark"] td {
+  border-color: var(--color-border); /* This will automatically use dark-border in dark mode */
+}
+
+html[data-theme="dark"] tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+html[data-theme="dark"] tbody tr:hover {
+  background-color: rgba(233, 153, 107, 0.15); /* Using color value from --dark-primary */
+}
+
+/* Responsive tables */
+@media (max-width: var(--breakpoint-md)) {
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Auto-wrap tables in containers */
+  table {
+    min-width: 650px; /* Ensures table doesn't get too cramped */
+  }
+}

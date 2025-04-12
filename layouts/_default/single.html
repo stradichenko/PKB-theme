@@ -66,4 +66,8 @@
   <script src="{{ $sidenotesPositionJS.RelPermalink }}" integrity="{{ $sidenotesPositionJS.Data.Integrity }}" crossorigin="anonymous"></script>
   */}}
 {{ end }}
+
+<!-- Include table-wrapper.js for responsive tables -->
+{{ $tableWrapperJS := resources.Get "js/table-wrapper.js" | minify | fingerprint }}
+<script src="{{ $tableWrapperJS.RelPermalink }}" integrity="{{ $tableWrapperJS.Data.Integrity }}" crossorigin="anonymous"></script>
 {{ end }}
