@@ -1,0 +1,83 @@
+/* Single post template styling */
+
+/* Make the post title match the h1 style in markdown.css with higher specificity */
+.layout-container .main-content .post-title {
+  font-size: 2.25rem;
+  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-primary);
+  color: var(--text-color-heading);
+  line-height: 1.2;
+  background: none !important; /* Force no background */
+}
+
+/* Post header section with increased specificity */
+.layout-container .main-content .post-header {
+  margin-bottom: 3rem;
+  background: none !important;
+}
+
+/* Metadata styling with higher specificity */
+.layout-container .main-content .page-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+  background: none !important;
+  align-items: center;
+}
+
+/* Icon alignment for metadata items with increased specificity */
+.layout-container .main-content .page-author,
+.layout-container .main-content .page-date,
+.layout-container .main-content .page-categories,
+.layout-container .main-content .page-tags {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none !important;
+}
+
+/* SVG icon styling with higher specificity */
+.layout-container .main-content .page-metadata svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+  opacity: 0.8;
+}
+
+/* Tag styling with increased specificity */
+.layout-container .main-content .page-tags {
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.layout-container .main-content .tag-link {
+  background-color: rgba(var(--color-primary-rgb, 74, 144, 226), 0.08);
+  border-radius: 3px;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  display: inline-block;
+  margin: 0.1rem 0.1rem;
+}
+
+/* Clear separation between metadata and content */
+.layout-container .main-content .post-content {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  clear: both;
+}
+
+/* Dark mode adjustments with higher specificity */
+[data-theme="dark"] .layout-container .main-content .post-title {
+  border-bottom-color: var(--color-primary);
+}
+
+[data-theme="dark"] .layout-container .main-content .tag-link {
+  background-color: rgba(233, 153, 107, 0.1);
+}

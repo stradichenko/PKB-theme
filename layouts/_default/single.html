@@ -1,18 +1,71 @@
 {{ define "main" }}
 <div class="layout-container">
-  <aside class="toc-sidebar">
-    <nav id="TableOfContents" class="toc">
-      {{ .TableOfContents }}
-    </nav>
-  </aside>
-  <main class="main-content">
-    <h1>{{ .Title }}</h1>
-    {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
-    {{ $dateHuman := .Date | time.Format ":date_long" }}
-    <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
-    {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+  <!-- Only show TOC sidebar if TOC is enabled and not empty -->
+  {{ if and .Params.toc .TableOfContents }}
+    <aside class="toc-sidebar">
+      <div class="toc">
+        <h2>Table of Contents</h2>
+        <nav id="TableOfContents">
+          {{ .TableOfContents }}
+        </nav>
+      </div>
+    </aside>
+  {{ end }}
+  
+  <article class="main-content">
+    <header class="post-header">
+      <h1 class="post-title">{{ .Title }}</h1>
+      <div class="page-metadata">
+        <!-- Author -->
+        {{ with .Params.author }}
+        <div class="page-author">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+          </svg>
+          <span>{{ . }}</span>
+        </div>
+        {{ end }}
+        
+        <!-- Date -->
+        {{ with .Date }}
+          {{ $dateMachine := . | time.Format "2006-01-02T15:04:05-07:00" }}
+          {{ $dateHuman := . | time.Format ":date_long" }}
+          <div class="page-date">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+            </svg>
+            <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+          </div>
+        {{ end }}
+        
+        <!-- Categories - Updated with folder icon -->
+        {{ if .Params.categories }}
+        <div class="page-categories">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
+          </svg>
+          {{ range $index, $category := .Params.categories }}
+            {{- if gt $index 0 }}, {{ end -}}
+            <a href="{{ "/categories/" | relLangURL }}{{ $category | urlize }}/" class="category-link">{{ $category }}</a>
+          {{- end }}
+        </div>
+        {{ end }}
+        
+        <!-- Tags -->
+        {{ if .Params.tags }}
+        <div class="page-tags">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"/>
+            <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+          </svg>
+          {{ range .Params.tags }}
+            <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}/" class="tag-link">{{ . }}</a>
+          {{ end }}
+        </div>
+        {{ end }}
+      </div>
+    </header>
     
-    <!-- Keep only one content div -->
     <div class="post-content">
       {{ .Content }}
     </div>
@@ -25,49 +78,61 @@
         {{ partial "comments/remark42.html" . }}
       {{ end }}
     {{ end }}
-  </main>
+  </article>
+  
+  <!-- Only include sidenote section if sidenotes are enabled -->
+  {{ if .Params.sidenotes }}
   <aside class="sidenote-section">
     <!-- Sidenotes will be collected and placed here -->
   </aside>
+  {{ end }}
 </div>
 
-{{/* Conditionally include toc.js if TOC is enabled in front matter */}}
-{{ if .Params.toc }}
-  {{ $tocJS := resources.Get "js/toc.js" | minify | fingerprint }}
-  <script src="{{ $tocJS.RelPermalink }}" integrity="{{ $tocJS.Data.Integrity }}" crossorigin="anonymous"></script>
+<!-- Resource bundling for scripts and styles based on page requirements -->
+{{ $scripts := slice }}
+{{ $styles := slice }}
+
+<!-- Add single.css for styling specific to single posts -->
+{{ with resources.Get "css/single.css" }}
+  {{ $styles = $styles | append . }}
 {{ end }}
 
-{{/* Conditionally include sidenotes.css if sidenotes are enabled in front matter */}}
+<!-- Add TOC resources if needed -->
+{{ if and .Params.toc .TableOfContents }}
+  {{ $tocJS := resources.Get "js/toc.js" }}
+  {{ $scripts = $scripts | append $tocJS }}
+{{ end }}
+
+<!-- Add sidenotes resources if needed -->
 {{ if .Params.sidenotes }}
   {{ with resources.Get "css/sidenotes.css" }}
-    {{ $sidenoteCSS := . | resources.Minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $sidenoteCSS.RelPermalink }}" integrity="{{ $sidenoteCSS.Data.Integrity }}" crossorigin="anonymous">
+    {{ $styles = $styles | append . }}
   {{ end }}
   
-  {{/* Include references.css for the sidenote references list */}}
   {{ with resources.Get "css/references.css" }}
-    {{ $referencesCSS := . | resources.Minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $referencesCSS.RelPermalink }}" integrity="{{ $referencesCSS.Data.Integrity }}" crossorigin="anonymous">
+    {{ $styles = $styles | append . }}
   {{ end }}
+  
+  {{ $sidenotesJS := resources.Get "js/sidenotes.js" }}
+  {{ $referencesJS := resources.Get "js/references.js" }}
+  {{ $scripts = $scripts | append $sidenotesJS $referencesJS }}
 {{ end }}
 
-{{/* Include sidenotes.js if sidenotes are enabled in front matter */}}
-{{ if .Params.sidenotes }}
-  {{ $sidenotesJS := resources.Get "js/sidenotes.js" | minify | fingerprint }}
-  <script src="{{ $sidenotesJS.RelPermalink }}" integrity="{{ $sidenotesJS.Data.Integrity }}" crossorigin="anonymous"></script>
+<!-- Always include table-wrapper.js -->
+{{ $tableWrapperJS := resources.Get "js/table-wrapper.js" }}
+{{ $scripts = $scripts | append $tableWrapperJS }}
 
-  {{/* Include references.js for generating the references list */}}
-  {{ $referencesJS := resources.Get "js/references.js" | minify | fingerprint }}
-  <script src="{{ $referencesJS.RelPermalink }}" integrity="{{ $referencesJS.Data.Integrity }}" crossorigin="anonymous"></script>
-
-  {{/* Remove or comment out the sidenotes-positioning.js inclusion */}}
-  {{/* 
-  {{ $sidenotesPositionJS := resources.Get "js/sidenotes-positioning.js" | minify | fingerprint }}
-  <script src="{{ $sidenotesPositionJS.RelPermalink }}" integrity="{{ $sidenotesPositionJS.Data.Integrity }}" crossorigin="anonymous"></script>
-  */}}
+<!-- Output the combined and minified resources -->
+<!-- Scripts -->
+{{ if gt (len $scripts) 0 }}
+  {{ $combinedScripts := $scripts | resources.Concat "js/single-page.js" | minify | fingerprint }}
+  <script src="{{ $combinedScripts.RelPermalink }}" integrity="{{ $combinedScripts.Data.Integrity }}" crossorigin="anonymous" defer></script>
 {{ end }}
 
-<!-- Include table-wrapper.js for responsive tables -->
-{{ $tableWrapperJS := resources.Get "js/table-wrapper.js" | minify | fingerprint }}
-<script src="{{ $tableWrapperJS.RelPermalink }}" integrity="{{ $tableWrapperJS.Data.Integrity }}" crossorigin="anonymous"></script>
+<!-- Styles -->
+{{ if gt (len $styles) 0 }}
+  {{ $combinedStyles := $styles | resources.Concat "css/single-page.css" | resources.Minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $combinedStyles.RelPermalink }}" integrity="{{ $combinedStyles.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
+
 {{ end }}
