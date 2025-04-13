@@ -1,83 +1,124 @@
-/* Single post template styling */
+/* Single post template styling - with maximum precedence */
 
 /* Make the post title match the h1 style in markdown.css with higher specificity */
-.layout-container .main-content .post-title {
-  font-size: 2.25rem;
-  margin-top: 2rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--color-primary);
-  color: var(--text-color-heading);
-  line-height: 1.2;
-  background: none !important; /* Force no background */
+html body .layout-container .main-content .post-title {
+  font-size: 2.25rem !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1.25rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 2px solid var(--color-primary) !important;
+  color: var(--text-color-heading) !important;
+  line-height: 1.2 !important;
+  background: none !important;
+  background-color: transparent !important;
 }
 
 /* Post header section with increased specificity */
-.layout-container .main-content .post-header {
-  margin-bottom: 3rem;
+html body .layout-container .main-content .post-header {
+  margin-bottom: 0 !important; /* Removed bottom margin */
   background: none !important;
+  background-color: transparent !important;
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  border: none !important; /* Remove any borders */
+  border-bottom: none !important; /* Specifically remove bottom border */
+  box-shadow: none !important; /* Remove any shadow that might look like a line */
 }
 
-/* Metadata styling with higher specificity */
-.layout-container .main-content .page-metadata {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  margin-bottom: 0;
-  font-size: 0.9rem;
-  color: var(--text-color-secondary);
+/* Metadata styling with maximum specificity */
+html body .layout-container .main-content .page-metadata {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1.2rem !important;
+  margin-top: 0 !important; /* Removed top margin */
+  margin-bottom: 1.5rem !important;
+  padding-bottom: 0.5rem !important;
+  font-size: 0.9rem !important;
+  color: var(--text-color-secondary) !important;
   background: none !important;
-  align-items: center;
+  background-color: transparent !important;
+  align-items: center !important;
+  width: 100% !important;
+  position: relative !important; 
+  z-index: 5 !important;
 }
 
-/* Icon alignment for metadata items with increased specificity */
-.layout-container .main-content .page-author,
-.layout-container .main-content .page-date,
-.layout-container .main-content .page-categories,
-.layout-container .main-content .page-tags {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Icon alignment for metadata items with maximum specificity */
+html body .layout-container .main-content .page-author,
+html body .layout-container .main-content .page-date,
+html body .layout-container .main-content .page-categories,
+html body .layout-container .main-content .page-tags {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important; /* Reduced gap for better alignment */
   background: none !important;
+  background-color: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 24px !important; /* Standardize height for consistent alignment */
+  line-height: 24px !important; /* Match line height to height */
 }
 
-/* SVG icon styling with higher specificity */
-.layout-container .main-content .page-metadata svg {
-  flex-shrink: 0;
-  color: var(--color-primary);
-  opacity: 0.8;
+/* SVG icon styling with maximum specificity */
+html body .layout-container .main-content .page-metadata svg {
+  flex-shrink: 0 !important;
+  color: var(--color-primary) !important;
+  opacity: 0.8 !important;
+  margin: 0 !important; /* Remove margin since we're using gap */
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  position: relative !important;
+  top: -1px !important; /* Fine-tune vertical alignment */
 }
 
-/* Tag styling with increased specificity */
-.layout-container .main-content .page-tags {
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 0.5rem;
+/* Add padding to the text content for better visual separation with maximum specificity */
+html body .layout-container .main-content .page-author span,
+html body .layout-container .main-content .page-date time,
+html body .layout-container .main-content .page-categories a,
+html body .layout-container .main-content .page-tags a:first-of-type {
+  position: relative !important;
+  padding: 0 !important; /* Remove padding for clean alignment */
+  vertical-align: middle !important;
+  display: inline-block !important;
+  line-height: 1.4 !important; /* Better text alignment */
 }
 
-.layout-container .main-content .tag-link {
-  background-color: rgba(var(--color-primary-rgb, 74, 144, 226), 0.08);
-  border-radius: 3px;
-  padding: 0.1rem 0.4rem;
-  font-size: 0.85rem;
-  white-space: nowrap;
-  display: inline-block;
-  margin: 0.1rem 0.1rem;
+/* Tag styling with highest specificity */
+html body .layout-container .main-content .page-tags {
+  flex-wrap: wrap !important;
+  gap: 0.4rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+html body .layout-container .main-content .tag-link {
+  background-color: rgba(var(--color-primary-rgb, 74, 144, 226), 0.08) !important;
+  border-radius: 3px !important;
+  padding: 0.1rem 0.4rem !important;
+  font-size: 0.85rem !important;
+  white-space: nowrap !important;
+  display: inline-block !important;
+  margin: 0.1rem 0.1rem !important;
 }
 
 /* Clear separation between metadata and content */
-.layout-container .main-content .post-content {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  clear: both;
+html body .layout-container .main-content .post-content {
+  margin-top: 2rem !important;
+  padding-top: 1rem !important;
+  clear: both !important;
+  position: relative !important;
+  width: 100% !important;
+  overflow: visible !important;
 }
 
-/* Dark mode adjustments with higher specificity */
-[data-theme="dark"] .layout-container .main-content .post-title {
-  border-bottom-color: var(--color-primary);
+/* Dark mode adjustments with highest specificity */
+html[data-theme="dark"] body .layout-container .main-content .post-title {
+  border-bottom-color: var(--color-primary) !important;
 }
 
-[data-theme="dark"] .layout-container .main-content .tag-link {
-  background-color: rgba(233, 153, 107, 0.1);
+html[data-theme="dark"] body .layout-container .main-content .tag-link {
+  background-color: rgba(233, 153, 107, 0.1) !important;
 }

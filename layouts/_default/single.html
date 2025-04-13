@@ -92,18 +92,7 @@
 {{ $scripts := slice }}
 {{ $styles := slice }}
 
-<!-- Add single.css for styling specific to single posts -->
-{{ with resources.Get "css/single.css" }}
-  {{ $styles = $styles | append . }}
-{{ end }}
-
-<!-- Add TOC resources if needed -->
-{{ if and .Params.toc .TableOfContents }}
-  {{ $tocJS := resources.Get "js/toc.js" }}
-  {{ $scripts = $scripts | append $tocJS }}
-{{ end }}
-
-<!-- Add sidenotes resources if needed -->
+<!-- Add other CSS resources first if needed -->
 {{ if .Params.sidenotes }}
   {{ with resources.Get "css/sidenotes.css" }}
     {{ $styles = $styles | append . }}
@@ -116,6 +105,17 @@
   {{ $sidenotesJS := resources.Get "js/sidenotes.js" }}
   {{ $referencesJS := resources.Get "js/references.js" }}
   {{ $scripts = $scripts | append $sidenotesJS $referencesJS }}
+{{ end }}
+
+<!-- Add single.css LAST for styling specific to single posts to ensure precedence -->
+{{ with resources.Get "css/single.css" }}
+  {{ $styles = $styles | append . }}
+{{ end }}
+
+<!-- Add TOC resources if needed -->
+{{ if and .Params.toc .TableOfContents }}
+  {{ $tocJS := resources.Get "js/toc.js" }}
+  {{ $scripts = $scripts | append $tocJS }}
 {{ end }}
 
 <!-- Always include table-wrapper.js -->
