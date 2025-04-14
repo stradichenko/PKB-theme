@@ -1,39 +1,47 @@
 /* Contribution Calendar Styling */
-.contribution-section {
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid var(--color-border);
-  width: 100%;
-  overflow: hidden; /* Prevent horizontal scrolling */
-}
+/* Remove the section styling since we're integrating into the about-profile container */
 
+/* Title styling to match about-profile.css */
 .contribution-title {
-  font-size: 1.5rem;
-  margin-bottom: 1.25rem;
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-md);
   color: var(--text-color-heading);
-  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--color-primary);
+  padding-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  display: inline-block;
 }
 
-.contribution-calendar {
+/* Calendar box to match the about-profile boxes */
+.calendar-box {
   width: 100%;
-  display: grid;
-  grid-template-rows: auto auto auto;
-  gap: 1rem;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-light);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
 }
 
 .calendar-container {
   width: 100%;
   max-width: 100%;
-  overflow-x: auto; /* Allow horizontal scroll */
+  overflow-x: auto;
+  margin-bottom: var(--spacing-md);
 }
 
 .calendar-wrapper {
-  width: fit-content; /* Don't expand beyond content */
-  position: relative; /* For month labels positioning */
-  padding-top: 20px; /* Space for month labels */
+  width: fit-content;
+  position: relative;
+  padding-top: 20px;
   min-width: 100%; /* Take up at least full width of parent */
 }
 
+/* Month labels */
 .calendar-months {
   position: absolute;
   top: 0;
@@ -49,22 +57,22 @@
   color: var(--text-color-secondary);
   white-space: nowrap;
   padding-bottom: 3px;
-  /* Position is now set by inline styles dynamically */
 }
 
+/* Calendar cells */
 .calendar-cells {
   display: grid;
   grid-template-rows: repeat(7, 12px);
   gap: 2px;
-  width: fit-content; /* Don't expand beyond content size */
+  width: fit-content;
 }
 
 .calendar-row {
   display: grid;
-  grid-template-columns: repeat(52, 12px); /* Fixed width columns */
+  grid-template-columns: repeat(52, 12px);
   gap: 2px;
   height: 12px;
-  width: fit-content; /* Don't expand beyond content size */
+  width: fit-content;
 }
 
 .calendar-cell {
@@ -73,9 +81,9 @@
   border-radius: 2px;
   transition: transform 0.15s ease, background-color 0.2s ease;
   cursor: pointer;
-  min-width: 12px; /* Prevent shrinking */
-  max-width: 12px; /* Prevent growing */
-  flex-shrink: 0; /* Don't allow flex shrinking */
+  min-width: 12px;
+  max-width: 12px;
+  flex-shrink: 0;
 }
 
 .calendar-cell:hover {
@@ -127,35 +135,35 @@
   background-color: rgba(var(--dark-primary-rgb, 233, 153, 107), 0.9);
 }
 
-/* Legend styling - fixed width approach */
+/* Legend styling - clean and minimal */
 .calendar-legend {
   display: flex;
   align-items: center;
-  margin-top: 0.75rem;
-  margin-left: 20px; /* Match the left margin of the calendar cells */
-  width: fit-content;
+  margin-top: 0; /* Removed margin */
+  padding-top: 0; /* Removed padding */
+  border-top: none; /* Removed border */
+  width: 100%;
 }
 
 .legend-label {
   font-size: 0.8rem;
   color: var(--text-color-secondary);
   white-space: nowrap;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
 .legend-cells {
   display: flex;
   gap: 2px;
-  margin: 0 0.5rem; /* Add equal margin on both sides */
-  flex-shrink: 0; /* Prevent shrinking */
+  margin: 0 0.5rem;
+  flex-shrink: 0;
 }
 
 .legend-cells .calendar-cell {
   cursor: default;
-  /* Fixed width matching the calendar cells */
   width: 12px;
   height: 12px;
-  min-width: 12px; 
+  min-width: 12px;
   max-width: 12px;
 }
 
@@ -184,15 +192,20 @@
   border-color: var(--dark-border);
 }
 
-/* Responsive design with better grid scaling */
+[data-theme="dark"] .calendar-box {
+  background-color: var(--dark-surface);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive design adjustments */
 @media (min-width: 1024px) {
   .calendar-container {
-    /* Use viewport-relative units for larger screens */
     width: 100%;
+    justify-content: center;
   }
   
   .calendar-row {
-    grid-template-columns: repeat(52, 12px); /* Keep fixed size even on large screens */
+    grid-template-columns: repeat(52, 12px);
   }
   
   .calendar-months {
@@ -202,23 +215,26 @@
 
 @media (max-width: 1023px) {
   .calendar-container {
-    /* Fixed width for medium screens with horizontal scroll if needed */
-    min-width: auto; /* Remove min-width constraint */
+    min-width: auto;
   }
 }
 
 @media (max-width: 768px) {
+  .calendar-box {
+    padding: var(--spacing-md);
+  }
+  
   .calendar-container {
-    min-width: auto; /* Remove min-width constraint */
+    min-width: auto;
   }
   
   .calendar-wrapper {
-    padding-top: 18px; /* Smaller top padding on mobile */
+    padding-top: 18px;
   }
   
   .calendar-row {
     height: 10px;
-    grid-template-columns: repeat(52, 10px); /* Smaller but still fixed size */
+    grid-template-columns: repeat(52, 10px);
     gap: 1px;
   }
   
@@ -256,6 +272,10 @@
 }
 
 @media (max-width: 480px) {
+  .calendar-box {
+    padding: var(--spacing-sm);
+  }
+  
   .calendar-cells {
     grid-template-rows: repeat(7, 8px);
     gap: 1px;
@@ -263,7 +283,7 @@
   
   .calendar-row {
     height: 8px;
-    grid-template-columns: repeat(52, 8px); /* Smaller but still fixed size */
+    grid-template-columns: repeat(52, 8px);
     gap: 1px;
   }
   
@@ -292,14 +312,19 @@
   
   .legend-cells {
     gap: 1px;
-    margin: 0 0.3rem; /* Smaller margin on small screens */
+    margin: 0 0.3rem;
   }
   
   .calendar-months {
-    width: calc(52 * 9px); /* 52 weeks × (8px cell + 1px gap) */
+    width: calc(52 * 9px);
   }
   
   .month-label {
     font-size: 0.65rem;
+  }
+  
+  .calendar-container,
+  .calendar-legend {
+    padding: var(--spacing-sm);
   }
 }
