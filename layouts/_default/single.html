@@ -122,6 +122,10 @@
 {{ $tableWrapperJS := resources.Get "js/table-wrapper.js" }}
 {{ $scripts = $scripts | append $tableWrapperJS }}
 
+<!-- Add BibTeX support -->
+{{ $bibtexJS := resources.Get "js/bibtex.js" }}
+{{ $scripts = $scripts | append $bibtexJS }}
+
 <!-- Output the combined and minified resources -->
 <!-- Scripts -->
 {{ if gt (len $scripts) 0 }}

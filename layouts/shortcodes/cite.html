@@ -1,0 +1,16 @@
+{{ $citationKey := .Get 0 | default "" }}
+{{ $bibFile := .Get 1 | default "references.bib" }}
+{{ $style := .Get 2 | default "apa" }}
+{{ $showNotes := .Get 3 | default "false" }}
+
+<span class="citation" 
+      data-citation-key="{{ $citationKey }}" 
+      data-bib-file="{{ $bibFile }}"
+      data-citation-style="{{ $style }}"
+      data-show-notes="{{ $showNotes }}">
+  {{ if eq $citationKey "" }}
+    [Citation key required]
+  {{ else }}
+    [Loading citation: {{ $citationKey }}]
+  {{ end }}
+</span>

@@ -98,6 +98,9 @@
   {{ $blockquoteCSS := resources.Get "css/components/blockquote.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $blockquoteCSS.RelPermalink }}" integrity="{{ $blockquoteCSS.Data.Integrity }}" crossorigin="anonymous">
   
+  {{ $citationCSS := resources.Get "css/components/citation.css" | fingerprint }}
+  <link rel="stylesheet" href="{{ $citationCSS.RelPermalink }}" integrity="{{ $citationCSS.Data.Integrity }}" crossorigin="anonymous">
+  
   {{ with resources.Get "css/components/code.css" }}
     {{ $codeCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $codeCSS.RelPermalink }}" integrity="{{ $codeCSS.Data.Integrity }}" crossorigin="anonymous">
@@ -142,6 +145,7 @@
       (resources.Get "css/components/toc.css")
       (resources.Get "css/components/table.css")
       (resources.Get "css/components/blockquote.css")
+      (resources.Get "css/components/citation.css")
       (resources.Get "css/components/code.css")
       (resources.Get "css/components/markdown.css")
       (resources.Get "css/list.css")

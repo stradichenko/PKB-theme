@@ -1,0 +1,65 @@
+/* Citation styles for BibTeX references */
+
+.citation {
+  display: block;
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--text-color-body);
+}
+
+.citation-processed {
+  padding: var(--spacing-sm);
+  border-left: 3px solid var(--color-primary);
+  background-color: var(--color-surface-alt);
+  border-radius: var(--border-radius);
+}
+
+.citation-text {
+  margin: 0;
+  padding: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+}
+
+.citation-note {
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px dashed var(--color-border);
+  font-style: italic;
+  color: var(--text-color-muted);
+}
+
+/* Links in citations */
+.citation a {
+  color: var(--color-primary);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--color-primary);
+}
+
+.citation a:hover {
+  border-bottom: 1px solid var(--color-primary);
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .citation-processed {
+  background-color: var(--dark-surface-alt, #1e2a38);
+  border-left-color: var(--dark-primary, #e9996b);
+}
+
+[data-theme="dark"] .citation-note {
+  border-top-color: var(--dark-border, #3a4755);
+  color: var(--dark-text-secondary, #a7b6c7);
+}
+
+[data-theme="dark"] .citation a {
+  color: var(--dark-primary, #e9996b);
+  border-bottom-color: var(--dark-primary, #e9996b);
+}
+
+/* Responsive adjustments */
+@media (max-width: var(--breakpoint-md)) {
+  .citation {
+    font-size: var(--font-size-small);
+  }
+}
