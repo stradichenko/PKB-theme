@@ -58,14 +58,13 @@ footer {
   height: 36px;
   color: var(--footer-text-color);
   border-radius: 50%;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease; /* Simplified transition */
   background-color: var(--footer-social-bg);
 }
 
 .social-link:hover,
 .social-link:focus {
-  color: var(--footer-link-color);
-  transform: translateY(-3px);
+  color: var(--color-primary); /* Using primary color for all social icons on hover */
   background-color: var(--footer-social-bg-hover);
   text-decoration: none;
 }
@@ -74,14 +73,6 @@ footer {
   width: 20px;
   height: 20px;
 }
-
-/* Social link specific colors on hover */
-.social-link.linkedin:hover { color: var(--color-linkedin); }
-.social-link.twitter:hover { color: var(--color-twitter); }
-.social-link.instagram:hover { color: var(--color-instagram); }
-.social-link.github:hover { color: var(--color-github); }
-.social-link.orcid:hover { color: var(--color-orcid); }
-.social-link.email:hover { color: var(--color-primary); }
 
 /* Footer link styling */
 .footer-info a {
