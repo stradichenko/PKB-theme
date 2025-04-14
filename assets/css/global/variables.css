@@ -176,6 +176,12 @@
   /* Footer specific variables */
   --footer-social-bg: rgba(255, 255, 255, 0.1);
   --footer-social-bg-hover: rgba(255, 255, 255, 0.15);
+
+  /* RGB versions of colors for opacity/transparency effects */
+  --light-primary-rgb: 74, 144, 226; /* RGB values for light primary color */
+  --light-secondary-rgb: 223, 45, 45; /* RGB values for light secondary color */
+  --dark-primary-rgb: 233, 153, 107; /* RGB values for dark primary color */
+  --dark-secondary-rgb: 255, 82, 82; /* RGB values for dark secondary color */
 }
 
 /* Dark Theme CSS Variable Overrides */

@@ -133,6 +133,10 @@
   <!-- 6. Theme toggle CSS - LOAD LAST to ensure overrides work -->
   {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
+
+  <!-- Contribution calendar CSS -->
+  {{ $contributionCalendarCSS := resources.Get "css/contribution-calendar.css" | minify }}
+  <link rel="stylesheet" href="{{ $contributionCalendarCSS.Permalink }}">
 {{ else }}
   <!-- Production mode - Concatenated and minified CSS -->
   {{ $cssFiles := slice 
@@ -165,6 +169,10 @@
   <!-- Load theme-toggle CSS last to ensure it overrides all other styles -->
   {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
+
+  <!-- Contribution calendar CSS -->
+  {{ $contributionCalendarCSS := resources.Get "css/contribution-calendar.css" | minify }}
+  <link rel="stylesheet" href="{{ $contributionCalendarCSS.Permalink }}">
 {{ end }}
 
 <!-- JavaScript loading -->

@@ -1,0 +1,111 @@
+<div class="contribution-section">
+  <h2 class="contribution-title">Activity Calendar</h2>
+  <div class="contribution-calendar">
+    {{ $posts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+    
+    {{ $now := now }}
+    {{ $today := $now.Format "2006-01-02" }}
+    {{ $startDate := $now.AddDate 0 0 -365 }}
+    
+    <!-- Create map of dates and activity count -->
+    {{ $dateMap := dict }}
+    {{ range $posts }}
+      {{ $lastmod := .Lastmod.Format "2006-01-02" }}
+      {{ $created := .Date.Format "2006-01-02" }}
+      
+      {{ if (index $dateMap $created) }}
+        {{ $currentCount := index $dateMap $created }}
+        {{ $dateMap = merge $dateMap (dict $created (add $currentCount 1)) }}
+      {{ else }}
+        {{ $dateMap = merge $dateMap (dict $created 1) }}
+      {{ end }}
+      
+      {{ if ne $lastmod $created }}
+        {{ if (index $dateMap $lastmod) }}
+          {{ $currentCount := index $dateMap $lastmod }}
+          {{ $dateMap = merge $dateMap (dict $lastmod (add $currentCount 1)) }}
+        {{ else }}
+          {{ $dateMap = merge $dateMap (dict $lastmod 1) }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+    
+    <!-- Calculate month positions for the calendar period -->
+    {{ $monthPositions := dict }}
+    {{ $currentDate := $startDate }}
+    {{ $endDate := $now }}
+    {{ $lastMonth := "" }}
+
+    <!-- Loop through all days to find month start positions -->
+    {{ range $dayOffset := seq 0 365 }}
+      {{ $date := $startDate.AddDate 0 0 $dayOffset }}
+      {{ $monthName := $date.Format "Jan" }}
+      {{ $month := $date.Format "2006-01" }}
+      
+      <!-- If we encounter a new month, record its position -->
+      {{ if ne $month $lastMonth }}
+        {{ $weekNum := div $dayOffset 7 }}
+        {{ $position := add 0.0 (mul $weekNum 14) }}
+        {{ $monthPositions = merge $monthPositions (dict $monthName $position) }}
+        {{ $lastMonth = $month }}
+      {{ end }}
+    {{ end }}
+    
+    <!-- Generate calendar visualization -->
+    <div class="calendar-container">
+      <div class="calendar-wrapper">
+        <div class="calendar-months">
+          <!-- Output months with their calculated positions -->
+          {{ range $month, $position := $monthPositions }}
+            <div class="month-label" data-month="{{ $month }}" style="left: {{ $position }}px;">{{ $month }}</div>
+          {{ end }}
+        </div>
+        
+        <div class="calendar-cells">
+          {{ range $i := seq 0 6 }}
+            <div class="calendar-row">
+              {{ range $j := seq 0 51 }}
+                {{ $dayOffset := add (mul $j 7) $i }}
+                {{ $currentDate := $startDate.AddDate 0 0 (int $dayOffset) }}
+                {{ $dateStr := $currentDate.Format "2006-01-02" }}
+                {{ $month := $currentDate.Format "Jan" }}
+                {{ $count := index $dateMap $dateStr | default 0 }}
+                {{ $level := 0 }}
+                {{ if gt $count 0 }}
+                  {{ if gt $count 10 }}
+                    {{ $level = 4 }}
+                  {{ else if gt $count 7 }}
+                    {{ $level = 3 }}
+                  {{ else if gt $count 4 }}
+                    {{ $level = 2 }}
+                  {{ else }}
+                    {{ $level = 1 }}
+                  {{ end }}
+                {{ end }}
+                <div 
+                  class="calendar-cell level-{{ $level }}" 
+                  data-date="{{ $dateStr }}" 
+                  data-month="{{ $month }}"
+                  data-count="{{ $count }}"
+                  title="{{ $dateStr }}: {{ $count }} activities"
+                ></div>
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="calendar-legend">
+      <span class="legend-label">Less</span>
+      <div class="legend-cells">
+        <div class="calendar-cell level-0" title="No activity"></div>
+        <div class="calendar-cell level-1" title="1-3 activities"></div>
+        <div class="calendar-cell level-2" title="4-6 activities"></div>
+        <div class="calendar-cell level-3" title="7-10 activities"></div>
+        <div class="calendar-cell level-4" title="10+ activities"></div>
+      </div>
+      <span class="legend-label">More</span>
+    </div>
+  </div>
+</div>
