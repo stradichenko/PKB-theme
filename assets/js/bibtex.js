@@ -23,6 +23,19 @@ const citationStyles = {
       }
     },
     
+    formatInlineReference: (entry, authors) => {
+      if (!authors) authors = parseAuthors(entry.author);
+      if (!authors || authors.length === 0) return `(${entry.year || 'n.d.'})`;
+      
+      if (authors.length === 1) {
+        return `(${authors[0].lastName}, ${entry.year || 'n.d.'})`;
+      } else if (authors.length === 2) {
+        return `(${authors[0].lastName} & ${authors[1].lastName}, ${entry.year || 'n.d.'})`;
+      } else {
+        return `(${authors[0].lastName} et al., ${entry.year || 'n.d.'})`;
+      }
+    },
+    
     formatReference: entry => {
       // Parse authors
       const authors = parseAuthors(entry.author);
@@ -67,6 +80,13 @@ const citationStyles = {
       } else {
         return `${authors[0].lastName}, ${authors[0].firstName}, et al.`;
       }
+    },
+    
+    formatInlineReference: (entry, authors) => {
+      if (!authors) authors = parseAuthors(entry.author);
+      if (!authors || authors.length === 0) return `(${entry.title ? entry.title.split(' ')[0] : 'n.d.'})`;
+      
+      return `(${authors[0].lastName} ${authors.length > 1 ? 'et al.' : ''})`;
     },
     
     formatReference: entry => {
@@ -117,6 +137,17 @@ const citationStyles = {
         return result;
       } else {
         return `${authors[0].lastName}, ${authors[0].firstName}, et al.`;
+      }
+    },
+    
+    formatInlineReference: (entry, authors) => {
+      if (!authors) authors = parseAuthors(entry.author);
+      if (!authors || authors.length === 0) return `(${entry.year || 'n.d.'})`;
+      
+      if (authors.length === 1) {
+        return `(${authors[0].lastName} ${entry.year || 'n.d.'})`;
+      } else {
+        return `(${authors[0].lastName} et al. ${entry.year || 'n.d.'})`;
       }
     },
     
@@ -226,12 +257,18 @@ function parseBibTeX(bibContent) {
 async function processCitations() {
   // Find all citation elements
   const citations = document.querySelectorAll('.citation');
-  if (citations.length === 0) return;
+  const citationMarkers = document.querySelectorAll('.citation-marker');
+  
+  if (citations.length === 0 && citationMarkers.length === 0) return;
   
   // Group citations by bibFile to minimize fetches
   const bibFiles = new Set();
   citations.forEach(citation => {
     bibFiles.add(citation.dataset.bibFile);
+  });
+  
+  citationMarkers.forEach(marker => {
+    bibFiles.add(marker.dataset.bibFile);
   });
   
   // Fetch and parse each BibTeX file
@@ -273,6 +310,34 @@ async function processCitations() {
     // Update the citation element
     citation.innerHTML = formattedCitation;
     citation.classList.add('citation-processed');
+  });
+  
+  // Process each inline citation marker
+  citationMarkers.forEach(marker => {
+    const key = marker.dataset.citationKey;
+    const bibFile = marker.dataset.bibFile;
+    const style = marker.dataset.citationStyle || 'apa';
+    
+    if (!key || !bibData[bibFile] || !bibData[bibFile][key]) {
+      marker.textContent = `[?]`;
+      return;
+    }
+    
+    const entry = bibData[bibFile][key];
+    const authors = parseAuthors(entry.author);
+    
+    // Format inline citation
+    let inlineCitation = '';
+    if (citationStyles[style] && citationStyles[style].formatInlineReference) {
+      inlineCitation = citationStyles[style].formatInlineReference(entry, authors);
+    } else {
+      // Default to numeric citation if style doesn't support inline
+      inlineCitation = `[${key}]`;
+    }
+    
+    // Update the marker element
+    marker.textContent = inlineCitation;
+    marker.classList.add('citation-marker-processed');
   });
 }
 

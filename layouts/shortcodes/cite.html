@@ -3,14 +3,33 @@
 {{ $style := .Get 2 | default "apa" }}
 {{ $showNotes := .Get 3 | default "false" }}
 
-<span class="citation" 
-      data-citation-key="{{ $citationKey }}" 
-      data-bib-file="{{ $bibFile }}"
-      data-citation-style="{{ $style }}"
-      data-show-notes="{{ $showNotes }}">
-  {{ if eq $citationKey "" }}
-    [Citation key required]
-  {{ else }}
-    [Loading citation: {{ $citationKey }}]
-  {{ end }}
+<!-- Create a unique ID for this citation sidenote -->
+{{ $citationId := printf "citation-%s" $citationKey }}
+
+<!-- Generate a sidenote with the citation data -->
+<span class="citation-reference">
+  <span class="citation-marker" 
+        data-citation-key="{{ $citationKey }}" 
+        data-bib-file="{{ $bibFile }}"
+        data-citation-style="{{ $style }}"
+        data-show-notes="{{ $showNotes }}">
+    {{ if eq $citationKey "" }}
+      [Citation key required]
+    {{ else }}
+      [{{ $citationKey }}]
+    {{ end }}
+  </span>
 </span>
+<aside class="sidenote sidenote-hidden citation-sidenote" id="{{ $citationId }}" lang="{{ .Site.Language.Lang | default "en" }}">
+  <span class="citation" 
+        data-citation-key="{{ $citationKey }}" 
+        data-bib-file="{{ $bibFile }}"
+        data-citation-style="{{ $style }}"
+        data-show-notes="{{ $showNotes }}">
+    {{ if eq $citationKey "" }}
+      [Citation key required]
+    {{ else }}
+      [Loading citation: {{ $citationKey }}]
+    {{ end }}
+  </span>
+</aside>

@@ -8,26 +8,65 @@
   color: var(--text-color-body);
 }
 
-.citation-processed {
-  padding: var(--spacing-sm);
-  border-left: 3px solid var(--color-primary);
-  background-color: var(--color-surface-alt);
-  border-radius: var(--border-radius);
+/* Citation reference in the main text */
+.citation-reference {
+  position: relative;
+  display: inline;
 }
 
-.citation-text {
+.citation-marker {
+  font-size: 0.85em;
+  vertical-align: super;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.citation-marker-processed {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Parenthetical citation styles */
+.citation-marker.apa-style,
+.citation-marker.chicago-style {
+  vertical-align: baseline;
+  font-size: var(--font-size-small);
+}
+
+/* Minimal styling for citations in sidenotes */
+.sidenote .citation,
+.references-list .citation {
+  display: inline;
   margin: 0;
   padding: 0;
-  text-indent: -2em;
-  padding-left: 2em;
+  font-size: inherit;
+  line-height: inherit;
 }
 
-.citation-note {
+/* Remove all decorative elements for citations in sidenotes/references */
+.sidenote .citation-processed,
+.references-list .citation-processed {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+}
+
+/* Simple text formatting for citation text in sidenotes */
+.sidenote .citation-text,
+.references-list .citation-text {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+}
+
+/* Notes in citations should be subtle */
+.sidenote .citation-note,
+.references-list .citation-note {
   margin-top: var(--spacing-sm);
-  padding-top: var(--spacing-sm);
-  border-top: 1px dashed var(--color-border);
   font-style: italic;
   color: var(--text-color-muted);
+  border: none;
+  padding: 0;
 }
 
 /* Links in citations */
@@ -41,20 +80,19 @@
   border-bottom: 1px solid var(--color-primary);
 }
 
-/* Dark mode styles */
-[data-theme="dark"] .citation-processed {
-  background-color: var(--dark-surface-alt, #1e2a38);
-  border-left-color: var(--dark-primary, #e9996b);
-}
-
-[data-theme="dark"] .citation-note {
-  border-top-color: var(--dark-border, #3a4755);
-  color: var(--dark-text-secondary, #a7b6c7);
+/* Dark mode styles - only essential color changes */
+[data-theme="dark"] .citation-marker {
+  color: var(--dark-primary, #e9996b);
 }
 
 [data-theme="dark"] .citation a {
   color: var(--dark-primary, #e9996b);
   border-bottom-color: var(--dark-primary, #e9996b);
+}
+
+[data-theme="dark"] .sidenote .citation-note,
+[data-theme="dark"] .references-list .citation-note {
+  color: var(--dark-text-secondary, #a7b6c7);
 }
 
 /* Responsive adjustments */
