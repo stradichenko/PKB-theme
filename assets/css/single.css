@@ -47,6 +47,7 @@ html body .layout-container .main-content .page-metadata {
 /* Icon alignment for metadata items with maximum specificity */
 html body .layout-container .main-content .page-author,
 html body .layout-container .main-content .page-date,
+html body .layout-container .main-content .page-updated,
 html body .layout-container .main-content .page-categories,
 html body .layout-container .main-content .page-tags {
   display: inline-flex !important;
@@ -78,6 +79,7 @@ html body .layout-container .main-content .page-metadata svg {
 /* Add padding to the text content for better visual separation with maximum specificity */
 html body .layout-container .main-content .page-author span,
 html body .layout-container .main-content .page-date time,
+html body .layout-container .main-content .page-updated span,
 html body .layout-container .main-content .page-categories a,
 html body .layout-container .main-content .page-tags a:first-of-type {
   position: relative !important;
