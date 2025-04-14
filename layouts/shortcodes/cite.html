@@ -12,7 +12,8 @@
         data-citation-key="{{ $citationKey }}" 
         data-bib-file="{{ $bibFile }}"
         data-citation-style="{{ $style }}"
-        data-show-notes="{{ $showNotes }}">
+        data-show-notes="{{ $showNotes }}"
+        data-citation-id="{{ $citationId }}">
     {{ if eq $citationKey "" }}
       [Citation key required]
     {{ else }}

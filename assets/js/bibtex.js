@@ -317,6 +317,7 @@ async function processCitations() {
     const key = marker.dataset.citationKey;
     const bibFile = marker.dataset.bibFile;
     const style = marker.dataset.citationStyle || 'apa';
+    const citationId = marker.dataset.citationId;
     
     if (!key || !bibData[bibFile] || !bibData[bibFile][key]) {
       marker.textContent = `[?]`;
@@ -335,8 +336,38 @@ async function processCitations() {
       inlineCitation = `[${key}]`;
     }
     
-    // Update the marker element
-    marker.textContent = inlineCitation;
+    // Create a wrapper for the citation text
+    const wrapper = document.createElement('span');
+    wrapper.textContent = inlineCitation;
+    wrapper.classList.add('citation-text');
+    
+    // Create the link if DOI exists
+    if (entry.doi) {
+      const link = document.createElement('a');
+      link.href = `https://doi.org/${entry.doi}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.classList.add('citation-link');
+      link.appendChild(wrapper);
+      
+      // Clear the marker and append the link
+      marker.textContent = '';
+      marker.appendChild(link);
+    } else if (citationId) {
+      // If no DOI but we have a citation ID, link to the sidenote
+      const link = document.createElement('a');
+      link.href = `#${citationId}`;
+      link.classList.add('citation-link');
+      link.appendChild(wrapper);
+      
+      // Clear the marker and append the link
+      marker.textContent = '';
+      marker.appendChild(link);
+    } else {
+      // Just update text if no linking is possible
+      marker.textContent = inlineCitation;
+    }
+    
     marker.classList.add('citation-marker-processed');
   });
 }
