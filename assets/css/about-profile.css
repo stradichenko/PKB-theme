@@ -1,23 +1,45 @@
-/* About Profile Styles */
+/* ------------------------------------------------------------------------- */
+/* ABOUT PROFILE STYLES                                                      */
+/* ------------------------------------------------------------------------- */
 
+/* Main container with responsive grid/flex layout */
 .about-profile-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  width: 100%;
+  max-width: 100%;  /* Use full width */
+  padding: 0;       /* Remove padding to use full width */
 }
 
+/* Profile left column with image and social links */
 .about-left-column {
   flex: 1;
   min-width: 240px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-light);
 }
 
+/* Profile right column with content */
 .about-right-column {
   flex: 3;
   min-width: 300px;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-light);
+}
+
+/* Profile image styling */
+.profile-image {
+  position: relative;
+  margin-bottom: var(--spacing-md);
 }
 
 .profile-image img {
@@ -25,47 +47,58 @@
   height: 240px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-light);
+  border: 4px solid var(--color-background);
 }
 
-/* Fixed social links styling */
+/* Social links container */
 .social-links {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
   width: 100%;
 }
 
+/* Social links grid layout option */
+.social-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+  grid-gap: var(--spacing-md);
+  max-width: 240px;
+  margin: var(--spacing-xl) auto 0;
+}
+
+/* Individual social link styling */
 .social-links a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-primary);
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: rgba(0,0,0,0.05);
+  background-color: rgba(0, 0, 0, 0.05);
   overflow: visible; /* Ensure SVGs aren't cut off */
 }
 
+/* Hover effect for social links - only color change, no transform */
 .social-links a:hover {
-  transform: translateY(-3px);
   color: var(--color-primary);
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Simplified SVG styling */
+/* SVG icon styling */
 .social-links svg {
   width: 24px;
   height: 24px;
   display: block;
 }
 
-/* Screen reader only class for accessibility */
+/* Accessibility - screen reader only class */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -78,18 +111,91 @@
   border-width: 0;
 }
 
+/* Content section styling */
+.about-section {
+  margin-bottom: var(--spacing-xl);
+  width: 100%;
+}
+
+.about-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Grid layout for interests */
 .interests-columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  width: 100%;
 }
 
 .column-1, .column-2 {
   flex: 1;
   min-width: 200px;
+  padding: var(--spacing-lg);  /* Increased padding for more space */
+  border-radius: var(--border-radius);
+  background-color: rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;     /* Ensure padding is included in width */
 }
 
-@media (max-width: 768px) {
+/* Ensure list items inside columns are properly contained */
+.column-1 ul, .column-2 ul {
+  list-style-position: inside;  /* Keep bullets inside container */
+  padding-left: 0;              /* Remove default padding */
+  margin-left: 0;               /* Remove default margin */
+}
+
+.column-1 li, .column-2 li {
+  text-indent: -1em;           /* Create hanging indent for bullets */
+  padding-left: 1em;           /* Balance the negative indent */
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.6;
+}
+
+/* Box styles for content sections */
+.content-box {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-light);
+  border-left: 4px solid var(--color-primary);
+  width: 100%;
+}
+
+/* Dark mode specific styles */
+[data-theme="dark"] .about-left-column,
+[data-theme="dark"] .about-right-column {
+  background-color: var(--dark-surface);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .content-box {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-left: 4px solid var(--color-primary);
+}
+
+[data-theme="dark"] .column-1,
+[data-theme="dark"] .column-2 {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .profile-image img {
+  border-color: var(--dark-background);
+}
+
+[data-theme="dark"] .social-links a {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .social-links a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: var(--breakpoint-md)) {
   .about-profile-container {
     flex-direction: column;
   }
@@ -97,4 +203,82 @@
   .social-links {
     max-width: 320px;
   }
+  
+  .about-left-column,
+  .about-right-column {
+    width: 100%;
+  }
+}
+
+@media (max-width: var(--breakpoint-sm)) {
+  .interests-columns {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-image img {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+/* Enhanced Typography for headings */
+.about-right-column h2 {
+  font-size: var(--font-size-2xl);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color-heading);
+  border-bottom: 3px solid var(--color-primary);
+  padding-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+}
+
+.about-right-column h3 {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  font-weight: var(--font-weight-semibold);
+  position: relative;
+  padding-left: var(--spacing-md);
+  line-height: 1.3;
+}
+
+/* Add decorative element to h3 headings */
+.about-right-column h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius);
+}
+
+.about-right-column h4 {
+  font-size: var(--font-size-large);
+  color: var(--text-color-heading);
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.about-right-column ul {
+  margin-left: var(--spacing-md);
+  list-style-type: disc;
+  margin-bottom: var(--spacing-md);
+}
+
+.about-right-column ul li {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.6;
+}
+
+.about-right-column p {
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
 }
