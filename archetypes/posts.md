@@ -1,7 +1,9 @@
 ---
 title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
-lastmod: {{ .Date }}  # Update this when content is modified
+# lastmod will be set automatically from Git with enableGitInfo = true
+# You can uncomment and set manually if needed
+# lastmod: {{ .Date }}
 draft: true
 comments: false  # Enable Remark42 comments by default
 tags: []
