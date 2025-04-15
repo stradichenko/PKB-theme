@@ -23,13 +23,44 @@
   stroke-width: 2px;
 }
 
+.node-dim {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.node-highlight {
+  stroke: var(--color-primary);
+  stroke-width: 2px;
+  opacity: 1;
+  transition: opacity 0.3s ease, stroke 0.3s ease;
+}
+
+.node-active {
+  stroke: var(--color-secondary);
+  stroke-width: 3px;
+  opacity: 1;
+  transition: opacity 0.3s ease, stroke 0.3s ease;
+}
+
 .label {
   font-family: var(--font-family-sans);
   font-size: var(--font-size-small);
   fill: var(--graph-text-color, var(--text-color-primary));
   font-weight: var(--font-weight-bold);
-  transition: fill 0.2s ease, text-shadow 0.2s ease;
+  transition: fill 0.2s ease, text-shadow 0.2s ease, opacity 0.3s ease;
   text-shadow: 0 0 2px rgba(0,0,0,0.2); /* Add slight shadow for better contrast */
+  pointer-events: none;
+}
+
+.label-dim {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.label-highlight {
+  opacity: 1;
+  font-weight: 700;
+  transition: opacity 0.3s ease, font-weight 0.3s ease;
 }
 
 .link {
@@ -38,6 +69,18 @@
 
 .link:hover {
   stroke-opacity: 1;
+}
+
+.link-dim {
+  opacity: 0.1;
+  transition: opacity 0.3s ease;
+}
+
+.link-highlight {
+  opacity: 1;
+  stroke-width: 2px;
+  stroke: var(--color-primary);
+  transition: opacity 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease;
 }
 
 /* Fullscreen button */

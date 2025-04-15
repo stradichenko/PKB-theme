@@ -234,6 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .attr('fill', d => colorScale(d.category))
     .attr('stroke', '#fff')
     .attr('stroke-width', 1.5)
+    .on('mouseover', highlightConnections)
+    .on('mouseout', resetHighlighting)
     .on('click', function(event, d) {
       // Open link in new tab instead of changing current page
       window.open(d.url, '_blank');
@@ -243,19 +245,61 @@ document.addEventListener('DOMContentLoaded', function() {
       .on('drag', dragged)
       .on('end', dragended));
       
-  // Node labels - with dynamic font size
+  // Node labels - place below nodes instead of centered
   const label = g.selectAll('.label')
     .data(graphData.nodes)
     .enter().append('text')
     .attr('class', 'label')
     .attr('text-anchor', 'middle')
-    .attr('dy', '.35em')
+    .attr('dy', '1.5em') // Position label below the node instead of centered
     .text(d => d.title.replace(/^"|"$/g, '')) // Remove surrounding quotes
     .style('font-size', d => `${calculateFontSize(d.linksCount)}px`)
     .style('fill', d => getCategoryTextColor(d.category))
     .style('font-weight', 'bold')
     .style('pointer-events', 'none');
     
+  // Function to highlight connected nodes and dim others
+  function highlightConnections(event, d) {
+    // Find connected nodes (one degree of separation)
+    const connectedNodeIds = new Set();
+    connectedNodeIds.add(d.id); // Add the current node
+    
+    // Find all nodes connected via links
+    graphData.links.forEach(link => {
+      if (link.source.id === d.id) {
+        connectedNodeIds.add(link.target.id);
+      } else if (link.target.id === d.id) {
+        connectedNodeIds.add(link.source.id);
+      }
+    });
+    
+    // Dim unconnected nodes and highlight connected ones
+    node.classed('node-dim', n => !connectedNodeIds.has(n.id))
+       .classed('node-highlight', n => n.id !== d.id && connectedNodeIds.has(n.id));
+    
+    // Highlight the current node
+    node.classed('node-active', n => n.id === d.id);
+    
+    // Dim unconnected links and highlight connected ones
+    link.classed('link-dim', l => !(connectedNodeIds.has(l.source.id) && connectedNodeIds.has(l.target.id)))
+        .classed('link-highlight', l => (l.source.id === d.id || l.target.id === d.id));
+    
+    // Dim unconnected labels and highlight connected ones
+    label.classed('label-dim', l => !connectedNodeIds.has(l.id))
+         .classed('label-highlight', l => connectedNodeIds.has(l.id));
+  }
+  
+  // Function to reset highlighting
+  function resetHighlighting() {
+    node.classed('node-dim', false)
+        .classed('node-highlight', false)
+        .classed('node-active', false);
+    link.classed('link-dim', false)
+        .classed('link-highlight', false);
+    label.classed('label-dim', false)
+         .classed('label-highlight', false);
+  }
+  
   // Set up simulation tick
   simulation.on('tick', () => {
     link
@@ -333,6 +377,8 @@ document.addEventListener('DOMContentLoaded', function() {
       .attr('fill', d => colorScale(d.category)) // Use theme-aware colors
       .attr('stroke', 'var(--graph-node-stroke)')
       .attr('stroke-width', 1.5)
+      .on('mouseover', highlightFullscreenConnections)
+      .on('mouseout', resetFullscreenHighlighting)
       .on('click', function(event, d) {
         window.open(d.url, '_blank');
       })
@@ -341,19 +387,54 @@ document.addEventListener('DOMContentLoaded', function() {
         .on('drag', fullscreenDragged)
         .on('end', fullscreenDragended));
         
-    // Copy the labels in fullscreen - with scaled font size
+    // Copy the labels in fullscreen - with scaled font size and positioned below nodes
     const fullscreenLabel = fullscreenG.selectAll('.label')
       .data(graphData.nodes)
       .enter().append('text')
       .attr('class', 'label')
       .attr('text-anchor', 'middle')
-      .attr('dy', '.35em')
+      .attr('dy', '1.5em') // Position label below the node instead of centered
       .text(d => d.title.replace(/^"|"$/g, '')) // Remove surrounding quotes
       .style('font-size', d => `${calculateFontSize(d.linksCount) * 1.2}px`) // 20% larger in fullscreen
       .style('fill', d => getCategoryTextColor(d.category))
       .style('font-weight', 'bold')
       .style('pointer-events', 'none');
+    
+    // Function to highlight connected nodes in fullscreen
+    function highlightFullscreenConnections(event, d) {
+      const connectedNodeIds = new Set();
+      connectedNodeIds.add(d.id);
       
+      graphData.links.forEach(link => {
+        if (link.source.id === d.id) {
+          connectedNodeIds.add(link.target.id);
+        } else if (link.target.id === d.id) {
+          connectedNodeIds.add(link.source.id);
+        }
+      });
+      
+      fullscreenNode.classed('node-dim', n => !connectedNodeIds.has(n.id))
+                   .classed('node-highlight', n => n.id !== d.id && connectedNodeIds.has(n.id));
+      fullscreenNode.classed('node-active', n => n.id === d.id);
+      
+      fullscreenLink.classed('link-dim', l => !(connectedNodeIds.has(l.source.id) && connectedNodeIds.has(l.target.id)))
+                   .classed('link-highlight', l => (l.source.id === d.id || l.target.id === d.id));
+      
+      fullscreenLabel.classed('label-dim', l => !connectedNodeIds.has(l.id))
+                     .classed('label-highlight', l => connectedNodeIds.has(l.id));
+    }
+    
+    // Function to reset fullscreen highlighting
+    function resetFullscreenHighlighting() {
+      fullscreenNode.classed('node-dim', false)
+                   .classed('node-highlight', false)
+                   .classed('node-active', false);
+      fullscreenLink.classed('link-dim', false)
+                   .classed('link-highlight', false);
+      fullscreenLabel.classed('label-dim', false)
+                     .classed('label-highlight', false);
+    }
+    
     // Create a separate simulation for the fullscreen view
     const fullscreenSimulation = d3.forceSimulation(graphData.nodes)
       .force('link', d3.forceLink(graphData.links).id(d => d.id))
@@ -603,6 +684,39 @@ document.addEventListener('DOMContentLoaded', function() {
   
   .legend-text {
     color: var(--text-color-primary);
+    font-weight: bold;
+  }
+  
+  /* Highlighting styles */
+  .node-dim {
+    opacity: 0.3;
+  }
+  
+  .node-highlight {
+    stroke: var(--color-primary);
+    stroke-width: 2px;
+  }
+  
+  .node-active {
+    stroke: var(--color-secondary);
+    stroke-width: 3px;
+  }
+  
+  .link-dim {
+    opacity: 0.3;
+  }
+  
+  .link-highlight {
+    stroke: var(--color-primary);
+    stroke-width: 2px;
+  }
+  
+  .label-dim {
+    opacity: 0.3;
+  }
+  
+  .label-highlight {
+    fill: var(--color-primary);
     font-weight: bold;
   }
 </style>
