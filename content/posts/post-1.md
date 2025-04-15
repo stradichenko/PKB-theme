@@ -11,7 +11,7 @@ comments = true
 ## Introduction
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
-
+Sidenotes work great with lists to provide additional context for specific items without breaking the list flow.Sidenotes work great with lists to provide additional context for specific items without breaking the list flow.
 {{< sidenote >}}
 This dasd asd asdasdasssdsdsdsdsdsdsdssdsd of text.
 {{< /sidenote >}}
