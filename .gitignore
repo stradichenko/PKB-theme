@@ -35,5 +35,5 @@ node_modules/
 package-lock.json
 
 # misc
-content/posts/
+#content/posts/
 

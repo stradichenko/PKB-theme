@@ -1,9 +1,9 @@
 +++
-title = "Improved Markdown tester"
+title = "Markdown Boilerplate with Sidenotes"
 date = 2025-02-01T09:00:00-07:00
 draft = false
-tags = ["documentation", "markdown", "reference", "formatting", "syntax"]
-categories = ["guides", "tutorials"]
+tags = ["documentation", "markdown", "reference", "formatting", "syntax", "writing", "guides", "content creation", "hugo", "static sites"]
+categories = ["guides", "reference", "documentation", "writing", "web development"]
 toc = true
 sidenotes = true
 comments = true
@@ -11,11 +11,13 @@ author = "Your Name"
 description = "A comprehensive boilerplate showcasing all markdown features and sidenote usage"
 +++
 
-This document demonstrates all standard Markdown features along with proper sidenote usage.
-Sidenotes work great with lists to provide additional context for specific items without breaking the list flow.
-For more information about building effective knowledge bases, check out [Building a Personal Knowledge Base](/posts/personal-knowledge-base/).
+# Markdown Boilerplate with Sidenotes
+
+This document demonstrates all standard Markdown features along with proper sidenote usage. This resource is the central reference for all content creators building a [Digital Garden](/posts/digital-garden/) or implementing the [Zettelkasten Method](/posts/zettelkasten-method/).
 
 ## Basic Typography
+
+Effective typography forms the foundation of digital writing. As explained in our [Hugo Styling Guide](/posts/hugo-styling-guide/), consistent formatting improves readability. This is especially important when [organizing content](/posts/content-organization/) in your knowledge base.
 
 Sidenotes work great with lists to provide additional context for specific items without breaking the list flow. {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}
 
@@ -25,11 +27,11 @@ Sidenotes work great with lists to provide additional context for specific items
 **Sidenotes can contain formatting too!** Use them for supplementary information that doesn't interrupt the main text flow.
 {{< /sidenote >}}
 
-If you're interested in advanced styling options, see our [Hugo Styling Guide](/posts/hugo-styling-guide/).
+For academic applications of these formatting techniques, see our [Academic Writing](/posts/academic-writing/) guide.
 
 ## Headings
 
-Above was an H2. Here are other levels:
+Above was an H2. Here are other levels, crucial for [content organization](/posts/content-organization/):
 
 ### H3 Heading
 
@@ -39,9 +41,9 @@ Above was an H2. Here are other levels:
 
 ###### H6 Heading
 
-Learn more about effective heading structure in our [Content Organization Guide](/posts/content-organization/).
-
 ## Lists
+
+Lists are essential for structuring information in your [Personal Knowledge Base](/posts/personal-knowledge-base/).
 
 ### Unordered Lists
 
@@ -62,8 +64,6 @@ Sidenotes work great with lists to provide additional context for specific items
    1. Nested item 1
    2. Nested item 2
 3. Third item
-
-For more examples of how to use markdown for academic writing, see our [Academic Writing with Markdown](/posts/academic-writing/) guide.
 
 ### Task Lists
 
@@ -218,5 +218,4 @@ Standard markdown footnotes[^1] work like this.
 
 ## Conclusion
 
-This boilerplate demonstrates the range of markdown features and proper sidenote usage. Copy, adapt, and extend for your own documents.
-+++
+This boilerplate demonstrates the range of markdown features and proper sidenote usage. Copy, adapt, and extend for your own documents. For practical applications, see our guides on [Digital Gardening](/posts/digital-garden/), [Personal Knowledge Management](/posts/personal-knowledge-base/), [Content Organization](/posts/content-organization/), and [Hugo Styling](/posts/hugo-styling-guide/).

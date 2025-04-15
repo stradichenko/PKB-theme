@@ -182,6 +182,29 @@
   --light-secondary-rgb: 223, 45, 45; /* RGB values for light secondary color */
   --dark-primary-rgb: 233, 153, 107; /* RGB values for dark primary color */
   --dark-secondary-rgb: 255, 82, 82; /* RGB values for dark secondary color */
+
+  /* Graph specific colors */
+  --graph-text-color: var(--text-color-primary);
+  --graph-link-color: var(--color-border);
+  --graph-node-stroke: #fff;
+  --graph-node-hover: var(--color-primary);
+  
+  /* Graph category colors - expanded to 15 distinct colors */
+  --graph-category-1: var(--color-primary);         /* Primary blue */
+  --graph-category-2: var(--color-secondary);       /* Secondary red */
+  --graph-category-3: var(--color-primary-variant); /* Green variant */
+  --graph-category-4: #8e44ad;                      /* Purple */
+  --graph-category-5: #f39c12;                      /* Orange */
+  --graph-category-6: #16a085;                      /* Teal */
+  --graph-category-7: #d35400;                      /* Deep orange */
+  --graph-category-8: #2c3e50;                      /* Navy blue */
+  --graph-category-9: #27ae60;                      /* Green */
+  --graph-category-10: #c0392b;                     /* Dark red */
+  --graph-category-11: #3498db;                     /* Light blue */
+  --graph-category-12: #f1c40f;                     /* Yellow */
+  --graph-category-13: #7f8c8d;                     /* Gray */
+  --graph-category-14: #9b59b6;                     /* Violet */
+  --graph-category-15: #34495e;                     /* Dark slate */
 }
 
 /* Dark Theme CSS Variable Overrides */
@@ -230,6 +253,29 @@
   --color-error-light: #c53030;
   --color-info: #63b3ed;
   --color-info-light: #2b6cb0;
+
+  /* Graph specific colors - dark theme */
+  --graph-text-color: var(--text-color-primary);
+  --graph-link-color: var(--color-border);
+  --graph-node-stroke: rgba(255, 255, 255, 0.2);
+  --graph-node-hover: var(--color-primary);
+  
+  /* Graph category colors for dark theme - adjusted for better visibility */
+  --graph-category-1: var(--color-primary);        /* Orange in dark theme */
+  --graph-category-2: var(--color-secondary);      /* Red */
+  --graph-category-3: var(--color-primary-variant); /* Green variant */
+  --graph-category-4: #a55eea;                     /* Brighter purple */
+  --graph-category-5: #feca57;                     /* Brighter orange/yellow */
+  --graph-category-6: #1dd1a1;                     /* Brighter teal */
+  --graph-category-7: #ff9f43;                     /* Soft orange */
+  --graph-category-8: #54a0ff;                     /* Sky blue */
+  --graph-category-9: #5be7a9;                     /* Mint green */
+  --graph-category-10: #ff6b6b;                    /* Light red */
+  --graph-category-11: #48dbfb;                    /* Bright blue */
+  --graph-category-12: #f9ca24;                    /* Gold */
+  --graph-category-13: #c8d6e5;                    /* Light gray */
+  --graph-category-14: #cd84f1;                    /* Light purple */
+  --graph-category-15: #7ed6df;                    /* Aqua */
 }
 
 /* ------------------------------------------------------------------------- */
