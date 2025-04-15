@@ -101,6 +101,9 @@
   {{ $citationCSS := resources.Get "css/components/citation.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $citationCSS.RelPermalink }}" integrity="{{ $citationCSS.Data.Integrity }}" crossorigin="anonymous">
   
+  {{ $knowledgeGraphCSS := resources.Get "css/components/knowledge-graph.css" | fingerprint }}
+  <link rel="stylesheet" href="{{ $knowledgeGraphCSS.RelPermalink }}" integrity="{{ $knowledgeGraphCSS.Data.Integrity }}" crossorigin="anonymous">
+  
   {{ with resources.Get "css/components/code.css" }}
     {{ $codeCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $codeCSS.RelPermalink }}" integrity="{{ $codeCSS.Data.Integrity }}" crossorigin="anonymous">

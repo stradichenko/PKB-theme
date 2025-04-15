@@ -1,3 +1,4 @@
+/* Knowledge Graph Container Layout */
 .knowledge-graph-container {
   position: relative;
   margin-bottom: var(--spacing-lg);
@@ -6,16 +7,25 @@
   padding: var(--spacing-md);
 }
 
+.graph-sidebar {
+  width: 220px;
+  min-width: 220px; /* Prevent sidebar from shrinking */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
 #knowledge-graph {
   width: 100%;
   background-color: var(--color-surface);
   border-radius: var(--border-radius);
-  font-family: var(--font-family-sans);
+  min-height: 500px;
 }
 
+/* Graph Visualization Elements */
 .node {
   cursor: pointer;
-  transition: stroke 0.2s ease;
+  transition: stroke 0.2s ease, opacity 0.3s ease;
 }
 
 .node:hover {
@@ -25,21 +35,18 @@
 
 .node-dim {
   opacity: 0.3;
-  transition: opacity 0.3s ease;
 }
 
 .node-highlight {
   stroke: var(--color-primary);
   stroke-width: 2px;
   opacity: 1;
-  transition: opacity 0.3s ease, stroke 0.3s ease;
 }
 
 .node-active {
   stroke: var(--color-secondary);
   stroke-width: 3px;
   opacity: 1;
-  transition: opacity 0.3s ease, stroke 0.3s ease;
 }
 
 .label {
@@ -48,23 +55,22 @@
   fill: var(--graph-text-color, var(--text-color-primary));
   font-weight: var(--font-weight-bold);
   transition: fill 0.2s ease, text-shadow 0.2s ease, opacity 0.3s ease;
-  text-shadow: 0 0 2px rgba(0,0,0,0.2); /* Add slight shadow for better contrast */
+  text-shadow: 0 0 2px rgba(0,0,0,0.2);
   pointer-events: none;
 }
 
 .label-dim {
   opacity: 0.3;
-  transition: opacity 0.3s ease;
 }
 
 .label-highlight {
   opacity: 1;
   font-weight: 700;
-  transition: opacity 0.3s ease, font-weight 0.3s ease;
+  fill: var(--color-primary);
 }
 
 .link {
-  transition: stroke-opacity 0.2s ease;
+  transition: stroke-opacity 0.2s ease, opacity 0.3s ease, stroke-width 0.2s ease;
 }
 
 .link:hover {
@@ -73,21 +79,200 @@
 
 .link-dim {
   opacity: 0.1;
-  transition: opacity 0.3s ease;
 }
 
 .link-highlight {
   opacity: 1;
   stroke-width: 2px;
   stroke: var(--color-primary);
-  transition: opacity 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease;
 }
 
-/* Fullscreen button */
-.graph-fullscreen-button {
+/* Controls & Legend Styling - Positioned overlapping the graph */
+.graph-legend {
   position: absolute;
-  top: var(--spacing-sm);
-  right: var(--spacing-sm);
+  background-color: rgba(var(--color-surface-rgb, 248, 248, 248), 0.9);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10;
+  width: 200px; /* Set fixed width */
+  max-width: 200px;
+  font-size: var(--font-size-small);
+  backdrop-filter: blur(2px);
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+}
+
+.controls-dropdown {
+  position: absolute;
+  background-color: rgba(var(--color-surface-rgb, 248, 248, 248), 0.9);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10;
+  width: 200px;
+  font-size: var(--font-size-small);
+  backdrop-filter: blur(2px);
+  top: var(--spacing-md); /* Same top position as legend */
+  left: calc(var(--spacing-md) + 210px); /* Right next to legend with 10px gap */
+}
+
+/* Controls Dropdown */
+.toggle-controls-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: transparent;
+  color: var(--text-color-primary);
+  border: none;
+  border-bottom: 1px solid transparent;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: left;
+  font-size: var(--font-size-small);
+}
+
+.toggle-controls-btn.expanded {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.toggle-controls-btn:hover {
+  background-color: var(--color-surface-hover, rgba(0,0,0,0.05));
+}
+
+.toggle-icon {
+  transform: rotate(0);
+  transition: transform 0.3s ease;
+}
+
+.toggle-controls-btn.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.graph-controls {
+  padding: var(--spacing-xs);
+  transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+  max-height: 500px;
+  opacity: 1;
+}
+
+.graph-controls.collapsed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.control-group {
+  margin: var(--spacing-xs) 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px;
+  align-items: center;
+}
+
+.control-group label {
+  grid-column: 1 / 3;
+  grid-row: 1;
+  color: var(--text-color-primary);
+  font-size: var(--font-size-small);
+  margin-bottom: 2px;
+}
+
+.value-display {
+  grid-column: 1;
+  grid-row: 2;
+  width: auto;
+  min-width: 24px;
+  text-align: left;
+  padding-right: var(--spacing-xs);
+  font-family: monospace;
+  color: var(--color-primary);
+  font-size: 0.85em;
+}
+
+.slider {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+.reset-button {
+  display: block;
+  width: 100%;
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  font-size: var(--font-size-small);
+}
+
+.reset-button:hover {
+  background-color: var(--color-primary);
+  color: var(--text-color-inverse);
+  border-color: var(--color-primary);
+}
+
+/* Legend Styling */
+.graph-legend {
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: var(--font-size-small);
+  /* Remove background-color since it's now defined above with transparency */
+}
+
+.legend-title {
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-color-primary);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-xs);
+  font-size: var(--font-size-small);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: var(--spacing-xs) 0;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.legend-text {
+  color: var(--text-color-primary);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fullscreen Mode */
+.graph-fullscreen-button {
+  position: static;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
   background-color: var(--color-surface);
   color: var(--text-color-primary);
   border: 1px solid var(--color-border);
@@ -99,17 +284,10 @@
   justify-content: center;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
-  z-index: 2;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  z-index: 12; /* Ensure it's above other controls */
 }
 
-.graph-fullscreen-button:hover {
-  opacity: 1;
-  color: var(--color-primary);
-  background-color: var(--color-surface);
-}
-
-/* Fullscreen overlay */
 .graph-fullscreen-overlay {
   display: none;
   position: fixed;
@@ -133,6 +311,8 @@
   width: 100%;
   height: 100%;
   padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
 }
 
 #fullscreen-graph {
@@ -140,74 +320,170 @@
   height: 100%;
   background-color: var(--color-surface);
   border-radius: var(--border-radius);
+  position: relative;
+}
+
+.fullscreen-legend {
+  position: absolute;
+  top: var(--spacing-lg);
+  left: var(--spacing-lg);
+  z-index: 10;
+  width: 200px; /* Set fixed width */
+  max-width: 200px;
+  font-size: var(--font-size-small);
+  background-color: rgba(var(--color-surface-rgb, 248, 248, 248), 0.9);
+  backdrop-filter: blur(2px);
+}
+
+.fullscreen-controls {
+  position: absolute;
+  top: var(--spacing-lg); /* Same top position as legend */
+  left: calc(var(--spacing-lg) + 210px); /* Right next to legend with 10px gap */
+  z-index: 10;
+  width: 200px;
+  background-color: rgba(var(--color-surface-rgb, 248, 248, 248), 0.9);
+  backdrop-filter: blur(2px);
+}
+
+/* Fullscreen actions container */
+.fullscreen-actions {
+  position: absolute;
+  top: calc(var(--spacing-lg) + var(--spacing-xs));
+  right: calc(var(--spacing-lg) + var(--spacing-xs));
+  display: flex;
+  gap: var(--spacing-sm);
+  z-index: 12;
 }
 
 .close-fullscreen-button {
-  position: absolute;
-  top: var(--spacing-md);
-  right: var(--spacing-md);
+  position: static; /* Change from absolute to static */
   background-color: var(--color-surface);
   color: var(--text-color-primary);
   border: 1px solid var(--color-border);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: color 0.2s ease, background-color 0.2s ease;
-  z-index: 3;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  opacity: 0.7;
 }
 
 .close-fullscreen-button:hover {
-  color: var(--color-secondary);
-  background-color: var(--color-surface);
+  opacity: 1;
+  color: var(--color-primary);
 }
 
-/* Legend styles */
-.graph-legend {
+/* Graph Actions */
+.graph-actions {
   position: absolute;
   top: var(--spacing-md);
-  left: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-sm);
+  z-index: 12;
+}
+
+.graph-save-dropdown {
+  position: relative;
+}
+
+.graph-save-button {
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.graph-save-button:hover {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+.save-options-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--spacing-xs);
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
-  padding: var(--spacing-sm);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  z-index: 2;
-  max-width: 200px;
-  font-size: var(--font-size-small);
+  padding: var(--spacing-xs);
+  min-width: 150px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: none;
+  flex-direction: column;
+  z-index: 13;
 }
 
-.fullscreen-legend {
-  top: var(--spacing-lg);
-  left: var(--spacing-lg);
-}
-
-.legend-title {
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--spacing-xs);
-  color: var(--text-color-primary);
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: var(--spacing-xs);
-}
-
-.legend-item {
+.save-options-dropdown.active {
   display: flex;
-  align-items: center;
-  margin: var(--spacing-xs) 0;
 }
 
-.legend-color {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-  margin-right: var(--spacing-sm);
-}
-
-.legend-text {
+.save-option {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  text-align: left;
+  cursor: pointer;
   color: var(--text-color-primary);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-small);
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+}
+
+.save-option:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .knowledge-graph-container {
+    flex-direction: column;
+  }
+  
+  .graph-sidebar {
+    width: 100%;
+    order: 2; /* Move sidebar below the graph on mobile */
+  }
+  
+  #knowledge-graph {
+    order: 1;
+  }
+  
+  .graph-legend,
+  .controls-dropdown {
+    position: static;
+    margin-bottom: var(--spacing-sm);
+    max-width: 100%;
+  }
+  
+  .fullscreen-legend,
+  .fullscreen-controls {
+    position: absolute;
+    max-width: 45%; /* Make them fit side by side on smaller screens */
+    width: 45%;
+  }
+  
+  .fullscreen-controls {
+    top: var(--spacing-lg); /* Keep them at same level */
+    left: calc(50% + 5px); /* Position at right side with small gap */
+  }
+  
+  .fullscreen-legend {
+    left: calc(5px); /* Position at left side with small gap */
+    top: var(--spacing-lg);
+    width: 45%;
+  }
 }

@@ -1,722 +1,127 @@
 <div class="knowledge-graph-container">
   <div id="knowledge-graph"></div>
   <div class="graph-legend"></div>
-  <button id="fullscreen-button" class="graph-fullscreen-button" aria-label="View graph in fullscreen">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
-    </svg>
-  </button>
-</div>
-
-<div id="fullscreen-overlay" class="graph-fullscreen-overlay">
-  <div class="overlay-content">
-    <div id="fullscreen-graph"></div>
-    <div class="graph-legend fullscreen-legend"></div>
-    <button id="close-fullscreen" class="close-fullscreen-button" aria-label="Close fullscreen view">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+  
+  <div class="controls-dropdown">
+    <button id="toggle-controls" class="toggle-controls-btn" aria-expanded="false" aria-controls="graph-controls-panel">
+      <span>Physics Controls</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="toggle-icon">
+        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+      </svg>
+    </button>
+    
+    <div id="graph-controls-panel" class="graph-controls collapsed">
+      <div class="control-group">
+        <label for="charge-strength">Repulsion:</label>
+        <span class="value-display">100</span>
+        <input type="range" id="charge-strength" min="10" max="300" value="100" class="slider">
+      </div>
+      <div class="control-group">
+        <label for="link-distance">Link Distance:</label>
+        <span class="value-display">30</span>
+        <input type="range" id="link-distance" min="10" max="200" value="30" class="slider">
+      </div>
+      <div class="control-group">
+        <label for="collision-radius">Node Spacing:</label>
+        <span class="value-display">1.2×</span>
+        <input type="range" id="collision-radius" min="1" max="3" value="1.2" step="0.1" class="slider">
+      </div>
+      <div class="control-group">
+        <label for="center-gravity">Center Gravity:</label>
+        <span class="value-display">0.1</span>
+        <input type="range" id="center-gravity" min="0" max="1" value="0.1" step="0.05" class="slider">
+      </div>
+      <button id="reset-physics" class="reset-button">Reset to Default</button>
+    </div>
+  </div>
+  
+  <div class="graph-actions">
+    <div class="graph-save-dropdown">
+      <button id="save-graph-button" class="graph-save-button" aria-label="Save graph as image" aria-expanded="false" aria-controls="save-options">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+        </svg>
+      </button>
+      <div id="save-options" class="save-options-dropdown">
+        <button class="save-option" data-format="png">Save as PNG</button>
+        <button class="save-option" data-format="svg">Save as SVG</button>
+        <button class="save-option" data-format="jpeg">Save as JPEG</button>
+      </div>
+    </div>
+    
+    <button id="fullscreen-button" class="graph-fullscreen-button" aria-label="View graph in fullscreen">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
       </svg>
     </button>
   </div>
 </div>
 
+<div id="fullscreen-overlay" class="graph-fullscreen-overlay">
+  <div class="overlay-content">
+    <div id="fullscreen-graph"></div>
+    
+    <div class="fullscreen-actions">
+      <div class="graph-save-dropdown">
+        <button id="fullscreen-save-button" class="graph-save-button" aria-label="Save graph as image" aria-expanded="false" aria-controls="fullscreen-save-options">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+          </svg>
+        </button>
+        <div id="fullscreen-save-options" class="save-options-dropdown">
+          <button class="save-option" data-format="png" data-target="fullscreen">Save as PNG</button>
+          <button class="save-option" data-format="svg" data-target="fullscreen">Save as SVG</button>
+          <button class="save-option" data-format="jpeg" data-target="fullscreen">Save as JPEG</button>
+        </div>
+      </div>
+      
+      <button id="close-fullscreen" class="close-fullscreen-button" aria-label="Close fullscreen view">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="graph-legend fullscreen-legend"></div>
+    
+    <div class="controls-dropdown fullscreen-controls">
+      <button id="fullscreen-toggle-controls" class="toggle-controls-btn" aria-expanded="false" aria-controls="fullscreen-graph-controls-panel">
+        <span>Physics Controls</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="toggle-icon">
+          <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </button>
+      
+      <div id="fullscreen-graph-controls-panel" class="graph-controls collapsed">
+        <div class="control-group">
+          <label for="fullscreen-charge-strength">Repulsion:</label>
+          <span class="value-display">200</span>
+          <input type="range" id="fullscreen-charge-strength" min="10" max="300" value="200" class="slider">
+        </div>
+        <div class="control-group">
+          <label for="fullscreen-link-distance">Link Distance:</label>
+          <span class="value-display">60</span>
+          <input type="range" id="fullscreen-link-distance" min="10" max="200" value="60" class="slider">
+        </div>
+        <div class="control-group">
+          <label for="fullscreen-collision-radius">Node Spacing:</label>
+          <span class="value-display">1.8×</span>
+          <input type="range" id="fullscreen-collision-radius" min="1" max="3" value="1.8" step="0.1" class="slider">
+        </div>
+        <div class="control-group">
+          <label for="fullscreen-center-gravity">Center Gravity:</label>
+          <span class="value-display">0.1</span>
+          <input type="range" id="fullscreen-center-gravity" min="0" max="1" value="0.1" step="0.05" class="slider">
+        </div>
+        <button id="fullscreen-reset-physics" class="reset-button">Reset to Default</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ $graphScript := resources.Get "js/components/knowledge-graph.js" | resources.ExecuteAsTemplate "js/knowledge-graph.js" . }}
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Graph configuration
-  const width = document.getElementById('knowledge-graph').clientWidth;
-  const height = 500;
-  
-  // Create SVG container
-  const svg = d3.select('#knowledge-graph')
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', height)
-    .call(d3.zoom().on('zoom', function(event) {
-      g.attr('transform', event.transform);
-    }));
-    
-  const g = svg.append('g');
-  
-  // Fetch site data
-  const graphData = {
-    nodes: [],
-    links: []
-  };
-  
-  // Build a map of valid permalinks to simplify lookup later
-  const validPermalinks = {};
-  
-  // Process Hugo data into graph format - first pass to create nodes
-  // Filter to only include regular content pages (posts and markdown files)
-  {{ range where site.AllPages "Kind" "page" }}
-    {{ $permalink := .RelPermalink }}
-    validPermalinks['{{ $permalink }}'] = true;
-    
-    graphData.nodes.push({
-      id: '{{ $permalink }}',
-      title: {{ .Title | jsonify }},
-      url: '{{ $permalink }}',
-      category: {{ with .Params.categories }}{{ index . 0 | default "uncategorized" | jsonify }}{{ else }}"uncategorized"{{ end }},
-      tags: {{ .Params.tags | jsonify }},
-      linksCount: 0
-    });
-  {{ end }}
-  
-  // Second pass to find links between pages - only for content pages
-  {{ range where site.AllPages "Kind" "page" }}
-    {{ $currentPermalink := .RelPermalink }}
-    
-    {{ with .Content }}
-      {{ $content := . | string }}
-      
-      // Process HTML links - <a href="/path/to/page">
-      {{ range findRE `<a href="(/[^"]+)"` $content }}
-        {{ $match := . }}
-        {{ $cleanURL := replaceRE `<a href="(/[^"]+)"` "$1" $match }}
-        
-        // Sanitize the URL - remove any quotes or other characters
-        {{ $cleanURL = replaceRE `".*$` "" $cleanURL }}
-        
-        // Only add if this is a valid internal link
-        {{ if (hasPrefix $cleanURL "/") }}
-          graphData.links.push({
-            source: '{{ $currentPermalink }}',
-            target: '{{ $cleanURL }}'
-          });
-        {{ end }}
-      {{ end }}
-      
-      // Process Markdown links - [text](/path/to/page)
-      {{ range findRE `\[([^\]]+)\]\((/[^)]+)\)` $content }}
-        {{ $match := . }}
-        {{ $cleanURL := replaceRE `\[([^\]]+)\]\((/[^)]+)\)` "$2" $match }}
-        
-        // Sanitize the URL - remove any quotes or other characters
-        {{ $cleanURL = replaceRE `\).*$` "" $cleanURL }}
-        
-        // Only add if this is a valid internal link
-        {{ if (hasPrefix $cleanURL "/") }}
-          graphData.links.push({
-            source: '{{ $currentPermalink }}',
-            target: '{{ $cleanURL }}'
-          });
-        {{ end }}
-      {{ end }}
-    {{ end }}
-  {{ end }}
-  
-  // Client-side filtering to ensure links are valid and properly formatted
-  graphData.links = graphData.links.filter(link => {
-    if (typeof link.target === 'string') {
-      // Sanitize the URL to remove any remaining quotes
-      link.target = link.target.replace(/["']/g, '');
-      
-      // Check if the target URL is a taxonomy page
-      if (link.target.startsWith('/tags/') || link.target.startsWith('/categories/')) {
-        return false;
-      }
-      
-      // Only keep links that target valid content nodes
-      return validPermalinks[link.target] === true;
-    }
-    return false;
-  });
-  
-  // Count incoming links for each node
-  graphData.links.forEach(link => {
-    const targetNode = graphData.nodes.find(node => node.id === link.target);
-    if (targetNode) {
-      targetNode.linksCount = (targetNode.linksCount || 0) + 1;
-    }
-  });
-  
-  // Create color scale for categories using theme colors
-  const categories = [...new Set(graphData.nodes.map(node => node.category))];
-  
-  // Get CSS variables from the current theme - updated to use predefined category colors
-  const getThemeColors = () => {
-    const computedStyle = getComputedStyle(document.documentElement);
-    const categoryColors = [];
-    
-    // Get the 15 predefined category colors
-    for (let i = 1; i <= 15; i++) {
-      const color = computedStyle.getPropertyValue(`--graph-category-${i}`).trim();
-      if (color) categoryColors.push(color);
-    }
-    
-    // Add fallbacks using RGB values if needed
-    if (categoryColors.length < categories.length) {
-      categoryColors.push(
-        `rgba(var(--light-primary-rgb), 0.8)`,
-        `rgba(var(--light-secondary-rgb), 0.8)`,
-        `rgba(var(--dark-primary-rgb), 0.8)`,
-        `rgba(var(--dark-secondary-rgb), 0.8)`
-      );
-    }
-    
-    return categoryColors;
-  };
+<script src="{{ $graphScript.RelPermalink }}"></script>
 
-  const colorScale = d3.scaleOrdinal()
-    .domain(categories)
-    .range(getThemeColors());
-    
-  // Create legend
-  createLegend(categories, colorScale, '.graph-legend');
-  
-  // Add observer for theme changes to update colors when theme changes
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-      if (mutation.attributeName === 'data-theme') {
-        // Update color scale when theme changes
-        colorScale.range(getThemeColors());
-        
-        // Update all nodes with new colors
-        d3.selectAll('.node')
-          .attr('fill', d => colorScale(d.category));
-          
-        // Update legend
-        createLegend(categories, colorScale, '.graph-legend');
-      }
-    });
-  });
-  
-  // Start observing document element for data-theme changes
-  observer.observe(document.documentElement, { attributes: true });
-  
-  // Helper function to calculate node size with more dramatic scaling
-  function calculateNodeSize(linkCount) {
-    // Use a more exponential scaling for nodes with many connections
-    if (linkCount === 0) return 6;  // Minimum size for nodes with no connections
-    // Significantly increase size with link count
-    return Math.pow(linkCount, 0.7) * 4 + 8;
-  }
-  
-  // Helper function to calculate font size based on connections
-  function calculateFontSize(linkCount) {
-    // Base font size
-    const baseFontSize = 10;
-    if (linkCount === 0) return baseFontSize;
-    // Scale font size, but more conservatively than node size
-    return baseFontSize + Math.pow(linkCount, 0.5);
-  }
-  
-  // Function to get contrasting text color for a category
-  function getCategoryTextColor(category) {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    // Use the appropriate high-contrast text color based on theme
-    return isDark ? 'var(--dark-text-primary)' : 'var(--light-text-primary)';
-  }
-  
-  // Create force simulation with size-based repulsion
-  const simulation = d3.forceSimulation(graphData.nodes)
-    .force('link', d3.forceLink(graphData.links).id(d => d.id))
-    .force('charge', d3.forceManyBody().strength(d => -100 - calculateNodeSize(d.linksCount) * 8)) // Scale charge with node size
-    .force('center', d3.forceCenter(width / 2, height / 2))
-    .force('collision', d3.forceCollide().radius(d => calculateNodeSize(d.linksCount) * 1.2)); // Add padding around nodes
-    
-  // Create links
-  const link = g.selectAll('.link')
-    .data(graphData.links)
-    .enter().append('line')
-    .attr('class', 'link')
-    .attr('stroke', 'var(--color-border)')
-    .attr('stroke-opacity', 0.6)
-    .attr('stroke-width', 1);
-    
-  // Create nodes
-  const node = g.selectAll('.node')
-    .data(graphData.nodes)
-    .enter().append('circle')
-    .attr('class', 'node')
-    .attr('r', d => calculateNodeSize(d.linksCount))
-    .attr('fill', d => colorScale(d.category))
-    .attr('stroke', '#fff')
-    .attr('stroke-width', 1.5)
-    .on('mouseover', highlightConnections)
-    .on('mouseout', resetHighlighting)
-    .on('click', function(event, d) {
-      // Open link in new tab instead of changing current page
-      window.open(d.url, '_blank');
-    })
-    .call(d3.drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended));
-      
-  // Node labels - place below nodes instead of centered
-  const label = g.selectAll('.label')
-    .data(graphData.nodes)
-    .enter().append('text')
-    .attr('class', 'label')
-    .attr('text-anchor', 'middle')
-    .attr('dy', '1.5em') // Position label below the node instead of centered
-    .text(d => d.title.replace(/^"|"$/g, '')) // Remove surrounding quotes
-    .style('font-size', d => `${calculateFontSize(d.linksCount)}px`)
-    .style('fill', d => getCategoryTextColor(d.category))
-    .style('font-weight', 'bold')
-    .style('pointer-events', 'none');
-    
-  // Function to highlight connected nodes and dim others
-  function highlightConnections(event, d) {
-    // Find connected nodes (one degree of separation)
-    const connectedNodeIds = new Set();
-    connectedNodeIds.add(d.id); // Add the current node
-    
-    // Find all nodes connected via links
-    graphData.links.forEach(link => {
-      if (link.source.id === d.id) {
-        connectedNodeIds.add(link.target.id);
-      } else if (link.target.id === d.id) {
-        connectedNodeIds.add(link.source.id);
-      }
-    });
-    
-    // Dim unconnected nodes and highlight connected ones
-    node.classed('node-dim', n => !connectedNodeIds.has(n.id))
-       .classed('node-highlight', n => n.id !== d.id && connectedNodeIds.has(n.id));
-    
-    // Highlight the current node
-    node.classed('node-active', n => n.id === d.id);
-    
-    // Dim unconnected links and highlight connected ones
-    link.classed('link-dim', l => !(connectedNodeIds.has(l.source.id) && connectedNodeIds.has(l.target.id)))
-        .classed('link-highlight', l => (l.source.id === d.id || l.target.id === d.id));
-    
-    // Dim unconnected labels and highlight connected ones
-    label.classed('label-dim', l => !connectedNodeIds.has(l.id))
-         .classed('label-highlight', l => connectedNodeIds.has(l.id));
-  }
-  
-  // Function to reset highlighting
-  function resetHighlighting() {
-    node.classed('node-dim', false)
-        .classed('node-highlight', false)
-        .classed('node-active', false);
-    link.classed('link-dim', false)
-        .classed('link-highlight', false);
-    label.classed('label-dim', false)
-         .classed('label-highlight', false);
-  }
-  
-  // Set up simulation tick
-  simulation.on('tick', () => {
-    link
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y);
-      
-    node
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y);
-      
-    label
-      .attr('x', d => d.x)
-      .attr('y', d => d.y);
-  });
-  
-  // Drag functions
-  function dragstarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  }
-  
-  function dragged(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
-  }
-  
-  function dragended(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-  }
-
-  // Fullscreen functionality
-  const fullscreenButton = document.getElementById('fullscreen-button');
-  const fullscreenOverlay = document.getElementById('fullscreen-overlay');
-  const closeFullscreenButton = document.getElementById('close-fullscreen');
-  
-  fullscreenButton.addEventListener('click', function() {
-    fullscreenOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-    
-    // Create a copy of the graph in the fullscreen overlay
-    const fullscreenWidth = document.getElementById('fullscreen-graph').clientWidth;
-    const fullscreenHeight = window.innerHeight * 0.9;
-    
-    const fullscreenSvg = d3.select('#fullscreen-graph')
-      .html('') // Clear any previous content
-      .append('svg')
-      .attr('width', '100%')
-      .attr('height', fullscreenHeight)
-      .call(d3.zoom().on('zoom', function(event) {
-        fullscreenG.attr('transform', event.transform);
-      }));
-      
-    const fullscreenG = fullscreenSvg.append('g');
-    
-    // Copy the links
-    const fullscreenLink = fullscreenG.selectAll('.link')
-      .data(graphData.links)
-      .enter().append('line')
-      .attr('class', 'link')
-      .attr('stroke', 'var(--color-border)')
-      .attr('stroke-opacity', 0.6)
-      .attr('stroke-width', 1);
-      
-    // Copy the nodes with theme colors
-    const fullscreenNode = fullscreenG.selectAll('.node')
-      .data(graphData.nodes)
-      .enter().append('circle')
-      .attr('class', 'node')
-      .attr('r', d => calculateNodeSize(d.linksCount) * 1.5) // 50% larger in fullscreen
-      .attr('fill', d => colorScale(d.category)) // Use theme-aware colors
-      .attr('stroke', 'var(--graph-node-stroke)')
-      .attr('stroke-width', 1.5)
-      .on('mouseover', highlightFullscreenConnections)
-      .on('mouseout', resetFullscreenHighlighting)
-      .on('click', function(event, d) {
-        window.open(d.url, '_blank');
-      })
-      .call(d3.drag()
-        .on('start', fullscreenDragstarted)
-        .on('drag', fullscreenDragged)
-        .on('end', fullscreenDragended));
-        
-    // Copy the labels in fullscreen - with scaled font size and positioned below nodes
-    const fullscreenLabel = fullscreenG.selectAll('.label')
-      .data(graphData.nodes)
-      .enter().append('text')
-      .attr('class', 'label')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '1.5em') // Position label below the node instead of centered
-      .text(d => d.title.replace(/^"|"$/g, '')) // Remove surrounding quotes
-      .style('font-size', d => `${calculateFontSize(d.linksCount) * 1.2}px`) // 20% larger in fullscreen
-      .style('fill', d => getCategoryTextColor(d.category))
-      .style('font-weight', 'bold')
-      .style('pointer-events', 'none');
-    
-    // Function to highlight connected nodes in fullscreen
-    function highlightFullscreenConnections(event, d) {
-      const connectedNodeIds = new Set();
-      connectedNodeIds.add(d.id);
-      
-      graphData.links.forEach(link => {
-        if (link.source.id === d.id) {
-          connectedNodeIds.add(link.target.id);
-        } else if (link.target.id === d.id) {
-          connectedNodeIds.add(link.source.id);
-        }
-      });
-      
-      fullscreenNode.classed('node-dim', n => !connectedNodeIds.has(n.id))
-                   .classed('node-highlight', n => n.id !== d.id && connectedNodeIds.has(n.id));
-      fullscreenNode.classed('node-active', n => n.id === d.id);
-      
-      fullscreenLink.classed('link-dim', l => !(connectedNodeIds.has(l.source.id) && connectedNodeIds.has(l.target.id)))
-                   .classed('link-highlight', l => (l.source.id === d.id || l.target.id === d.id));
-      
-      fullscreenLabel.classed('label-dim', l => !connectedNodeIds.has(l.id))
-                     .classed('label-highlight', l => connectedNodeIds.has(l.id));
-    }
-    
-    // Function to reset fullscreen highlighting
-    function resetFullscreenHighlighting() {
-      fullscreenNode.classed('node-dim', false)
-                   .classed('node-highlight', false)
-                   .classed('node-active', false);
-      fullscreenLink.classed('link-dim', false)
-                   .classed('link-highlight', false);
-      fullscreenLabel.classed('label-dim', false)
-                     .classed('label-highlight', false);
-    }
-    
-    // Create a separate simulation for the fullscreen view
-    const fullscreenSimulation = d3.forceSimulation(graphData.nodes)
-      .force('link', d3.forceLink(graphData.links).id(d => d.id))
-      .force('charge', d3.forceManyBody().strength(d => -200 - calculateNodeSize(d.linksCount) * 15)) // Stronger repulsion based on size
-      .force('center', d3.forceCenter(fullscreenWidth / 2, fullscreenHeight / 2))
-      .force('collision', d3.forceCollide().radius(d => calculateNodeSize(d.linksCount) * 1.8)); // More padding in fullscreen
-      
-    fullscreenSimulation.on('tick', () => {
-      fullscreenLink
-        .attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
-        
-      fullscreenNode
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-        
-      fullscreenLabel
-        .attr('x', d => d.x)
-        .attr('y', d => d.y);
-    });
-    
-    // Drag functions for fullscreen
-    function fullscreenDragstarted(event, d) {
-      if (!event.active) fullscreenSimulation.alphaTarget(0.3).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    }
-    
-    function fullscreenDragged(event, d) {
-      d.fx = event.x;
-      d.fy = event.y;
-    }
-    
-    function fullscreenDragended(event, d) {
-      if (!event.active) fullscreenSimulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
-    }
-    
-    // Update legend in fullscreen view with theme colors
-    createLegend(categories, colorScale, '.fullscreen-legend');
-  });
-  
-  closeFullscreenButton.addEventListener('click', function() {
-    fullscreenOverlay.classList.remove('active');
-    document.body.style.overflow = ''; // Restore scrolling
-  });
-  
-  // Legend creation function - updated with bold text
-  function createLegend(categories, colorScale, containerSelector) {
-    const legendContainer = d3.select(containerSelector);
-    legendContainer.html(''); // Clear any existing content
-    
-    // Add title
-    legendContainer.append('div')
-      .attr('class', 'legend-title')
-      .text('Categories');
-    
-    // Create legend items - strip quotes from category names
-    const legendItems = legendContainer.selectAll('.legend-item')
-      .data(categories)
-      .enter()
-      .append('div')
-      .attr('class', 'legend-item');
-    
-    // Add color square
-    legendItems.append('span')
-      .attr('class', 'legend-color')
-      .style('background-color', d => colorScale(d));
-    
-    // Add category text - remove surrounding quotes and make bold
-    legendItems.append('span')
-      .attr('class', 'legend-text')
-      .text(d => typeof d === 'string' ? d.replace(/^"|"$/g, '') : d)
-      .style('font-weight', 'bold');
-  }
-});
-</script>
-
-<style>
-  .knowledge-graph-container {
-    position: relative;
-    margin-bottom: var(--spacing-lg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-md);
-  }
-  
-  #knowledge-graph {
-    width: 100%;
-    background-color: var(--color-surface);
-    border-radius: var(--border-radius);
-    font-family: var(--font-family-sans);
-  }
-  
-  .node {
-    cursor: pointer;
-    transition: stroke 0.2s ease;
-  }
-  
-  .node:hover {
-    stroke: var(--color-primary);
-    stroke-width: 2px;
-  }
-  
-  .label {
-    font-family: var(--font-family-sans);
-    font-size: var(--font-size-small);
-    fill: var(--graph-text-color, var(--text-color-primary));
-    font-weight: bold;
-    transition: fill 0.2s ease;
-  }
-  
-  .link {
-    transition: stroke-opacity 0.2s ease;
-  }
-  
-  .link:hover {
-    stroke-opacity: 1;
-  }
-  
-  /* Fullscreen button */
-  .graph-fullscreen-button {
-    position: absolute;
-    top: var(--spacing-sm);
-    right: var(--spacing-sm);
-    background-color: var(--color-surface);
-    color: var(--text-color-primary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
-    z-index: 2;
-  }
-  
-  .graph-fullscreen-button:hover {
-    opacity: 1;
-    color: var(--color-primary);
-    background-color: var(--color-surface);
-  }
-  
-  /* Fullscreen overlay */
-  .graph-fullscreen-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--color-background);
-    z-index: var(--z-index-modal);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .graph-fullscreen-overlay.active {
-    display: block;
-    opacity: 1;
-  }
-  
-  .overlay-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: var(--spacing-lg);
-  }
-  
-  #fullscreen-graph {
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-surface);
-    border-radius: var(--border-radius);
-  }
-  
-  .close-fullscreen-button {
-    position: absolute;
-    top: var(--spacing-md);
-    right: var(--spacing-md);
-    background-color: var(--color-surface);
-    color: var(--text-color-primary);
-    border: 1px solid var(--color-border);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: color 0.2s ease, background-color 0.2s ease;
-    z-index: 3;
-  }
-  
-  .close-fullscreen-button:hover {
-    color: var(--color-secondary);
-    background-color: var(--color-surface);
-  }
-  
-  /* Legend styles */
-  .graph-legend {
-    position: absolute;
-    top: var(--spacing-md);
-    left: var(--spacing-md);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-sm);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    z-index: 2;
-    max-width: 200px;
-    font-size: var(--font-size-small);
-  }
-  
-  .fullscreen-legend {
-    top: var(--spacing-lg);
-    left: var(--spacing-lg);
-  }
-  
-  .legend-title {
-    font-weight: var(--font-weight-semibold);
-    margin-bottom: var(--spacing-xs);
-    color: var(--text-color-primary);
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: var(--spacing-xs);
-  }
-  
-  .legend-item {
-    display: flex;
-    align-items: center;
-    margin: var(--spacing-xs) 0;
-  }
-  
-  .legend-color {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-    margin-right: var(--spacing-sm);
-  }
-  
-  .legend-text {
-    color: var(--text-color-primary);
-    font-weight: bold;
-  }
-  
-  /* Highlighting styles */
-  .node-dim {
-    opacity: 0.3;
-  }
-  
-  .node-highlight {
-    stroke: var(--color-primary);
-    stroke-width: 2px;
-  }
-  
-  .node-active {
-    stroke: var(--color-secondary);
-    stroke-width: 3px;
-  }
-  
-  .link-dim {
-    opacity: 0.3;
-  }
-  
-  .link-highlight {
-    stroke: var(--color-primary);
-    stroke-width: 2px;
-  }
-  
-  .label-dim {
-    opacity: 0.3;
-  }
-  
-  .label-highlight {
-    fill: var(--color-primary);
-    font-weight: bold;
-  }
-</style>

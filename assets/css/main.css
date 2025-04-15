@@ -2,6 +2,9 @@
 /* Current approach: */
 /* Imports removed as per suggestion to use Hugo's resource bundling in head.html */
 
+/* Import the knowledge graph component CSS */
+@import 'components/knowledge-graph.css';
+
 /* General components */
 
 a {
