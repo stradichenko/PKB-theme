@@ -1,11 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('Sidenotes script loaded');
+  
   // Find the sidenote section
   const sidenoteSection = document.querySelector('.sidenote-section');
   
-  if (!sidenoteSection) return;
+  if (!sidenoteSection) {
+    console.error('No sidenote section found - check if sidenotes are enabled in frontmatter');
+    return;
+  }
+  
+  console.log('Found sidenote section');
   
   // Get all sidenotes from the content
   const sidenotes = document.querySelectorAll('.sidenote');
+  console.log(`Found ${sidenotes.length} sidenotes`);
   
   // Make sure all sidenotes are hidden initially
   sidenotes.forEach(sidenote => {
@@ -143,7 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   
   // Position initially with a shorter delay to ensure all styles are applied
-  setTimeout(positionAllSidenotes, 200); // Faster initial positioning (was 300ms)
+  console.log('Setting up initial positioning');
+  setTimeout(positionAllSidenotes, 300); // Increased from 200ms for reliability
   
   // Handle scroll events efficiently
   let scrollTimeout = null;
@@ -168,6 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollTimeout = null;
     });
   });
+  
+  // Debug output CSS variables to console
+  const style = getComputedStyle(document.documentElement);
+  console.log('Sidenote background color:', style.getPropertyValue('--sidenote-bg-color'));
+  console.log('Main background color:', style.getPropertyValue('--main-bg-color'));
   
   // Debounce function for handling events efficiently
   function debounce(func, wait) {

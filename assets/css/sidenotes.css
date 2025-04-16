@@ -1,5 +1,10 @@
 /* Sidenotes styling using semantic variables */
 
+/* Define missing variables if not defined elsewhere */
+:root {
+  --sidenote-bg-color: var(--color-surface, #f9f9fb);
+}
+
 /* Sidenote section within the layout */
 .sidenote-section {
   grid-area: sidenotes;

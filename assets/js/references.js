@@ -2,27 +2,33 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('References script loaded');
   
   // Create references with a delay to ensure the DOM is ready
-  setTimeout(initReferences, 1000);
+  setTimeout(initReferences, 1500); // Increased from 1000ms
   
   // Also handle the custom event
   document.addEventListener('sidenotesProcessed', () => {
     console.log('Sidenotes processed event received');
-    setTimeout(initReferences, 500);
+    setTimeout(initReferences, 800); // Increased from 500ms
   });
   
   // Listen for load event as well
   window.addEventListener('load', () => {
     console.log('Window loaded');
-    setTimeout(initReferences, 500);
+    setTimeout(initReferences, 800); // Increased from 500ms
   });
 });
 
 function initReferences() {
   console.log('Initializing references');
   
-  // Find all sidenotes on the page
-  const sidenotes = document.querySelectorAll('.sidenote');
-  console.log(`Found ${sidenotes.length} sidenotes`);
+  // Find all sidenotes on the page - specifically look in sidenote-section for better reliability
+  const sidenoteSection = document.querySelector('.sidenote-section');
+  if (!sidenoteSection) {
+    console.error('No sidenote section found');
+    return;
+  }
+  
+  const sidenotes = sidenoteSection.querySelectorAll('.sidenote');
+  console.log(`Found ${sidenotes.length} sidenotes in sidenote section`);
   
   // Only proceed if sidenotes exist
   if (!sidenotes.length) return;
@@ -73,12 +79,18 @@ function initReferences() {
   referencesContainer.appendChild(referencesList);
   
   // Find the best place to insert the references
-  // First check for post-content
   const postContent = document.querySelector('.post-content');
   if (postContent) {
     console.log('Found post-content, appending after it');
     // Insert after post-content
     postContent.insertAdjacentElement('afterend', referencesContainer);
+    
+    // Force a layout recalculation to ensure visibility
+    referencesContainer.offsetHeight;
+    
+    // Make sure the container is visible
+    referencesContainer.style.display = 'block';
+    
     return;
   }
   

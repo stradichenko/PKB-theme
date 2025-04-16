@@ -109,10 +109,6 @@
 
 <!-- Add other CSS resources first if needed -->
 {{ if .Params.sidenotes }}
-  {{ with resources.Get "css/sidenotes.css" }}
-    {{ $styles = $styles | append . }}
-  {{ end }}
-  
   {{ with resources.Get "css/references.css" }}
     {{ $styles = $styles | append . }}
   {{ end }}

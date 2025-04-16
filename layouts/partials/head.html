@@ -84,7 +84,7 @@
   {{ end }}
   
   <!-- 3. Component styles -->
-  {{ with resources.Get "css/components/sidenote.css" }}
+  {{ with resources.Get "css/sidenotes.css" }}
     {{ $sidenotesCSS := . | toCSS | fingerprint }}
     <link rel="stylesheet" href="{{ $sidenotesCSS.RelPermalink }}" integrity="{{ $sidenotesCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
@@ -148,7 +148,7 @@
       (resources.Get "css/body.css")
       (resources.Get "css/header.css") 
       (resources.Get "css/footer.css")
-      (resources.Get "css/components/sidenote.css")
+      (resources.Get "css/sidenotes.css")
       (resources.Get "css/components/toc.css")
       (resources.Get "css/components/table.css")
       (resources.Get "css/components/blockquote.css")
