@@ -1,0 +1,826 @@
+<div class="about-profile-container">
+  <div class="zipf-box">
+    <h2 class="zipf-title">Content Analysis (Zipf's Law)</h2>
+    
+    <div class="zipf-container">
+      <div class="zipf-graph">
+        <h3>Word Frequency Distribution</h3>
+        <!-- Wrapper for chart with relative positioning -->
+        <div class="zipf-chart-wrapper">
+          <div id="zipf-chart"></div>
+          
+          <!-- Action buttons positioned on top right -->
+          <div class="zipf-graph-actions">
+            <!-- Legend will automatically be positioned at the right due to flex-direction: row-reverse -->
+            
+            <!-- Fullscreen button -->
+            <button id="zipf-fullscreen-button" class="zipf-fullscreen-button" aria-label="View graph in fullscreen">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
+              </svg>
+            </button>
+            
+            <!-- Save button dropdown -->
+            <div class="zipf-save-dropdown">
+              <button id="zipf-save-button" class="zipf-save-button" aria-label="Save graph as image" aria-expanded="false" aria-controls="zipf-save-options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                  <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg>
+              </button>
+              <div id="zipf-save-options" class="zipf-save-options">
+                <button class="zipf-save-option" data-format="png">Save as PNG</button>
+                <button class="zipf-save-option" data-format="svg">Save as SVG</button>
+                <button class="zipf-save-option" data-format="jpeg">Save as JPEG</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="zipf-explanation-container">
+          <p class="zipf-explanation">
+            Zipf's law, named after linguist George Kingsley Zipf (1902-1950), states that the frequency of any word is inversely proportional to its rank in the frequency table. For example, if the most common word occurs n times, the second most common occurs n/2 times, the third most common n/3 times, etc.
+          </p>
+          
+          <p class="zipf-explanation">
+            Mathematically expressed as: f(r) ∝ 1/r<sup>α</sup>, where f(r) is the frequency of the word with rank r, and α is close to 1.
+          </p>
+          
+          <p class="zipf-explanation">
+            This visualization compares the actual vocabulary distribution (blue dots) against the ideal Zipf's Law distribution (dashed line). The phenomenon appears not only in language but across many natural and social systems, reflecting organizational principles of human behavior and information.
+          </p>
+          
+          <div class="zipf-corpus-explanation">
+            <h4>About the Cleaned Corpus</h4>
+            <p>The "cleaned corpus" refers to the collection of words processed through several cleaning steps:</p>
+            <ol>
+              <li>Words are extracted from all posts (titles, descriptions, tags, categories)</li>
+              <li>All words are converted to lowercase</li>
+              <li>Punctuation and special characters are removed</li>
+              <li>Very short words (2 characters or less) are filtered out</li>
+              <li>Common stop words like "a", "an", "the", "and", etc. are removed</li>
+            </ol>
+            <p>This cleaning process is important because it removes noise that would skew the frequency analysis, normalizes text to ensure word variations are counted as the same word, and excludes common words that occur frequently but don't add much meaning.</p>
+          </div>
+          
+          <div class="zipf-references">
+            <p><strong>References:</strong></p>
+            <ul>
+              <li>Zipf, G. K. (1949). <em>Human Behavior and the Principle of Least Effort</em>. Addison-Wesley.</li>
+              <li>Piantadosi, S. T. (2014). Zipf's word frequency law in natural language: A critical review and future directions. <em>Psychonomic Bulletin & Review</em>, 21(5), 1112-1130.</li>
+              <li>Manning, C. D., & Schütze, H. (1999). <em>Foundations of Statistical Natural Language Processing</em>. MIT Press.</li>
+              <li>Jäger, G. (2012). Power laws and other heavy-tailed distributions in linguistic typology. <em>Advances in Complex Systems</em>, 15(3).</li>
+              <li>Ferrer-i-Cancho, R., & Solé, R. V. (2003). Least effort and the origins of scaling in human language. <em>Proceedings of the National Academy of Sciences</em>, 100(3), 788-791.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="zipf-table">
+        <h3>Word Frequency Analysis</h3>
+        <div class="table-container">
+          <table id="zipf-data">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Word</th>
+                <th>Freq (n/total)</th>
+                <th>Pr(%)</th>
+                <th>Ideal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        <div class="zipf-source">
+          Source: Analysis of content from titles, descriptions, tags, and categories across all posts in this knowledge base.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen overlay - updated for full-screen usage -->
+<div id="zipf-fullscreen-overlay" class="zipf-fullscreen-overlay">
+  <div class="zipf-overlay-content">
+    <div class="zipf-fullscreen-chart-wrapper">
+      <div id="zipf-fullscreen-chart"></div>
+      
+      <!-- Fullscreen actions with same ordering as regular view -->
+      <div class="zipf-fullscreen-actions">
+        <!-- Fullscreen save dropdown button -->
+        <div class="zipf-save-dropdown">
+          <button id="zipf-fullscreen-save-button" class="zipf-save-button" aria-label="Save graph as image" aria-expanded="false" aria-controls="zipf-fullscreen-save-options">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+            </svg>
+          </button>
+          <div id="zipf-fullscreen-save-options" class="zipf-save-options">
+            <button class="zipf-save-option" data-format="png" data-target="fullscreen">Save as PNG</button>
+            <button class="zipf-save-option" data-format="svg" data-target="fullscreen">Save as SVG</button>
+            <button class="zipf-save-option" data-format="jpeg" data-target="fullscreen">Save as JPEG</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Close button remains in the top right corner -->
+    <button id="zipf-close-fullscreen" class="zipf-close-fullscreen" aria-label="Close fullscreen view">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Extract words from all posts
+  const allWords = [];
+  {{ range where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+    // Extract from title
+    {{ $title := .Title | lower }}
+    {{ $titleWords := split $title " " }}
+    {{ range $titleWords }}
+      allWords.push("{{ . }}");
+    {{ end }}
+    
+    // Extract from description
+    {{ with .Description }}
+      {{ $desc := . | lower }}
+      {{ $descWords := split $desc " " }}
+      {{ range $descWords }}
+        allWords.push("{{ . }}");
+      {{ end }}
+    {{ end }}
+    
+    // Extract from tags
+    {{ range .Params.tags }}
+      allWords.push("{{ . | lower }}");
+    {{ end }}
+    
+    // Extract from categories
+    {{ range .Params.categories }}
+      allWords.push("{{ . | lower }}");
+    {{ end }}
+  {{ end }}
+  
+  // Clean and normalize words (remove punctuation, articles, etc.)
+  const stopWords = new Set(['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'with', 'by', 'about', 'as', 'of', 'this', 'that', 'these', 'those']);
+  const cleanedWords = allWords
+    .map(word => word.replace(/[^\w\s]|_/g, "").trim().toLowerCase())
+    .filter(word => word.length > 2) // Filter out short words
+    .filter(word => !stopWords.has(word)); // Filter out stop words
+  
+  // Count word frequencies
+  const wordCounts = {};
+  cleanedWords.forEach(word => {
+    wordCounts[word] = (wordCounts[word] || 0) + 1;
+  });
+  
+  // Calculate TOTAL words in entire corpus for accurate frequency representation
+  const totalCorpusWords = cleanedWords.length;
+  
+  // Convert to array for sorting
+  let wordArray = Object.entries(wordCounts).map(([word, count]) => ({ word, count }));
+  
+  // Sort by frequency (descending)
+  wordArray.sort((a, b) => b.count - a.count);
+  
+  // Keep only top 150 words
+  wordArray = wordArray.slice(0, 150);
+  
+  // Calculate total for percentage among the top words
+  const totalTopWords = wordArray.reduce((sum, item) => sum + item.count, 0);
+  
+  // Add rank, percentage and ideal Zipf values
+  wordArray.forEach((item, index) => {
+    item.rank = index + 1;
+    item.percentage = (item.count / totalTopWords * 100).toFixed(2);
+    
+    // Calculate ideal Zipf's Law value
+    if (index === 0) {
+      item.ideal = item.count;
+      item.idealPercentage = item.percentage;
+    } else {
+      item.ideal = (wordArray[0].count / item.rank).toFixed(1);
+      item.idealPercentage = (item.ideal / totalTopWords * 100).toFixed(2);
+    }
+  });
+  
+  // Populate the table
+  const tableBody = document.querySelector('#zipf-data tbody');
+  tableBody.innerHTML = '';
+  
+  wordArray.forEach(item => {
+    const row = document.createElement('tr');
+    
+    // Add class if this is very close to the ideal Zipf's Law value
+    const ratio = item.count / parseFloat(item.ideal);
+    if (ratio > 0.9 && ratio < 1.1) {
+      row.classList.add('zipf-ideal-row');
+    }
+    
+    // Update frequency column to show count / total corpus words
+    row.innerHTML = `
+      <td>${item.rank}</td>
+      <td>${item.word}</td>
+      <td>${item.count} / ${totalCorpusWords} <small>(${(item.count/totalCorpusWords*100).toFixed(4)}%)</small></td>
+      <td>${item.percentage}%</td>
+      <td>${item.ideal} <small>(${item.idealPercentage}%)</small></td>
+    `;
+    tableBody.appendChild(row);
+  });
+  
+  // Update the heading of the frequency column to indicate what it represents
+  document.querySelector('#zipf-data thead tr').innerHTML = `
+    <th>Rank</th>
+    <th>Word</th>
+    <th>Freq (n/${totalCorpusWords})</th>
+    <th>Pr(%)</th>
+    <th>Ideal</th>
+  `;
+  
+  // Create the Zipf's law chart
+  createZipfChart(wordArray, 'zipf-chart');
+  
+  // Set up fullscreen functionality
+  setupZipfFullscreen(wordArray);
+  
+  // Set up save functionality
+  setupZipfSave();
+});
+
+function createZipfChart(data, containerId) {
+  // Set up dimensions
+  const width = document.getElementById(containerId).offsetWidth;
+  const height = containerId === 'zipf-fullscreen-chart' ? window.innerHeight - 120 : 400;
+  const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+  
+  // Clear any existing SVG in the container
+  document.getElementById(containerId).innerHTML = '';
+  
+  // Create SVG
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', width);
+  svg.setAttribute('height', height);
+  document.getElementById(containerId).appendChild(svg);
+  
+  // Create scales (using log scales for Zipf's law)
+  const xScale = logScale(1, data.length, margin.left, width - margin.right);
+  const yScale = logScale(1, data[0].count, height - margin.bottom, margin.top);
+  
+  // Create axes
+  createAxis(svg, 'x', xScale, 'Rank', width, height, margin);
+  createAxis(svg, 'y', yScale, 'Frequency', width, height, margin);
+  
+  // Plot data points
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  svg.appendChild(g);
+  
+  data.forEach(item => {
+    // Create dot
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', xScale(item.rank));
+    circle.setAttribute('cy', yScale(item.count));
+    circle.setAttribute('r', 4);
+    circle.setAttribute('fill', 'var(--color-primary)');
+    circle.setAttribute('class', 'zipf-point');
+    
+    // Add tooltip text
+    circle.setAttribute('data-word', item.word);
+    circle.setAttribute('data-freq', item.count);
+    
+    // Add word label for top words
+    if (item.rank <= 20) {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', xScale(item.rank) + 8);
+      text.setAttribute('y', yScale(item.count));
+      text.setAttribute('class', 'zipf-label');
+      text.textContent = item.word;
+      g.appendChild(text);
+    }
+    
+    // Add hover effects
+    circle.addEventListener('mouseover', function(e) {
+      this.setAttribute('r', 6);
+      showTooltip(e, item);
+    });
+    
+    circle.addEventListener('mouseout', function() {
+      this.setAttribute('r', 4);
+      hideTooltip();
+    });
+    
+    g.appendChild(circle);
+  });
+  
+  // Add the best-fit line for Zipf's law - CONSTRAINED TO CHART BOUNDS
+  const idealData = data.map((item, i) => {
+    const idealCount = data[0].count / (i + 1);
+    return { 
+      rank: item.rank, 
+      count: idealCount,
+      // Ensure y-value is constrained within the chart boundaries
+      constrainedCount: Math.max(1, Math.min(idealCount, data[0].count)) 
+    };
+  });
+  
+  // Create path element for the line
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  let d = `M ${xScale(idealData[0].rank)} ${yScale(idealData[0].constrainedCount)}`;
+  
+  for (let i = 1; i < idealData.length; i++) {
+    // Only draw the line within the visible area
+    const x = xScale(idealData[i].rank);
+    const y = yScale(idealData[i].constrainedCount);
+    
+    // Check if the point is within the chart boundaries
+    if (x >= margin.left && x <= (width - margin.right) && 
+        y >= margin.top && y <= (height - margin.bottom)) {
+      d += ` L ${x} ${y}`;
+    }
+  }
+  
+  line.setAttribute('d', d);
+  line.setAttribute('stroke', 'var(--color-secondary)');
+  line.setAttribute('stroke-width', '2');
+  line.setAttribute('fill', 'none');
+  line.setAttribute('stroke-dasharray', '5,5');
+  g.appendChild(line);
+  
+  // Add legend in the top-left corner to avoid button overlap
+  const legendG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  svg.appendChild(legendG);
+  
+  // Calculate proper position for legend - in top left with padding
+  const legendX = margin.left + 10;
+  const legendY = margin.top + 10;
+  
+  // Legend background
+  const legendBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  legendBg.setAttribute('x', legendX);
+  legendBg.setAttribute('y', legendY);
+  legendBg.setAttribute('width', 140);
+  legendBg.setAttribute('height', 50);
+  legendBg.setAttribute('fill', 'rgba(255,255,255,0.8)');
+  legendBg.setAttribute('rx', '5');
+  legendG.appendChild(legendBg);
+  
+  // Actual data point
+  const dot1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot1.setAttribute('cx', legendX + 20);
+  dot1.setAttribute('cy', legendY + 15);
+  dot1.setAttribute('r', 4);
+  dot1.setAttribute('fill', 'var(--color-primary)');
+  legendG.appendChild(dot1);
+  
+  // Label for actual data
+  const label1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  label1.setAttribute('x', legendX + 30);
+  label1.setAttribute('y', legendY + 20);
+  label1.setAttribute('class', 'zipf-label');
+  label1.textContent = 'Actual Words';
+  legendG.appendChild(label1);
+  
+  // Ideal line
+  const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line1.setAttribute('x1', legendX + 10);
+  line1.setAttribute('y1', legendY + 35);
+  line1.setAttribute('x2', legendX + 30);
+  line1.setAttribute('y2', legendY + 35);
+  line1.setAttribute('stroke', 'var(--color-secondary)');
+  line1.setAttribute('stroke-width', '2');
+  line1.setAttribute('stroke-dasharray', '5,5');
+  legendG.appendChild(line1);
+  
+  // Label for ideal line
+  const label2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  label2.setAttribute('x', legendX + 40);
+  label2.setAttribute('y', legendY + 40);
+  label2.setAttribute('class', 'zipf-label');
+  label2.textContent = 'Ideal Zipf\'s Law';
+  legendG.appendChild(label2);
+  
+  return svg;
+}
+
+function setupZipfFullscreen(data) {
+  const fullscreenButton = document.getElementById('zipf-fullscreen-button');
+  const fullscreenOverlay = document.getElementById('zipf-fullscreen-overlay');
+  const closeFullscreenButton = document.getElementById('zipf-close-fullscreen');
+  
+  fullscreenButton.addEventListener('click', function() {
+    // Show fullscreen overlay
+    fullscreenOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    
+    // Create fullscreen graph with enhanced settings
+    createZipfChart(data, 'zipf-fullscreen-chart');
+    
+    // Add resize listener for fullscreen responsiveness
+    window.addEventListener('resize', function() {
+      if (fullscreenOverlay.classList.contains('active')) {
+        createZipfChart(data, 'zipf-fullscreen-chart');
+      }
+    });
+  });
+  
+  closeFullscreenButton.addEventListener('click', function() {
+    fullscreenOverlay.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+    window.removeEventListener('resize', null);
+  });
+}
+
+function setupZipfSave() {
+  // Setup save dropdown toggles
+  setupSaveDropdown('zipf-save-button', 'zipf-save-options');
+  setupSaveDropdown('zipf-fullscreen-save-button', 'zipf-fullscreen-save-options');
+  
+  // Handle save format selection
+  const saveOptionButtons = document.querySelectorAll('.zipf-save-option');
+  if (saveOptionButtons) {
+    saveOptionButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const format = this.getAttribute('data-format');
+        const target = this.getAttribute('data-target') || 'normal';
+        
+        // Export the correct graph
+        if (target === 'fullscreen') {
+          exportZipfGraph(format, 'zipf-fullscreen-chart');
+        } else {
+          exportZipfGraph(format, 'zipf-chart');
+        }
+        
+        // Close the dropdown
+        const dropdown = this.closest('.zipf-save-options');
+        if (dropdown) {
+          dropdown.classList.remove('active');
+        }
+        
+        const button = dropdown.previousElementSibling;
+        if (button) {
+          button.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+  }
+}
+
+function setupSaveDropdown(buttonId, dropdownId) {
+  const saveButton = document.getElementById(buttonId);
+  const saveOptions = document.getElementById(dropdownId);
+  
+  if (saveButton && saveOptions) {
+    // Toggle dropdown on button click
+    saveButton.addEventListener('click', function() {
+      const isExpanded = saveButton.getAttribute('aria-expanded') === 'true';
+      saveButton.setAttribute('aria-expanded', !isExpanded);
+      
+      if (isExpanded) {
+        saveOptions.classList.remove('active');
+      } else {
+        saveOptions.classList.add('active');
+      }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!saveButton.contains(event.target) && !saveOptions.contains(event.target)) {
+        saveOptions.classList.remove('active');
+        saveButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+}
+
+function exportZipfGraph(format, containerId) {
+  // Get the SVG element from the specified graph
+  const svgElement = document.querySelector(`#${containerId} svg`);
+  if (!svgElement) return;
+  
+  // Create a copy of the SVG to modify for export
+  const svgCopy = svgElement.cloneNode(true);
+  
+  // Set explicit dimensions with higher resolution
+  const width = svgElement.clientWidth * 2; // Double the resolution
+  const height = svgElement.clientHeight * 2;
+  svgCopy.setAttribute('width', width);
+  svgCopy.setAttribute('height', height);
+  svgCopy.setAttribute('viewBox', `0 0 ${svgElement.clientWidth} ${svgElement.clientHeight}`);
+  
+  // Add inline CSS with explicit styles to ensure visibility
+  const styles = document.createElement('style');
+  styles.textContent = `
+    .zipf-point { 
+      fill: var(--color-primary, #4a90e2); 
+      stroke: #fff; 
+      stroke-width: 1px;
+      r: 4px;
+    }
+    path {
+      stroke: var(--color-secondary, #df2d2d);
+      stroke-width: 2px;
+      fill: none;
+      stroke-dasharray: 5, 5;
+    }
+    .zipf-label { 
+      font-family: Arial, sans-serif; 
+      font-size: 10px;
+      fill: #333;
+    }
+    .axis-label { 
+      font-family: Arial, sans-serif; 
+      font-size: 10px;
+      fill: #333;
+    }
+    .axis-title { 
+      font-family: Arial, sans-serif; 
+      font-size: 12px; 
+      font-weight: bold;
+      fill: #333;
+    }
+    line {
+      stroke: #333;
+      stroke-width: 1px;
+    }
+  `;
+  svgCopy.insertBefore(styles, svgCopy.firstChild);
+  
+  // Set explicit colors for elements that might be using CSS variables
+  svgCopy.querySelectorAll('circle').forEach(circle => {
+    if (!circle.getAttribute('fill') || circle.getAttribute('fill').includes('var(--')) {
+      circle.setAttribute('fill', '#4a90e2'); // Default to a visible blue color
+    }
+    // Make sure all points are visible
+    circle.setAttribute('r', '4'); // Set explicit radius
+  });
+  
+  svgCopy.querySelectorAll('path').forEach(path => {
+    if (!path.getAttribute('stroke') || path.getAttribute('stroke').includes('var(--')) {
+      path.setAttribute('stroke', '#df2d2d'); // Default to a visible red color
+    }
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('fill', 'none');
+  });
+  
+  // Get SVG as a string
+  const serializer = new XMLSerializer();
+  const svgString = serializer.serializeToString(svgCopy);
+  
+  if (format === 'svg') {
+    // Download as SVG file
+    downloadFile(svgString, 'zipf-law-graph.svg', 'image/svg+xml');
+  } else {
+    // For PNG and JPEG, convert SVG to image with higher resolution
+    const canvas = document.createElement('canvas');
+    // Set canvas dimensions to 2x for higher resolution
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    
+    // Fill with white background for JPEG
+    if (format === 'jpeg') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
+    }
+    
+    // Create image from SVG
+    const img = new Image();
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0, width, height);
+      let mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+      
+      try {
+        const dataURL = canvas.toDataURL(mimeType, 0.95);
+        downloadFile(dataURL, `zipf-law-graph.${format}`, mimeType);
+      } catch (e) {
+        console.error("Failed to export graph:", e);
+        alert("Failed to export the graph. Please try another format.");
+      }
+    };
+    
+    // Convert SVG to data URI
+    const svg64 = btoa(unescape(encodeURIComponent(svgString)));
+    const b64Start = 'data:image/svg+xml;base64,';
+    img.src = b64Start + svg64;
+  }
+}
+
+function getComputedZipfStyles() {
+  return `
+    .zipf-point { 
+      cursor: pointer;
+      fill: #4a90e2;
+      stroke: #fff;
+      stroke-width: 1px;
+      r: 4px;
+    }
+    .zipf-point:hover { 
+      r: 6px;
+      fill: #2a70c2;
+    }
+    path {
+      stroke: #df2d2d;
+      stroke-width: 2px;
+      fill: none;
+      stroke-dasharray: 5, 5;
+    }
+    .zipf-label { 
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      fill: #333;
+    }
+    .axis-label { 
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      fill: #333;
+    }
+    .axis-title { 
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      fill: #333;
+    }
+    line {
+      stroke: #333;
+      stroke-width: 1px;
+    }
+    text {
+      font-family: Arial, sans-serif;
+      fill: #333;
+    }
+  `;
+}
+
+function downloadFile(data, filename, mimeType) {
+  const blob = mimeType.startsWith('image/svg') 
+    ? new Blob([data], { type: mimeType })
+    : fetch(data).then(res => res.blob());
+  
+  const link = document.createElement('a');
+  
+  if (mimeType.startsWith('image/svg')) {
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  } else {
+    Promise.resolve(blob).then(blobData => {
+      link.href = URL.createObjectURL(blobData);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+  }
+}
+
+function logScale(domainStart, domainEnd, rangeStart, rangeEnd) {
+  const domainRatio = Math.log(domainEnd / domainStart);
+  return function(x) {
+    const logX = Math.log(x / domainStart);
+    const scale = (rangeStart - rangeEnd) / domainRatio;
+    return rangeStart - logX * scale;
+  };
+}
+
+function createAxis(svg, type, scale, label, width, height, margin) {
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  svg.appendChild(g);
+  
+  if (type === 'x') {
+    // Create x-axis line
+    const axis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    axis.setAttribute('x1', margin.left);
+    axis.setAttribute('y1', height - margin.bottom);
+    axis.setAttribute('x2', width - margin.right);
+    axis.setAttribute('y2', height - margin.bottom);
+    axis.setAttribute('stroke', 'var(--graph-text-color)');
+    axis.setAttribute('stroke-width', '1');
+    g.appendChild(axis);
+    
+    // Create tick marks and labels
+    [1, 2, 5, 10, 20, 50, 100].forEach(tick => {
+      if (tick <= 100) {
+        const x = scale(tick);
+        
+        // Tick mark
+        const tickMark = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tickMark.setAttribute('x1', x);
+        tickMark.setAttribute('y1', height - margin.bottom);
+        tickMark.setAttribute('x2', x);
+        tickMark.setAttribute('y2', height - margin.bottom + 6);
+        tickMark.setAttribute('stroke', 'var(--graph-text-color)');
+        tickMark.setAttribute('stroke-width', '1');
+        g.appendChild(tickMark);
+        
+        // Label
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', height - margin.bottom + 20);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('class', 'axis-label');
+        text.textContent = tick;
+        g.appendChild(text);
+      }
+    });
+    
+    // Axis label
+    const axisLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    axisLabel.setAttribute('x', (width - margin.left - margin.right) / 2 + margin.left);
+    axisLabel.setAttribute('y', height - 10);
+    axisLabel.setAttribute('text-anchor', 'middle');
+    axisLabel.setAttribute('class', 'axis-title');
+    axisLabel.textContent = label;
+    g.appendChild(axisLabel);
+    
+  } else if (type === 'y') {
+    // Create y-axis line
+    const axis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    axis.setAttribute('x1', margin.left);
+    axis.setAttribute('y1', margin.top);
+    axis.setAttribute('x2', margin.left);
+    axis.setAttribute('y2', height - margin.bottom);
+    axis.setAttribute('stroke', 'var(--graph-text-color)');
+    axis.setAttribute('stroke-width', '1');
+    g.appendChild(axis);
+    
+    // Create logarithmic tick marks
+    [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000].forEach(tick => {
+      const y = scale(tick);
+      
+      if (y >= margin.top && y <= height - margin.bottom) {
+        // Tick mark
+        const tickMark = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tickMark.setAttribute('x1', margin.left - 6);
+        tickMark.setAttribute('y1', y);
+        tickMark.setAttribute('x2', margin.left);
+        tickMark.setAttribute('y2', y);
+        tickMark.setAttribute('stroke', 'var(--graph-text-color)');
+        tickMark.setAttribute('stroke-width', '1');
+        g.appendChild(tickMark);
+        
+        // Label
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', margin.left - 10);
+        text.setAttribute('y', y + 4);
+        text.setAttribute('text-anchor', 'end');
+        text.setAttribute('class', 'axis-label');
+        text.textContent = tick;
+        g.appendChild(text);
+      }
+    });
+    
+    // Axis label
+    const axisLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    axisLabel.setAttribute('transform', `rotate(-90, ${margin.left - 35}, ${height/2})`);
+    axisLabel.setAttribute('x', margin.left - 35);
+    axisLabel.setAttribute('y', height/2);
+    axisLabel.setAttribute('text-anchor', 'middle');
+    axisLabel.setAttribute('class', 'axis-title');
+    axisLabel.textContent = label;
+    g.appendChild(axisLabel);
+  }
+}
+
+function showTooltip(event, data) {
+  let tooltip = document.getElementById('zipf-tooltip');
+  
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'zipf-tooltip';
+    tooltip.className = 'zipf-tooltip';
+    document.body.appendChild(tooltip);
+  }
+  
+  const idealValue = parseFloat(data.ideal);
+  const ratio = data.count / idealValue;
+  const zipfFit = ratio > 0.9 && ratio < 1.1 ? 'Follows Zipf\'s Law well!' : 
+                 ratio > 0.7 ? 'Close to Zipf\'s prediction' : 
+                 'Deviates from Zipf\'s Law';
+  
+  tooltip.innerHTML = `
+    <strong>${data.word}</strong><br>
+    Rank: ${data.rank}<br>
+    Frequency: ${data.count} (${data.percentage}%)<br>
+    Ideal Zipf: ${data.ideal} (1/${(data.rank).toFixed(0)})<br>
+    <em>${zipfFit}</em>
+  `;
+  
+  const rect = event.target.getBoundingClientRect();
+  tooltip.style.left = `${rect.left + window.scrollX + 10}px`;
+  tooltip.style.top = `${rect.top + window.scrollY - 10}px`;
+  tooltip.style.display = 'block';
+}
+
+function hideTooltip() {
+  const tooltip = document.getElementById('zipf-tooltip');
+  if (tooltip) {
+    tooltip.style.display = 'none';
+  }
+}
+</script>

@@ -1,0 +1,457 @@
+/* ------------------------------------------------------------------------- */
+/* ZIPF'S LAW VISUALIZATION STYLES                                           */
+/* ------------------------------------------------------------------------- */
+
+/* Main container */
+.zipf-box {
+  width: 100%;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-light);
+}
+
+.zipf-title {
+  font-size: var(--font-size-2xl);
+  color: var(--text-color-heading);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 3px solid var(--color-primary);
+  display: inline-block;
+}
+
+.zipf-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+/* Graph section */
+.zipf-graph {
+  flex: 3;
+  min-width: 300px;
+}
+
+/* Wrapper for chart with buttons and legend */
+.zipf-chart-wrapper,
+.zipf-fullscreen-chart-wrapper {
+  position: relative;
+  width: 100%;
+  margin: var(--spacing-md) 0;
+}
+
+#zipf-chart {
+  width: 100%;
+  height: 400px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Reposition graph actions to top right, with proper spacing */
+.zipf-graph-actions {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  flex-direction: row-reverse; /* Buttons appear from right to left */
+  gap: var(--spacing-sm);
+  z-index: 100; /* Ensure buttons are above the chart */
+}
+
+/* Fullscreen chart - take up full available space */
+#zipf-fullscreen-chart {
+  width: 100%;
+  height: calc(100vh - 100px); /* Use most of the viewport height */
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+/* Table section - IMPROVED SCROLLING */
+.zipf-table {
+  flex: 2;
+  min-width: 250px;
+}
+
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--color-primary) rgba(0, 0, 0, 0.1); /* Firefox */
+  /* Remove top and bottom margins */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Webkit scrollbar styling */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary-variant);
+}
+
+#zipf-data {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;   /* Set top margin to 0 */
+  margin-bottom: 0;  /* Set bottom margin to 0 */
+}
+
+#zipf-data th,
+#zipf-data td {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+#zipf-data th {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  font-size: var(--font-size-small);
+  z-index: 1; /* Ensure headers stay above content when scrolling */
+}
+
+#zipf-data tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+#zipf-data tr:hover {
+  background-color: rgba(var(--light-primary-rgb), 0.1);
+}
+
+/* Graph elements */
+.zipf-point {
+  cursor: pointer;
+  transition: r 0.2s ease;
+}
+
+.zipf-label {
+  font-size: 10px;
+  fill: var(--text-color-primary);
+  pointer-events: none;
+}
+
+.axis-label {
+  font-size: 10px;
+  fill: var(--text-color-primary);
+}
+
+.axis-title {
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  fill: var(--text-color-heading);
+}
+
+/* Explanation and details - Updated with better formatting */
+.zipf-explanation-container {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: var(--border-radius);
+  border-left: 3px solid var(--color-primary);
+}
+
+.zipf-explanation {
+  font-size: var(--font-size-medium);
+  color: var(--text-color-primary);
+  margin-bottom: var(--spacing-md);
+  line-height: var(--line-height-relaxed);
+}
+
+/* New section for corpus explanation */
+.zipf-corpus-explanation {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: rgba(var(--light-primary-rgb), 0.05);
+  border-radius: var(--border-radius);
+  border-left: 3px solid var(--color-secondary);
+}
+
+.zipf-corpus-explanation h4 {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-color-heading);
+}
+
+.zipf-corpus-explanation p {
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-color-primary);
+}
+
+.zipf-corpus-explanation ol {
+  padding-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.zipf-corpus-explanation li {
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-xs);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-color-primary);
+}
+
+.zipf-references {
+  font-size: var(--font-size-small);
+  color: var(--text-color-muted);
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+}
+
+.zipf-references ul {
+  margin-left: var(--spacing-md);
+  padding-left: var(--spacing-md);
+  list-style-type: disc;
+}
+
+.zipf-references li {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Highlight the ideal Zipf's Law values */
+.zipf-ideal-row td {
+  color: var(--color-primary);
+  font-style: italic;
+  border-left: 3px solid var(--color-primary);
+}
+
+/* Graph Actions - UPDATED POSITION TO RIGHT */
+.zipf-graph-actions {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  flex-direction: row-reverse; /* Reverse the order: legend will be rightmost */
+  gap: var(--spacing-sm);
+  z-index: 100; /* Ensure buttons are above the chart */
+}
+
+.zipf-fullscreen-button,
+.zipf-save-button {
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.9; /* Increased from 0.7 for better visibility */
+  transition: opacity 0.2s ease, color 0.2s ease;
+  /* Add shadow for better visibility */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.zipf-fullscreen-button:hover,
+.zipf-save-button:hover {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+.zipf-save-dropdown {
+  position: relative;
+}
+
+.zipf-save-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--spacing-xs);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs);
+  min-width: 150px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: none;
+  flex-direction: column;
+  z-index: 120; /* Above other elements */
+}
+
+.zipf-save-options.active {
+  display: flex;
+}
+
+.zipf-save-option {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-color-primary);
+  font-size: var(--font-size-small);
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+}
+
+.zipf-save-option:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+}
+
+/* Fullscreen overlay */
+.zipf-fullscreen-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-background);
+  z-index: var(--z-index-modal);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.zipf-fullscreen-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+.zipf-overlay-content {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+#zipf-fullscreen-chart {
+  width: 100%;
+  height: calc(100vh - 100px); /* Use most of the viewport height */
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.zipf-close-fullscreen {
+  position: absolute;
+  top: calc(var(--spacing-lg) + var(--spacing-sm));
+  right: calc(var(--spacing-lg) + var(--spacing-sm));
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  z-index: 110;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.zipf-close-fullscreen:hover {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+/* Position fullscreen actions similar to the normal view */
+.zipf-fullscreen-actions {
+  position: absolute;
+  top: calc(var(--spacing-lg) + var(--spacing-sm));
+  right: calc(var(--spacing-lg) + 40px + var(--spacing-md)); /* Make room for close button */
+  display: flex;
+  flex-direction: row-reverse; /* Reverse the order */
+  gap: var(--spacing-sm);
+  z-index: 110; /* Above chart content */
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .zipf-box {
+  background-color: var(--dark-surface);
+}
+
+[data-theme="dark"] #zipf-chart,
+[data-theme="dark"] .table-container {
+  border-color: var(--dark-border);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] #zipf-data th {
+  background-color: var(--dark-primary);
+}
+
+[data-theme="dark"] #zipf-data tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] #zipf-data tr:hover {
+  background-color: rgba(var(--dark-primary-rgb), 0.2);
+}
+
+[data-theme="dark"] .zipf-ideal-row td {
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .zipf-fullscreen-button,
+[data-theme="dark"] .zipf-save-button,
+[data-theme="dark"] .zipf-close-fullscreen {
+  background-color: var(--dark-surface);
+  color: var(--dark-text-primary);
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .zipf-save-options {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .zipf-save-option:hover {
+  background-color: rgba(var(--dark-primary-rgb), 0.2);
+}
+
+[data-theme="dark"] .table-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .zipf-explanation-container {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .zipf-corpus-explanation {
+  background-color: rgba(var(--dark-primary-rgb), 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: var(--breakpoint-md)) {
+  .zipf-container {
+    flex-direction: column;
+  }
+  
+  .zipf-graph,
+  .zipf-table {
+    width: 100%;
+  }
+}

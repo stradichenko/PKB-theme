@@ -183,3 +183,8 @@
     </div>
   </div>
 </div>
+
+<!-- Include Zipf's Law Analysis -->
+{{ $zipfsCSS := resources.Get "css/zipfs-law.css" | resources.Minify }}
+<link rel="stylesheet" href="{{ $zipfsCSS.RelPermalink }}">
+{{ partial "zipfs-law.html" . }}
