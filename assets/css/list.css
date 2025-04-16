@@ -116,18 +116,59 @@ html:not([data-theme="dark"]) .tag-link {
 }
 
 .tag-link {
-  background-color: rgba(74, 144, 226, 0.1); /* Light theme default */
+  background-color: rgba(var(--color-primary-rgb, 74, 144, 226), 0.2); /* Restored transparency */
+  color: var(--color-primary); /* Changed back to primary color for better contrast with transparent bg */
   border-radius: 3px;
   padding: 0.1rem 0.4rem;
 }
 
 /* Dark mode overrides */
 html[data-theme="dark"] .tag-link {
-  background-color: rgba(233, 153, 107, 0.15); /* Based on dark-primary with transparency */
+  background-color: rgba(var(--color-primary-rgb, 233, 153, 107), 0.15); /* Restored transparency */
 }
 
 .page-summary {
   color: var(--color-text-secondary);
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+/* Tooltip for truncated tags/categories */
+.more-indicator {
+  position: relative;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+}
+
+.more-indicator:hover::after,
+.tag-more:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--text-color-primary);
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 100; /* Increased z-index to ensure tooltips appear on top */
+  white-space: normal; /* Changed from nowrap to normal */
+  font-size: 0.8rem;
+  pointer-events: none;
+  min-width: 150px;
+  max-width: 300px; /* Increased max-width */
+  text-align: left;
+  transform: translateY(-5px);
+  word-wrap: break-word; /* Added to handle long words */
+  overflow-wrap: break-word;
+}
+
+.tag-more {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  position: relative;
 }

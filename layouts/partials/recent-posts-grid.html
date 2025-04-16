@@ -7,8 +7,18 @@
         <div class="post-date">{{ .Date.Format "Jan 2, 2006" }}</div>
         {{ if .Params.tags }}
         <div class="post-tags">
-          {{ range .Params.tags }}
-            <span class="tag">{{ . }}</span>
+          {{ $tagCount := len .Params.tags }}
+          {{ $maxTags := 2 }}
+          {{ $allTags := .Params.tags }}
+          
+          {{ range $index, $tag := .Params.tags }}
+            {{ if lt $index $maxTags }}
+              <span class="tag">{{ . }}</span>
+            {{ else if eq $index $maxTags }}
+              {{ $remainingTags := after $maxTags $allTags }}
+              <span class="tag tag-more" data-tooltip="{{ delimit $remainingTags ", " }}">+{{ sub $tagCount $maxTags }}</span>
+              {{ break }}
+            {{ end }}
           {{ end }}
         </div>
         {{ end }}
