@@ -386,6 +386,151 @@
   z-index: 12;
 }
 
+/* Graph Filter Dropdown */
+.graph-filter-dropdown {
+  position: relative;
+}
+
+.graph-filter-button {
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.graph-filter-button:hover {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+.filter-options-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--spacing-xs);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  min-width: 220px;
+  max-height: 80vh; /* Limit to 80% of viewport height */
+  overflow-y: auto; /* Make the entire dropdown scrollable if needed */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  z-index: 13;
+}
+
+.filter-options-dropdown.active {
+  display: flex;
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.filter-section label {
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color-primary);
+}
+
+.filter-select {
+  padding: var(--spacing-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  font-size: var(--font-size-small);
+  width: 100%;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  max-height: 200px; /* Set a maximum height */
+  overflow-y: auto; /* Make it scrollable */
+  padding-right: var(--spacing-xs); /* Add padding for scrollbar */
+}
+
+.filter-options.hidden {
+  display: none;
+}
+
+/* Style for the scrollbar to make it more elegant */
+.filter-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-options::-webkit-scrollbar-track {
+  background: rgba(var(--color-surface-rgb, 248, 248, 248), 0.5);
+  border-radius: 6px;
+}
+
+.filter-options::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--color-primary-rgb), 0.3);
+  border-radius: 6px;
+}
+
+.filter-options::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.5);
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-small);
+}
+
+.search-input {
+  padding: var(--spacing-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  font-size: var(--font-size-small);
+  width: 100%;
+}
+
+.filter-button {
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  cursor: pointer;
+  font-size: var(--font-size-small);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.filter-button:hover {
+  background-color: var(--color-primary);
+  color: var(--text-color-inverse);
+}
+
+/* Graph Actions */
+.graph-actions {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-sm);
+  z-index: 12;
+}
+
 .graph-save-dropdown {
   position: relative;
 }

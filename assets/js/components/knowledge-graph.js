@@ -241,6 +241,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .radius(d => calculateNodeSize(d.linksCount) * 
                     config.physics.collisionRadiusMultiplier * sizeMultiplier));
     
+    // Add a filter state tracker to the simulation
+    simulation.filterActive = false;
+    simulation.filteredNodes = new Set();
+    
     // Draw links
     const link = g.selectAll('.link')
       .data(graphData.links)
@@ -260,14 +264,14 @@ document.addEventListener('DOMContentLoaded', function() {
       .attr('stroke', isFullscreen ? 'var(--graph-node-stroke)' : '#fff')
       .attr('stroke-width', 1.5)
       .on('mouseover', (event, d) => highlightConnections(event, d, node, link, label))
-      .on('mouseout', () => resetHighlighting(node, link, label))
+      .on('mouseout', () => resetHighlightingPreserveFilter(node, link, label, simulation))
       .on('click', function(event, d) {
         window.open(d.url, '_blank');
       })
       .call(d3.drag()
         .on('start', dragStarted)
         .on('drag', dragged)
-        .on('end', dragEnded));
+        .on('end', d => dragEnded(d, simulation)));
     
     // Draw labels
     const label = g.selectAll('.label')
@@ -315,6 +319,11 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
+      
+      // Reapply filter if active
+      if (simulation.filterActive) {
+        reapplyFilter(node, link, label, simulation);
+      }
     }
     
     // Create legend for this view
@@ -364,16 +373,43 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   /**
-   * Reset highlight state
+   * Reset highlight state but preserve filter states
    */
-  function resetHighlighting(node, link, label) {
-    node.classed('node-dim', false)
-        .classed('node-highlight', false)
+  function resetHighlightingPreserveFilter(node, link, label, simulation) {
+    node.classed('node-highlight', false)
         .classed('node-active', false);
-    link.classed('link-dim', false)
-        .classed('link-highlight', false);
-    label.classed('label-dim', false)
-         .classed('label-highlight', false);
+    link.classed('link-highlight', false);
+    label.classed('label-highlight', false);
+    
+    // Only reset dimming if filter is not active
+    if (!simulation.filterActive) {
+      node.classed('node-dim', false);
+      link.classed('link-dim', false);
+      label.classed('label-dim', false);
+    } else {
+      // Reapply filter dimming
+      reapplyFilter(node, link, label, simulation);
+    }
+  }
+  
+  /**
+   * Reapply filter state after interactions
+   */
+  function reapplyFilter(node, link, label, simulation) {
+    if (!simulation.filterActive) return;
+    
+    // Re-dim nodes that are in the filtered set
+    node.classed('node-dim', d => simulation.filteredNodes.has(d.id));
+    
+    // Update links visibility based on node visibility
+    link.classed('link-dim', l => {
+      const sourceVisible = !simulation.filteredNodes.has(l.source.id);
+      const targetVisible = !simulation.filteredNodes.has(l.target.id);
+      return !(sourceVisible && targetVisible);
+    });
+    
+    // Update labels visibility based on node visibility
+    label.classed('label-dim', d => simulation.filteredNodes.has(d.id));
   }
   
   // ======================================================
@@ -537,6 +573,9 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Set up fullscreen controls
       setupFullscreenControls(fullscreenGraph);
+      
+      // Set up fullscreen filters
+      setupFullscreenGraphFilters(fullscreenGraph);
     });
     
     closeFullscreenButton.addEventListener('click', function() {
@@ -920,6 +959,395 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  /**
+   * Set up graph filtering functionality
+   */
+  function setupGraphFilters() {
+    setupFilterDropdown('filter-graph-button', 'filter-options', mainGraph);
+    
+    // Set up filter type change handlers
+    setupFilterTypeHandler('filter-type', 'category-filters', 'tag-filters', 'search-filter', mainGraph);
+    
+    // Initialize filter options
+    populateFilterOptions(mainGraph, false);
+    
+    // Set up clear filters button
+    document.getElementById('clear-filters').addEventListener('click', function() {
+      clearFilters(mainGraph, false);
+    });
+  }
+  
+  /**
+   * Set up fullscreen graph filtering functionality
+   */
+  function setupFullscreenGraphFilters(fullscreenGraph) {
+    setupFilterDropdown('fullscreen-filter-button', 'fullscreen-filter-options', fullscreenGraph);
+    
+    // Set up filter type change handlers
+    setupFilterTypeHandler('fullscreen-filter-type', 'fullscreen-category-filters', 'fullscreen-tag-filters', 'fullscreen-search-filter', fullscreenGraph);
+    
+    // Initialize filter options
+    populateFilterOptions(fullscreenGraph, true);
+    
+    // Set up clear filters button
+    document.getElementById('fullscreen-clear-filters').addEventListener('click', function() {
+      clearFilters(fullscreenGraph, true);
+    });
+  }
+  
+  /**
+   * Setup dropdown toggle behavior for filters
+   */
+  function setupFilterDropdown(buttonId, dropdownId, graph) {
+    const filterButton = document.getElementById(buttonId);
+    const filterOptions = document.getElementById(dropdownId);
+    
+    if (filterButton && filterOptions) {
+      // Toggle dropdown on button click
+      filterButton.addEventListener('click', function() {
+        const isExpanded = filterButton.getAttribute('aria-expanded') === 'true';
+        filterButton.setAttribute('aria-expanded', !isExpanded);
+        
+        if (isExpanded) {
+          filterOptions.classList.remove('active');
+        } else {
+          filterOptions.classList.add('active');
+        }
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!filterButton.contains(event.target) && !filterOptions.contains(event.target)) {
+          filterOptions.classList.remove('active');
+          filterButton.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  }
+  
+  /**
+   * Set up filter type change handler
+   */
+  function setupFilterTypeHandler(filterTypeId, categoryFiltersId, tagFiltersId, searchFilterId, graph) {
+    const filterType = document.getElementById(filterTypeId);
+    const categoryFilters = document.getElementById(categoryFiltersId);
+    const tagFilters = document.getElementById(tagFiltersId);
+    const searchFilter = document.getElementById(searchFilterId);
+    
+    if (!filterType || !categoryFilters || !tagFilters || !searchFilter) return;
+    
+    filterType.addEventListener('change', function() {
+      // Hide all filter options first
+      categoryFilters.classList.add('hidden');
+      tagFilters.classList.add('hidden');
+      searchFilter.classList.add('hidden');
+      
+      // Show selected filter options
+      const value = this.value;
+      if (value === 'category') {
+        categoryFilters.classList.remove('hidden');
+      } else if (value === 'tag') {
+        tagFilters.classList.remove('hidden');
+      } else if (value === 'search') {
+        searchFilter.classList.remove('hidden');
+      }
+      
+      // Apply the current filter
+      applyFilters(graph, value === 'none' ? null : value, 
+                   filterTypeId === 'fullscreen-filter-type');
+    });
+    
+    // Set up search input
+    const searchInput = document.getElementById(filterTypeId === 'filter-type' ? 'node-search' : 'fullscreen-node-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const isFullscreen = filterTypeId === 'fullscreen-filter-type';
+        applySearchFilter(graph, searchTerm, isFullscreen);
+      });
+    }
+  }
+  
+  /**
+   * Populate filter options with categories and tags
+   */
+  function populateFilterOptions(graph, isFullscreen) {
+    // Get all unique categories and tags
+    const categories = [...new Set(graphData.nodes.map(node => node.category))];
+    
+    // Collect all tags from all nodes
+    const allTags = [];
+    graphData.nodes.forEach(node => {
+      if (node.tags && Array.isArray(node.tags)) {
+        allTags.push(...node.tags);
+      }
+    });
+    const tags = [...new Set(allTags)];
+    
+    // Populate category filters
+    const categoryContainer = document.getElementById(isFullscreen ? 'fullscreen-category-filters' : 'category-filters');
+    if (categoryContainer) {
+      categoryContainer.innerHTML = '';
+      categories.forEach(category => {
+        const formattedCategory = typeof category === 'string' ? category.replace(/^"|"$/g, '') : category;
+        
+        const checkbox = document.createElement('label');
+        checkbox.className = 'filter-checkbox';
+        checkbox.innerHTML = `
+          <input type="checkbox" data-category="${formattedCategory}">
+          <span>${formattedCategory}</span>
+        `;
+        
+        categoryContainer.appendChild(checkbox);
+        
+        // Add event listener to checkbox
+        const input = checkbox.querySelector('input');
+        input.addEventListener('change', function() {
+          applyCategoryFilter(graph, isFullscreen);
+        });
+      });
+    }
+    
+    // Populate tag filters
+    const tagContainer = document.getElementById(isFullscreen ? 'fullscreen-tag-filters' : 'tag-filters');
+    if (tagContainer) {
+      tagContainer.innerHTML = '';
+      tags.forEach(tag => {
+        const formattedTag = typeof tag === 'string' ? tag.replace(/^"|"$/g, '') : tag;
+        
+        const checkbox = document.createElement('label');
+        checkbox.className = 'filter-checkbox';
+        checkbox.innerHTML = `
+          <input type="checkbox" data-tag="${formattedTag}">
+          <span>${formattedTag}</span>
+        `;
+        
+        tagContainer.appendChild(checkbox);
+        
+        // Add event listener to checkbox
+        const input = checkbox.querySelector('input');
+        input.addEventListener('change', function() {
+          applyTagFilter(graph, isFullscreen);
+        });
+      });
+    }
+  }
+  
+  /**
+   * Apply filters based on selected filter type
+   */
+  function applyFilters(graph, filterType, isFullscreen) {
+    if (!filterType) {
+      // Reset filter state
+      graph.simulation.filterActive = false;
+      graph.simulation.filteredNodes.clear();
+      
+      // Show all nodes if no filter is selected
+      resetNodeVisibility(graph);
+      return;
+    }
+    
+    // Set filter as active
+    graph.simulation.filterActive = true;
+    
+    if (filterType === 'category') {
+      applyCategoryFilter(graph, isFullscreen);
+    } else if (filterType === 'tag') {
+      applyTagFilter(graph, isFullscreen);
+    }
+    // Search is handled by the input event
+  }
+  
+  /**
+   * Apply category filters
+   */
+  function applyCategoryFilter(graph, isFullscreen) {
+    const categoryCheckboxes = document.querySelectorAll(`#${isFullscreen ? 'fullscreen-' : ''}category-filters input[type="checkbox"]`);
+    const selectedCategories = Array.from(categoryCheckboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.dataset.category);
+    
+    // If no categories selected, show all nodes
+    if (selectedCategories.length === 0) {
+      resetNodeVisibility(graph);
+      return;
+    }
+    
+    // Store filtered nodes in simulation
+    graph.simulation.filteredNodes.clear();
+    graph.node.each(d => {
+      const category = typeof d.category === 'string' ? d.category.replace(/^"|"$/g, '') : d.category;
+      if (!selectedCategories.includes(category)) {
+        graph.simulation.filteredNodes.add(d.id);
+      }
+    });
+    
+    // Otherwise, filter based on selected categories
+    graph.node.classed('node-dim', d => {
+      const category = typeof d.category === 'string' ? d.category.replace(/^"|"$/g, '') : d.category;
+      return !selectedCategories.includes(category);
+    });
+    
+    // Update links visibility
+    updateLinkVisibility(graph);
+    
+    // Update labels visibility
+    graph.label.classed('label-dim', d => {
+      const category = typeof d.category === 'string' ? d.category.replace(/^"|"$/g, '') : d.category;
+      return !selectedCategories.includes(category);
+    });
+  }
+  
+  /**
+   * Apply tag filters
+   */
+  function applyTagFilter(graph, isFullscreen) {
+    const tagCheckboxes = document.querySelectorAll(`#${isFullscreen ? 'fullscreen-' : ''}tag-filters input[type="checkbox"]`);
+    const selectedTags = Array.from(tagCheckboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.dataset.tag);
+    
+    // If no tags selected, show all nodes
+    if (selectedTags.length === 0) {
+      resetNodeVisibility(graph);
+      return;
+    }
+    
+    // Store filtered nodes in simulation
+    graph.simulation.filteredNodes.clear();
+    graph.node.each(d => {
+      // Node has tags and at least one tag matches a selected tag
+      if (d.tags && Array.isArray(d.tags)) {
+        const nodeTags = d.tags.map(tag => typeof tag === 'string' ? tag.replace(/^"|"$/g, '') : tag);
+        if (!nodeTags.some(tag => selectedTags.includes(tag))) {
+          graph.simulation.filteredNodes.add(d.id);
+        }
+      } else {
+        graph.simulation.filteredNodes.add(d.id);
+      }
+    });
+    
+    // Otherwise, filter based on selected tags
+    graph.node.classed('node-dim', d => {
+      // Node has tags and at least one tag matches a selected tag
+      if (d.tags && Array.isArray(d.tags)) {
+        const nodeTags = d.tags.map(tag => typeof tag === 'string' ? tag.replace(/^"|"$/g, '') : tag);
+        return !nodeTags.some(tag => selectedTags.includes(tag));
+      }
+      return true; // No tags, so dim it
+    });
+    
+    // Update links visibility
+    updateLinkVisibility(graph);
+    
+    // Update labels visibility
+    graph.label.classed('label-dim', d => {
+      if (d.tags && Array.isArray(d.tags)) {
+        const nodeTags = d.tags.map(tag => typeof tag === 'string' ? tag.replace(/^"|"$/g, '') : tag);
+        return !nodeTags.some(tag => selectedTags.includes(tag));
+      }
+      return true;
+    });
+  }
+  
+  /**
+   * Apply search filter
+   */
+  function applySearchFilter(graph, searchTerm, isFullscreen) {
+    if (!searchTerm) {
+      graph.simulation.filterActive = false;
+      graph.simulation.filteredNodes.clear();
+      resetNodeVisibility(graph);
+      return;
+    }
+    
+    graph.simulation.filterActive = true;
+    graph.simulation.filteredNodes.clear();
+    
+    graph.node.each(d => {
+      const title = d.title.toLowerCase().replace(/^"|"$/g, '');
+      if (!title.includes(searchTerm.toLowerCase())) {
+        graph.simulation.filteredNodes.add(d.id);
+      }
+    });
+    
+    graph.node.classed('node-dim', d => {
+      const title = d.title.toLowerCase().replace(/^"|"$/g, '');
+      return !title.includes(searchTerm);
+    });
+    
+    // Update links visibility
+    updateLinkVisibility(graph);
+    
+    // Update labels visibility
+    graph.label.classed('label-dim', d => {
+      const title = d.title.toLowerCase().replace(/^"|"$/g, '');
+      return !title.includes(searchTerm);
+    });
+  }
+  
+  /**
+   * Update link visibility based on node visibility
+   */
+  function updateLinkVisibility(graph) {
+    graph.link.classed('link-dim', l => {
+      const sourceVisible = !graph.simulation.filteredNodes.has(l.source.id);
+      const targetVisible = !graph.simulation.filteredNodes.has(l.target.id);
+      return !(sourceVisible && targetVisible);
+    });
+  }
+  
+  /**
+   * Reset node visibility
+   */
+  function resetNodeVisibility(graph) {
+    graph.node.classed('node-dim', false);
+    graph.link.classed('link-dim', false);
+    graph.label.classed('label-dim', false);
+  }
+  
+  /**
+   * Clear all filters
+   */
+  function clearFilters(graph, isFullscreen) {
+    // Reset filter type to "All Nodes"
+    const filterType = document.getElementById(isFullscreen ? 'fullscreen-filter-type' : 'filter-type');
+    if (filterType) {
+      filterType.value = 'none';
+    }
+    
+    // Uncheck all category filters
+    const categoryCheckboxes = document.querySelectorAll(`#${isFullscreen ? 'fullscreen-' : ''}category-filters input[type="checkbox"]`);
+    categoryCheckboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    
+    // Uncheck all tag filters
+    const tagCheckboxes = document.querySelectorAll(`#${isFullscreen ? 'fullscreen-' : ''}tag-filters input[type="checkbox"]`);
+    tagCheckboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    
+    // Clear search input
+    const searchInput = document.getElementById(isFullscreen ? 'fullscreen-node-search' : 'node-search');
+    if (searchInput) {
+      searchInput.value = '';
+    }
+    
+    // Hide all filter options
+    document.getElementById(isFullscreen ? 'fullscreen-category-filters' : 'category-filters').classList.add('hidden');
+    document.getElementById(isFullscreen ? 'fullscreen-tag-filters' : 'tag-filters').classList.add('hidden');
+    document.getElementById(isFullscreen ? 'fullscreen-search-filter' : 'search-filter').classList.add('hidden');
+    
+    // Reset filter state
+    graph.simulation.filterActive = false;
+    graph.simulation.filteredNodes.clear();
+    
+    // Reset node visibility
+    resetNodeVisibility(graph);
+  }
+  
   // Add setupGraphExport() to your main initialization
   setupGraphExport();
+  setupGraphFilters();
 });
