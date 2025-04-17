@@ -3,3 +3,24 @@
     path = "../"
     disable = false
 
+# Main Menu
+[[menu.main]]
+  name = "Home"
+  url = "/"
+  weight = 10
+
+[[menu.main]]
+  name = "Posts"
+  url = "/posts/"
+  weight = 20
+
+[[menu.main]]
+  name = "Docs"
+  url = "/docs/"
+  weight = 30
+
+[[menu.main]]
+  name = "About"
+  url = "/about/"
+  weight = 40
+

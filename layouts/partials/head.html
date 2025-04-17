@@ -183,3 +183,7 @@
   {{ $mainJS := . | js.Build | minify | fingerprint }}
   <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous"></script>
 {{ end }}
+
+<!-- Include analytics scripts -->
+{{ partial "analytics.html" . }}
+</head>

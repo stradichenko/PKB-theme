@@ -1,0 +1,28 @@
+# Analytics Configuration Example
+# Uncomment and configure the analytics system you want to use
+
+[analytics]
+  # Plausible Analytics (https://plausible.io)
+  # plausible = true
+  # plausibleDomain = "yourdomain.com"
+  # plausibleScriptSrc = "https://plausible.io/js/script.js" # Use your self-hosted URL if applicable
+
+  # Umami Analytics (https://umami.is)
+  # umami = true
+  # umamiWebsiteId = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+  # umamiScriptSrc = "https://analytics.yourdomain.com/umami.js"
+
+  # Matomo/Piwik Analytics (https://matomo.org)
+  # matomo = true
+  # matomoSiteId = "1"
+  # matomoURL = "https://analytics.yourdomain.com/"
+
+  # Fathom Analytics (https://usefathom.com)
+  # fathom = true
+  # fathomSiteId = "ABCDEFGH"
+  # fathomScriptSrc = "https://cdn.usefathom.com/script.js" # Use your self-hosted URL if applicable
+
+  # Shynet (https://github.com/milesmcc/shynet)
+  # shynet = true
+  # shynetURL = "https://analytics.yourdomain.com"
+  # shynetUUID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
