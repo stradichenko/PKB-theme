@@ -1,12 +1,14 @@
-{{ $citationKey := .Get 0 | default "" }}
-{{ $bibFile := .Get 1 | default "references.bib" }}
-{{ $style := .Get 2 | default "apa" }}
-{{ $showNotes := .Get 3 | default "false" }}
+{{- $num := .Page.Scratch.Get "citeCounter" | default 0 -}}
+{{- $num = add $num 1 -}}
+{{- .Page.Scratch.Set "citeCounter" $num -}}
+<sup class="citation-sup">{{ $num }}. </sup>{{- /* Inline marker with dot and space */ -}}
+{{- $citationKey := .Get 0 | default "" -}}
+{{- $bibFile := .Get 1 | default "references.bib" -}}
+{{- $style := .Get 2 | default "apa" -}}
+{{- $showNotes := .Get 3 | default "false" -}}
 
-<!-- Create a unique ID for this citation sidenote -->
-{{ $citationId := printf "citation-%s" $citationKey }}
+{{- $citationId := printf "citation-%s" $citationKey -}}
 
-<!-- Generate a sidenote with the citation data -->
 <span class="citation-reference">
   <span class="citation-marker" 
         data-citation-key="{{ $citationKey }}" 
@@ -14,23 +16,22 @@
         data-citation-style="{{ $style }}"
         data-show-notes="{{ $showNotes }}"
         data-citation-id="{{ $citationId }}">
-    {{ if eq $citationKey "" }}
+    {{- if eq $citationKey "" -}}
       [Citation key required]
-    {{ else }}
+    {{- else -}}
       [{{ $citationKey }}]
-    {{ end }}
+    {{- end -}}
   </span>
 </span>
-<aside class="sidenote sidenote-hidden citation-sidenote" id="{{ $citationId }}" lang="{{ .Site.Language.Lang | default "en" }}">
-  <span class="citation" 
-        data-citation-key="{{ $citationKey }}" 
-        data-bib-file="{{ $bibFile }}"
-        data-citation-style="{{ $style }}"
-        data-show-notes="{{ $showNotes }}">
-    {{ if eq $citationKey "" }}
-      [Citation key required]
-    {{ else }}
-      [Loading citation: {{ $citationKey }}]
-    {{ end }}
+<aside class="sidenote sidenote-hidden citation-sidenote" id="{{ $citationId }}" lang="{{ .Site.Language.Lang | default "en" }}" style="display: inline !important; white-space: normal;">
+  <span style="display:inline;">
+    <sup class="citation-sup">{{ $num }}. </sup>{{- /* Inline superscript with dot for the sidenote */ -}}
+    <span class="citation citation-inline" style="display:inline;" data-citation-key="{{ $citationKey }}" data-bib-file="{{ $bibFile }}" data-citation-style="{{ $style }}" data-show-notes="{{ $showNotes }}">
+      {{- if eq $citationKey "" -}}
+        [Citation key required]
+      {{- else -}}
+        [Loading citation: {{ $citationKey }}]
+      {{- end -}}
+    </span>
   </span>
 </aside>

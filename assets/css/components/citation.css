@@ -113,3 +113,9 @@
     font-size: var(--font-size-small);
   }
 }
+
+/* Inline citation styles */
+.citation-inline p {
+  display: inline !important;
+  margin: 0 !important;
+}
