@@ -95,28 +95,24 @@
     {{ end }}
   </article>
   
-  <!-- Only include sidenote section if sidenotes are enabled -->
-  {{ if .Params.sidenotes }}
+  <!-- Always include sidenote section -->
   <aside class="sidenote-section">
     <!-- Sidenotes will be collected and placed here -->
   </aside>
-  {{ end }}
 </div>
 
 <!-- Resource bundling for scripts and styles based on page requirements -->
 {{ $scripts := slice }}
 {{ $styles := slice }}
 
-<!-- Add other CSS resources first if needed -->
-{{ if .Params.sidenotes }}
-  {{ with resources.Get "css/references.css" }}
-    {{ $styles = $styles | append . }}
-  {{ end }}
-  
-  {{ $sidenotesJS := resources.Get "js/sidenotes.js" }}
-  {{ $referencesJS := resources.Get "js/references.js" }}
-  {{ $scripts = $scripts | append $sidenotesJS $referencesJS }}
+<!-- Unconditionally add sidenotes resources -->
+{{ with resources.Get "css/references.css" }}
+  {{ $styles = $styles | append . }}
 {{ end }}
+
+{{ $sidenotesJS := resources.Get "js/sidenotes.js" }}
+{{ $referencesJS := resources.Get "js/references.js" }}
+{{ $scripts = $scripts | append $sidenotesJS $referencesJS }}
 
 <!-- Add single.css LAST for styling specific to single posts to ensure precedence -->
 {{ with resources.Get "css/single.css" }}

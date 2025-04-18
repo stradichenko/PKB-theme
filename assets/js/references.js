@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Also handle the custom event
   document.addEventListener('sidenotesProcessed', () => {
-    console.log('Sidenotes processed event received');
+    console.log('sidenotesProcessed event received');
     setTimeout(initReferences, 800); // Increased from 500ms
   });
   
