@@ -1,3 +1,8 @@
+{{ $counter := .Page.Scratch.Get "sidenoteCounter" | default 0 }}
+{{ $counter = add $counter 1 }}
+{{ .Page.Scratch.Set "sidenoteCounter" $counter }}
+{{ $letter := printf "%c" (add $counter 96) }}
 <aside class="sidenote sidenote-hidden" lang="{{ .Site.Language.Lang | default "en" }}">
+  <sup class="sidenote-sup">{{ $letter }}</sup>
   {{ .Inner | markdownify }}
 </aside>
