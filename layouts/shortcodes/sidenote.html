@@ -1,8 +1,18 @@
 {{ $counter := .Page.Scratch.Get "sidenoteCounter" | default 0 }}
 {{ $counter = add $counter 1 }}
 {{ .Page.Scratch.Set "sidenoteCounter" $counter }}
-{{ $letter := printf "%c" (add $counter 96) }}
+{{ $n := $counter }}
+{{ $result := "" }}
+{{ range seq 1 10 }}
+  {{ if gt $n 0 }}
+    {{ $n = sub $n 1 }}
+    {{ $rem := mod $n 26 }}
+    {{ $letter := printf "%c" (add $rem 97) }}
+    {{ $result = print $letter $result }}  {{/* Prepend letter to result */}}
+    {{ $n = div $n 26 }}
+  {{ end }}
+{{ end }}
 <aside class="sidenote sidenote-hidden" lang="{{ .Site.Language.Lang | default "en" }}">
-  <sup class="sidenote-sup">{{ $letter }}</sup>
+  <sup class="sidenote-sup">{{ $result }}</sup>
   {{ .Inner | markdownify }}
 </aside>
