@@ -1,7 +1,7 @@
 {{- $num := .Page.Scratch.Get "citeCounter" | default 0 -}}
 {{- $num = add $num 1 -}}
 {{- .Page.Scratch.Set "citeCounter" $num -}}
-<sup class="citation-sup">{{ $num }}. </sup>{{- /* Inline marker with dot and space */ -}}
+<sup class="citation-sup">{{ $num }} </sup>{{- /* Inline marker with dot and space */ -}}
 {{- $citationKey := .Get 0 | default "" -}}
 {{- $bibFile := .Get 1 | default "references.bib" -}}
 {{- $style := .Get 2 | default "apa" -}}
