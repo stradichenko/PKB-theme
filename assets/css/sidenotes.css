@@ -59,6 +59,28 @@
   vertical-align: middle;
 }
 
+/* Sidenote reference styling */
+.sidenote-ref {
+  display: inline;
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: super;
+}
+
+/* Sidenote marker in the main text */
+.sidenote-marker-inline {
+  display: inline;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: inherit;
+}
+
+.sidenote-marker-inline sup {
+  vertical-align: super;
+  font-size: smaller;
+}
+
 /* Hover state enhancement */
 .sidenote:hover {
   opacity: 1;

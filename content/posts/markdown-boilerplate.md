@@ -25,10 +25,13 @@ Effective typography forms the foundation of digital writing. As explained in ou
 
 Sidenotes work great with lists to provide additional context for specific items without breaking the list flow. {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}
 
-**Bold text** and *italic text* are straightforward. You can also have ***bold italic text*** and ~~strikethrough~~. {{< sidenote >}}
-**Sidenotes can contain formatting too!** Use them for supplementary information that doesn't interrupt the main text flow.
+**Bold text** and *italic text* are straightforward. You can also have ***bold italic text*** and ~~strikethrough~~. {{< sidenote >}} 
+**Sidenotes can contain formatting too!** Use them for supplementary information that doesn't interrupt the main text flow. 
 {{< /sidenote >}}
 
+Plain text with a sidenote. {{< sidenote >}}
+This is a standard sidenote. Use it for brief asides or clarifications.
+{{< /sidenote >}}
 
 
 For academic applications of these formatting techniques, see our [Academic Writing](/posts/academic-writing/) guide. {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}

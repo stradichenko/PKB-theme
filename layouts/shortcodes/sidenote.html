@@ -2,8 +2,8 @@
 {{ $counter = add $counter 1 }}
 {{ .Page.Scratch.Set "sidenoteCounter" $counter }}
 {{ $letter := printf "%c" (add $counter 96) }}
-<!-- Inline marker in main content -->
-<span class="sidenote-marker-inline"><sup>{{ $letter }}. </sup></span>
+<!-- Inline marker in main content (modified to ensure inline display) -->
+<sup class="sidenote-ref">{{ $letter }}</sup><!-- Remove whitespace and extra spans -->
 <!-- Sidenote content that will be moved to the sidenote section -->
 <aside class="sidenote sidenote-hidden" lang="{{ .Site.Language.Lang | default "en" }}">
   <sup class="sidenote-sup">{{ $letter }}. </sup>
