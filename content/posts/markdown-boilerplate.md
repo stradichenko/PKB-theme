@@ -23,11 +23,11 @@ This document demonstrates all standard Markdown features along with proper side
 
 Effective typography forms the foundation of digital writing. As explained in our [Hugo Styling Guide](/posts/hugo-styling-guide/), consistent formatting improves readability. This is especially important when [organizing content](/posts/content-organization/) in your knowledge base.
 
-Sidenotes work great with lists to provide additional context for specific items without breaking the list flow. {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}
+Sidenotes work great with lists to provide additional context for specific items without breaking the list flow {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}. Pay attention to this line. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. 
 
-**Bold text** and *italic text* are straightforward. You can also have ***bold italic text*** and ~~strikethrough~~. {{< sidenote >}} 
-**Sidenotes can contain formatting too!** Use them for supplementary information that doesn't interrupt the main text flow. 
-{{< /sidenote >}}
+**Bold text** and *italic text* are straightforward. You can also have ***bold italic text*** and ~~strikethrough~~ {{< sidenote >}} **Sidenotes can contain formatting too!** Use them for supplementary information that doesn't interrupt the main text flow. {{< /sidenote >}}. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context.
+
+
 
 Plain text with a sidenote. {{< sidenote >}}
 This is a standard sidenote. Use it for brief asides or clarifications.
@@ -50,7 +50,7 @@ Above was an H2. Here are other levels, crucial for [content organization](/post
 
 ## Lists
 
-Lists are essential for structuring information in your [Personal Knowledge Base](/posts/personal-knowledge-base/).
+Lists are essential  your [Personal Knowledge Base](/posts/personal-knowledge-base/) {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}. Lists are essential for structuring information in your PKB
 
 ### Unordered Lists
 
