@@ -4,7 +4,7 @@
 html body .layout-container .main-content .post-title {
   font-size: var(--font-size-3xl) !important;
   line-height: 1.2 !important;
-  margin: 0.5rem 0 !important; /* Reduced from default margins */
+  margin: 1rem 0 0 !important; /* Changed bottom margin to 0 */
   color: var(--text-color-heading) !important;
   font-weight: var(--font-weight-bold) !important;
   padding-bottom: 0.5rem !important;
@@ -77,14 +77,15 @@ html body .layout-container .main-content .page-metadata svg {
   flex-shrink: 0 !important;
   color: var(--color-primary) !important;
   opacity: 0.8 !important;
-  margin: 0 !important; /* Remove margin since we're using gap */
-  width: 16px !important;
-  height: 16px !important;
-  min-width: 16px !important;
-  display: inline-block !important;
-  vertical-align: middle !important;
+  margin: 0 !important;
+  width: 18px !important; /* Increased from 16px for better visibility */
+  height: 18px !important; /* Increased from 16px for better visibility */
+  min-width: 18px !important; /* Match new width */
+  display: inline-flex !important; /* Changed to inline-flex for better alignment */
+  align-items: center !important; /* Added for vertical centering */
+  justify-content: center !important; /* Added for horizontal centering */
   position: relative !important;
-  top: -1px !important; /* Fine-tune vertical alignment */
+  top: -0.5px !important; /* Adjusted for more precise alignment */
 }
 
 /* Add padding to the text content for better visual separation with maximum specificity */
@@ -94,10 +95,12 @@ html body .layout-container .main-content .page-updated span,
 html body .layout-container .main-content .page-categories a,
 html body .layout-container .main-content .page-tags a:first-of-type {
   position: relative !important;
-  padding: 0 !important; /* Remove padding for clean alignment */
+  padding: 0 !important;
   vertical-align: middle !important;
-  display: inline-block !important;
-  line-height: 1.4 !important; /* Better text alignment */
+  display: inline-flex !important; /* Changed to inline-flex for better alignment */
+  align-items: center !important; /* Added for vertical centering */
+  line-height: 1.4 !important;
+  min-height: 18px !important; /* Added to match icon height */
 }
 
 /* Tag styling with highest specificity */

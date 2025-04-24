@@ -324,7 +324,7 @@ a:hover, a:focus {
   font-family: var(--header-font-family);
   font-size: var(--header-font-size);
   padding: var(--header-padding);
-  width: 100%; /* Important: avoid 100vw to prevent overflow */
+  width: 100vw;
   box-shadow: var(--header-shadow);
   display: flex;
   align-items: center;
