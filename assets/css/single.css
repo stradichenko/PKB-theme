@@ -2,37 +2,48 @@
 
 /* Make the post title match the h1 style in markdown.css with higher specificity */
 html body .layout-container .main-content .post-title {
-  font-size: 2.25rem !important;
-  margin-top: 2rem !important;
-  margin-bottom: 1.25rem !important;
+  font-size: var(--font-size-3xl) !important;
+  line-height: 1.2 !important;
+  margin: 0.5rem 0 !important; /* Reduced from default margins */
+  color: var(--text-color-heading) !important;
+  font-weight: var(--font-weight-bold) !important;
   padding-bottom: 0.5rem !important;
   border-bottom: 2px solid var(--color-primary) !important;
-  color: var(--text-color-heading) !important;
-  line-height: 1.2 !important;
   background: none !important;
   background-color: transparent !important;
 }
 
 /* Post header section with increased specificity */
 html body .layout-container .main-content .post-header {
-  margin-bottom: 0 !important; /* Removed bottom margin */
+  margin-bottom: var(--spacing-sm) !important;
   background: none !important;
   background-color: transparent !important;
   position: relative !important;
   z-index: 1 !important;
   width: 100% !important;
   border: none !important; /* Remove any borders */
-  border-bottom: none !important; /* Specifically remove bottom border */
+  border-bottom: 0px solid var(--color-border) !important;
   box-shadow: none !important; /* Remove any shadow that might look like a line */
+  min-height: fit-content !important;
+  height: auto !important;
+  overflow: visible !important;
 }
 
-/* Metadata styling with maximum specificity */
-html body .layout-container .main-content .page-metadata {
+.post-header-container {
+  padding-bottom: var(--spacing-md) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--spacing-md) !important;
+  width: 100% !important;
+}
+
+/* Metadata styling */
+.page-metadata {
   display: flex !important;
   flex-wrap: wrap !important;
   gap: 1.2rem !important;
   margin-top: 0 !important; /* Removed top margin */
-  margin-bottom: 1.5rem !important;
+  margin-bottom: var(--spacing-sm) !important;
   padding-bottom: 0.5rem !important;
   font-size: 0.9rem !important;
   color: var(--text-color-secondary) !important;
@@ -106,10 +117,10 @@ html body .layout-container .main-content .tag-link {
   margin: 0.1rem 0.1rem !important;
 }
 
-/* Clear separation between metadata and content */
-html body .layout-container .main-content .post-content {
-  margin-top: 2rem !important;
-  padding-top: 1rem !important;
+/* Content separation */
+.post-content {
+  margin-top: 0.5rem !important; /* Reduced from 1rem */
+  padding-top: 0.5rem !important;
   clear: both !important;
   position: relative !important;
   width: 100% !important;

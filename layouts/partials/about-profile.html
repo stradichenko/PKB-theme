@@ -188,3 +188,8 @@
 {{ $zipfsCSS := resources.Get "css/zipfs-law.css" | resources.Minify }}
 <link rel="stylesheet" href="{{ $zipfsCSS.RelPermalink }}">
 {{ partial "zipfs-law.html" . }}
+
+<!-- Include LDA Analysis -->
+{{ $ldaCSS := resources.Get "css/components/lda-analysis.css" | resources.Minify }}
+<link rel="stylesheet" href="{{ $ldaCSS.RelPermalink }}">
+{{ partial "lda-analysis.html" . }}

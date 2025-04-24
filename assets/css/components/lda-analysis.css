@@ -1,0 +1,203 @@
+/* LDA Analysis Container Layout */
+.lda-box {
+  width: 100%;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-light);
+  margin-top: var(--spacing-lg);
+}
+
+.lda-title {
+  font-size: var(--font-size-2xl);
+  color: var(--text-color-heading);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 3px solid var(--color-primary);
+  display: inline-block;
+}
+
+.lda-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+.lda-graph {
+  flex: 3;
+  min-width: 300px;
+}
+
+.lda-table {
+  flex: 2;
+  min-width: 250px;
+}
+
+.topic-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+}
+
+.topic-item {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topic-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color-heading);
+  margin-bottom: var(--spacing-sm);
+}
+
+.topic-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.topic-word {
+  background: rgba(var(--light-primary-rgb), 0.1);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  color: var(--text-color-primary);
+}
+
+.topic-word-table {
+  width: 100%;
+  margin: var(--spacing-xs) 0;
+  border-collapse: collapse;
+}
+
+.topic-word-table th,
+.topic-word-table td {
+  padding: var(--spacing-xs);
+  text-align: left;
+}
+
+.topic-word-table th {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color-primary);
+  font-size: var(--font-size-small);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topic-weight {
+  font-family: var(--font-family-mono);
+  color: var(--color-primary);
+  font-size: var(--font-size-small);
+}
+
+.topic-number {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.topic-pseudo-title {
+  font-style: italic;
+  color: var(--text-color-muted);
+  margin-left: var(--spacing-sm);
+  font-size: 0.9em;
+}
+
+.lda-loading {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--text-color-muted);
+}
+
+.lda-error {
+  color: var(--color-error);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-error);
+  border-radius: var(--border-radius);
+  margin: var(--spacing-md) 0;
+}
+
+/* Document type badges */
+.doc-type {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  margin-right: var(--spacing-xs);
+}
+
+.doc-type.posts {
+  background-color: rgba(var(--light-primary-rgb), 0.1);
+  color: var(--color-primary);
+}
+
+.doc-type.docs {
+  background-color: rgba(var(--light-secondary-rgb), 0.1);
+  color: var(--color-secondary);
+}
+
+.topic-documents {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+}
+
+.topic-documents h4 {
+  font-size: var(--font-size-small);
+  color: var(--text-color-muted);
+  margin-bottom: var(--spacing-xs);
+}
+
+.topic-documents ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topic-documents li {
+  font-size: var(--font-size-small);
+  margin-bottom: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius);
+  background-color: rgba(var(--light-primary-rgb), 0.03);
+}
+
+.topic-documents li:hover {
+  background-color: rgba(var(--light-primary-rgb), 0.08);
+}
+
+.topic-documents small {
+  color: var(--text-color-muted);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .topic-word {
+  background: rgba(var(--dark-primary-rgb), 0.2);
+}
+
+[data-theme="dark"] .topic-word-table th {
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .topic-weight {
+  color: var(--dark-primary);
+}
+
+[data-theme="dark"] .doc-type.posts {
+  background-color: rgba(var(--dark-primary-rgb), 0.2);
+}
+
+[data-theme="dark"] .doc-type.docs {
+  background-color: rgba(var(--dark-secondary-rgb), 0.2);
+}
+
+[data-theme="dark"] .topic-documents li {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .topic-documents li:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}

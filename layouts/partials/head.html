@@ -56,7 +56,8 @@
 {{ if eq hugo.Environment "development" }}
   <!-- Development mode - Individual CSS files with source maps -->
   
-  <!-- 1. Core styles - variables and reset first -->
+  <!-- Critical CSS first -->
+  <!-- 1. Core styles -->
   {{ with resources.Get "css/global/variables.css" }}
     {{ $variablesCSS := . | toCSS | fingerprint }}
     <link rel="stylesheet" href="{{ $variablesCSS.RelPermalink }}" integrity="{{ $variablesCSS.Data.Integrity }}" crossorigin="anonymous">
@@ -123,7 +124,7 @@
   {{ $aboutProfileCSS := resources.Get "css/about-profile.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $aboutProfileCSS.RelPermalink }}" integrity="{{ $aboutProfileCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  <!-- 4. Main CSS for global styles -->
+  <!-- 4. Main CSS last -->
   {{ $mainCSS := resources.Get "css/main.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $mainCSS.RelPermalink }}" integrity="{{ $mainCSS.Data.Integrity }}" crossorigin="anonymous">
   
