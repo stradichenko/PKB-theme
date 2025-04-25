@@ -2,7 +2,8 @@ const sidenoteState = {
   processedNotes: new Set(),
   ready: false,
   positions: new Map(),
-  pendingUpdates: []
+  pendingUpdates: [],
+  citationsReady: false,  // Add this line
 };
 
 const sidenoteEvents = {
@@ -178,10 +179,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
   
-  // Position initially with a shorter delay to ensure all styles are applied
+  // Update initial positioning to check for citations
   console.log('Setting up initial positioning');
-  setTimeout(positionAllSidenotes, 350); // Increased from 200ms for reliability
+  const initializePositioning = () => {
+    if (document.querySelector('.citation-sidenote') && !sidenoteState.citationsReady) {
+      console.log('Waiting for citations to complete...');
+      setTimeout(initializePositioning, 100);
+      return;
+    }
+    positionAllSidenotes();
+  };
   
+  setTimeout(initializePositioning, 350);
+  
+  // Add citation ready event listener
+  document.addEventListener('citationsProcessed', () => {
+    console.log('Citations processed, updating sidenote positions');
+    sidenoteState.citationsReady = true;
+    positionAllSidenotes();
+  });
+
   // Handle scroll events efficiently
   let scrollTimeout = null;
   let lastScrollY = window.scrollY;

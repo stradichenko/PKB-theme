@@ -341,6 +341,9 @@ async function processCitations() {
     });
   });
   
+  // After processing all citations, emit event
+  document.dispatchEvent(new CustomEvent('citationsProcessed'));
+  
   // Process sidenote citations
   const sidenoteCitations = document.querySelectorAll('.citation-sidenote .citation');
   sidenoteCitations.forEach(citation => {
