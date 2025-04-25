@@ -1,11 +1,6 @@
-{{ $counter := .Page.Scratch.Get "sidenoteCounter" | default 0 }}
-{{ $counter = add $counter 1 }}
-{{ .Page.Scratch.Set "sidenoteCounter" $counter }}
-{{ $letter := printf "%c" (add $counter 96) }}
-<!-- Inline marker in main content (modified to ensure inline display) -->
-<sup class="sidenote-ref">{{ $letter }}</sup><!-- Remove whitespace and extra spans -->
-<!-- Sidenote content that will be moved to the sidenote section -->
-<aside class="sidenote sidenote-hidden" lang="{{ .Site.Language.Lang | default "en" }}">
-  <sup class="sidenote-sup">{{ $letter }}. </sup>
-  {{ .Inner | markdownify }}
-</aside>
+{{- $counter := .Page.Scratch.Get "sidenoteCounter" | default 0 -}}
+{{- $counter = add $counter 1 -}}
+{{- .Page.Scratch.Set "sidenoteCounter" $counter -}}
+{{- $letter := printf "%c" (add $counter 96) -}}
+{{- $content := .Inner | markdownify -}}
+{{- printf `<sup class="sidenote-ref">%s</sup><span class="sidenote sidenote-hidden" lang="%s"><sup class="sidenote-sup">%s.</sup>%s</span>` $letter (.Site.Language.Lang | default "en") $letter $content | safeHTML -}}

@@ -341,6 +341,23 @@ async function processCitations() {
     });
   });
   
+  // Process sidenote citations
+  const sidenoteCitations = document.querySelectorAll('.citation-sidenote .citation');
+  sidenoteCitations.forEach(citation => {
+    const key = citation.dataset.citationKey;
+    const bibFile = citation.dataset.bibFile;
+    const style = citation.dataset.citationStyle || 'apa';
+    
+    if (!key || !citationState.bibData[bibFile] || !citationState.bibData[bibFile][key]) {
+      citation.innerHTML = `[Citation not found: ${key}]`;
+      return;
+    }
+    
+    const entry = citationState.bibData[bibFile][key];
+    citation.innerHTML = citationStyles[style].formatReference(entry);
+    citation.classList.add('citation-processed');
+  });
+  
   // Process markers with event emission
   citationMarkers.forEach(marker => {
     const key = marker.dataset.citationKey;

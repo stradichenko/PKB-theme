@@ -1,0 +1,6 @@
+{{ $content := .Inner }}
+{{ if strings.Contains $content "sidenote-wrapper" }}
+{{ $content | safeHTML }}
+{{ else }}
+<p>{{ $content }}</p>
+{{ end }}

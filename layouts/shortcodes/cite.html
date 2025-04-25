@@ -1,37 +1,9 @@
 {{- $num := .Page.Scratch.Get "citeCounter" | default 0 -}}
 {{- $num = add $num 1 -}}
 {{- .Page.Scratch.Set "citeCounter" $num -}}
-<sup class="citation-sup">{{ $num }} </sup>{{- /* Inline marker with dot and space */ -}}
 {{- $citationKey := .Get 0 | default "" -}}
 {{- $bibFile := .Get 1 | default "references.bib" -}}
 {{- $style := .Get 2 | default "apa" -}}
 {{- $showNotes := .Get 3 | default "false" -}}
-
 {{- $citationId := printf "citation-%s" $citationKey -}}
-
-<span class="citation-reference">
-  <span class="citation-marker" 
-        data-citation-key="{{ $citationKey }}" 
-        data-bib-file="{{ $bibFile }}"
-        data-citation-style="{{ $style }}"
-        data-show-notes="{{ $showNotes }}"
-        data-citation-id="{{ $citationId }}">
-    {{- if eq $citationKey "" -}}
-      [Citation key required]
-    {{- else -}}
-      [{{ $citationKey }}]
-    {{- end -}}
-  </span>
-</span>
-<aside class="sidenote sidenote-hidden citation-sidenote" id="{{ $citationId }}" lang="{{ .Site.Language.Lang | default "en" }}" style="display: inline !important; white-space: normal;">
-  <span style="display:inline;">
-    <sup class="citation-sup">{{ $num }}. </sup>{{- /* Inline superscript with dot for the sidenote */ -}}
-    <span class="citation citation-inline" style="display:inline;" data-citation-key="{{ $citationKey }}" data-bib-file="{{ $bibFile }}" data-citation-style="{{ $style }}" data-show-notes="{{ $showNotes }}">
-      {{- if eq $citationKey "" -}}
-        [Citation key required]
-      {{- else -}}
-        [Loading citation: {{ $citationKey }}]
-      {{- end -}}
-    </span>
-  </span>
-</aside>
+{{- printf `<sup class="citation-ref">%d</sup><span class="citation-marker" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s" data-citation-id="%s"></span><span class="sidenote sidenote-hidden citation-sidenote" id="%s" lang="%s" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s"><sup class="citation-sup">%d.</sup><span class="citation citation-inline" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s"></span></span>` $num $citationKey $bibFile $style $showNotes $citationId $citationId (.Site.Language.Lang | default "en") $citationKey $bibFile $style $showNotes $num $citationKey $bibFile $style | safeHTML -}}

@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Position initially with a shorter delay to ensure all styles are applied
   console.log('Setting up initial positioning');
-  setTimeout(positionAllSidenotes, 300); // Increased from 200ms for reliability
+  setTimeout(positionAllSidenotes, 350); // Increased from 200ms for reliability
   
   // Handle scroll events efficiently
   let scrollTimeout = null;

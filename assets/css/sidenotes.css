@@ -21,26 +21,35 @@
 
 /* Individual sidenote styling */
 .sidenote {
+  display: inline-block;
   position: absolute;
   background-color: var(--sidenote-bg-color);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
   padding: var(--spacing-sm);
   width: calc(100% - var(--spacing-sm)*2);
-  opacity: 0.8;
-  transition: opacity 0.15s ease, top 0.15s ease; /* Faster transition */
+  font-size: var(--font-size-sm, 0.875rem);
+  line-height: var(--line-height-tight, 1.4);
   box-sizing: border-box;
-  z-index: var(--z-index-dropdown);
-  left: var(--spacing-sm);
-  
-  /* Typography improvements */
-  font-size: var(--font-size-small);
-  line-height: var(--line-height-tight);
-  
-  /* Text hyphenation */
-  hyphens: auto;
-  overflow-wrap: break-word;
-  word-break: break-word;
+}
+
+/* Specific size control for citation text in sidenotes */
+.sidenote .citation-text {
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0;
+}
+
+.sidenote .citation-text p {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.sidenote-ref {
+  display: inline;
+  position: relative;
+  z-index: 1;
 }
 
 /* Hidden state for sidenotes during positioning */
@@ -59,13 +68,38 @@
   vertical-align: middle;
 }
 
-/* Sidenote reference styling */
-.sidenote-ref {
-  display: inline;
-  font-size: 75%;
-  line-height: 0;
+/* Prevent paragraph breaks */
+[data-nomarkdown] {
+  display: inline !important;
+}
+
+.sidenote-wrapper {
+  display: inline !important;
+  white-space: normal;
   position: relative;
-  vertical-align: super;
+}
+
+.sidenote-wrapper p {
+  display: inline !important;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove any margins that might cause breaks */
+.sidenote-ref {
+  display: inline-block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Prevent Markdown from wrapping sidenotes in paragraphs */
+p > .sidenote-wrapper:only-child {
+  display: inline;
+}
+
+p > .sidenote-wrapper {
+  margin: 0;
+  padding: 0;
 }
 
 /* Sidenote marker in the main text */
@@ -109,4 +143,22 @@
     margin-bottom: var(--spacing-md);
     left: auto;
   }
+}
+
+/* Special handling for lists */
+li > .sidenote-ref {
+  display: inline;
+  white-space: nowrap;
+}
+
+/* Fix paragraph handling */
+p > .sidenote-ref,
+p > .sidenote {
+  display: inline;
+}
+
+/* Prevent line breaks */
+.sidenote-ref {
+  white-space: nowrap;
+  word-break: keep-all;
 }
