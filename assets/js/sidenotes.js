@@ -1,3 +1,19 @@
+const sidenoteState = {
+  processedNotes: new Set(),
+  ready: false,
+  positions: new Map(),
+  pendingUpdates: []
+};
+
+const sidenoteEvents = {
+  emit(event, data) {
+    document.dispatchEvent(new CustomEvent(`sidenote:${event}`, { detail: data }));
+  },
+  on(event, callback) {
+    document.addEventListener(`sidenote:${event}`, (e) => callback(e.detail));
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Sidenotes script loaded');
   
@@ -122,6 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Update the bottom position for next note
       lastBottom = finalTop + height;
+      
+      // Emit position updates
+      sidenoteState.positions.set(sidenote.id, finalTop);
+      sidenoteEvents.emit('positionUpdate', {
+        id: sidenote.id,
+        position: finalTop
+      });
     });
     
     // Ensure the sidenote section is tall enough
@@ -147,6 +170,11 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Dispatching sidenotesProcessed event');
         document.dispatchEvent(new CustomEvent('sidenotesProcessed'));
       }, 150); // Faster reveal (was 300ms)
+    }
+
+    if (!sidenoteState.ready) {
+      sidenoteState.ready = true;
+      sidenoteEvents.emit('ready', true);
     }
   };
   
@@ -238,4 +266,35 @@ function updateSidenoteThemes() {
       sidenote.style.borderColor = '';     // Use the CSS default
     }
   });
+}
+
+// Add citation synchronization
+sidenoteEvents.on('citation:sync', (processedCitations) => {
+  const relatedSidenotes = document.querySelectorAll('.sidenote[data-citation-key]');
+  relatedSidenotes.forEach(sidenote => {
+    if (processedCitations.has(sidenote.dataset.citationKey)) {
+      updateSidenoteWithCitation(sidenote);
+    }
+  });
+});
+
+// Handle citation updates
+sidenoteEvents.on('citation:update', ({ key, data }) => {
+  const sidenote = document.querySelector(`.sidenote[data-citation-key="${key}"]`);
+  if (sidenote) {
+    updateSidenoteContent(sidenote, data);
+    positionAllSidenotes();
+  }
+});
+
+// Add helper functions for updates
+function updateSidenoteWithCitation(sidenote) {
+  // Implementation for updating sidenote content based on citation data
+  if (!sidenote.classList.contains('citation-linked')) {
+    sidenote.classList.add('citation-linked');
+    sidenoteEvents.emit('sidenoteLinked', {
+      id: sidenote.id,
+      citationKey: sidenote.dataset.citationKey
+    });
+  }
 }

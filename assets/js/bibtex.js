@@ -2,6 +2,24 @@
  * BibTeX parser and citation formatter
  */
 
+// Add state management
+const citationState = {
+  processedEntries: new Set(),
+  ready: false,
+  bibData: {},
+  pendingUpdates: []
+};
+
+// Add event bus implementation
+const citationEvents = {
+  emit(event, data) {
+    document.dispatchEvent(new CustomEvent(`citation:${event}`, { detail: data }));
+  },
+  on(event, callback) {
+    document.addEventListener(`citation:${event}`, (e) => callback(e.detail));
+  }
+};
+
 // Citation styles
 const citationStyles = {
   apa: {
@@ -255,6 +273,11 @@ function parseBibTeX(bibContent) {
 
 // Main function to process citations
 async function processCitations() {
+  if (!citationState.ready) {
+    citationState.ready = true;
+    citationEvents.emit('ready', true);
+  }
+
   // Find all citation elements
   const citations = document.querySelectorAll('.citation');
   const citationMarkers = document.querySelectorAll('.citation-marker');
@@ -272,11 +295,10 @@ async function processCitations() {
   });
   
   // Fetch and parse each BibTeX file
-  const bibData = {};
   for (const bibFile of bibFiles) {
     const content = await fetchBibTeXFile(bibFile);
     if (content) {
-      bibData[bibFile] = parseBibTeX(content);
+      citationState.bibData[bibFile] = parseBibTeX(content);
     }
   }
   
@@ -287,12 +309,12 @@ async function processCitations() {
     const style = citation.dataset.citationStyle || 'apa';
     const showNotes = citation.dataset.showNotes === 'true';
     
-    if (!key || !bibData[bibFile] || !bibData[bibFile][key]) {
+    if (!key || !citationState.bibData[bibFile] || !citationState.bibData[bibFile][key]) {
       citation.innerHTML = `[Citation not found: ${key}]`;
       return;
     }
     
-    const entry = bibData[bibFile][key];
+    const entry = citationState.bibData[bibFile][key];
     
     // Format citation according to selected style
     let formattedCitation = '';
@@ -310,21 +332,28 @@ async function processCitations() {
     // Update the citation element
     citation.innerHTML = formattedCitation;
     citation.classList.add('citation-processed');
+
+    // Emit event for processed citation
+    citationEvents.emit('citationProcessed', {
+      key: key,
+      element: citation,
+      entry: entry
+    });
   });
   
-  // Process each inline citation marker
+  // Process markers with event emission
   citationMarkers.forEach(marker => {
     const key = marker.dataset.citationKey;
     const bibFile = marker.dataset.bibFile;
     const style = marker.dataset.citationStyle || 'apa';
     const citationId = marker.dataset.citationId;
     
-    if (!key || !bibData[bibFile] || !bibData[bibFile][key]) {
+    if (!key || !citationState.bibData[bibFile] || !citationState.bibData[bibFile][key]) {
       marker.textContent = `[?]`;
       return;
     }
     
-    const entry = bibData[bibFile][key];
+    const entry = citationState.bibData[bibFile][key];
     const authors = parseAuthors(entry.author);
     
     // Format inline citation
@@ -369,14 +398,38 @@ async function processCitations() {
     }
     
     marker.classList.add('citation-marker-processed');
+
+    // Emit event for processed marker
+    citationEvents.emit('markerProcessed', {
+      key: key,
+      element: marker,
+      entry: entry
+    });
+  });
+
+  citationEvents.emit('allProcessed', {
+    totalCitations: citations.length,
+    totalMarkers: citationMarkers.length
+  });
+}
+
+// New synchronization methods
+function synchronizeWithSidenotes() {
+  citationEvents.on('sidenote:ready', () => {
+    citationEvents.emit('citations:sync', citationState.processedEntries);
   });
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  // Process citations with a small delay to ensure DOM is ready
+  synchronizeWithSidenotes();
   setTimeout(processCitations, 500);
 });
 
-// Also process when window is fully loaded
-window.addEventListener('load', processCitations);
+// Handle dynamic updates
+citationEvents.on('sidenote:update', ({ id, position }) => {
+  const relatedCitation = document.querySelector(`[data-citation-id="${id}"]`);
+  if (relatedCitation) {
+    updateCitationPosition(relatedCitation, position);
+  }
+});
