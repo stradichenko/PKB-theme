@@ -21,7 +21,9 @@ This document demonstrates all standard Markdown features along with proper side
 
 ## Basic Typography
 
-Effective typography forms the foundation of digital writing. As explained in our [Hugo Styling Guide](/posts/hugo-styling-guide/), consistent formatting improves readability. This is especially important when [organizing content](/posts/content-organization/) in your knowledge base.
+Effective typography forms the foundation of digital writing. As explained by {{< cite "lee2023" "/bibtex/references.bib" "chicago" "true" >}}, consistent formatting improves readability. Recent studies {{< cite "garcia2022" "/bibtex/references.bib" "apa" "true" >}} show that proper formatting significantly impacts user engagement. As demonstrated in previous research {{< cite "garcia2022" "/bibtex/references.bib" "apa" "true" >}}, this approach has been validated multiple times.
+
+Modern web development has evolved significantly {{< cite "zhang2023" "/bibtex/references.bib" "apa" "true" >}}. This evolution continues to shape how we build websites {{< cite "zhang2023" "/bibtex/references.bib" "apa" "true" >}} and manage content {{< cite "brown2021" "/bibtex/references.bib" "mla" "true" >}}.
 
 Sidenotes work great with lists to provide additional context for specific items without breaking the list flow {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}. Pay attention to this line. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. 
 
@@ -90,7 +92,7 @@ Images can be further explained here without cluttering the main content.
 
 ## Code
 
-Inline `code` is wrapped with backticks.
+Inline `code` is wrapped with backticks. Modern web development practices {{< cite "zhang2023" "/bibtex/references.bib" "apa" "true" >}} emphasize the importance of clean, well-documented code. This has been consistently shown in the literature {{< cite "miller2022" "/bibtex/references.bib" "chicago" "true" >}}.
 
 ```python
 # Code block with syntax highlighting
@@ -124,6 +126,8 @@ Provide information about the quote source or additional context here.
 ---
 
 ## Advanced Sidenote Usage
+
+According to {{< cite "brown2021" "/bibtex/references.bib" "mla" "true" >}}, effective content management requires careful consideration of information architecture. Recent performance studies {{< cite "miller2022" "/bibtex/references.bib" "chicago" "true" >}} have shown that proper content organization significantly impacts site performance. These findings align with earlier research {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}.
 
 Plain text with a sidenote. {{< sidenote >}}
 This is a standard sidenote. Use it for brief asides or clarifications.
@@ -225,4 +229,4 @@ Standard markdown footnotes[^1] work like this.
 
 ## Conclusion
 
-This boilerplate demonstrates the range of markdown features and proper sidenote usage. Copy, adapt, and extend for your own documents. For practical applications, see our guides on [Digital Gardening](/posts/digital-garden/), [Personal Knowledge Management](/posts/personal-knowledge-base/), [Content Organization](/posts/content-organization/), and [Hugo Styling](/posts/hugo-styling-guide/).
+This boilerplate demonstrates the range of markdown features and proper sidenote usage {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}. For practical applications and performance considerations {{< cite "miller2022" "/bibtex/references.bib" "chicago" "true" >}}, see our guides on Digital Gardening. As noted in seminal work {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}, proper documentation is essential.

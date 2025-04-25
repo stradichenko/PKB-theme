@@ -1,9 +1,18 @@
-{{- $num := .Page.Scratch.Get "citeCounter" | default 0 -}}
-{{- $num = add $num 1 -}}
-{{- .Page.Scratch.Set "citeCounter" $num -}}
 {{- $citationKey := .Get 0 | default "" -}}
 {{- $bibFile := .Get 1 | default "references.bib" -}}
-{{- $style := .Get 2 | default "apa" -}}
-{{- $showNotes := .Get 3 | default "false" -}}
-{{- $citationId := printf "citation-%s" $citationKey -}}
-{{- printf `<sup class="citation-ref">%d</sup><span class="citation-marker" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s" data-citation-id="%s"></span><span class="sidenote sidenote-hidden citation-sidenote" id="%s" lang="%s" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s"><sup class="citation-sup">%d.</sup><span class="citation citation-inline" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s"></span></span>` $num $citationKey $bibFile $style $showNotes $citationId $citationId (.Site.Language.Lang | default "en") $citationKey $bibFile $style $showNotes $num $citationKey $bibFile $style | safeHTML -}}
+{{- /* Get existing citation number if it exists */ -}}
+{{- $existingNum := .Page.Scratch.Get (printf "citation-%s-num" $citationKey) -}}
+{{- if $existingNum -}}
+  {{- /* Just output the superscript reference number */ -}}
+  <sup class="citation-ref">{{ $existingNum }}</sup>
+{{- else -}}
+  {{- /* New citation - increment counter and store */ -}}
+  {{- $num := .Page.Scratch.Get "citeCounter" | default 0 -}}
+  {{- $num = add $num 1 -}}
+  {{- .Page.Scratch.Set "citeCounter" $num -}}
+  {{- .Page.Scratch.Set (printf "citation-%s-num" $citationKey) $num -}}
+  {{- $style := .Get 2 | default "apa" -}}
+  {{- $showNotes := .Get 3 | default "false" -}}
+  {{- $citationId := printf "citation-%s" $citationKey -}}
+  {{- printf `<sup class="citation-ref">%d</sup><span class="citation-marker" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s" data-citation-id="%s"></span><span class="sidenote sidenote-hidden citation-sidenote" id="%s" lang="%s" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s"><sup class="citation-sup">%d.</sup><span class="citation citation-inline" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s"></span></span>` $num $citationKey $bibFile $style $showNotes $citationId $citationId (.Site.Language.Lang | default "en") $citationKey $bibFile $style $showNotes $num $citationKey $bibFile $style | safeHTML -}}
+{{- end -}}
