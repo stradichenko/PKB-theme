@@ -1,0 +1,55 @@
+.sidenote-ref,
+.citation-ref {
+    cursor: help;
+    position: relative;
+}
+
+/* Native browser tooltip */
+.sidenote-ref[title],
+.citation-ref[title] {
+    border-bottom: 1px dotted var(--text-color-primary);
+}
+
+/* Custom tooltip */
+.tooltip {
+    display: none;
+    position: absolute;
+    z-index: var(--z-index-tooltip);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm);
+    max-width: 300px;
+    box-shadow: var(--shadow-light);
+    font-size: var(--font-size-small);
+    color: var(--text-color-primary);
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+    backdrop-filter: blur(8px);
+}
+
+.tooltip.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* Light theme specific */
+:root:not([data-theme="dark"]) .tooltip {
+    background: rgba(var(--light-surface-rgb), 0.95);
+    border-color: var(--light-border);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme specific */
+[data-theme="dark"] .tooltip {
+    background: rgba(var(--dark-surface-rgb), 0.85);
+    border-color: var(--dark-border);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Hover effects */
+.sidenote-ref:hover + .tooltip,
+.citation-ref:hover + .tooltip {
+    transform: translateY(-2px);
+}

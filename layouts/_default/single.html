@@ -108,6 +108,11 @@
 {{ $scripts := slice }}
 {{ $styles := slice }}
 
+<!-- Add tooltip styles -->
+{{ with resources.Get "css/tooltip.css" }}
+  {{ $styles = $styles | append . }}
+{{ end }}
+
 <!-- Unconditionally add sidenotes resources -->
 {{ with resources.Get "css/references.css" }}
   {{ $styles = $styles | append . }}
@@ -127,6 +132,10 @@
   {{ $tocJS := resources.Get "js/toc.js" }}
   {{ $scripts = $scripts | append $tocJS }}
 {{ end }}
+
+<!-- Add tooltip.js -->
+{{ $tooltipJS := resources.Get "js/tooltip.js" }}
+{{ $scripts = $scripts | append $tooltipJS }}
 
 <!-- Always include table-wrapper.js -->
 {{ $tableWrapperJS := resources.Get "js/table-wrapper.js" }}
