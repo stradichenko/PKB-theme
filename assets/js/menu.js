@@ -6,9 +6,24 @@ document.addEventListener('DOMContentLoaded', function() {
   function toggleMenu() {
     const isExpanded = burger.getAttribute('aria-expanded') === 'true';
     burger.setAttribute('aria-expanded', !isExpanded);
-    nav.classList.toggle('active');
-    // Prevent body scroll when menu is open
-    document.body.style.overflow = isExpanded ? '' : 'hidden';
+    
+    // Toggle menu visibility
+    if (!isExpanded) {
+      nav.style.display = 'block';
+      // Force reflow
+      nav.offsetHeight;
+      nav.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      nav.classList.remove('active');
+      // Wait for transition before hiding
+      setTimeout(() => {
+        if (!nav.classList.contains('active')) {
+          nav.style.display = 'none';
+        }
+      }, 300);
+      document.body.style.overflow = '';
+    }
   }
 
   function closeMenu() {

@@ -174,39 +174,114 @@ html[data-theme="dark"] .moon-icon {
   display: none;
 }
 
-/* Responsive adaptations */
-@media (max-width: var(--breakpoint-md)) {
-  header {
+/* Share modal styles - moved from header.html */
+.share-modal {
+  display: none;
+  position: fixed;
+  z-index: var(--z-index-modal, 1000);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.share-modal.active {
+  opacity: 1;
+}
+
+.share-modal-content {
+  position: relative;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 15% auto;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 260px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-20px);
+  transition: transform 0.2s ease;
+}
+
+.share-modal.active .share-modal-content {
+  transform: translateY(0);
+}
+
+/* Improved navigation transitions */
+.main-nav {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Burger menu button - prevent shrinking */
+.burger-button {
+  min-width: 40px;
+  min-height: 40px;
+  width: 40px;
+  height: 40px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: inherit;
+  flex-shrink: 0; /* Prevent shrinking */
+  margin-right: var(--spacing-sm);
+}
+
+/* Mobile navigation styles */
+@media (max-width: 768px) {
+  .burger-button {
+    display: flex;
+  }
+
+  .main-nav {
+    display: none;
+    position: fixed;
+    top: var(--header-height, 60px);
+    left: 0;
+    width: 100%;
     height: auto;
+    background-color: var(--header-bg-color);
+    box-shadow: var(--header-shadow);
+    padding: var(--spacing-md);
+    z-index: calc(var(--z-index-fixed) - 1);
   }
-  
+
+  .main-nav.active {
+    display: block;
+  }
+
+  .main-nav ul {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--spacing-sm);
+  }
+
+  .main-nav li {
+    width: 100%;
+  }
+
+  .main-nav a {
+    width: 100%;
+    padding: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* Remove default mobile styles that break layout */
   .header-container {
-    flex-direction: column;
-    padding: var(--spacing-sm, 8px);
-    gap: var(--spacing-md, 16px);
+    flex-wrap: nowrap !important;
   }
-  
+
   .header-left {
-    flex-direction: column;
-    width: 100%;
-    gap: var(--spacing-sm, 8px);
-  }
-  
-  .header-right {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  /* On mobile, put controls above search */
-  .header-controls {
-    width: 100%;
-    justify-content: center;
-    order: 1;
-  }
-  
-  .header-search {
-    width: 100%;
-    order: 2;
+    flex: 0 1 auto;
+    min-width: 0;
   }
 }
