@@ -7,34 +7,35 @@ Renders a menu for the given menu ID.
 @example: {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
 */}}
 
-{{- $page := .page }} <!-- Assign the current page context to the variable $page -->
-{{- $menuID := .menuID }} <!-- Assign the provided menu ID to the variable $menuID -->
+{{- $page := .page }}
+{{- $menuID := .menuID }}
 
-{{- with index site.Menus $menuID }} <!-- Check if the menu with the given menu ID exists in the site's menus -->
-  <nav>
-    <ul>
-      {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }} <!-- Render the menu entries recursively using the "walk.html" partial -->
-    </ul>
-  </nav>
+{{- with index site.Menus $menuID }}
+  <ul role="menubar" class="menu-list">
+    {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" . "level" 0) }}
+  </ul>
 {{- end }}
 
-{{- define "partials/inline/menu/walk.html" }} <!-- Define the "walk.html" partial for rendering menu entries recursively -->
-  {{- $page := .page }} <!-- Assign the current page context to the variable $page -->
-  {{- range .menuEntries }} <!-- Iterate over the menu entries -->
-    {{- $attrs := dict "href" .URL }} <!-- Initialize attributes for the menu item with its URL -->
-    {{- if $page.IsMenuCurrent .Menu . }} <!-- Check if the current page is the active menu item -->
-      {{- $attrs = merge $attrs (dict "class" "active" "aria-current" "page") }} <!-- Add "active" class and ARIA attributes for the current page -->
-    {{- else if $page.HasMenuCurrent .Menu .}} <!-- Check if the current page is an ancestor of the menu item -->
-      {{- $attrs = merge $attrs (dict "class" "ancestor" "aria-current" "true") }} <!-- Add "ancestor" class and ARIA attributes for ancestor pages -->
+{{- define "partials/inline/menu/walk.html" }}
+  {{- $page := .page }}
+  {{- $level := .level }}
+  {{- range .menuEntries }}
+    {{- $attrs := dict "href" .URL }}
+    {{- if $page.IsMenuCurrent .Menu . }}
+      {{- $attrs = merge $attrs (dict "class" "active" "aria-current" "page") }}
+    {{- else if $page.HasMenuCurrent .Menu .}}
+      {{- $attrs = merge $attrs (dict "class" "ancestor" "aria-current" "true") }}
     {{- end }}
-    {{- $name := .Name }} <!-- Default the menu item name to its Name property -->
-    {{- with .Identifier }} <!-- Check if the menu item has an Identifier -->
-      {{- with T . }} <!-- Translate the Identifier if a translation exists -->
-        {{- $name = . }} <!-- Override the menu item name with the translated value -->
+    {{- $name := .Name }}
+    {{- with .Identifier }}
+      {{- with T . }}
+        {{- $name = . }}
       {{- end }}
     {{- end }}
-    <li>
+    <li role="none">
       <a
+        role="menuitem"
+        {{- if .Children }} aria-haspopup="true" aria-expanded="false"{{- end }}
         {{- range $k, $v := $attrs }}
           {{- with $v }}
             {{- printf " %s=%q" $k $v | safeHTMLAttr }}
@@ -42,8 +43,8 @@ Renders a menu for the given menu ID.
         {{- end -}}
       >{{ $name }}</a>
       {{- with .Children }}
-        <ul>
-          {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}
+        <ul role="menu" class="submenu level-{{ add $level 1 }}">
+          {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" . "level" (add $level 1)) }}
         </ul>
       {{- end }}
     </li>

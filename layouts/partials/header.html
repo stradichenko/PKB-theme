@@ -1,9 +1,17 @@
 <!-- layouts/partials/header.html -->
 <div class="header-container">
-  <!-- Left section: Logo and Navigation -->
   <div class="header-left">
+    <!-- Move burger button before site title -->
+    <button id="burger-menu" class="burger-button" aria-label="Toggle menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
     <h1 class="site-title"><a href="{{ .Site.Home.RelPermalink }}">{{ site.Title }}</a></h1>
-    <nav class="main-nav">
+    
+    <nav class="main-nav" id="main-nav">
       {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
     </nav>
   </div>
@@ -88,6 +96,10 @@
   </div>
 </div>
 
+<!-- Add menu.js before the closing body tag -->
+{{ $menuJS := resources.Get "js/menu.js" | minify | fingerprint }}
+<script src="{{ $menuJS.RelPermalink }}" integrity="{{ $menuJS.Data.Integrity }}" crossorigin="anonymous"></script>
+
 <!-- Use external theme toggle script instead of inline -->
 {{ $themeToggleJS := resources.Get "js/theme-toggle.js" | minify | fingerprint }}
 <script src="{{ $themeToggleJS.RelPermalink }}" integrity="{{ $themeToggleJS.Data.Integrity }}" crossorigin="anonymous"></script>
@@ -137,7 +149,7 @@
         copyBtn.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1-2-2h9a2 2 0 0 1-2 2v1"></path>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1-2 2v1"></path>
           </svg>
           Copy`;
       }, 2000);
@@ -317,5 +329,185 @@
     background-color: #2d3748;
     color: #e2e8ff;
     border-color: #4a5568;
+  }
+
+  .burger-button {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: inherit;
+    margin-right: 10px;
+    min-width: 40px; /* Add fixed minimum width */
+    min-height: 40px; /* Add fixed minimum height */
+    flex-shrink: 0; /* Prevent button from shrinking */
+  }
+
+  .burger-button svg {
+    width: 24px;
+    height: 24px;
+    min-width: 24px; /* Prevent SVG from shrinking */
+    min-height: 24px; /* Prevent SVG from shrinking */
+  }
+
+  @media (max-width: 768px) {
+    .header-container {
+      position: relative;
+    }
+
+    .burger-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-left {
+      width: 100%;
+      gap: 15px; /* Consistent spacing */
+    }
+    
+    .main-nav {
+      display: none;
+      position: fixed;
+      top: var(--header-height, 60px);
+      left: 0;
+      width: 100%;
+      height: calc(100vh - var(--header-height, 60px));
+      background: var(--header-bg-color);
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      transition: transform 0.3s ease-in-out;
+      transform: translateX(-100%);
+    }
+
+    .main-nav.active {
+      display: block;
+      transform: translateX(0);
+    }
+
+    .main-nav ul {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .main-nav li {
+      width: 100%;
+      padding: 0.5rem 0;
+    }
+
+    .main-nav ul ul {
+      position: static;
+      width: 100%;
+      padding-left: 1rem;
+      box-shadow: none;
+      border-left: 2px solid var(--border-color);
+    }
+  }
+
+  /* Desktop styles */
+  @media (min-width: 769px) {
+    .main-nav ul {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .main-nav li {
+      position: relative;
+    }
+
+    .main-nav ul ul {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--header-bg-color);
+      min-width: 200px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 0.5rem 0;
+    }
+
+    .main-nav li:hover > ul {
+      display: block;
+    }
+
+    .main-nav ul ul li {
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  /* Submenu styling with high specificity */
+  .header-container .main-nav .menu-list .submenu {
+    background: var(--header-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 0.5rem 0;
+    list-style: none;
+    min-width: 200px;
+    z-index: 1000;
+  }
+
+  .header-container .main-nav .menu-list li > a {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: var(--text-color-primary);
+    text-decoration: none;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .header-container .main-nav .menu-list li > a:hover {
+    color: var(--color-primary);
+    background-color: var(--bg-hover);
+  }
+
+  .header-container .main-nav .menu-list .submenu li {
+    padding: 0;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .header-container .main-nav .menu-list .submenu {
+      position: static;
+      border: none;
+      box-shadow: none;
+      background: transparent;
+      border-left: 2px solid var(--border-color);
+      margin-left: 1rem;
+      padding-left: 1rem;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .header-container .main-nav .menu-list > li {
+      position: relative;
+    }
+
+    .header-container .main-nav .menu-list .submenu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .header-container .main-nav .menu-list li:hover > .submenu {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .header-container .main-nav .menu-list .submenu .submenu {
+      top: 0;
+      left: 100%;
+    }
   }
 </style>
