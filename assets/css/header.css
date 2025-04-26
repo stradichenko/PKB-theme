@@ -40,12 +40,32 @@ header {
   gap: var(--spacing-md, 16px);
 }
 
-/* Site title */
+/* Logo styling */
+.logo-link {
+  display: flex;
+  align-items: center;
+  margin-right: var(--spacing-sm);
+  flex-shrink: 0;
+  min-width: 40px; /* Ensure minimum width */
+  width: 40px; /* Fixed width */
+}
+
+.site-logo {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  min-width: 40px; /* Ensure minimum width */
+  object-fit: contain; /* Maintain aspect ratio */
+}
+
+/* Site title enhanced styling */
 .site-title {
   margin: 0;
-  font-size: var(--font-size-large, 1.25rem);
+  font-size: var(--font-size-xl, 1.5rem);
+  font-weight: 700;
   line-height: 1;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .site-title a {
@@ -238,6 +258,21 @@ html[data-theme="dark"] .moon-icon {
 @media (max-width: 768px) {
   .burger-button {
     display: flex;
+    order: 2; /* Move burger after logo */
+  }
+
+  .site-title {
+    display: none; /* Hide site title when burger is visible */
+  }
+
+  .header-left {
+    justify-content: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .logo-link {
+    order: 1;
+    flex: 0 0 40px; /* Fixed flex basis */
   }
 
   .main-nav {
@@ -283,5 +318,12 @@ html[data-theme="dark"] .moon-icon {
   .header-left {
     flex: 0 1 auto;
     min-width: 0;
+  }
+}
+
+/* Show site title on wider screens */
+@media (min-width: 769px) {
+  .site-title {
+    display: block;
   }
 }

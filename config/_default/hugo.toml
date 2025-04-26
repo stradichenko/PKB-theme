@@ -1,6 +1,6 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
-title = 'HUGO_site'
+title = 'HUGO_sites'
 
 [params]
   [params.contact]
@@ -104,7 +104,7 @@ disableLanguages = []
     languageCode = 'en-US'
     languageDirection = 'ltr'
     languageName = 'English'
-    title = ''
+#    title = 'HUGO_site'
     weight = 0
 #    [languages.en.pagination]
 #        disableAliases = true
