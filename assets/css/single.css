@@ -51,7 +51,7 @@ html body .layout-container .main-content .post-header {
   background-color: transparent !important;
   align-items: center !important;
   width: 100% !important;
-  position: relative !important; 
+  position: relative !important;
   z-index: 5 !important;
 }
 
@@ -137,4 +137,41 @@ html[data-theme="dark"] body .layout-container .main-content .post-title {
 
 html[data-theme="dark"] body .layout-container .main-content .tag-link {
   background-color: rgba(233, 153, 107, 0.1) !important;
+}
+
+.layout-container {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.toc-sidebar {
+  flex: 0 0 250px;
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+.main-content {
+  flex: 0 1 80ch; /* Fixed preferred width, can shrink */
+  min-width: 0; /* Allows content to shrink below flex-basis */
+  max-width: 90ch;
+}
+
+/* Responsive breakpoints */
+@media screen and (max-width: 1400px) {
+  .main-content {
+    flex: 0 1 75ch;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .toc-sidebar {
+    display: none;
+  }
+  .main-content {
+    flex: 1 1 auto;
+  }
 }
