@@ -1,10 +1,10 @@
 {{ define "main" }}
   <div class="content-container">
-    {{ partial "knowledge-graph.html" . }}
-    
     <header class="page-header">
       <h1 class="page-title">{{ .Title }}</h1>
     </header>
+    
+    {{ partial "knowledge-graph.html" . }}
     
     <div class="page-content">
       {{ .Content }}
@@ -66,9 +66,17 @@
             {{ end }}
           </div>
           
-          <div class="page-summary">
-            {{ .Summary }}
+          {{ with .Description }}
+          <div class="page-description">
+            {{ . }}
           </div>
+          {{ end }}
+          
+          {{ with .Summary }}
+          <div class="page-summary">
+            {{ . }}
+          </div>
+          {{ end }}
         </article>
       {{ end }}
     </div>

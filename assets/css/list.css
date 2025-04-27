@@ -6,30 +6,21 @@
 }
 
 .page-header {
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: var(--spacing-md);
+  margin-bottom: 0rem;
+  padding-bottom: var(--spacing-sm);
+  background: transparent;  /* Make background explicitly transparent */
+  border-bottom: transparent;
 }
 
 .page-title {
   font-size: var(--font-size-3xl);
-  color: var(--text-color-heading); /* This is the correct text color variable */
-  background-color: transparent; /* Explicitly set background to transparent */
+  color: var(--text-color-heading);
   margin-bottom: var(--spacing-md);
   font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-  letter-spacing: -0.02em;
-  position: relative;
-}
-
-.page-title::after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 4px;
-  background-color: var(--color-primary);
-  margin-top: var(--spacing-sm);
-  border-radius: var(--border-radius);
+  line-height: 1.2;
+  border-bottom: 2px solid var(--color-primary);
+  display: inline-block;
+  background: transparent;  /* Make background explicitly transparent */
 }
 
 .page-content {
@@ -122,15 +113,30 @@ html:not([data-theme="dark"]) .tag-link {
   padding: 0.1rem 0.4rem;
 }
 
-/* Dark mode overrides */
-html[data-theme="dark"] .tag-link {
-  background-color: rgba(var(--color-primary-rgb, 233, 153, 107), 0.15); /* Restored transparency */
+/* Description and Summary styling */
+.page-description {
+  color: var(--text-color-primary);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-weight: var(--font-weight-medium);
+  border-left: 3px solid var(--color-primary);
+  padding-left: 1rem;
 }
 
 .page-summary {
   color: var(--color-text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.5;
+  opacity: 0.85;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  border-top: 1px dashed var(--color-border);
+}
+
+/* Dark mode adjustments */
+html[data-theme="dark"] .page-description {
+  border-left-color: var(--color-primary);
 }
 
 /* Tooltip for truncated tags/categories */

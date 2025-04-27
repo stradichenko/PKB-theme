@@ -319,7 +319,7 @@ a:hover, a:focus {
 /* HEADER                                                                    */
 /* ------------------------------------------------------------------------- */
 .site-header {
-  background-color: var(--header-bg-color);
+  background-color: var(--color-error);
   color: var(--header-text-color);
   font-family: var(--header-font-family);
   font-size: var(--header-font-size);
