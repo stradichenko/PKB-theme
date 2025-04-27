@@ -67,10 +67,13 @@
   </div>
 </div>
 
+<!-- Add share modal CSS -->
+{{ $shareModalCSS := resources.Get "css/share-modal.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $shareModalCSS.RelPermalink }}" integrity="{{ $shareModalCSS.Data.Integrity }}" crossorigin="anonymous">
+
 <!-- Share Link Modal - simplified markup -->
 <div id="share-modal" class="share-modal">
   <div class="share-modal-content">
-    <button class="share-modal-close" aria-label="Close modal">&times;</button>
     <h3>Share this page</h3>
     
     <div class="qrcode-container">
@@ -110,31 +113,36 @@
   document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('share-modal');
     const btn = document.getElementById('share-link-btn');
-    const closeBtn = document.querySelector('.share-modal-close');
     const copyBtn = document.getElementById('copy-url-btn');
     const urlInput = document.getElementById('share-url');
     
     // Open modal when the share button is clicked
     btn.onclick = function() {
       modal.style.display = 'block';
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
     }
     
-    // Close modal when the X is clicked
-    closeBtn.onclick = function() {
-      modal.style.display = 'none';
+    // Close modal function
+    function closeModal() {
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }, 200);
     }
     
     // Close modal when clicking outside of it
     window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = 'none';
+      if (event.target === modal) {
+        closeModal();
       }
     }
     
     // Close modal with Escape key
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape' && modal.style.display === 'block') {
-        modal.style.display = 'none';
+        closeModal();
       }
     });
     

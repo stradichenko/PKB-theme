@@ -1,5 +1,4 @@
 /* Share modal styling */
-
 .share-modal {
   display: none;
   position: fixed;
@@ -22,32 +21,6 @@
   width: 90%;
   max-width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.share-modal-close {
-  position: absolute;
-  right: var(--spacing-sm);
-  top: var(--spacing-sm);
-  font-size: var(--font-size-large);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.share-modal-close:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.share-modal h3 {
-  margin-top: 0;
-  margin-bottom: var(--spacing-md);
-  text-align: center;
 }
 
 .qrcode-container {
@@ -110,8 +83,4 @@
   background-color: var(--dark-surface);
   color: var(--dark-text-primary);
   border-color: var(--color-border);
-}
-
-[data-theme="dark"] .share-modal-close:hover {
-  background-color: rgba(255, 255, 255, 0.1);
 }
