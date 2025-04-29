@@ -261,6 +261,27 @@ background-color: var(--color-surface);
   height: 16px;
 }
 
+.filter-stats {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.filter-stats.hidden {
+  display: none;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.filter-stats #filtered-count {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
 /* Dark mode adjustments */
 [data-theme="dark"] .post-card {
   background-color: var(--dark-surface);

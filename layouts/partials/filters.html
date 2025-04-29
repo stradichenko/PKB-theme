@@ -24,7 +24,7 @@
       <button id="clear-filters" class="clear-filters-btn">Clear All</button>
     </div>
     <div id="active-filters" class="active-filters"></div>
-    <div class="filter-stats">
+    <div id="filter-stats" class="filter-stats hidden">
       <span id="filtered-count">0</span> items found
     </div>
   </div>
@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const filteredCount = document.getElementById('filtered-count');
   const filteredPosts = document.getElementById('filtered-posts');
   const initialMessage = document.getElementById('initial-message');
+  const filterStats = document.getElementById('filter-stats');
 
   const graphColors = [
     'var(--graph-category-1)', 'var(--graph-category-2)', 
@@ -215,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const hasActiveFilters = activeFilterMap.size > 0;
     initialMessage.style.display = hasActiveFilters ? 'none' : 'flex';
     filteredPosts.style.display = hasActiveFilters ? 'block' : 'none';
+    filterStats.classList.toggle('hidden', !hasActiveFilters);
 
     if (hasActiveFilters) {
       posts.forEach(post => {
