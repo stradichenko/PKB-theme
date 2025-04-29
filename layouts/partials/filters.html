@@ -1,0 +1,266 @@
+<div class="filters-layout">
+  <div class="filters-sidebar">
+    <div class="filters-controls">
+      <div class="filter-dropdowns">
+        <select id="category-filter" class="filter-select">
+          <option value="" disabled selected>Select Category</option>
+          {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+            {{ $count := len $taxonomy }}
+            <option value="{{ $name }}" data-count="{{ $count }}" title="{{ $name }} ({{ $count }})">
+              {{ $name }} ({{ $count }})
+            </option>
+          {{ end }}
+        </select>
+        <select id="tag-filter" class="filter-select">
+          <option value="" disabled selected>Select Tag</option>
+          {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+            {{ $count := len $taxonomy }}
+            <option value="{{ $name }}" data-count="{{ $count }}" title="{{ $name }} ({{ $count }})">
+              {{ $name }} ({{ $count }})
+            </option>
+          {{ end }}
+        </select>
+      </div>
+      <button id="clear-filters" class="clear-filters-btn">Clear All</button>
+    </div>
+    <div id="active-filters" class="active-filters"></div>
+    <div class="filter-stats">
+      <span id="filtered-count">0</span> items found
+    </div>
+  </div>
+
+  <div class="posts-container">
+    <div id="initial-message" class="initial-message">
+      <p>Select a category or tag to view matching posts</p>
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="filter-icon">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+    </div>
+    <div class="posts-scroll" id="filtered-posts" style="display: none;">
+      {{ range site.RegularPages }}
+        <article class="post-card" 
+                 {{ with .Params.categories }}data-categories="{{ delimit . "," }}"{{ end }}
+                 {{ with .Params.tags }}data-tags="{{ delimit . "," }}"{{ end }}>
+          <h2 class="page-item-title">
+            <a href="{{ .RelPermalink }}" class="page-link">{{ .LinkTitle }}</a>
+          </h2>
+          
+          <div class="page-metadata">
+            {{ if .Date }}
+            <span class="page-date">
+              <i class="icon-calendar"></i> {{ .Date.Format "January 2, 2006" }}
+            </span>
+            {{ end }}
+            
+            {{ if .Params.categories }}
+            <span class="page-categories">
+              <i class="icon-folder"></i>
+              {{ $maxCategories := 2 }}
+              {{ $categoryCount := len .Params.categories }}
+              {{ $allCategories := .Params.categories }}
+              
+              {{ range $index, $category := .Params.categories }}
+                {{ if lt $index $maxCategories }}
+                  {{- if gt $index 0 }}, {{ end -}}
+                  <a href="{{ "categories/" | relLangURL }}{{ $category | urlize }}" class="category-link">{{ $category }}</a>
+                {{ else if eq $index $maxCategories }}
+                  {{ $remainingCategories := after $maxCategories $allCategories }}
+                  <span class="more-indicator" data-tooltip="{{ delimit $remainingCategories ", " }}">...</span>
+                  {{ break }}
+                {{ end }}
+              {{- end -}}
+            </span>
+            {{ end }}
+            
+            {{ if .Params.tags }}
+            <span class="page-tags">
+              <i class="icon-tag"></i>
+              {{ $maxTags := 3 }}
+              {{ $tagCount := len .Params.tags }}
+              {{ $allTags := .Params.tags }}
+              
+              {{ range $index, $tag := .Params.tags }}
+                {{ if lt $index $maxTags }}
+                  {{- if gt $index 0 }}, {{ end -}}
+                  <a href="{{ "tags/" | relLangURL }}{{ $tag | urlize }}" class="tag-link">{{ $tag }}</a>
+                {{ else if eq $index $maxTags }}
+                  {{ $remainingTags := after $maxTags $allTags }}
+                  <span class="more-indicator" data-tooltip="{{ delimit $remainingTags ", " }}">...</span>
+                  {{ break }}
+                {{ end }}
+              {{- end -}}
+            </span>
+            {{ end }}
+          </div>
+          
+          {{ with .Description }}
+          <div class="page-description">
+            {{ . }}
+          </div>
+          {{ end }}
+          
+          {{ with .Summary }}
+          <div class="page-summary">
+            {{ . }}
+          </div>
+          {{ end }}
+        </article>
+      {{ end }}
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const categoryFilter = document.getElementById('category-filter');
+  const tagFilter = document.getElementById('tag-filter');
+  const activeFilters = document.getElementById('active-filters');
+  const clearFiltersBtn = document.getElementById('clear-filters');
+  const posts = document.querySelectorAll('.post-card');
+  const filteredCount = document.getElementById('filtered-count');
+  const filteredPosts = document.getElementById('filtered-posts');
+  const initialMessage = document.getElementById('initial-message');
+
+  const graphColors = [
+    'var(--graph-category-1)', 'var(--graph-category-2)', 
+    'var(--graph-category-3)', 'var(--graph-category-4)',
+    'var(--graph-category-5)', 'var(--graph-category-6)',
+    'var(--graph-category-7)', 'var(--graph-category-8)'
+  ];
+
+  const activeFilterMap = new Map();
+  const chipColorMap = new Map();
+
+  function getRandomColor() {
+    return graphColors[Math.floor(Math.random() * graphColors.length)];
+  }
+
+  function updateFilterStats() {
+    const visiblePosts = document.querySelectorAll('.post-card[style="display: block;"]');
+    filteredCount.textContent = visiblePosts.length;
+  }
+
+  function createFilterChip(type, value) {
+    if (!chipColorMap.has(value)) {
+      chipColorMap.set(value, getRandomColor());
+    }
+
+    const chip = document.createElement('span');
+    chip.classList.add('filter-chip');
+    chip.style.backgroundColor = chipColorMap.get(value);
+    chip.textContent = value;
+    chip.dataset.type = type;
+    chip.dataset.value = value;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.classList.add('chip-close');
+    closeBtn.innerHTML = '×';
+    closeBtn.onclick = () => removeFilter(type, value);
+    
+    chip.appendChild(closeBtn);
+    return chip;
+  }
+
+  function updateSelectOptions() {
+    [
+      { select: categoryFilter, type: 'category' },
+      { select: tagFilter, type: 'tag' }
+    ].forEach(({ select, type }) => {
+      const activeFilters = activeFilterMap.get(type) || new Set();
+      Array.from(select.options).forEach(option => {
+        if (option.value && activeFilters.has(option.value)) {
+          option.disabled = true;
+          option.style.display = 'none';
+        } else {
+          option.disabled = false;
+          option.style.display = '';
+        }
+      });
+    });
+  }
+
+  function addFilter(type, value) {
+    if (!value) return;
+    
+    if (!activeFilterMap.has(type)) {
+      activeFilterMap.set(type, new Set());
+    }
+    activeFilterMap.get(type).add(value);
+    
+    activeFilters.appendChild(createFilterChip(type, value));
+    updateVisibility();
+    updateSelectOptions();
+    
+    if (type === 'category') categoryFilter.value = '';
+    if (type === 'tag') tagFilter.value = '';
+  }
+
+  function removeFilter(type, value) {
+    const filters = activeFilterMap.get(type);
+    if (filters) {
+      filters.delete(value);
+      if (filters.size === 0) {
+        activeFilterMap.delete(type);
+      }
+    }
+    
+    const chip = activeFilters.querySelector(`[data-type="${type}"][data-value="${value}"]`);
+    if (chip) chip.remove();
+    
+    updateVisibility();
+    updateSelectOptions();
+  }
+
+  function updateVisibility() {
+    const hasActiveFilters = activeFilterMap.size > 0;
+    initialMessage.style.display = hasActiveFilters ? 'none' : 'flex';
+    filteredPosts.style.display = hasActiveFilters ? 'block' : 'none';
+
+    if (hasActiveFilters) {
+      posts.forEach(post => {
+        const categories = (post.dataset.categories || '').split(',').filter(Boolean);
+        const tags = (post.dataset.tags || '').split(',').filter(Boolean);
+        let visible = true;
+
+        if (activeFilterMap.has('category')) {
+          visible = visible && Array.from(activeFilterMap.get('category'))
+            .some(cat => categories.includes(cat));
+        }
+        
+        if (activeFilterMap.has('tag')) {
+          visible = visible && Array.from(activeFilterMap.get('tag'))
+            .some(tag => tags.includes(tag));
+        }
+
+        post.style.display = visible ? 'block' : 'none';
+        
+        if (visible) {
+          post.classList.add('post-card-visible');
+          post.classList.remove('post-card-hidden');
+        } else {
+          post.classList.add('post-card-hidden');
+          post.classList.remove('post-card-visible');
+        }
+      });
+      updateFilterStats();
+    }
+  }
+
+  function clearFilters() {
+    activeFilterMap.clear();
+    chipColorMap.clear();
+    activeFilters.innerHTML = '';
+    categoryFilter.value = '';
+    tagFilter.value = '';
+    updateVisibility();
+    updateSelectOptions();
+  }
+
+  categoryFilter.addEventListener('change', (e) => addFilter('category', e.target.value));
+  tagFilter.addEventListener('change', (e) => addFilter('tag', e.target.value));
+  clearFiltersBtn.addEventListener('click', clearFilters);
+  
+  // Initialize stats
+  updateFilterStats();
+});
+</script>

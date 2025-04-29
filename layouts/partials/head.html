@@ -118,6 +118,9 @@
   {{ $listCSS := resources.Get "css/list.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $listCSS.RelPermalink }}" integrity="{{ $listCSS.Data.Integrity }}" crossorigin="anonymous">
   
+  {{ $filtersCSS := resources.Get "css/filters.css" | toCSS | fingerprint }}
+  <link rel="stylesheet" href="{{ $filtersCSS.RelPermalink }}" integrity="{{ $filtersCSS.Data.Integrity }}" crossorigin="anonymous">
+  
   {{ $postsGridCSS := resources.Get "css/components/recent-posts-grid.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $postsGridCSS.RelPermalink }}" integrity="{{ $postsGridCSS.Data.Integrity }}" crossorigin="anonymous">
   
@@ -157,6 +160,7 @@
       (resources.Get "css/components/code.css")
       (resources.Get "css/components/markdown.css")
       (resources.Get "css/list.css")
+      (resources.Get "css/filters.css")
       (resources.Get "css/components/recent-posts-grid.css")
       (resources.Get "css/about-profile.css")
       (resources.Get "css/main.css")
