@@ -50,11 +50,6 @@ title = 'HUGO_sites'
 
 [menus]
   [[menus.main]]
-      name = 'Home'
-      pageRef = '/'
-      weight = 10
-
-  [[menus.main]]
       name = 'Posts'
       pageRef = '/posts'
       weight = 20
@@ -63,11 +58,6 @@ title = 'HUGO_sites'
       name = 'Docs'
       pageRef = '/docs'
       weight = 30
-
-  [[menus.main]]
-      name = 'Tags'
-      pageRef = '/tags'
-      weight = 40
 
   [[menus.main]]
       name = 'About'
