@@ -1,0 +1,25 @@
+[[imports]]
+    path = "../"
+    disabled = false
+
+[[mounts]]
+source = "../../layouts"
+target = "layouts"
+
+[[mounts]]
+source = "../../assets"
+target = "assets"
+
+[[mounts]]
+source = "../../static"
+target = "static"
+
+[[mounts]]
+source = "../../archetypes"
+target = "archetypes"
+
+[[mounts]]
+source = "content"
+target = "content"
+
+

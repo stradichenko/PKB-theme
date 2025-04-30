@@ -1,14 +1,46 @@
-[params]
-  title = "My Website"
-  description = "A description of my website"
-  author = "Author Name"
+[contact]
+  email = 'info@example.org'
+  phone = '+1 206-555-1212'
+  
+[social]
+  linkedin = "https://linkedin.com/in/your-profile"
+  twitter = "https://twitter.com/your-profile"
+  instagram = "https://instagram.com/your-profile"
+  orcid = "https://orcid.org/your-id"
+  github = "https://github.com/your-profile"
+  email = "your-email@example.com"
 
-[comments]
-  [comments.remark42]
-    enabled = true
-    host = "https://your-remark-domain.com"  # Must be a full URL with https://
-    site_id = "your-site-id"                 # Choose a unique identifier for your site
-    theme = "light"
-    locale = "en"
-    show_email_subscription = false
-    max_shown_comments = 15
+mainSections = ["posts", "docs", "projects"]  # sections to include in contribution calendar
+
+# Analytics configuration options
+[analytics]
+  # Uncomment and configure the analytics system you want to use
+  
+  # Matomo Analytics
+  # matomo = true
+  # matomoSiteId = "1"
+  # matomoURL = "https://analytics.yourdomain.com/"
+  
+  # Plausible Analytics
+  # plausible = true
+  # plausibleDomain = "yourdomain.com"
+  # plausibleScriptSrc = "https://plausible.io/js/script.js"
+  
+  # Umami Analytics
+  # umami = true
+  # umamiWebsiteId = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+  # umamiScriptSrc = "https://analytics.yourdomain.com/umami.js"
+  
+  # Fathom Analytics
+  # fathom = true
+  # fathomSiteId = "ABCDEFGH"
+  # fathomScriptSrc = "https://cdn.usefathom.com/script.js"
+  
+  # Shynet Analytics
+  # shynet = true
+  # shynetURL = "https://analytics.yourdomain.com"
+  # shynetUUID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'

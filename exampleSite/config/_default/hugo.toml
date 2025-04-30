@@ -1,0 +1,13 @@
+baseURL = ""
+title = "PKB-theme Example Site"
+theme = "PKB-theme"
+
+# Enable features
+enableGitInfo = true
+enableRobotsTXT = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+

@@ -53,13 +53,12 @@ jobs:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
           HUGO_ENVIRONMENT: production
         run: |
-          hugo \
-            --minify \
-            --baseURL "${{ steps.pages.outputs.base_url }}/"
+          cd exampleSite
+          hugo --minify --themesDir "../.." --theme "PKB-theme" --baseURL "${{ steps.pages.outputs.base_url }}/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: exampleSite/public
 
   # Deployment job
   deploy:

@@ -1,3 +1,13 @@
++++
+title = "Analytics Configuration"
+date = 2023-06-15T09:00:00-07:00
+draft = false
+tags = ["analytics", "configuration", "privacy", "documentation"]
+categories = ["guides", "documentation"]
+toc = true
+description = "Guide for configuring various analytics providers with PKB-theme"
++++
+
 # Analytics Configuration for PKB-theme
 
 This document describes how to configure various self-hosted analytics options for your PKB-theme website.

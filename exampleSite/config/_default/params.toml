@@ -1,6 +1,15 @@
 # Analytics Configuration Example
 # Uncomment and configure the analytics system you want to use
 
+# Theme features
+enableSearch = true
+enableDarkMode = true
+enableSidenotes = true
+
+# Layout settings
+mainSections = ["posts", "docs"]
+contentWidth = "wide"
+
 [analytics]
   # Plausible Analytics (https://plausible.io)
   # plausible = true

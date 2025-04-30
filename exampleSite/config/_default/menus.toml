@@ -1,26 +1,21 @@
-[module]
-  [[module.imports]]
-    path = "../"
-    disable = false
-
 # Main Menu
-[[menu.main]]
+[[main]]
   name = "Home"
   url = "/"
   weight = 10
 
-[[menu.main]]
+[[main]]
   name = "Posts"
   url = "/posts/"
   weight = 20
 
-[[menu.main]]
+[[main]]
   name = "Docs"
   url = "/docs/"
   weight = 30
 
-[[menu.main]]
+[[main]]
   name = "About"
   url = "/about/"
   weight = 40
-
+ 1

@@ -1,0 +1,25 @@
+[[main]]
+    name = 'Posts'
+    pageRef = '/posts'
+    weight = 20
+    
+[[main]]
+    name = 'Docs'
+    pageRef = '/docs'
+    weight = 30
+
+[[main]]
+    name = 'About'
+    pageRef = '/about'
+    weight = 50
+
+[[footer]]
+    name = 'Terms'
+    pageRef = '/terms'
+    weight = 80
+
+[[footer]]
+    name = 'Privacy'
+    pageRef = '/privacy'
+    weight = 90
+
