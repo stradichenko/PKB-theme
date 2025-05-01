@@ -39,14 +39,16 @@ jobs:
     - name: Build and test exampleSite
       working-directory: exampleSite
       run: |
+        # Clear any existing module state first
+        rm -f go.mod go.sum
+        
         # Initialize the module for the example site
         hugo mod init github.com/stradichenko/PKB-theme/exampleSite
 
         # Configure module replacement to use local theme
         hugo mod edit -replace "github.com/stradichenko/PKB-theme=../"
 
-        # Clear any existing module cache and get dependencies
-        hugo mod clean
+        # Get dependencies (no need for mod clean since we removed files)
         hugo mod get -u
 
         # Tidy and verify modules
