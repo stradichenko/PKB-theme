@@ -39,15 +39,16 @@ jobs:
     - name: Build and test exampleSite
       working-directory: exampleSite
       run: |
-        # Ensure site module exists (won't overwrite if already present)
-        if [ ! -f go.mod ]; then
-          hugo mod init github.com/stradichenko/PKB-theme-example
-        fi
+        # Initialize the module for the example site
+        hugo mod init github.com/stradichenko/PKB-theme/exampleSite
 
-        # Point the theme import at our local checkout
-        go mod edit -replace=github.com/stradichenko/PKB-theme=..
+        # Clear any existing module cache
+        hugo mod clean
 
-        # Tidy, verify, and fetch modules
+        # Configure module replacement to use local theme
+        hugo mod edit -replace "github.com/stradichenko/PKB-theme=../"
+
+        # Tidy and verify modules
         hugo mod tidy
         hugo mod verify
 
@@ -56,7 +57,8 @@ jobs:
           --minify \
           --cleanDestinationDir \
           --environment production \
-          --logLevel debug
+          --logLevel debug \
+          --themesDir "../"
 
         # Run HTML validation
         htmltest -c .htmltest.yml --log-level 3 --skip-external
