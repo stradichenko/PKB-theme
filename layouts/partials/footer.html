@@ -55,7 +55,9 @@
   {{ with .Site.Params.footer.customText }}
     <p>{{ . | safeHTML }}</p>
   {{ else }}
-    <p>Copyright &copy; {{ now.Year }}. All rights reserved.</p>
+    <p>Copyright &copy; {{ now.Year }}. All rights reserved. <a href="{{ .Site.BaseURL }}index.xml">RSS</a>. 
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">HUGO</a> & 
+    <a href="https://github.com/stradichenko/PKB-theme" target="_blank" rel="noopener">PKB-theme</a></p>
   {{ end }}
   
   {{ if .Site.Params.footer.showEnvironment }}

@@ -41,6 +41,9 @@ mainSections = ["posts", "docs", "projects"]  # sections to include in contribut
   # shynetURL = "https://analytics.yourdomain.com"
   # shynetUUID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
+[footer]
+  #customText = """"""
+
 [taxonomies]
   category = 'categories'
   tag = 'tags'

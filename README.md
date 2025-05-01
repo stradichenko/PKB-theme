@@ -18,7 +18,7 @@ From your project's root directory, initiate the hugo module system and add the 
 ```bash
 
 # 0. Create boilerplate files for your site, replace placeholder title (in case of testing locally anything like <example.com/my-blog> works fine)
-hogo new site <your-site>
+hugo new site <your-site>
 
 # 1. Initialize HUGO module to go.mod
 hugo mod init github.com/stradichenko/PKB-theme
@@ -104,4 +104,80 @@ If you’re using **Git submodules**, you need to run:
 git submodule update --remote --merge
 ```
 to fetch the latest theme updates.
+
+### Hugo's Theme Configuration Inheritance
+
+Hugo uses a configuration cascade system that allows for easy theme customization without modifying the original theme files. The configuration is processed in the following priority order (highest to lowest):
+
+1. Project-level configuration (your site's config files)
+2. Environment-specific configuration
+3. Theme's default configuration
+
+When using PKB-theme as a module or submodule, you can override any theme settings by specifying them in your project's configuration file. For example, if the theme has these default parameters:
+
+```toml
+[params]
+  mainColor = "blue"
+  showSidebar = true
+```
+
+You can override them in your project's config file:
+
+```toml
+[params]
+  mainColor = "red"    # This overrides the theme's blue
+  showSidebar = false  # This overrides the theme's true
+```
+
+This inheritance system ensures that:
+- Your customizations remain intact when the theme updates
+- You can maintain a clean separation between theme code and your configurations
+- You don't need to modify theme files directly
+- You can easily revert to theme defaults by removing overrides
+
+#### Practical Example: Customizing Theme Components
+
+To customize specific theme components while maintaining the ability to update the theme, you can:
+
+1. **Identify the theme component** you want to customize (e.g., footer partial)
+2. **Copy the component** from the theme to your site's directory
+3. **Modify your copy** as needed
+
+For example, to customize the footer:
+
+```bash
+# 1. Create the partials directory in your site if it doesn't exist
+mkdir -p layouts/partials
+
+# 2. Copy the footer partial from the theme
+# If using Hugo Modules:
+hugo mod vendor
+cp vendor/github.com/stradichenko/PKB-theme/layouts/partials/footer.html layouts/partials/
+
+# If using Git submodule:
+cp themes/PKB-theme/layouts/partials/footer.html layouts/partials/
+```
+
+Now you can modify `layouts/partials/footer.html` with your custom content. Hugo will:
+- Use your customized footer instead of the theme's version
+- Preserve your changes when the theme updates
+- Allow you to revert to the theme's footer by simply deleting your copy
+
+This same approach works for any theme component you want to customize:
+- Layout files
+- Partial templates
+- Shortcodes
+- Static assets
+- CSS/JS files
+
+#### Example: Customizing Footer Message
+
+The footer message can be customized through your site's configuration file without copying any theme files. Simply add to your `config.toml`:
+
+```toml
+[params.footer]
+    customText = "My Custom Footer Message"
+```
+
+This will override the theme's default footer message while maintaining upgradeability, as your configuration takes precedence over the theme's default configuration.
 
