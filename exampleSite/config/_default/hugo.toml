@@ -1,6 +1,6 @@
-baseURL = ""
+baseURL = "https://stradichenko.github.io/PKB-theme/" #Theme's demo site
 title = "PKB-theme Example Site"
-theme = "PKB-theme"
+languageCode = "en-us"
 
 # Enable features
 enableGitInfo = true
@@ -10,4 +10,8 @@ enableRobotsTXT = true
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+baseURL = "http://example.org/"
+title = "My New Hugo Site"
+
 

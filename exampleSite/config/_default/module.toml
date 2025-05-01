@@ -1,5 +1,5 @@
 [[imports]]
-    path = "../"
+    path = "github.com/stradichenko/PKB-theme"
     disabled = false
 
 [[mounts]]

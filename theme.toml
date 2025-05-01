@@ -1,36 +1,19 @@
 name = 'PKB Theme'
 license = 'MIT'
 licenselink = 'https://github.com/stradichenko/PKB-theme/blob/main/LICENSE'
-description = 'Modern documentation theme for Hugo'
+description = 'An easy to setup and use HUGO theme with academic and Personal Knowledge Base content in mind'
 
-# Required for validation
 [author]
-name = 'Your Name'
-homepage = 'https://your-website.com'
-
-# Remove one of these conflicting sections:
-# EITHER this (single author):
-[author]
-  name = "Your Name"
-  homepage = "https://your-website.com"
-
-# OR this (multiple authors):
-# authors = [
-#   {name = 'Name 1', homepage = 'https://site1.com'},
-#   {name = 'Name 2', homepage = 'https://site2.com'}
-# ]
+    name = "stradichenko"
+    homepage = "https://krotanote.xyz/"
 
 # Demo configuration
 homepage = 'https://github.com/stradichenko/PKB-theme'
 demosite = 'https://stradichenko.github.io/PKB-theme/'
 
-# Taxonomy
+# Taxonomy terms
 tags = ['documentation', 'knowledge-base']
-features = ['responsive', 'search']
+features = ['responsive', 'search', 'blog', 'PKB']
 
-# Original theme attribution (if applicable)
-[original]
-  author = 'Original Author Name'
-  homepage = 'https://original-theme-site.com'
-  repo = 'https://github.com/original/repo'
+min_version = v0.126.2
 
