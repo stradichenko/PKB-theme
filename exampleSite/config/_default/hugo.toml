@@ -1,6 +1,7 @@
 baseURL = "https://stradichenko.github.io/PKB-theme/" #Theme's demo site
 title = "PKB-theme Example Site"
 languageCode = "en-us"
+theme = "PKB-theme"
 
 # Enable features
 enableGitInfo = true
