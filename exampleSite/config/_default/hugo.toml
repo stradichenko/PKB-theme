@@ -15,7 +15,6 @@ enableRobotsTXT = true
   # Import your theme as a module
   [[module.imports]]
     path = "github.com/stradichenko/PKB-theme"
-    disable = false
 
   # Mount the theme's layouts into your site's layouts
   [[module.mounts]]
