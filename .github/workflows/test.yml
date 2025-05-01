@@ -42,11 +42,12 @@ jobs:
         # Initialize the module for the example site
         hugo mod init github.com/stradichenko/PKB-theme/exampleSite
 
-        # Clear any existing module cache
-        hugo mod clean
-
         # Configure module replacement to use local theme
         hugo mod edit -replace "github.com/stradichenko/PKB-theme=../"
+
+        # Clear any existing module cache and get dependencies
+        hugo mod clean
+        hugo mod get -u
 
         # Tidy and verify modules
         hugo mod tidy
