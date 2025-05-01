@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        hugo-version: ['0.123.7'] # Match your theme's requirement
+        hugo-version: ['0.126.2']  # match your theme’s min_version
 
     steps:
     - name: Checkout code
@@ -26,41 +26,37 @@ jobs:
 
     - name: Install htmltest
       run: |
-        # Fetch the latest version of htmltest
-        LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+        # Fetch the latest htmltest release tag
+        LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
+          | grep '"tag_name":' \
+          | cut -d '"' -f 4)
         echo "LATEST_VERSION=${LATEST_VERSION}"
-        
-        if [ -z "$LATEST_VERSION" ]; then
-            echo "Failed to fetch the latest version of htmltest."
-            exit 1
-        fi
-        
-        # Adjust the URL to match the asset naming convention
-        echo "Downloading from: https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
-        wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz || {
-            echo "Failed to download htmltest. Check the URL or network connection.";
-            exit 1;
-        }
-        
+        # Download and install
+        wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
         tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
         sudo mv htmltest /usr/local/bin/
 
-    - name: Build and test
+    - name: Build and test exampleSite
+      working-directory: exampleSite
       run: |
-        cd exampleSite
-        
-        # Clean previous modules
-        rm -rf go.mod go.sum resources/_gen public
-        
-        # Initialize temporary module
-        hugo mod init temp-site
-        
-        # Get latest theme version automatically
-        hugo mod get -u github.com/stradichenko/PKB-theme
-        
-        # Verify module integrity
+        # Ensure site module exists (won't overwrite if already present)
+        if [ ! -f go.mod ]; then
+          hugo mod init github.com/stradichenko/PKB-theme-example
+        fi
+
+        # Point the theme import at our local checkout
+        go mod edit -replace=github.com/stradichenko/PKB-theme=..
+
+        # Tidy, verify, and fetch modules
+        hugo mod tidy
         hugo mod verify
-        
-        # Build and test
-        hugo --minify --cleanDestinationDir --environment production --logLevel debug
+
+        # Build the site in production mode
+        hugo \
+          --minify \
+          --cleanDestinationDir \
+          --environment production \
+          --logLevel debug
+
+        # Run HTML validation
         htmltest -c .htmltest.yml --log-level 3 --skip-external
