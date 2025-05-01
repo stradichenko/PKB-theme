@@ -8,12 +8,10 @@ description = 'An easy to setup and use HUGO theme with academic and Personal Kn
     homepage = "https://krotanote.xyz/"
 
 # Demo configuration
-homepage = 'https://github.com/stradichenko/PKB-theme'
 demosite = 'https://stradichenko.github.io/PKB-theme/'
 
 # Taxonomy terms
 tags = ['documentation', 'knowledge-base']
 features = ['responsive', 'search', 'blog', 'PKB']
 
-min_version = v0.126.2
-
+min_version = "0.126.2"

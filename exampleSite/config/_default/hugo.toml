@@ -1,7 +1,6 @@
-baseURL = "https://stradichenko.github.io/PKB-theme/" #Theme's demo site
+baseURL = "https://stradichenko.github.io/PKB-theme/"
 title = "PKB-theme Example Site"
 languageCode = "en-us"
-theme = "PKB-theme"
 
 # Enable features
 enableGitInfo = true
@@ -12,7 +11,34 @@ enableRobotsTXT = true
     [markup.goldmark.renderer]
       unsafe = true
 
-baseURL = "http://example.org/"
-title = "My New Hugo Site"
+[module]
+  # Import your theme as a module
+  [[module.imports]]
+    path = "github.com/stradichenko/PKB-theme"
+    disable = false
 
+  # Mount the theme's layouts into your site's layouts
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+
+  # Mount the theme's assets (e.g. SCSS, JS) into your site's assets
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+
+  # Mount the theme's static files (images, fonts) into your site's static
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+
+  # Mount the theme's archetypes so you can use them in `hugo new`
+  [[module.mounts]]
+    source = "archetypes"
+    target = "archetypes"
+
+  # (Optional) Mount any other directories you want, for example data or i18n
+  # [[module.mounts]]
+  #   source = "data"
+  #   target = "data"
 
