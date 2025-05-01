@@ -38,26 +38,30 @@ jobs:
 
     - name: Build and test exampleSite
       working-directory: exampleSite
-      env:
-        HUGO_MODULE_PROXY: direct
       run: |
-        # Clear state and create fresh module setup
-        rm -rf go.* public/
+        # Clear any existing module state first
+        rm -f go.mod go.sum
         
-        # Initialize with the same module name as in hugo.toml
-        hugo mod init github.com/stradichenko/PKB-theme-example
-        
-        # Add the theme as a replacement
-        hugo mod edit -replace github.com/stradichenko/PKB-theme=../
-        
-        # Get and verify dependencies
-        hugo mod get
+        # Initialize the module for the example site
+        hugo mod init github.com/stradichenko/PKB-theme/exampleSite
+
+        # Configure module replacement to use local theme
+        hugo mod edit -replace "github.com/stradichenko/PKB-theme=../"
+
+        # Get dependencies (no need for mod clean since we removed files)
+        hugo mod get -u
+
+        # Tidy and verify modules
+        hugo mod tidy
         hugo mod verify
-        
-        # Build site
+
+        # Build the site in production mode
         hugo \
           --minify \
           --cleanDestinationDir \
           --environment production \
           --logLevel debug \
-          --theme github.com/stradichenko/PKB-theme
+          --themesDir "../"
+
+        # Run HTML validation
+        htmltest -c .htmltest.yml --log-level 3 --skip-external

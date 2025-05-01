@@ -1,4 +1,4 @@
-baseURL = "https://stradichenko.github.io/PKB-theme/"
+baseURL = ""
 title = "PKB-theme Example Site"
 languageCode = "en-us"
 
@@ -12,32 +12,31 @@ enableRobotsTXT = true
       unsafe = true
 
 [module]
-  # Import your theme as a module
   [[module.imports]]
-    path = "github.com/stradichenko/PKB-theme"
+    path = 'github.com/stradichenko/PKB-theme'
 
-  # Mount the theme's layouts into your site's layouts
+  # Layouts from parent theme
   [[module.mounts]]
-    source = "layouts"
+    source = "../layouts"
     target = "layouts"
 
-  # Mount the theme's assets (e.g. SCSS, JS) into your site's assets
+  # Content mount 
   [[module.mounts]]
-    source = "assets"
-    target = "assets"
+    source = "../content"
+    target = "content"
 
-  # Mount the theme's static files (images, fonts) into your site's static
+  # Static assets
   [[module.mounts]]
-    source = "static"
+    source = "../static"
     target = "static"
 
-  # Mount the theme's archetypes so you can use them in `hugo new`
+  # Static assets (pointing to parent theme's static folder)
   [[module.mounts]]
-    source = "archetypes"
-    target = "archetypes"
+    source = "../static"    # Points to the theme's static folder
+    target = "static"       # Mounts in the site's static directory
 
-  # (Optional) Mount any other directories you want, for example data or i18n
-  # [[module.mounts]]
-  #   source = "data"
-  #   target = "data"
+  # Assets pipeline
+  [[module.mounts]]
+    source = "../assets"
+    target = "assets"
 
