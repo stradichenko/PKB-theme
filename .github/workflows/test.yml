@@ -40,24 +40,17 @@ jobs:
       working-directory: exampleSite
       run: |
         # Debug workspace structure
-        echo "Current directory structure:"
-        pwd
-        ls -la 
+        echo "Workspace structure:"
+        ls -la ${GITHUB_WORKSPACE}
         
         # Clear any existing module state
         rm -rf go.mod go.sum
         
-        # Create themes directory
-        mkdir -p themes
-        
-        # Create symlink to parent theme
-        ln -s ${GITHUB_WORKSPACE} themes/PKB-theme
-        
         # Initialize the module
         hugo mod init example.com/exampleSite
         
-        # Use local theme path
-        hugo mod edit -replace "github.com/stradichenko/PKB-theme=${GITHUB_WORKSPACE}/themes/PKB-theme"
+        # Use parent directory as module replacement
+        hugo mod edit -replace "github.com/stradichenko/PKB-theme=${GITHUB_WORKSPACE}"
         
         # Verify module configuration
         cat go.mod
@@ -72,5 +65,7 @@ jobs:
           --minify \
           --cleanDestinationDir \
           --environment _default \
-          --logLevel debug \
-          --themesDir themes
+          --logLevel debug
+        
+        # Run HTML validation
+        htmltest -c .htmltest.yml --log-level 3 --skip-external
