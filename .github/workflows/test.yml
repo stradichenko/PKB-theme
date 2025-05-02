@@ -59,7 +59,7 @@ jobs:
         hugo \
           --minify \
           --cleanDestinationDir \
-          --environment production \
+          --environment _default \
           --logLevel debug \
           --themesDir "../"
 
