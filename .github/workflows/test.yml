@@ -39,20 +39,27 @@ jobs:
     - name: Build and test exampleSite
       working-directory: exampleSite
       run: |
-        # Clear any existing module state first
+        # Debug workspace structure
+        echo "Workspace structure:"
+        ls -la ${GITHUB_WORKSPACE}
+        
+        # Clear any existing module state
         rm -rf go.mod go.sum
-
-        # Initialize the module for the example site
+        
+        # Initialize the module
         hugo mod init example.com/exampleSite
-
-        # Configure module replacement using absolute path
+        
+        # Use parent directory as module replacement
         hugo mod edit -replace "github.com/stradichenko/PKB-theme=${GITHUB_WORKSPACE}"
-
-        # Get dependencies
-        hugo mod get -u
+        
+        # Verify module configuration
+        cat go.mod
+        
+        # Get dependencies with verbose logging
+        hugo mod get -u -v
         hugo mod tidy
         hugo mod verify
-
+        
         # Build the site
         hugo \
           --minify \
