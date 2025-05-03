@@ -63,7 +63,16 @@ jobs:
           go version
 
       - name: Install htmltest
-        uses: chrnorm/htmltest-action@v1
+        run: |
+          # Fetch the latest htmltest release tag
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
+            | grep '"tag_name":' \
+            | cut -d '"' -f 4)
+          echo "LATEST_VERSION=${LATEST_VERSION}"
+          # Download and install
+          wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
+          tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
+          sudo mv htmltest /usr/local/bin/
 
       - name: Initialize Hugo Module
         working-directory: exampleSite
