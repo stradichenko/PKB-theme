@@ -6,66 +6,86 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: hugo-theme-test-${{ github.ref }}
+  cancel-in-progress: true  # cancel previous runs on same ref :contentReference[oaicite:5]{index=5}
+
+env:
+  HUGO_CACHEDIR: /tmp/hugo_cache
+
 jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       matrix:
-        hugo-version: ['0.126.2']  # match your theme’s min_version
+        hugo-version: ['0.126.2']  # minimum Hugo version :contentReference[oaicite:6]{index=6}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # fetch full history for modules & tags :contentReference[oaicite:7]{index=7}
+          submodules: recursive   # if you ever use git submodules
 
-    - name: Setup Hugo
-      uses: peaceiris/actions-hugo@v2
-      with:
-        hugo-version: ${{ matrix.hugo-version }}
-        extended: true
+      - name: Setup Go (for Hugo Modules)
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'      # match your dev environment :contentReference[oaicite:8]{index=8}
 
-    - name: Install htmltest
-      run: |
-        # Fetch the latest htmltest release tag
-        LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
-          | grep '"tag_name":' \
-          | cut -d '"' -f 4)
-        echo "LATEST_VERSION=${LATEST_VERSION}"
-        # Download and install
-        wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
-        tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
-        sudo mv htmltest /usr/local/bin/
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ matrix.hugo-version }}
+          extended: true
 
-    - name: Build and test exampleSite
-      working-directory: exampleSite
-      run: |
-        # Debug workspace structure
-        echo "Workspace structure:"
-        ls -la ${GITHUB_WORKSPACE}
-        
-        # Clear any existing module state
-        rm -rf go.mod go.sum
-        
-        # Initialize the module
-        hugo mod init example.com/exampleSite
-        
-        # Use parent directory as module replacement
-        hugo mod edit -replace "github.com/stradichenko/PKB-theme=${GITHUB_WORKSPACE}"
-        
-        # Verify module configuration
-        cat go.mod
-        
-        # Get dependencies with verbose logging
-        hugo mod get -u -v
-        hugo mod tidy
-        hugo mod verify
-        
-        # Build the site
-        hugo \
-          --minify \
-          --cleanDestinationDir \
-          --environment _default \
-          --logLevel debug
-        
-        # Run HTML validation
-        htmltest -c .htmltest.yml --log-level 3 --skip-external
+      - name: Cache Hugo Modules
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HUGO_CACHEDIR }}
+          key: ${{ runner.os }}-hugo-cache-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-hugo-cache-
+
+      - name: Cache Go Modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-mod-
+
+      - name: Verify versions
+        run: |
+          hugo version
+          go version
+
+      - name: Install htmltest
+        uses: chrnorm/htmltest-action@v1  # official htmltest Action
+      # alternatively, pin manually:
+      #   run: |
+      #     LATEST=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
+      #       | jq -r .tag_name)
+      #     wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST}/htmltest_${LATEST#v}_linux_amd64.tar.gz"
+      #     tar xzf "htmltest_${LATEST#v}_linux_amd64.tar.gz"
+      #     sudo mv htmltest /usr/local/bin/
+
+      - name: Build and test exampleSite
+        working-directory: exampleSite
+        run: |
+          # ensure a clean module state
+          rm -f go.mod go.sum
+
+          hugo mod init example.com/exampleSite
+          hugo mod edit -replace "github.com/stradichenko/PKB-theme=${GITHUB_WORKSPACE}"
+          hugo mod tidy -v
+          hugo mod verify
+
+          hugo --minify --cleanDestinationDir \
+               --environment _default --logLevel debug
+
+      - name: Run HTML validation
+        working-directory: exampleSite
+        run: htmltest -c .htmltest.yml --log-level 3 --skip-external
