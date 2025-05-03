@@ -42,7 +42,9 @@ jobs:
       - name: Cache Hugo Modules
         uses: actions/cache@v4
         with:
-          path: ${{ env.HUGO_CACHEDIR }}
+          path: |
+            ${{ env.HUGO_CACHEDIR }}
+            exampleSite/vendor
           key: ${{ runner.os }}-hugo-cache-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugo-cache-
@@ -82,6 +84,11 @@ jobs:
           hugo mod edit -replace github.com/stradichenko/PKB-theme=../
           hugo mod tidy
           hugo mod verify
+
+      - name: Vendor Hugo Modules
+        working-directory: exampleSite
+        run: |
+          hugo mod vendor
 
       - name: Build the site
         working-directory: exampleSite
