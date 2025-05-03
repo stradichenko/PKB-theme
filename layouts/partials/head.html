@@ -70,34 +70,34 @@
   <!-- Critical CSS first -->
   <!-- 1. Core styles -->
   {{ with resources.Get "css/global/variables.css" }}
-    {{ $variablesCSS := . | toCSS | fingerprint }}
+    {{ $variablesCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $variablesCSS.RelPermalink }}" integrity="{{ $variablesCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
   {{ with resources.Get "css/global/reset.css" }}
-    {{ $resetCSS := . | toCSS | fingerprint }}
+    {{ $resetCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $resetCSS.RelPermalink }}" integrity="{{ $resetCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
 
   <!-- 2. Layout components -->
   {{ with resources.Get "css/body.css" }}
-    {{ $bodyCSS := . | toCSS | fingerprint }}
+    {{ $bodyCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $bodyCSS.RelPermalink }}" integrity="{{ $bodyCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
   {{ with resources.Get "css/header.css" }}
-    {{ $headerCSS := . | toCSS | fingerprint }}
+    {{ $headerCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $headerCSS.RelPermalink }}" integrity="{{ $headerCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
   {{ with resources.Get "css/footer.css" }}
-    {{ $footerCSS := . | toCSS | fingerprint }}
+    {{ $footerCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $footerCSS.RelPermalink }}" integrity="{{ $footerCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
   <!-- 3. Component styles -->
   {{ with resources.Get "css/sidenotes.css" }}
-    {{ $sidenotesCSS := . | toCSS | fingerprint }}
+    {{ $sidenotesCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $sidenotesCSS.RelPermalink }}" integrity="{{ $sidenotesCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
@@ -126,30 +126,30 @@
     <link rel="stylesheet" href="{{ $markdownCSS.RelPermalink }}" integrity="{{ $markdownCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
-  {{ $listCSS := resources.Get "css/list.css" | toCSS | fingerprint }}
+  {{ $listCSS := resources.Get "css/list.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $listCSS.RelPermalink }}" integrity="{{ $listCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  {{ $filtersCSS := resources.Get "css/filters.css" | toCSS | fingerprint }}
+  {{ $filtersCSS := resources.Get "css/filters.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $filtersCSS.RelPermalink }}" integrity="{{ $filtersCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  {{ $postsGridCSS := resources.Get "css/components/recent-posts-grid.css" | toCSS | fingerprint }}
+  {{ $postsGridCSS := resources.Get "css/components/recent-posts-grid.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $postsGridCSS.RelPermalink }}" integrity="{{ $postsGridCSS.Data.Integrity }}" crossorigin="anonymous">
   
-  {{ $aboutProfileCSS := resources.Get "css/about-profile.css" | toCSS | fingerprint }}
+  {{ $aboutProfileCSS := resources.Get "css/about-profile.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $aboutProfileCSS.RelPermalink }}" integrity="{{ $aboutProfileCSS.Data.Integrity }}" crossorigin="anonymous">
   
   <!-- 4. Main CSS last -->
-  {{ $mainCSS := resources.Get "css/main.css" | toCSS | fingerprint }}
+  {{ $mainCSS := resources.Get "css/main.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $mainCSS.RelPermalink }}" integrity="{{ $mainCSS.Data.Integrity }}" crossorigin="anonymous">
   
   <!-- 5. Replace SCSS with regular CSS -->
   {{ with resources.Get "css/search.css" }}
-    {{ $searchCSS := . | toCSS | fingerprint }}
+    {{ $searchCSS := . | fingerprint }}
     <link rel="stylesheet" href="{{ $searchCSS.RelPermalink }}" integrity="{{ $searchCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
   <!-- 6. Theme toggle CSS - LOAD LAST to ensure overrides work -->
-  {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | fingerprint }}
+  {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
 
   <!-- Contribution calendar CSS -->
@@ -176,17 +176,17 @@
       (resources.Get "css/about-profile.css")
       (resources.Get "css/main.css")
   }}
-  {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | toCSS | minify | fingerprint }}
+  {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
   
   <!-- Include regular CSS -->
   {{ with resources.Get "css/search.css" }}
-    {{ $searchCSS := . | toCSS | minify | fingerprint }}
+    {{ $searchCSS := . | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $searchCSS.RelPermalink }}" integrity="{{ $searchCSS.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
   
   <!-- Load theme-toggle CSS last to ensure it overrides all other styles -->
-  {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | toCSS | minify | fingerprint }}
+  {{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
 
   <!-- Contribution calendar CSS -->

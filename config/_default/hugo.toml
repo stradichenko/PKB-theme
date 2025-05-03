@@ -3,7 +3,8 @@ languageCode = 'en-us'
 title = 'HUGO_site'
 
 enableGitInfo = true
-
+#relativeURLs = true
+#canonifyURLs = true
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
 disableDefaultLanguageRedirect = false
