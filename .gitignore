@@ -27,8 +27,8 @@ public/
 resources/
 
 # Files created during CI/CD
-exampleSite/go.mod
-exampleSite/go.sum
+#exampleSite/go.mod
+#exampleSite/go.sum
 
 # npm and nodejs files
 node_modules/
