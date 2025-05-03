@@ -31,7 +31,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.20'
+          go-version: '1.23.8'
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -78,7 +78,7 @@ jobs:
         working-directory: exampleSite
         run: |
           rm -f go.mod go.sum
-          hugo mod init example.com/exampleSite
+          hugo mod init github.com/stradichenko/PKB-theme/exampleSite
           hugo mod edit -replace github.com/stradichenko/PKB-theme=../
           hugo mod tidy
           hugo mod verify
