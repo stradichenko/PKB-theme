@@ -1,4 +1,4 @@
-# PKB-theme
+# PKB-theme ![Demo](https://stradichenko.github.io/PKB-theme/)
 ![CI Status](https://github.com/stradichenko/PKB-theme/actions/workflows/test.yml/badge.svg)
 ![GitHub License](https://img.shields.io/github/license/stradichenko/PKB-theme)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/stradichenko/PKB-theme)
