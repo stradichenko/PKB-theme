@@ -39,12 +39,19 @@ jobs:
           hugo-version: ${{ matrix.hugo-version }}
           extended: true
 
-      - name: Cache Hugo build artifacts
+      # ── NEW: copy theme into exampleSite/themes so Hugo can find it ──
+      - name: Copy PKB theme into exampleSite/themes
+        run: |
+          mkdir -p exampleSite/themes/PKB-theme
+          # copy everything except the exampleSite (and git metadata)
+          rsync -a --exclude 'exampleSite' --exclude '.git*' --exclude '.github' ./ exampleSite/themes/PKB-theme/
+
+      - name: Cache Hugo Modules
         uses: actions/cache@v4
         with:
           path: |
             ${{ env.HUGO_CACHEDIR }}
-            exampleSite/themes/PKB-theme
+            exampleSite/vendor
           key: ${{ runner.os }}-hugo-cache-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugo-cache-
@@ -73,11 +80,19 @@ jobs:
           tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
           sudo mv htmltest /usr/local/bin/
 
-      - name: Vendor the PKB Theme
-        # Copy your theme repo into exampleSite/themes/PKB-theme so Hugo sees it as a local theme
+      - name: Initialize Hugo Module
+        working-directory: exampleSite
         run: |
-          mkdir -p exampleSite/themes/PKB-theme
-          rsync -a --exclude='.git*' --exclude='exampleSite/**' ./ exampleSite/themes/PKB-theme/
+          rm -f go.mod go.sum
+          hugo mod init github.com/stradichenko/PKB-theme/exampleSite
+          hugo mod edit -replace github.com/stradichenko/PKB-theme=../
+          hugo mod tidy
+          hugo mod verify
+
+      - name: Vendor Hugo Modules
+        working-directory: exampleSite
+        run: |
+          hugo mod vendor
 
       - name: Build the site
         working-directory: exampleSite
@@ -86,4 +101,5 @@ jobs:
 
       - name: Run HTML validation
         working-directory: exampleSite
-        run: htmltest -c .htmltest.yml --log-level 3 --skip-external
+        run: |
+          htmltest -c .htmltest.yml --log-level 3 --skip-external
