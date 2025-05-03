@@ -39,12 +39,12 @@ jobs:
           hugo-version: ${{ matrix.hugo-version }}
           extended: true
 
-      - name: Cache Hugo Modules
+      - name: Cache Hugo build artifacts
         uses: actions/cache@v4
         with:
           path: |
             ${{ env.HUGO_CACHEDIR }}
-            exampleSite/vendor
+            exampleSite/themes/PKB-theme
           key: ${{ runner.os }}-hugo-cache-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugo-cache-
@@ -66,29 +66,18 @@ jobs:
 
       - name: Install htmltest
         run: |
-          # Fetch the latest htmltest release tag
           LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
             | grep '"tag_name":' \
             | cut -d '"' -f 4)
-          echo "LATEST_VERSION=${LATEST_VERSION}"
-          # Download and install
           wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
           tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
           sudo mv htmltest /usr/local/bin/
 
-      - name: Initialize Hugo Module
-        working-directory: exampleSite
+      - name: Vendor the PKB Theme
+        # Copy your theme repo into exampleSite/themes/PKB-theme so Hugo sees it as a local theme
         run: |
-          rm -f go.mod go.sum
-          hugo mod init github.com/stradichenko/PKB-theme/exampleSite
-          hugo mod edit -replace github.com/stradichenko/PKB-theme=../
-          hugo mod tidy
-          hugo mod verify
-
-      - name: Vendor Hugo Modules
-        working-directory: exampleSite
-        run: |
-          hugo mod vendor
+          mkdir -p exampleSite/themes/PKB-theme
+          rsync -a --exclude='.git*' --exclude='exampleSite/**' ./ exampleSite/themes/PKB-theme/
 
       - name: Build the site
         working-directory: exampleSite
