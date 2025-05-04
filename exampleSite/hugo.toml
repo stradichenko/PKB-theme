@@ -15,8 +15,8 @@ title        = "PKB-theme Demo"
       target = "layouts"
 
     [[module.imports.mounts]]
-      source = "static" # “inside the theme repo, find static/images/profile.png”
-      target = "static" # “inject it into my site’s
+      source = "static" # inside the theme repo
+      target = "assets" # inject it into my site’s
 
     [[module.imports.mounts]]
       source = "assets"
