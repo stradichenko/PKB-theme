@@ -5,24 +5,6 @@ title = 'HUGO_site'
 enableGitInfo = true
 #relativeURLs = true
 #canonifyURLs = true
-defaultContentLanguage = 'en'
-defaultContentLanguageInSubdir = false
-disableDefaultLanguageRedirect = false
-disableLanguages = []
-
-[languages]
-  [languages.en]
-    #contentDir = 'content/en'
-    disabled = false
-    languageCode = 'en-US'
-    languageDirection = 'ltr'
-    languageName = 'English'
-#    title = 'HUGO_site_en'
-    weight = 0
-#    [languages.en.pagination]
-#        disableAliases = true
-#        pagerSize = 10
-#         path = 'page'
 
 [HTTPCache]
   [HTTPCache.cache]
@@ -92,7 +74,14 @@ disableLanguages = []
   resampleFilter = 'box'
 
 [markup]
-  defaultMarkdownHandler = 'goldmark'
+  [markup.goldmark]
+    [markup.goldmark.renderHooks]
+      [markup.goldmark.renderHooks.image]
+        enableDefault = true
+      [markup.goldmark.renderHooks.link]
+        enableDefault = true
+    [markup.goldmark.renderer]
+      unsafe = true  # This allows raw HTML in markdown files
 
 [mediaTypes]
   [mediaTypes.'application/json']

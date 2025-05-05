@@ -2,12 +2,17 @@
 <meta charset="utf-8">
 
 <!-- Favicons -->
-<link rel="icon" type="image/png" href="/my-favicon/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="/my-favicon/favicon.svg" />
-<link rel="shortcut icon" href="/my-favicon/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/my-favicon/apple-touch-icon.png" />
+
+<!-- Basic Favicon -->
+<link rel="icon" type="image/png" href="{{ relURL "favicon.png" }}" />
+<link rel="icon" type="image/png" href="{{ relURL "my-favicon/favicon-96x96.png" }}" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="{{ relURL "my-favicon/favicon.svg" }}" />
+<link rel="shortcut icon" href="{{ relURL "my-favicon/favicon.ico" }}" />
+<link rel="apple-touch-icon" sizes="180x180" href="{{ relURL "my-favicon/apple-touch-icon.png" }}" />
 <meta name="apple-mobile-web-app-title" content="MyWebSite" />
-<link rel="manifest" href="/my-favicon/site.webmanifest" />
+
+<!-- Web Manifest -->
+<link rel="manifest" href="{{ relURL "my-favicon/site.webmanifest" }}">
 
 <!-- RSS Feed -->
 <link rel="alternate" type="application/rss+xml" href="{{ .Site.BaseURL }}index.xml" title="{{ .Site.Title }}">

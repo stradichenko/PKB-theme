@@ -9,14 +9,10 @@ title        = "PKB-theme Demo"
   [[module.imports]]
     path = "github.com/stradichenko/PKB-theme"
     # version = "v1.0.0"  # optional pin once you have tags
-    
-    [[module.imports.mounts]]
-      source = "layouts"
-      target = "layouts"
 
     [[module.imports.mounts]]
-      source = "static" # “inside the theme repo, find static/images/profile.png”
-      target = "static" # “inject it into my site’s
+      source = "static" # inside the theme repo
+      target = "static" # inject it into my site’s    
 
     [[module.imports.mounts]]
       source = "assets"
@@ -25,6 +21,10 @@ title        = "PKB-theme Demo"
     [[module.imports.mounts]]
       source = "content"
       target = "content"
+
+    [[module.imports.mounts]]
+      source = "layouts"
+      target = "layouts"
 
     [[module.imports.mounts]]
       source = "archetypes"
