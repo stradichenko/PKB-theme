@@ -11,8 +11,8 @@
 <link rel="apple-touch-icon" sizes="180x180" href="{{ relURL "my-favicon/apple-touch-icon.png" }}" />
 <meta name="apple-mobile-web-app-title" content="MyWebSite" />
 
-<!-- Use the webmanifest partial -->
-{{ partial "webmanifest.html" . }}
+<!-- Web Manifest -->
+<link rel="manifest" href="{{ relURL "my-favicon/site.webmanifest" }}">
 
 <!-- RSS Feed -->
 <link rel="alternate" type="application/rss+xml" href="{{ .Site.BaseURL }}index.xml" title="{{ .Site.Title }}">

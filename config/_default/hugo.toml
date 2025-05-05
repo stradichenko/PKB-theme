@@ -80,6 +80,8 @@ enableGitInfo = true
         enableDefault = true
       [markup.goldmark.renderHooks.link]
         enableDefault = true
+    [markup.goldmark.renderer]
+      unsafe = true  # This allows raw HTML in markdown files
 
 [mediaTypes]
   [mediaTypes.'application/json']
