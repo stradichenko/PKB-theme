@@ -12,7 +12,7 @@ title        = "PKB-theme Demo"
 
     [[module.imports.mounts]]
       source = "static" # inside the theme repo
-      target = "assets" # inject it into my site’s    
+      target = "static" # inject it into my site’s    
 
     [[module.imports.mounts]]
       source = "assets"
