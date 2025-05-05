@@ -21,12 +21,16 @@ jobs:
       matrix:
         hugo-version: ['0.126.2']
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive
+          submodules: false   # no need for theme submodule; Hugo Modules will import it
 
       - name: Setup Go
         uses: actions/setup-go@v4
@@ -38,13 +42,6 @@ jobs:
         with:
           hugo-version: ${{ matrix.hugo-version }}
           extended: true
-
-      # ── NEW: copy theme into exampleSite/themes so Hugo can find it ──
-      - name: Copy PKB theme into exampleSite/themes
-        run: |
-          mkdir -p exampleSite/themes/PKB-theme
-          # copy everything except the exampleSite (and git metadata)
-          rsync -a --exclude 'exampleSite' --exclude '.git*' --exclude '.github' ./ exampleSite/themes/PKB-theme/
 
       - name: Cache Hugo Modules
         uses: actions/cache@v4
@@ -73,11 +70,10 @@ jobs:
 
       - name: Install htmltest
         run: |
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
-            | grep '"tag_name":' \
-            | cut -d '"' -f 4)
-          wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
-          tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
+          LATEST=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
+            | grep '"tag_name":' | cut -d '"' -f 4)
+          wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST}/htmltest_${LATEST#v}_linux_amd64.tar.gz"
+          tar xzf htmltest_${LATEST#v}_linux_amd64.tar.gz
           sudo mv htmltest /usr/local/bin/
 
       - name: Initialize Hugo Module
@@ -91,15 +87,16 @@ jobs:
 
       - name: Vendor Hugo Modules
         working-directory: exampleSite
-        run: |
-          hugo mod vendor
+        run: hugo mod vendor
 
       - name: Build the site
         working-directory: exampleSite
         run: |
-          hugo --minify --cleanDestinationDir --environment _default --logLevel debug
+          hugo --minify \
+               --cleanDestinationDir \
+               --environment _default \
+               --logLevel debug
 
       - name: Run HTML validation
         working-directory: exampleSite
-        run: |
-          htmltest -c .htmltest.yml --log-level 3 --skip-external
+        run: htmltest -c .htmltest.yml --log-level 3 --skip-external
