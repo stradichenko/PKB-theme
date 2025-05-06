@@ -81,8 +81,9 @@ jobs:
         run: |
           rm -f go.mod go.sum
           hugo mod init github.com/stradichenko/PKB-theme/exampleSite
-          hugo mod edit -replace github.com/stradichenko/PKB-theme=../
           hugo mod get github.com/stradichenko/PKB-theme
+          hugo mod edit -replace github.com/stradichenko/PKB-theme=../
+
           hugo mod tidy
           hugo mod verify
 
