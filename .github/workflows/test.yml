@@ -19,11 +19,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        hugo-version: ['0.126.2']
-
-    defaults:
-      run:
-        shell: bash
+        hugo-version: ['0.128.2']
 
     steps:
       - name: Checkout code
@@ -35,7 +31,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.23.8'
+          go-version: '1.23'
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -48,57 +44,36 @@ jobs:
         with:
           path: |
             ${{ env.HUGO_CACHEDIR }}
-            exampleSite/vendor
-          key: ${{ runner.os }}-hugo-cache-${{ hashFiles('**/go.sum') }}
+            exampleSite/resources
+            exampleSite/_vendor
+          key: ${{ runner.os }}-hugo-${{ hashFiles('exampleSite/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-hugo-cache-
+            ${{ runner.os }}-hugo-
 
-      - name: Cache Go Modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-mod-
-
-      - name: Verify versions
+      - name: Verify Hugo and Go versions
         run: |
           hugo version
           go version
 
       - name: Install htmltest
         run: |
-          LATEST=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
-            | grep '"tag_name":' | cut -d '"' -f 4)
-          wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST}/htmltest_${LATEST#v}_linux_amd64.tar.gz"
-          tar xzf htmltest_${LATEST#v}_linux_amd64.tar.gz
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
+          wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
+          tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
           sudo mv htmltest /usr/local/bin/
 
-      - name: Initialize Hugo Module
+      - name: Init Hugo Module and vendor theme
         working-directory: exampleSite
         run: |
-          rm -f go.mod go.sum
-          hugo mod init github.com/stradichenko/PKB-theme/exampleSite
-          hugo mod get github.com/stradichenko/PKB-theme
-          hugo mod edit -replace github.com/stradichenko/PKB-theme=../
-
           hugo mod tidy
-          hugo mod verify
-
-      - name: Vendor Hugo Modules
-        working-directory: exampleSite
-        run: hugo mod vendor
+          hugo mod vendor
 
       - name: Build the site
         working-directory: exampleSite
         run: |
-          hugo --minify \
-               --cleanDestinationDir \
-               --environment _default \
-               --logLevel debug
+          hugo --minify --cleanDestinationDir --environment _default --logLevel debug
 
       - name: Run HTML validation
         working-directory: exampleSite
-        run: htmltest -c .htmltest.yml --log-level 3 --skip-external
+        run: |
+          htmltest -c .htmltest.yml --log-level 3 --skip-external
