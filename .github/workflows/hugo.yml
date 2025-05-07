@@ -47,7 +47,7 @@ jobs:
       - name: Build example site
         run: |
           cd exampleSite
-          hugo --minify
+          hugo --minify --cleanDestinationDir --environment _default --logLevel debug
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
