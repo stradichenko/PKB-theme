@@ -13,7 +13,7 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: false
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,15 +40,19 @@ jobs:
       - name: Reset & initialize Hugo module
         run: |
           cd exampleSite
+          # Remove any existing Go module files
           rm -f go.mod go.sum
-          # Re-init go.mod pointing at this repo
-          hugo mod init github.com/${{ github.repository }}
+          # 1) Declare this directory as its own module again:
+          hugo mod init github.com/stradichenko/PKB-theme/exampleSite
+          # 2) Tell Go to require your theme (at v0.0.1, or whatever tag):
+          go mod edit -require=github.com/stradichenko/PKB-theme@latest
+          # 3) …but point that import back to the local parent directory:
+          go mod edit -replace=github.com/stradichenko/PKB-theme=../
 
       - name: Install Hugo modules and vendor theme
         run: |
           cd exampleSite
           hugo mod tidy
-          # Vendor everything into exampleSite/vendor/
           hugo mod vendor
 
       - name: Build example site
@@ -60,3 +64,14 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: exampleSite/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

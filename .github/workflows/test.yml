@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        hugo-version: ['0.128.2']
+        hugo-version: ['0.126.2']
 
     steps:
       - name: Checkout code
