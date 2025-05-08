@@ -1,5 +1,7 @@
 {{- $citationKey := .Get 0 | default "" -}}
-{{- $bibFile := .Get 2 | default "bibtex/references.bib" | relURL -}}
+{{- $bibFile := .Get 2 | default "bibtex/references.bib" -}}
+{{- /* Ensure proper path resolution */ -}}
+{{- $bibPath := path.Join "static" $bibFile | absURL -}}
 {{- $existingNum := .Page.Scratch.Get (printf "citation-%s-num" $citationKey) -}}
 {{- if $existingNum -}}
   {{- $citationId := printf "citation-%s" $citationKey -}}
@@ -14,9 +16,9 @@
   {{- $style := .Get 1 | default "apa" -}}
   {{- $showNotes := .Get 3 | default "false" -}}
   {{- $citationId := printf "citation-%s" $citationKey -}}
-  {{- printf `<sup class="citation-ref" data-citation-key="%s">%d</sup><span class="citation-marker" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s" data-citation-id="%s"></span><span class="sidenote sidenote-hidden citation-sidenote" id="%s" lang="%s" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s"><sup class="citation-sup">%d.</sup><span class="citation citation-inline" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s"></span></span>` $citationKey $num $citationKey $bibFile $style $showNotes $citationId $citationId (.Site.Language.Lang | default "en") $citationKey $bibFile $style $showNotes $num $citationKey $bibFile $style | safeHTML -}}
+  {{- printf `<sup class="citation-ref" data-citation-key="%s">%d</sup><span class="citation-marker" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s" data-citation-id="%s"></span><span class="sidenote sidenote-hidden citation-sidenote" id="%s" lang="%s" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s"><sup class="citation-sup">%d.</sup><span class="citation citation-inline" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s"></span></span>` $citationKey $num $citationKey $bibPath $style $showNotes $citationId $citationId (.Site.Language.Lang | default "en") $citationKey $bibPath $style $showNotes $num $citationKey $bibPath $style | safeHTML -}}
   {{- /* Store citation data for reuse */ -}}
   {{- $citations := .Page.Store.Get "citations" | default dict -}}
-  {{- $citations = merge $citations (dict $citationKey (dict "id" $citationId "style" $style "bibFile" $bibFile)) -}}
+  {{- $citations = merge $citations (dict $citationKey (dict "id" $citationId "style" $style "bibFile" $bibPath)) -}}
   {{- .Page.Store.Set "citations" $citations -}}
 {{- end -}}
