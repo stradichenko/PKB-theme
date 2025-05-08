@@ -247,20 +247,11 @@ function parseBibTeXEntry(entry) {
 
 async function fetchBibTeXFile(filePath) {
   try {
-    // Handle both absolute and relative paths
-    const url = filePath.startsWith('http') 
-      ? filePath 
-      : filePath.startsWith('/') 
-        ? `${window.location.origin}${filePath}`
-        : filePath;
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status} for file: ${url}`);
-    }
+    const response = await fetch(filePath);
+    if (!response.ok) throw new Error(`Failed to fetch BibTeX file: ${response.statusText}`);
     return await response.text();
   } catch (error) {
-    console.error(`Error loading BibTeX file (${filePath}):`, error);
+    console.error('Error loading BibTeX file:', error);
     return null;
   }
 }
