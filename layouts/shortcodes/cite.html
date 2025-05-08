@@ -1,5 +1,5 @@
 {{- $citationKey := .Get 0 | default "" -}}
-{{- $bibFile := .Get 1 | default "references.bib" -}}
+{{- $bibFile := .Get 2 | default "bibtex/references.bib" | relURL -}}
 {{- $existingNum := .Page.Scratch.Get (printf "citation-%s-num" $citationKey) -}}
 {{- if $existingNum -}}
   {{- $citationId := printf "citation-%s" $citationKey -}}
@@ -11,7 +11,7 @@
   {{- $num = add $num 1 -}}
   {{- .Page.Scratch.Set "citeCounter" $num -}}
   {{- .Page.Scratch.Set (printf "citation-%s-num" $citationKey) $num -}}
-  {{- $style := .Get 2 | default "apa" -}}
+  {{- $style := .Get 1 | default "apa" -}}
   {{- $showNotes := .Get 3 | default "false" -}}
   {{- $citationId := printf "citation-%s" $citationKey -}}
   {{- printf `<sup class="citation-ref" data-citation-key="%s">%d</sup><span class="citation-marker" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s" data-citation-id="%s"></span><span class="sidenote sidenote-hidden citation-sidenote" id="%s" lang="%s" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s" data-show-notes="%s"><sup class="citation-sup">%d.</sup><span class="citation citation-inline" data-citation-key="%s" data-bib-file="%s" data-citation-style="%s"></span></span>` $citationKey $num $citationKey $bibFile $style $showNotes $citationId $citationId (.Site.Language.Lang | default "en") $citationKey $bibFile $style $showNotes $num $citationKey $bibFile $style | safeHTML -}}
