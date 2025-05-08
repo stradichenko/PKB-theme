@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -34,20 +36,36 @@ jobs:
           path: |
             ~/.cache/hugo
             exampleSite/resources
-          key: ${{ runner.os }}-hugo-${{ hashFiles('exampleSite/go.sum') }}
+            exampleSite/.hugo_build.lock
+          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.mod', '**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-hugo-
+            ${{ runner.os }}-hugomod-
+
+      - name: Clean and Setup
+        run: |
+          rm -rf exampleSite/public/
+          rm -rf exampleSite/resources/
+          rm -rf exampleSite/.hugo_build.lock
 
       - name: Install Hugo modules and vendor theme
         run: |
           cd exampleSite
+          hugo mod get -u
           hugo mod tidy
           hugo mod vendor
 
       - name: Build example site
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
         run: |
           cd exampleSite
-          hugo --minify --cleanDestinationDir --environment _default --logLevel debug
+          hugo \
+            --minify \
+            --cleanDestinationDir \
+            --baseURL "https://stradichenko.github.io/PKB-theme/" \
+            --environment production \
+            --logLevel debug
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
