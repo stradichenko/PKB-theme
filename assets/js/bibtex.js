@@ -247,22 +247,20 @@ function parseBibTeXEntry(entry) {
 
 async function fetchBibTeXFile(filePath) {
   try {
-    // Get base URL from meta tag
-    const baseURL = document.querySelector('meta[name="base-url"]')?.content || '';
-    
-    // Construct full URL, handling both absolute and relative paths
+    // Handle both absolute and relative paths
     const url = filePath.startsWith('http') 
       ? filePath 
-      : new URL(filePath, baseURL || window.location.origin).href;
+      : filePath.startsWith('/') 
+        ? `${window.location.origin}${filePath}`
+        : filePath;
 
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status} for file: ${url}`);
     }
     return await response.text();
   } catch (error) {
     console.error(`Error loading BibTeX file (${filePath}):`, error);
-    citationEvents.emit('error', { message: `Failed to load citations: ${error.message}` });
     return null;
   }
 }

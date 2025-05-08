@@ -1,7 +1,7 @@
 {{- $citationKey := .Get 0 | default "" -}}
 {{- $bibFile := .Get 2 | default "bibtex/references.bib" -}}
 {{- /* Ensure proper path resolution */ -}}
-{{- $bibPath := path.Join "static" $bibFile | absURL -}}
+{{- $bibPath := printf "%s%s" .Site.BaseURL $bibFile -}}
 {{- $existingNum := .Page.Scratch.Get (printf "citation-%s-num" $citationKey) -}}
 {{- if $existingNum -}}
   {{- $citationId := printf "citation-%s" $citationKey -}}
