@@ -28,15 +28,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const validPermalinks = {};
   
   {{ range where site.AllPages "Kind" "page" }}
-    {{ $permalink := .RelPermalink }}
-    validPermalinks['{{ $permalink }}'] = true;
+    {{ $permalink := .RelPermalink | jsonify }}
+    {{ safeJS $permalink }}
+    validPermalinks[{{ $permalink }}] = true;
     
     graphData.nodes.push({
-      id: '{{ $permalink }}',
-      title: {{ .Title | jsonify }},
-      url: '{{ $permalink }}',
-      category: {{ with .Params.categories }}{{ index . 0 | default "uncategorized" | jsonify }}{{ else }}"uncategorized"{{ end }},
-      tags: {{ .Params.tags | jsonify }},
+      id: {{ $permalink }},
+      title: {{ .Title | jsonify | safeJS }},
+      url: {{ $permalink }},
+      category: {{ with .Params.categories }}{{ index . 0 | default "uncategorized" | jsonify | safeJS }}{{ else }}"uncategorized"{{ end }},
+      tags: {{ .Params.tags | default slice | jsonify | safeJS }},
       linksCount: 0
     });
   {{ end }}
@@ -89,10 +90,17 @@ document.addEventListener('DOMContentLoaded', function() {
    * Filter and process raw graph data
    */
   function processGraphData(graphData, validPermalinks) {
+    // Validate data structures
+    if (!Array.isArray(graphData.links) || !Array.isArray(graphData.nodes)) {
+      console.error('Invalid graph data structure');
+      return;
+    }
+
     // Filter invalid links
     graphData.links = graphData.links.filter(link => {
+      if (!link || !link.source || !link.target) return false;
+      
       if (typeof link.target === 'string') {
-        // Clean URL and filter taxonomy pages
         link.target = link.target.replace(/["']/g, '');
         if (link.target.startsWith('/tags/') || link.target.startsWith('/categories/')) {
           return false;
@@ -101,12 +109,20 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       return false;
     });
-    
-    // Count links for sizing nodes
+
+    // Count links safely
+    const linkCounts = new Map();
     graphData.links.forEach(link => {
-      const targetNode = graphData.nodes.find(node => node.id === link.target);
-      if (targetNode) {
-        targetNode.linksCount = (targetNode.linksCount || 0) + 1;
+      if (link && link.target) {
+        const count = linkCounts.get(link.target) || 0;
+        linkCounts.set(link.target, count + 1);
+      }
+    });
+
+    // Update node link counts
+    graphData.nodes.forEach(node => {
+      if (node && node.id) {
+        node.linksCount = linkCounts.get(node.id) || 0;
       }
     });
   }
