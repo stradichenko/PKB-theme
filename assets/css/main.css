@@ -1,8 +1,8 @@
-/* Import core variables first */
+/* Core imports first */
 @import 'global/variables.css';
 @import 'global/reset.css';
 
-/* Import components */
+/* Component imports */
 @import 'components/knowledge-graph.css';
 @import 'components/toc.css';
 @import 'components/table.css';
@@ -11,7 +11,7 @@
 @import 'components/code.css';
 @import 'components/markdown.css';
 
-/* Import layout styles */
+/* Layout imports */
 @import 'header.css';
 @import 'footer.css';
 @import 'body.css';
