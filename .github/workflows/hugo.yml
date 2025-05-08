@@ -13,7 +13,7 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: false
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,20 +28,27 @@ jobs:
           hugo-version: '0.128.0'
           extended: true
 
-      - name: Cache Hugo modules
+      - name: Cache Hugo modules & vendor
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/hugo
             exampleSite/resources
-          key: ${{ runner.os }}-hugo-${{ hashFiles('exampleSite/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-hugo-
+            exampleSite/vendor
+          key: ${{ runner.os }}-hugo
+
+      - name: Reset & initialize Hugo module
+        run: |
+          cd exampleSite
+          rm -f go.mod go.sum
+          # Re-init go.mod pointing at this repo
+          hugo mod init github.com/${{ github.repository }}
 
       - name: Install Hugo modules and vendor theme
         run: |
           cd exampleSite
           hugo mod tidy
+          # Vendor everything into exampleSite/vendor/
           hugo mod vendor
 
       - name: Build example site
@@ -53,14 +60,3 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: exampleSite/public
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
