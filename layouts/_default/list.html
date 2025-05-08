@@ -4,7 +4,9 @@
       <h1 class="page-title">{{ .Title }}</h1>
     </header>
     
-    {{ partial "knowledge-graph.html" . }}
+    <div class="knowledge-graph-wrapper">
+      {{ partial "knowledge-graph.html" . }}
+    </div>
     
     <div class="page-content">
       {{ .Content }}
