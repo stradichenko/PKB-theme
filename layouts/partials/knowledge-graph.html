@@ -179,7 +179,7 @@
   </div>
 </div>
 
-{{ $graphScript := resources.Get "js/components/knowledge-graph.js" | resources.ExecuteAsTemplate "js/knowledge-graph.js" . }}
+{{ $graphScript := resources.Get "js/knowledge-graph.js" | resources.ExecuteAsTemplate "js/knowledge-graph.js" . }}
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="{{ $graphScript.RelPermalink }}"></script>
 
