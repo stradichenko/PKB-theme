@@ -9,7 +9,7 @@
   <div class="about-profile-container">
     <div class="about-left-column">
       <div class="profile-image">
-        <img src="{{ .Site.Params.profilePicture | default "/images/profile.png" | relURL }}" alt="Profile Picture" width="240" height="240">
+        <img src="{{ with .Site.Params.profilePicture }}{{ . }}{{ else }}{{ "img/default-profile.png" | absURL }}{{ end }}" alt="Profile Picture" width="240" height="240">
       </div>
       <h2 class="profile-name">{{ .Site.Params.profileName | default "Your Name" }}</h2>
       <p class="profile-description">{{ .Site.Params.profileDescription | default "A short description about yourself." }}</p>
