@@ -1,7 +1,4 @@
-@import url('./global/variables.css'); /* Ensure your variables are correctly defined */
-
 /* Footer styling - completely refactored */
-
 footer {
   background-color: var(--footer-bg-color);
   color: var(--footer-text-color);
