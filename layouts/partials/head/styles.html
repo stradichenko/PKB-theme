@@ -27,25 +27,28 @@
   {{ end }}
 {{ else }}
   <!-- Production mode CSS loading -->
-  {{ $cssFiles := slice 
-      (resources.Get "css/global/variables.css")
-      (resources.Get "css/global/reset.css")
-      (resources.Get "css/body.css")
-      (resources.Get "css/header.css")
-      (resources.Get "css/footer.css")
-      (resources.Get "css/sidenotes.css")
-      (resources.Get "css/components/toc.css")
-      (resources.Get "css/components/table.css")
-      (resources.Get "css/components/blockquote.css")
-      (resources.Get "css/components/citation.css")
-      (resources.Get "css/components/code.css")
-      (resources.Get "css/components/markdown.css")
+  {{ $cssFiles := slice }}
+  {{ range (slice 
+      "css/global/variables.css"
+      "css/global/reset.css"
+      "css/body.css"
+      "css/header.css"
+      "css/footer.css"
+      "css/sidenotes.css"
+      "css/components/toc.css"
+      "css/components/table.css"
+      "css/components/blockquote.css"
+      "css/components/citation.css"
+      "css/components/code.css"
+      "css/components/markdown.css"
       "css/list.css"
       "css/filters.css"
       "css/components/recent-posts-grid.css"
       "css/about-profile.css"
       "css/main.css"
-  }}
+  ) }}
+    {{ $cssFiles = $cssFiles | append (resources.Get .) }}
+  {{ end }}
   {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ end }}
