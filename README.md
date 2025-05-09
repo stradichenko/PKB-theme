@@ -1,17 +1,30 @@
-<center># PKB-theme [Demo](https://stradichenko.github.io/PKB-theme/)</center>
+<h1 align="center">
+  PKB-theme |<a href="https://stradichenko.github.io/PKB-theme/"> Demo</a>
+</h1>
+
+<h3 align="center">
 
 ![CI Status](https://github.com/stradichenko/PKB-theme/actions/workflows/test.yml/badge.svg)
 ![GitHub License](https://img.shields.io/github/license/stradichenko/PKB-theme)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/stradichenko/PKB-theme)
-[![hugo-papermod](https://img.shields.io/badge/Hugo--Themes-@PaperMod-blue)](https://themes.gohugo.io/themes/)
+[![PKB-theme](https://img.shields.io/badge/Hugo--Themes-@PKB-theme)](https://themes.gohugo.io/themes/)
 
-Consider supporting:
-![Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)
-![LiberaPay](https://img.shields.io/badge/Liberapay-F6C915?style=for-the-badge&logo=liberapay&logoColor=black)
-[![Github-sponsors](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/stradichenko)
+</h3>
 
+<h4 align="center">
+  Consider supporting:<br><br>
+  <img src="https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white">
+  <img src="https://img.shields.io/badge/Liberapay-F6C915?style=for-the-badge&logo=liberapay&logoColor=black">
+  <a href="https://github.com/sponsors/stradichenko">
+    <img src="https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA">
+  </a>
+</h4>
+
+<h4 align="center">
 
 [![X (formerly Twitter) URL](https://img.shields.io/badge/-Share%20on%20X-gray?style=flat&logo=x)](https://x.com/intent/tweet/?text=PKB-theme!%20A%20resource%20to%20easily%20your%20launch%20personal%20blog%20&url=https://github.com/stradichenko/PKB-theme&hashtags=Hugo,pkbtheme,blog)
+</h4>
+
 
 ## About
 This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
