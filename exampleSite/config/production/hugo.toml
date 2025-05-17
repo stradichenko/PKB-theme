@@ -1,0 +1,2 @@
+# Production-specific configuration
+baseURL = "https://stradichenko.github.io/PKB-theme/"
