@@ -30,10 +30,29 @@ resources/
 #exampleSite/go.mod
 #exampleSite/go.sum
 
-# npm and nodejs files
+# Node.js dependencies
 node_modules/
 package-lock.json
 
-# misc
-#content/posts/
-assets/my-favicon/
+# Hugo build artifacts
+public/
+resources/
+.hugo_build.lock
+
+# BackstopJS artifacts
+backstop_data/
+
+# IDE and system files
+.vscode/
+.idea/
+.DS_Store
+*~
+
+# Demo site build artifacts
+exampleSite/public/
+exampleSite/resources/
+exampleSite/.hugo_build.lock
+
+# Cache directories
+.cache/
+tmp/

@@ -3,6 +3,28 @@
  * Renders an interactive node graph of content relationships
  */
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("Knowledge graph script loading...");
+    
+    // Load graph data from the embedded JSON
+    let graphData;
+    try {
+        const dataElement = document.getElementById('graph-data');
+        if (!dataElement) {
+            throw new Error('Graph data element not found');
+        }
+        graphData = JSON.parse(dataElement.textContent);
+        console.log("Graph data loaded:", graphData);
+    } catch (error) {
+        console.error("Failed to load graph data:", error);
+        return;
+    }
+
+    // Initialize graph with loaded data
+    if (!graphData || !graphData.nodes || !graphData.links) {
+        console.error("Invalid graph data structure");
+        return;
+    }
+  
   // Graph configuration and state
   const config = {
     height: 500,
@@ -19,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // ======================================================
   
   // Prepare graph data structure
-  const graphData = {
+  graphData = {
     nodes: [],
     links: []
   };
