@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # 1) configuration
-HUGO_VERSION="0.126.2"         # or bump to 0.127.0+ if you prefer
+HUGO_VERSION="0.127.0"         # Updated to newer version with improved URL handling
 THEME_MODULE="github.com/stradichenko/PKB-theme"
 WORKSPACE="$(pwd)"
 EXAMPLE_DIR="exampleSite"
