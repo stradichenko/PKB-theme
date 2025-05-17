@@ -1,4 +1,25 @@
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ with .Title }}{{ . }} | {{ end }}{{ site.Title }}{{ end }}</title>
+
+    <!-- 
+    The <base> tag below solves the URL path issue by telling browsers to prepend
+    the site.BaseURL (https://stradichenko.github.io/PKB-theme/) to all relative URLs.
+    
+    This ensures that links like "/posts/post-1/" will correctly become 
+    "https://stradichenko.github.io/PKB-theme/posts/post-1/" instead of 
+    "https://stradichenko.github.io/posts/post-1/"
+    
+    The baseURL value is pulled from your config file, so it will always be correct
+    even if you change your site's base path in the future.
+    -->
+    <base href="{{ .Site.BaseURL }}">
+    
+    {{ range .AlternativeOutputFormats -}}
+        {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .Permalink $.Site.Title | safeHTML }}
+    {{ end -}}
+    
     {{ partial "head/meta.html" . }}
     {{ partial "head/favicons.html" . }}
     {{ partial "head/critical-css.html" . }}
