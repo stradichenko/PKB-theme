@@ -118,16 +118,45 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    console.log("Valid permalinks:", validPermalinks);
+    
     // Filter invalid links
     graphData.links = graphData.links.filter(link => {
       if (!link || !link.source || !link.target) return false;
       
       if (typeof link.target === 'string') {
         link.target = link.target.replace(/["']/g, '');
+        
+        // Skip tag and category pages
         if (link.target.startsWith('/tags/') || link.target.startsWith('/categories/')) {
           return false;
         }
-        return validPermalinks[link.target] === true;
+        
+        // Enhanced validation to handle baseURL variations
+        const isValid = validPermalinks[link.target] === true;
+        
+        // Debug log for link validation
+        if (!isValid) {
+          console.log(`Link target not found in validPermalinks: ${link.target}`);
+          
+          // Try finding a matching permalink by comparing path components
+          const targetPath = link.target.split('/').filter(Boolean);
+          const matchingPermalink = Object.keys(validPermalinks).find(permalink => {
+            const permalinkPath = permalink.split('/').filter(Boolean);
+            // Check if path components match, ignoring the first segment (baseURL)
+            return targetPath.length > 1 && 
+                  permalinkPath.length > 1 && 
+                  permalinkPath.slice(1).join('/') === targetPath.slice(1).join('/');
+          });
+          
+          if (matchingPermalink) {
+            console.log(`Found matching permalink for ${link.target}: ${matchingPermalink}`);
+            link.target = matchingPermalink;
+            return true;
+          }
+        }
+        
+        return isValid;
       }
       return false;
     });
