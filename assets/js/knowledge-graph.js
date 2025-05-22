@@ -71,10 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
     {{ with .Content }}
       {{ $content := . | string }}
       
-      // Process HTML links
-      {{ range findRE `<a href="(/[^"]+)"` $content }}
+      // Process HTML links - look for both regular href and data-internal-link
+      {{ range findRE `<a[^>]*href="(/[^"]+)"[^>]*>|<a[^>]*data-internal-link="(/[^"]+)"[^>]*>` $content }}
         {{ $match := . }}
-        {{ $cleanURL := replaceRE `<a href="(/[^"]+)"` "$1" $match }}
+        {{ $cleanURL := replaceRE `<a[^>]*(?:href|data-internal-link)="(/[^"]+)"[^>]*>` "$1" $match }}
         {{ $cleanURL = replaceRE `".*$` "" $cleanURL }}
         
         {{ if (hasPrefix $cleanURL "/") }}
