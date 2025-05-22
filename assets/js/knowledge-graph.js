@@ -120,6 +120,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log("Valid permalinks:", validPermalinks);
     
+    // Extract the base path prefix from the permalinks
+    const allPermalinks = Object.keys(validPermalinks);
+    const basePathPrefix = allPermalinks.length > 0 ? 
+      extractCommonPrefix(allPermalinks) : '';
+    
+    console.log("Detected base path prefix:", basePathPrefix);
+    
     // Filter invalid links
     graphData.links = graphData.links.filter(link => {
       if (!link || !link.source || !link.target) return false;
@@ -132,34 +139,80 @@ document.addEventListener('DOMContentLoaded', function() {
           return false;
         }
         
-        // Enhanced validation to handle baseURL variations
-        const isValid = validPermalinks[link.target] === true;
+        // First try direct match
+        if (validPermalinks[link.target] === true) {
+          return true;
+        }
         
-        // Debug log for link validation
-        if (!isValid) {
-          console.log(`Link target not found in validPermalinks: ${link.target}`);
+        // If not found, try prepending the base prefix
+        const prefixedTarget = basePathPrefix + link.target;
+        if (validPermalinks[prefixedTarget] === true) {
+          console.log(`Found link target with prefix: ${link.target} -> ${prefixedTarget}`);
+          link.target = prefixedTarget;
+          return true;
+        }
+        
+        // If still not found, try a fuzzy match by removing any prefix and comparing path components
+        const targetPath = link.target.split('/').filter(Boolean);
+        
+        // Try to find a matching permalink
+        for (const permalink of allPermalinks) {
+          const permalinkPath = permalink.split('/').filter(Boolean);
           
-          // Try finding a matching permalink by comparing path components
-          const targetPath = link.target.split('/').filter(Boolean);
-          const matchingPermalink = Object.keys(validPermalinks).find(permalink => {
-            const permalinkPath = permalink.split('/').filter(Boolean);
-            // Check if path components match, ignoring the first segment (baseURL)
-            return targetPath.length > 1 && 
-                  permalinkPath.length > 1 && 
-                  permalinkPath.slice(1).join('/') === targetPath.slice(1).join('/');
-          });
-          
-          if (matchingPermalink) {
-            console.log(`Found matching permalink for ${link.target}: ${matchingPermalink}`);
-            link.target = matchingPermalink;
-            return true;
+          // Compare path components excluding the first segment (baseURL)
+          if (permalinkPath.length > 1 && targetPath.length > 0) {
+            // Skip the first component in permalink (e.g., 'PKB-theme') 
+            // if it doesn't exist in targetPath
+            const permalinkPathTail = permalinkPath.slice(1);
+            
+            // Check if target path matches the end of the permalink path
+            if (arraysEqual(targetPath, permalinkPathTail)) {
+              console.log(`Found matching permalink for ${link.target}: ${permalink}`);
+              link.target = permalink;
+              return true;
+            }
           }
         }
         
-        return isValid;
+        console.log(`Link target not found in validPermalinks: ${link.target}`);
+        return false;
       }
       return false;
     });
+
+    // Helper function to extract common prefix from an array of strings
+    function extractCommonPrefix(strings) {
+      if (strings.length === 0) return '';
+      
+      const paths = strings.map(s => s.split('/').filter(Boolean));
+      
+      // Find the shortest path length
+      const minLength = Math.min(...paths.map(p => p.length));
+      
+      // Check common prefix segments
+      let commonPrefix = [];
+      for (let i = 0; i < minLength; i++) {
+        const segment = paths[0][i];
+        if (paths.every(p => p[i] === segment)) {
+          commonPrefix.push(segment);
+        } else {
+          break;
+        }
+      }
+      
+      return commonPrefix.length > 0 ? '/' + commonPrefix.join('/') + '/' : '/';
+    }
+    
+    // Helper function to compare arrays for equality
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      
+      return true;
+    }
 
     // Count links safely
     const linkCounts = new Map();
