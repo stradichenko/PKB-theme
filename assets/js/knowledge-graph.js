@@ -139,23 +139,110 @@ document.addEventListener('DOMContentLoaded', function() {
           return false;
         }
         
-        // First try direct match
+        // Step 1: Try direct match
         if (validPermalinks[link.target] === true) {
           return true;
         }
         
-        // If not found, try prepending the base prefix
+        // Step 2: Try adding or removing trailing slash
+        const withTrailingSlash = link.target.endsWith('/') ? link.target : link.target + '/';
+        const withoutTrailingSlash = link.target.endsWith('/') ? link.target.slice(0, -1) : link.target;
+        
+        if (validPermalinks[withTrailingSlash] === true) {
+          link.target = withTrailingSlash;
+          console.log(`Found with trailing slash: ${link.target}`);
+          return true;
+        }
+        
+        if (validPermalinks[withoutTrailingSlash] === true) {
+          link.target = withoutTrailingSlash;
+          console.log(`Found without trailing slash: ${link.target}`);
+          return true;
+        }
+        
+        // Step 3: Try prepending the base prefix
         const prefixedTarget = basePathPrefix + link.target;
+        const prefixedWithTrailingSlash = prefixedTarget.endsWith('/') ? prefixedTarget : prefixedTarget + '/';
+        const prefixedWithoutTrailingSlash = prefixedTarget.endsWith('/') ? prefixedTarget.slice(0, -1) : prefixedTarget;
+        
         if (validPermalinks[prefixedTarget] === true) {
           console.log(`Found link target with prefix: ${link.target} -> ${prefixedTarget}`);
           link.target = prefixedTarget;
           return true;
         }
         
-        // If still not found, try a fuzzy match by removing any prefix and comparing path components
+        if (validPermalinks[prefixedWithTrailingSlash] === true) {
+          console.log(`Found link target with prefix and trailing slash: ${link.target} -> ${prefixedWithTrailingSlash}`);
+          link.target = prefixedWithTrailingSlash;
+          return true;
+        }
+        
+        if (validPermalinks[prefixedWithoutTrailingSlash] === true) {
+          console.log(`Found link target with prefix without trailing slash: ${link.target} -> ${prefixedWithoutTrailingSlash}`);
+          link.target = prefixedWithoutTrailingSlash;
+          return true;
+        }
+        
+        // Step 4: Handle .md file paths (content sources)
+        if (link.target.includes('.md')) {
+          // Convert /content/path/file.md to /path/file/
+          const contentPath = link.target
+            .replace(/^\/content/, '')
+            .replace(/\.md$/, '/');
+          
+          // Try both with and without base prefix
+          const possiblePaths = [
+            contentPath,
+            contentPath.endsWith('/') ? contentPath.slice(0, -1) : contentPath,
+            basePathPrefix + contentPath,
+            basePathPrefix + (contentPath.endsWith('/') ? contentPath.slice(0, -1) : contentPath)
+          ];
+          
+          for (const path of possiblePaths) {
+            if (validPermalinks[path] === true) {
+              console.log(`Found markdown source match: ${link.target} -> ${path}`);
+              link.target = path;
+              return true;
+            }
+          }
+        }
+        
+        // Step 5: Try a fuzzy match by path components
         const targetPath = link.target.split('/').filter(Boolean);
         
-        // Try to find a matching permalink
+        // Special handling for deeply nested paths - we'll try different subpaths
+        for (let i = 0; i < targetPath.length; i++) {
+          const subPath = '/' + targetPath.slice(i).join('/');
+          const subPathWithTrailingSlash = subPath.endsWith('/') ? subPath : subPath + '/';
+          const prefixedSubPath = basePathPrefix + subPath;
+          const prefixedSubPathWithTrailingSlash = prefixedSubPath.endsWith('/') ? prefixedSubPath : prefixedSubPath + '/';
+          
+          if (validPermalinks[subPath] === true) {
+            console.log(`Found subpath match: ${link.target} -> ${subPath}`);
+            link.target = subPath;
+            return true;
+          }
+          
+          if (validPermalinks[subPathWithTrailingSlash] === true) {
+            console.log(`Found subpath with slash match: ${link.target} -> ${subPathWithTrailingSlash}`);
+            link.target = subPathWithTrailingSlash;
+            return true;
+          }
+          
+          if (validPermalinks[prefixedSubPath] === true) {
+            console.log(`Found prefixed subpath match: ${link.target} -> ${prefixedSubPath}`);
+            link.target = prefixedSubPath;
+            return true;
+          }
+          
+          if (validPermalinks[prefixedSubPathWithTrailingSlash] === true) {
+            console.log(`Found prefixed subpath with slash match: ${link.target} -> ${prefixedSubPathWithTrailingSlash}`);
+            link.target = prefixedSubPathWithTrailingSlash;
+            return true;
+          }
+        }
+        
+        // Step 6: Try to find a matching permalink by comparing path components
         for (const permalink of allPermalinks) {
           const permalinkPath = permalink.split('/').filter(Boolean);
           
@@ -165,9 +252,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // if it doesn't exist in targetPath
             const permalinkPathTail = permalinkPath.slice(1);
             
-            // Check if target path matches the end of the permalink path
+            // Check if target path exactly matches the tail of the permalink path
             if (arraysEqual(targetPath, permalinkPathTail)) {
               console.log(`Found matching permalink for ${link.target}: ${permalink}`);
+              link.target = permalink;
+              return true;
+            }
+            
+            // Check if the last component matches (e.g., for docs/configuration -> docs/configuration/)
+            const lastTargetComponent = targetPath[targetPath.length - 1];
+            const lastPermalinkComponent = permalinkPath[permalinkPath.length - 1];
+            if (lastTargetComponent === lastPermalinkComponent && 
+                permalinkPath.join('/').includes(targetPath.join('/'))) {
+              console.log(`Found last component match for ${link.target}: ${permalink}`);
               link.target = permalink;
               return true;
             }
