@@ -3,8 +3,7 @@ languageCode = 'en-us'
 title = 'HUGO_site'
 
 enableGitInfo = true
-# Uncomment relativeURLs to make internal links relative to the current page
-relativeURLs = true
+#relativeURLs = true
 #canonifyURLs = true
 
 [HTTPCache]
@@ -17,6 +16,9 @@ relativeURLs = true
   noJSConfigInAssets = false
   useResourceCacheWhen = 'fallback'
   [build.buildStats]
+    disableClasses = false
+    disableIDs = false
+    disableTags = false
     enable = false
   [[build.cacheBusters]]
     source = '(postcss|tailwind)\.config\.js'

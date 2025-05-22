@@ -1,0 +1,10 @@
+{{- $url := .Destination -}}
+{{- $isExternal := or (strings.HasPrefix $url "http:") (strings.HasPrefix $url "https:") -}}
+
+<a href="{{ if and (not $isExternal) (strings.HasPrefix $url "/") }}{{ .Page.Site.BaseURL | strings.TrimSuffix "/" }}{{ .Destination }}{{ else }}{{ .Destination | safeURL }}{{ end }}"
+  {{- with .Title }} title="{{ . }}"{{ end -}}
+  {{- if $isExternal }} rel="external" target="_blank"{{ end -}}
+>
+  {{- with .Text }}{{ . }}{{ end -}}
+</a>
+{{- /* chomp trailing newline */ -}}
