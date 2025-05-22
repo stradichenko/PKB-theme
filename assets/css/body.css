@@ -1,5 +1,3 @@
-@import url('./global/variables.css');
-
 /* Body styling - UPDATED with specificity that won't fight dark mode */
 body {
   background-color: var(--body-bg-color, #275f85); /* Add fallback color inline */

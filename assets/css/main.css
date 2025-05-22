@@ -1,12 +1,26 @@
-/* Replace multiple imports with Hugo bundling */
-/* Current approach: */
-/* Imports removed as per suggestion to use Hugo's resource bundling in head.html */
+/* Core imports first */
+@import 'global/variables.css';
+@import 'global/reset.css';
 
-/* Import the knowledge graph component CSS */
+/* Component imports */
 @import 'components/knowledge-graph.css';
+@import 'components/toc.css';
+@import 'components/table.css';
+@import 'components/blockquote.css';
+@import 'components/citation.css';
+@import 'components/code.css';
+@import 'components/markdown.css';
 
-/* General components */
+/* Layout imports */
+@import 'header.css';
+@import 'footer.css';
+@import 'body.css';
+@import 'sidenotes.css';
+@import 'list.css';
+@import 'filters.css';
+@import 'search.css';
 
+/* General styling */
 a {
   color: var(--link-color); /* Use variable for link color */
   text-decoration: none;

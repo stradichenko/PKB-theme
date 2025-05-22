@@ -3,6 +3,28 @@
  * Renders an interactive node graph of content relationships
  */
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("Knowledge graph script loading...");
+    
+    // Load graph data from the embedded JSON
+    let graphData;
+    try {
+        const dataElement = document.getElementById('graph-data');
+        if (!dataElement) {
+            throw new Error('Graph data element not found');
+        }
+        graphData = JSON.parse(dataElement.textContent);
+        console.log("Graph data loaded:", graphData);
+    } catch (error) {
+        console.error("Failed to load graph data:", error);
+        return;
+    }
+
+    // Initialize graph with loaded data
+    if (!graphData || !graphData.nodes || !graphData.links) {
+        console.error("Invalid graph data structure");
+        return;
+    }
+  
   // Graph configuration and state
   const config = {
     height: 500,
@@ -19,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // ======================================================
   
   // Prepare graph data structure
-  const graphData = {
+  graphData = {
     nodes: [],
     links: []
   };
@@ -28,15 +50,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const validPermalinks = {};
   
   {{ range where site.AllPages "Kind" "page" }}
-    {{ $permalink := .RelPermalink }}
-    validPermalinks['{{ $permalink }}'] = true;
+    {{ $permalink := .RelPermalink | jsonify }}
+    {{ safeJS $permalink }}
+    validPermalinks[{{ $permalink }}] = true;
     
     graphData.nodes.push({
-      id: '{{ $permalink }}',
-      title: {{ .Title | jsonify }},
-      url: '{{ $permalink }}',
-      category: {{ with .Params.categories }}{{ index . 0 | default "uncategorized" | jsonify }}{{ else }}"uncategorized"{{ end }},
-      tags: {{ .Params.tags | jsonify }},
+      id: {{ $permalink }},
+      title: {{ .Title | jsonify | safeJS }},
+      url: {{ $permalink }},
+      category: {{ with .Params.categories }}{{ index . 0 | default "uncategorized" | jsonify | safeJS }}{{ else }}"uncategorized"{{ end }},
+      tags: {{ .Params.tags | default slice | jsonify | safeJS }},
       linksCount: 0
     });
   {{ end }}
@@ -48,10 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
     {{ with .Content }}
       {{ $content := . | string }}
       
-      // Process HTML links
-      {{ range findRE `<a href="(/[^"]+)"` $content }}
+      // Process HTML links - look for both regular href and data-internal-link
+      {{ range findRE `<a[^>]*href="(/[^"]+)"[^>]*>|<a[^>]*data-internal-link="(/[^"]+)"[^>]*>` $content }}
         {{ $match := . }}
-        {{ $cleanURL := replaceRE `<a href="(/[^"]+)"` "$1" $match }}
+        {{ $cleanURL := replaceRE `<a[^>]*(?:href|data-internal-link)="(/[^"]+)"[^>]*>` "$1" $match }}
         {{ $cleanURL = replaceRE `".*$` "" $cleanURL }}
         
         {{ if (hasPrefix $cleanURL "/") }}
@@ -89,24 +112,218 @@ document.addEventListener('DOMContentLoaded', function() {
    * Filter and process raw graph data
    */
   function processGraphData(graphData, validPermalinks) {
+    // Validate data structures
+    if (!Array.isArray(graphData.links) || !Array.isArray(graphData.nodes)) {
+      console.error('Invalid graph data structure');
+      return;
+    }
+
+    console.log("Valid permalinks:", validPermalinks);
+    
+    // Extract the base path prefix from the permalinks
+    const allPermalinks = Object.keys(validPermalinks);
+    const basePathPrefix = allPermalinks.length > 0 ? 
+      extractCommonPrefix(allPermalinks) : '';
+    
+    console.log("Detected base path prefix:", basePathPrefix);
+    
     // Filter invalid links
     graphData.links = graphData.links.filter(link => {
+      if (!link || !link.source || !link.target) return false;
+      
       if (typeof link.target === 'string') {
-        // Clean URL and filter taxonomy pages
         link.target = link.target.replace(/["']/g, '');
+        
+        // Skip tag and category pages
         if (link.target.startsWith('/tags/') || link.target.startsWith('/categories/')) {
           return false;
         }
-        return validPermalinks[link.target] === true;
+        
+        // Step 1: Try direct match
+        if (validPermalinks[link.target] === true) {
+          return true;
+        }
+        
+        // Step 2: Try adding or removing trailing slash
+        const withTrailingSlash = link.target.endsWith('/') ? link.target : link.target + '/';
+        const withoutTrailingSlash = link.target.endsWith('/') ? link.target.slice(0, -1) : link.target;
+        
+        if (validPermalinks[withTrailingSlash] === true) {
+          link.target = withTrailingSlash;
+          console.log(`Found with trailing slash: ${link.target}`);
+          return true;
+        }
+        
+        if (validPermalinks[withoutTrailingSlash] === true) {
+          link.target = withoutTrailingSlash;
+          console.log(`Found without trailing slash: ${link.target}`);
+          return true;
+        }
+        
+        // Step 3: Try prepending the base prefix
+        const prefixedTarget = basePathPrefix + link.target;
+        const prefixedWithTrailingSlash = prefixedTarget.endsWith('/') ? prefixedTarget : prefixedTarget + '/';
+        const prefixedWithoutTrailingSlash = prefixedTarget.endsWith('/') ? prefixedTarget.slice(0, -1) : prefixedTarget;
+        
+        if (validPermalinks[prefixedTarget] === true) {
+          console.log(`Found link target with prefix: ${link.target} -> ${prefixedTarget}`);
+          link.target = prefixedTarget;
+          return true;
+        }
+        
+        if (validPermalinks[prefixedWithTrailingSlash] === true) {
+          console.log(`Found link target with prefix and trailing slash: ${link.target} -> ${prefixedWithTrailingSlash}`);
+          link.target = prefixedWithTrailingSlash;
+          return true;
+        }
+        
+        if (validPermalinks[prefixedWithoutTrailingSlash] === true) {
+          console.log(`Found link target with prefix without trailing slash: ${link.target} -> ${prefixedWithoutTrailingSlash}`);
+          link.target = prefixedWithoutTrailingSlash;
+          return true;
+        }
+        
+        // Step 4: Handle .md file paths (content sources)
+        if (link.target.includes('.md')) {
+          // Convert /content/path/file.md to /path/file/
+          const contentPath = link.target
+            .replace(/^\/content/, '')
+            .replace(/\.md$/, '/');
+          
+          // Try both with and without base prefix
+          const possiblePaths = [
+            contentPath,
+            contentPath.endsWith('/') ? contentPath.slice(0, -1) : contentPath,
+            basePathPrefix + contentPath,
+            basePathPrefix + (contentPath.endsWith('/') ? contentPath.slice(0, -1) : contentPath)
+          ];
+          
+          for (const path of possiblePaths) {
+            if (validPermalinks[path] === true) {
+              console.log(`Found markdown source match: ${link.target} -> ${path}`);
+              link.target = path;
+              return true;
+            }
+          }
+        }
+        
+        // Step 5: Try a fuzzy match by path components
+        const targetPath = link.target.split('/').filter(Boolean);
+        
+        // Special handling for deeply nested paths - we'll try different subpaths
+        for (let i = 0; i < targetPath.length; i++) {
+          const subPath = '/' + targetPath.slice(i).join('/');
+          const subPathWithTrailingSlash = subPath.endsWith('/') ? subPath : subPath + '/';
+          const prefixedSubPath = basePathPrefix + subPath;
+          const prefixedSubPathWithTrailingSlash = prefixedSubPath.endsWith('/') ? prefixedSubPath : prefixedSubPath + '/';
+          
+          if (validPermalinks[subPath] === true) {
+            console.log(`Found subpath match: ${link.target} -> ${subPath}`);
+            link.target = subPath;
+            return true;
+          }
+          
+          if (validPermalinks[subPathWithTrailingSlash] === true) {
+            console.log(`Found subpath with slash match: ${link.target} -> ${subPathWithTrailingSlash}`);
+            link.target = subPathWithTrailingSlash;
+            return true;
+          }
+          
+          if (validPermalinks[prefixedSubPath] === true) {
+            console.log(`Found prefixed subpath match: ${link.target} -> ${prefixedSubPath}`);
+            link.target = prefixedSubPath;
+            return true;
+          }
+          
+          if (validPermalinks[prefixedSubPathWithTrailingSlash] === true) {
+            console.log(`Found prefixed subpath with slash match: ${link.target} -> ${prefixedSubPathWithTrailingSlash}`);
+            link.target = prefixedSubPathWithTrailingSlash;
+            return true;
+          }
+        }
+        
+        // Step 6: Try to find a matching permalink by comparing path components
+        for (const permalink of allPermalinks) {
+          const permalinkPath = permalink.split('/').filter(Boolean);
+          
+          // Compare path components excluding the first segment (baseURL)
+          if (permalinkPath.length > 1 && targetPath.length > 0) {
+            // Skip the first component in permalink (e.g., 'PKB-theme') 
+            // if it doesn't exist in targetPath
+            const permalinkPathTail = permalinkPath.slice(1);
+            
+            // Check if target path exactly matches the tail of the permalink path
+            if (arraysEqual(targetPath, permalinkPathTail)) {
+              console.log(`Found matching permalink for ${link.target}: ${permalink}`);
+              link.target = permalink;
+              return true;
+            }
+            
+            // Check if the last component matches (e.g., for docs/configuration -> docs/configuration/)
+            const lastTargetComponent = targetPath[targetPath.length - 1];
+            const lastPermalinkComponent = permalinkPath[permalinkPath.length - 1];
+            if (lastTargetComponent === lastPermalinkComponent && 
+                permalinkPath.join('/').includes(targetPath.join('/'))) {
+              console.log(`Found last component match for ${link.target}: ${permalink}`);
+              link.target = permalink;
+              return true;
+            }
+          }
+        }
+        
+        console.log(`Link target not found in validPermalinks: ${link.target}`);
+        return false;
       }
       return false;
     });
+
+    // Helper function to extract common prefix from an array of strings
+    function extractCommonPrefix(strings) {
+      if (strings.length === 0) return '';
+      
+      const paths = strings.map(s => s.split('/').filter(Boolean));
+      
+      // Find the shortest path length
+      const minLength = Math.min(...paths.map(p => p.length));
+      
+      // Check common prefix segments
+      let commonPrefix = [];
+      for (let i = 0; i < minLength; i++) {
+        const segment = paths[0][i];
+        if (paths.every(p => p[i] === segment)) {
+          commonPrefix.push(segment);
+        } else {
+          break;
+        }
+      }
+      
+      return commonPrefix.length > 0 ? '/' + commonPrefix.join('/') + '/' : '/';
+    }
     
-    // Count links for sizing nodes
+    // Helper function to compare arrays for equality
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+      
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      
+      return true;
+    }
+
+    // Count links safely
+    const linkCounts = new Map();
     graphData.links.forEach(link => {
-      const targetNode = graphData.nodes.find(node => node.id === link.target);
-      if (targetNode) {
-        targetNode.linksCount = (targetNode.linksCount || 0) + 1;
+      if (link && link.target) {
+        const count = linkCounts.get(link.target) || 0;
+        linkCounts.set(link.target, count + 1);
+      }
+    });
+
+    // Update node link counts
+    graphData.nodes.forEach(node => {
+      if (node && node.id) {
+        node.linksCount = linkCounts.get(node.id) || 0;
       }
     });
   }

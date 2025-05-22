@@ -1,0 +1,23 @@
+<!-- For basic favicon support -->
+<link rel="icon" type="image/x-icon" href="{{ "favicon.ico" | absURL }}">
+
+<!-- Only include these if the files exist -->
+{{ if (fileExists "static/favicon.png") }}
+<link rel="icon" type="image/png" href="{{ "favicon.png" | absURL }}">
+{{ end }}
+
+{{ if (fileExists "static/my-favicon/favicon-96x96.png") }}
+<link rel="icon" type="image/png" href="{{ "my-favicon/favicon-96x96.png" | absURL }}" sizes="96x96">
+{{ end }}
+
+{{ if (fileExists "static/my-favicon/favicon.svg") }}
+<link rel="icon" type="image/svg+xml" href="{{ "my-favicon/favicon.svg" | absURL }}">
+{{ end }}
+
+{{ if (fileExists "static/my-favicon/apple-touch-icon.png") }}
+<link rel="apple-touch-icon" sizes="180x180" href="{{ "my-favicon/apple-touch-icon.png" | absURL }}">
+{{ end }}
+
+{{ if (fileExists "static/my-favicon/site.webmanifest") }}
+<link rel="manifest" href="{{ "my-favicon/site.webmanifest" | absURL }}">
+{{ end }}

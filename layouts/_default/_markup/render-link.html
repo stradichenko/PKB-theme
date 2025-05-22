@@ -1,0 +1,15 @@
+{{- $url := .Destination -}}
+{{- $isExternal := or (strings.HasPrefix $url "http:") (strings.HasPrefix $url "https:") -}}
+{{- $fullUrl := $url -}}
+{{- if and (not $isExternal) (strings.HasPrefix $url "/") -}}
+  {{- $fullUrl = printf "%s%s" (.Page.Site.BaseURL | strings.TrimSuffix "/") $url -}}
+{{- end -}}
+
+<a href="{{ $fullUrl | safeURL }}"
+  {{- with .Title }} title="{{ . }}"{{ end -}}
+  {{- if $isExternal }} rel="external" target="_blank"{{ end -}}
+  {{- if and (not $isExternal) (strings.HasPrefix $url "/") }} data-internal-link="{{ $url }}" class="internal-link"{{ end -}}
+>
+  {{- with .Text }}{{ . }}{{ end -}}
+</a>
+{{- /* chomp trailing newline */ -}}

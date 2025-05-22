@@ -1,9 +1,10 @@
-{{- with resources.Get "css/main.css" }}
-  {{- if eq hugo.Environment "development" }}
-    <link rel="stylesheet" href="{{ .RelPermalink }}">
-  {{- else }}
-    {{- with . | minify | fingerprint }}
-      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
-    {{- end }}
-  {{- end }}
+{{- $mainCSS := resources.Get "css/main.css" }}
+{{- $cssOpts := dict "inlineImports" true "includePaths" (slice "assets/css") }}
+
+{{- if eq hugo.Environment "development" }}
+  {{- $css := $mainCSS | resources.ToCSS $cssOpts }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+{{- else }}
+  {{- $css := $mainCSS | resources.ToCSS $cssOpts | resources.Minify | resources.Fingerprint }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
 {{- end }}

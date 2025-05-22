@@ -179,7 +179,30 @@
   </div>
 </div>
 
-{{ $graphScript := resources.Get "js/components/knowledge-graph.js" | resources.ExecuteAsTemplate "js/knowledge-graph.js" . }}
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="{{ $graphScript.RelPermalink }}"></script>
+<script type="application/json" id="graph-data">
+  {{- $nodes := slice -}}
+  {{- $links := slice -}}
+  {{- range .Site.Pages -}}
+    {{- $nodeID := .RelPermalink -}}
+    {{- $node := dict "id" $nodeID "title" .Title "category" .Section -}}
+    {{- $nodes = $nodes | append $node -}}
+    {{- range .Pages -}}
+      {{- $link := dict "source" $nodeID "target" .RelPermalink -}}
+      {{- $links = $links | append $link -}}
+    {{- end -}}
+  {{- end -}}
+  {
+    "nodes": {{ $nodes | jsonify }},
+    "links": {{ $links | jsonify }}
+  }
+</script>
+
+{{ $graphScript := resources.Get "js/knowledge-graph.js" }}
+{{ if $graphScript }}
+  {{ $graphScript = $graphScript | resources.ExecuteAsTemplate "js/knowledge-graph.js" . | resources.Minify | fingerprint }}
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="{{ $graphScript.RelPermalink }}" integrity="{{ $graphScript.Data.Integrity }}"></script>
+{{ else }}
+  {{ errorf "Required file 'knowledge-graph.js' not found in assets/js/ directory" }}
+{{ end }}
 

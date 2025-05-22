@@ -1,9 +1,19 @@
 baseURL      = "https://stradichenko.github.io/PKB-theme/"
-languageCode = "en-us"
+#languageCode = "en-us"
 title        = "PKB-theme Demo"
 
 # publish the site into ../docs for GitHub Pages
 #publishDir = "docs"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderHooks]
+      [markup.goldmark.renderHooks.image]
+        enableDefault = true
+      [markup.goldmark.renderHooks.link]
+        enableDefault = true
+    [markup.goldmark.renderer]
+      unsafe = true  # This allows raw HTML in markdown files
 
 [module]
   [[module.imports]]

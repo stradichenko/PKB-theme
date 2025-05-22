@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 name: Deploy Hugo site to Pages
 
 on:
   push:
     branches: ["gh-pages"]
   workflow_dispatch:
+=======
+name: Build and Deploy ExampleSite to GitHub Pages
+
+on:
+  push:
+    branches:
+      - gh-pages
+>>>>>>> gh-pages
 
 permissions:
   contents: read
@@ -17,6 +26,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+<<<<<<< HEAD
     env:
       HUGO_VERSION: 0.126.2
     defaults:
@@ -57,6 +67,57 @@ jobs:
           HUGO_ENVIRONMENT: default
         run: |
           hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+=======
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.128.0'
+          extended: true
+
+      - name: Cache Hugo modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/hugo
+            exampleSite/resources
+            exampleSite/.hugo_build.lock
+          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.mod', '**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-hugomod-
+
+      - name: Clean and Setup
+        run: |
+          rm -rf exampleSite/public/
+          rm -rf exampleSite/resources/
+          rm -rf exampleSite/.hugo_build.lock
+
+      - name: Install Hugo modules and vendor theme
+        run: |
+          cd exampleSite
+          hugo mod get -u
+          hugo mod tidy
+          hugo mod vendor
+
+      - name: Build example site
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
+        run: |
+          cd exampleSite
+          hugo \
+            --minify \
+            --cleanDestinationDir \
+            --baseURL "https://stradichenko.github.io/PKB-theme/" \
+            --environment production \
+            --logLevel debug
+>>>>>>> gh-pages
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

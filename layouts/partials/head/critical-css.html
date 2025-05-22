@@ -1,0 +1,40 @@
+<script>
+  (function() {
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const currentTheme = localStorage.getItem('theme') || 
+                       (prefersDarkScheme.matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    document.documentElement.style.backgroundColor = 
+      currentTheme === 'dark' ? '#1a202c' : '#275f85';
+    document.documentElement.style.color = 
+      currentTheme === 'dark' ? '#e2e8ff' : '#cad6ff';
+  })();
+</script>
+
+{{ $criticalJS := resources.Get "js/critical.js" | js.Build | minify }}
+<script>{{ $criticalJS.Content | safeJS }}</script>
+
+<style>
+  /* Text selection highlighting with maximum specificity */
+  *::selection {
+    background-color: var(--color-primary, #4a90e2) !important;
+    color: var(--color-white, #ffffff) !important;
+    text-shadow: none !important;
+  }
+  
+  *::-moz-selection {
+    background-color: var(--color-primary, #4a90e2) !important;
+    color: var(--color-white, #ffffff) !important;
+    text-shadow: none !important;
+  }
+  
+  html[data-theme="dark"] *::selection {
+    background-color: #e9996b !important;
+    color: #1a2633 !important;
+  }
+  
+  html[data-theme="dark"] *::-moz-selection {
+    background-color: #e9996b !important;
+    color: #1a2633 !important;
+  }
+</style>

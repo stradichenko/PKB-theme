@@ -592,6 +592,20 @@
   color: var(--color-primary);
 }
 
+/* List Layout Integration */
+.knowledge-graph-wrapper {
+  margin: var(--spacing-lg) 0;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.knowledge-graph-wrapper .knowledge-graph-container {
+  margin-bottom: 0;
+  border: none;
+  height: 600px; /* Fixed height for list view */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .knowledge-graph-container {
@@ -630,5 +644,13 @@
     left: calc(5px); /* Position at left side with small gap */
     top: var(--spacing-lg);
     width: 45%;
+  }
+  
+  .knowledge-graph-wrapper {
+    margin: var(--spacing-md) 0;
+  }
+  
+  .knowledge-graph-wrapper .knowledge-graph-container {
+    height: 400px; /* Shorter on mobile */
   }
 }

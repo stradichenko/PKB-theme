@@ -247,7 +247,14 @@ function parseBibTeXEntry(entry) {
 
 async function fetchBibTeXFile(filePath) {
   try {
-    const response = await fetch(filePath);
+    // Get base URL from the document
+    const baseURL = document.documentElement.getAttribute('data-base-url') || '';
+    // Ensure filePath starts with /
+    const normalizedPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
+    // Combine base URL with file path
+    const fullPath = `${baseURL}${normalizedPath}`;
+    
+    const response = await fetch(fullPath);
     if (!response.ok) throw new Error(`Failed to fetch BibTeX file: ${response.statusText}`);
     return await response.text();
   } catch (error) {
