@@ -3,380 +3,126 @@
     <h2 class="lda-title">Topic Analysis (LDA)</h2>
     
     <div class="lda-container">
-      <div class="lda-graph">
-        <h3>Topic Distribution</h3>
-        <div id="lda-chart"></div>
-      </div>
-      
-      <div class="lda-table">
-        <h3>Topic Details</h3>
-        <div id="topic-list" class="topic-list">
-          <div class="lda-loading">
-            <p>Analyzing content using GPU-accelerated LDA...</p>
+      <div class="lda-graph-wrapper">
+        <div class="lda-graph">
+          <h3>Topic Distribution</h3>
+          <div id="lda-chart" class="chart-responsive">
+            <div id="lda-chart-bars" class="lda-chart-bars">
+              <!-- Dynamic bars will be inserted here -->
+            </div>
           </div>
         </div>
       </div>
+      
+      <div class="lda-table-wrapper">
+        <div class="lda-table">
+          <h3>Topic Details</h3>
+          <div id="topic-list" class="topic-list responsive-table">
+            <div class="lda-loading">
+              <p>Analyzing content using GPU-accelerated LDA...</p>
+            </div>
+          </div>
+          <!-- Hover tooltip container -->
+          <div id="topic-tooltip" class="topic-tooltip">
+            <div class="tooltip-content">
+              <h4 class="tooltip-title"></h4>
+              <div class="tooltip-keywords"></div>
+              <div class="tooltip-documents"></div>
+              <div class="tooltip-confidence"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile-specific controls -->
+    <div class="lda-mobile-controls">
+      <button id="toggle-view" class="btn-toggle-view">
+        <span class="toggle-text">Switch to Table View</span>
+      </button>
     </div>
     
     <div class="lda-explanation">
       <p>This visualization uses Latent Dirichlet Allocation (LDA) to discover topics in the content. The analysis is performed using GPU acceleration via TensorFlow.js for optimal performance.</p>
+      <p class="mobile-hint">On mobile: tap topics for details, use the toggle button to switch between chart and table views.</p>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async function() {
-  try {
-    await tf.setBackend('webgl');
-    
-    // Extract content from all posts AND docs
-    const documents = [];
-    {{ range where .Site.Pages "Section" "in" (slice "posts" "docs") }}
-      documents.push({
-        content: `
-          {{ .Title }}
-          {{ .Description }}
-          {{ .Plain }}
-        `,
-        type: {{ .Section | jsonify }},
-        title: {{ .Title | jsonify }}
-      });
-    {{ end }}
-
-    // Initialize parameters
-    const NUM_TOPICS = 8; // Increased from 5 to accommodate more diverse content
-    const NUM_WORDS_PER_TOPIC = 10;
-    const NUM_ITERATIONS = 50;
-    
-    // Preprocess documents
-    const { docWordMatrix, vocabulary } = preprocessDocuments(documents.map(d => d.content));
-    
-    // Convert to tensor with proper shape
-    const docWordTensor = tf.tensor2d(docWordMatrix);
-    
-    // Run LDA
-    const { topicWordDist, docTopicDist } = await runLDA(
-      docWordTensor,
-      NUM_TOPICS,
-      NUM_ITERATIONS
-    );
-
-    // Extract top words and generate topic titles
-    const topicData = extractTopicWords(topicWordDist.arraySync(), vocabulary, NUM_WORDS_PER_TOPIC);
-    
-    // Match documents to their most probable topics
-    const docTopics = docTopicDist.arraySync().map((dist, idx) => {
-      const topTopicIdx = dist.indexOf(Math.max(...dist));
-      return {
-        title: documents[idx].title,
-        type: documents[idx].type,
-        topicIndex: topTopicIdx,
-        probability: dist[topTopicIdx]
-      };
-    });
-
-    // Update UI with document classifications
-    updateTopicList(topicData, docTopics);
-    createTopicDistributionChart(docTopicDist.arraySync());
-
-  } catch (error) {
-    console.error('LDA Analysis failed:', error);
-    document.getElementById('topic-list').innerHTML = `
-      <div class="lda-error">
-        <p>Failed to perform LDA analysis: ${error.message}</p>
-        <p>Technical details: ${error.stack}</p>
-      </div>
-    `;
-  }
-});
-
-function preprocessDocuments(documents) {
-  // Define stop words
-  const stopWords = new Set(['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'with']);
-  
-  // Create vocabulary
-  const vocabMap = new Map();
-  const wordCounts = new Map();
-  
-  // First pass: build vocabulary
-  documents.forEach(doc => {
-    const words = doc.toLowerCase()
-      .replace(/[^\w\s]/g, '')
-      .split(/\s+/)
-      .filter(w => w.length > 2 && !stopWords.has(w));
-      
-    words.forEach(word => {
-      if (!vocabMap.has(word)) {
-        vocabMap.set(word, vocabMap.size);
-      }
-      wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
-    });
-  });
-
-  // Filter vocabulary to most frequent words
-  const sortedWords = Array.from(wordCounts.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 1000)
-    .map(([word]) => word);
-
-  // Create final vocabulary mapping
-  const vocabulary = sortedWords;
-  const vocabSize = vocabulary.length;
-  
-  // Create document-word matrix
-  const docWordMatrix = documents.map(doc => {
-    const counts = new Array(vocabSize).fill(0);
-    const words = doc.toLowerCase()
-      .replace(/[^\w\s]/g, '')
-      .split(/\s+/)
-      .filter(w => w.length > 2 && !stopWords.has(w));
-      
-    words.forEach(word => {
-      const idx = vocabulary.indexOf(word);
-      if (idx !== -1) {
-        counts[idx]++;
-      }
-    });
-    return counts;
-  });
-
-  return { docWordMatrix, vocabulary };
-}
-
-async function runLDA(docWordTensor, numTopics, numIterations) {
-  return tf.tidy(() => {
-    const [numDocs, vocabSize] = docWordTensor.shape;
-    
-    // Initialize random distributions
-    const docTopicDist = tf.randomUniform([numDocs, numTopics]).div(numTopics);
-    const topicWordDist = tf.randomUniform([numTopics, vocabSize]).div(vocabSize);
-    
-    // Normalize initial distributions
-    const docTopicNorm = docTopicDist.sum(1, true);
-    const topicWordNorm = topicWordDist.sum(1, true);
-    
-    const normalizedDocTopic = docTopicDist.div(docTopicNorm);
-    const normalizedTopicWord = topicWordDist.div(topicWordNorm);
-    
-    // Run iterations
-    let currentDocTopic = normalizedDocTopic;
-    let currentTopicWord = normalizedTopicWord;
-    
-    for (let i = 0; i < numIterations; i++) {
-      // Update topic-word distribution
-      const docWordSum = docWordTensor.sum(0).expandDims(0);
-      const newTopicWord = tf.matMul(currentDocTopic.transpose(), docWordTensor);
-      currentTopicWord = newTopicWord.div(newTopicWord.sum(1, true));
-      
-      // Update document-topic distribution
-      const newDocTopic = tf.matMul(docWordTensor, currentTopicWord.transpose());
-      currentDocTopic = newDocTopic.div(newDocTopic.sum(1, true));
+<!-- Embed document data for LDA analysis -->
+<script type="application/json" id="lda-documents-data">
+[
+  {{ $first := true }}
+  {{ range where .Site.Pages "Section" "in" (slice "posts" "docs") }}
+    {{ if not $first }},{{ end }}
+    {
+      "content": {{ printf "%s %s %s" .Title .Description .Plain | jsonify }},
+      "type": {{ .Section | jsonify }},
+      "title": {{ .Title | jsonify }},
+      "url": {{ .RelPermalink | jsonify }},
+      "date": {{ .Date.Format "2006-01-02" | jsonify }}
     }
-    
-    return {
-      topicWordDist: currentTopicWord,
-      docTopicDist: currentDocTopic
-    };
-  });
-}
-
-function extractTopicWords(topicWordDist, vocabulary, numWords) {
-  return topicWordDist.map(topic => {
-    const wordScores = vocabulary.map((word, idx) => ({
-      word: word,
-      weight: topic[idx]
-    }));
-    
-    return wordScores
-      .sort((a, b) => b.weight - a.weight)
-      .slice(0, numWords);
-  });
-}
-
-function updateTopicList(topicWords, docTopics) {
-  const topicList = document.getElementById('topic-list');
-  topicList.innerHTML = topicWords.map((topic, i) => {
-    const docsInTopic = docTopics.filter(d => d.topicIndex === i)
-      .sort((a, b) => b.probability - a.probability)
-      .slice(0, 3); // Show top 3 docs per topic
-
-    const pseudoTitle = generateTopicTitle(topic);
-    
-    return `
-      <div class="topic-item">
-        <div class="topic-title">
-          <span class="topic-number">Topic ${i + 1}</span>
-          <span class="topic-pseudo-title">"${pseudoTitle}"</span>
-        </div>
-        <div class="topic-content">
-          <div class="topic-words">
-            <table class="topic-word-table">
-              <thead>
-                <tr>
-                  <th>Term</th>
-                  <th>Weight</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${topic.map(({word, weight}) => `
-                  <tr>
-                    <td><span class="topic-word">${word}</span></td>
-                    <td><span class="topic-weight">${weight.toFixed(4)}</span></td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-          <div class="topic-documents">
-            <h4>Top Documents:</h4>
-            <ul>
-              ${docsInTopic.map(doc => `
-                <li>
-                  <span class="doc-type ${doc.type}">${doc.type}</span>
-                  ${doc.title}
-                  <small>(${(doc.probability * 100).toFixed(1)}%)</small>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function generateTopicTitle(topic) {
-  // Get top 3 words with highest weights
-  const topWords = topic
-    .slice(0, 3)
-    .map(t => t.word)
-    // Capitalize first letter of each word
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1));
-  
-  // If first word is a noun/verb and second is an adjective/noun, 
-  // use different combinations
-  if (topWords.length >= 2) {
-    if (topWords[0].endsWith('ing') || topWords[0].endsWith('ed')) {
-      // Verb-like first word
-      return `${topWords[0]} ${topWords[1]}`;
-    } else {
-      // Try to make a meaningful phrase from top words
-      return `${topWords[0]} & ${topWords[1]}`;
-    }
-  }
-  
-  return topWords[0] || "Unnamed Topic";
-}
-
-function createTopicDistributionChart(docTopicDist) {
-  // Clear previous chart
-  d3.select('#lda-chart').html('');
-
-  // Set up dimensions
-  const width = document.getElementById('lda-chart').clientWidth;
-  const height = 400;
-  const margin = { top: 40, right: 20, bottom: 40, left: 60 };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-
-  // Create SVG
-  const svg = d3.select('#lda-chart')
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height);
-
-  const g = svg.append('g')
-    .attr('transform', `translate(${margin.left},${margin.top})`);
-
-  // Process data for visualization
-  const topicData = docTopicDist[0].map((_, topicIdx) => ({
-    topic: `Topic ${topicIdx + 1}`,
-    avgProb: d3.mean(docTopicDist, d => d[topicIdx])
-  }));
-
-  // Create scales
-  const xScale = d3.scaleBand()
-    .domain(topicData.map(d => d.topic))
-    .range([0, innerWidth])
-    .padding(0.1);
-
-  const yScale = d3.scaleLinear()
-    .domain([0, d3.max(topicData, d => d.avgProb)])
-    .range([innerHeight, 0]);
-
-  // Create and style bars
-  g.selectAll('rect')
-    .data(topicData)
-    .enter()
-    .append('rect')
-    .attr('x', d => xScale(d.topic))
-    .attr('y', d => yScale(d.avgProb))
-    .attr('width', xScale.bandwidth())
-    .attr('height', d => innerHeight - yScale(d.avgProb))
-    .attr('fill', 'var(--color-primary)')
-    .attr('rx', 4)
-    .attr('ry', 4)
-    .on('mouseover', function(event, d) {
-      d3.select(this)
-        .transition()
-        .duration(200)
-        .attr('fill', 'var(--color-primary-variant)');
-        
-      // Show tooltip
-      const tooltip = d3.select('body')
-        .append('div')
-        .attr('class', 'lda-tooltip')
-        .style('position', 'absolute')
-        .style('background', 'var(--color-surface)')
-        .style('padding', '8px')
-        .style('border-radius', '4px')
-        .style('box-shadow', '0 2px 4px rgba(0,0,0,0.1)')
-        .html(`<strong>${d.topic}</strong><br>Probability: ${(d.avgProb * 100).toFixed(2)}%`);
-
-      const [x, y] = d3.pointer(event, document.body);
-      tooltip
-        .style('left', `${x + 10}px`)
-        .style('top', `${y - 10}px`);
-    })
-    .on('mouseout', function() {
-      d3.select(this)
-        .transition()
-        .duration(200)
-        .attr('fill', 'var(--color-primary)');
-      
-      d3.selectAll('.lda-tooltip').remove();
-    });
-
-  // Add axes
-  const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(d => `${(d * 100).toFixed(0)}%`);
-
-  g.append('g')
-    .attr('transform', `translate(0,${innerHeight})`)
-    .call(xAxis)
-    .selectAll('text')
-    .attr('transform', 'rotate(-45)')
-    .style('text-anchor', 'end');
-
-  g.append('g')
-    .call(yAxis);
-
-  // Add labels
-  svg.append('text')
-    .attr('x', -height/2)
-    .attr('y', margin.left/3)
-    .attr('transform', 'rotate(-90)')
-    .attr('text-anchor', 'middle')
-    .text('Average Probability')
-    .attr('fill', 'var(--text-color-primary)');
-
-  svg.append('text')
-    .attr('x', width/2)
-    .attr('y', height - margin.bottom/3)
-    .attr('text-anchor', 'middle')
-    .text('Topics')
-    .attr('fill', 'var(--text-color-primary)');
-}
+    {{ $first = false }}
+  {{ end }}
+]
 </script>
+
+<!-- Load LDA CSS -->
+{{ with resources.Get "css/lda-analysis.css" }}
+  {{ $ldaCSS := . | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $ldaCSS.RelPermalink }}" integrity="{{ $ldaCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
+
+<!-- Mobile interaction script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleBtn = document.getElementById('toggle-view');
+  const container = document.querySelector('.lda-container');
+  const toggleText = document.querySelector('.toggle-text');
+  const tooltip = document.getElementById('topic-tooltip');
+  let showingTable = false;
+  
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function() {
+      showingTable = !showingTable;
+      if (showingTable) {
+        container.classList.add('show-table');
+        toggleText.textContent = 'Switch to Chart View';
+      } else {
+        container.classList.remove('show-table');
+        toggleText.textContent = 'Switch to Table View';
+      }
+    });
+  }
+  
+  // Global function for LDA script to use
+  window.showTopicTooltip = function(event, topicData) {
+    const rect = event.target.getBoundingClientRect();
+    tooltip.querySelector('.tooltip-title').textContent = `Topic ${topicData.id}: ${topicData.label}`;
+    tooltip.querySelector('.tooltip-keywords').innerHTML = topicData.keywords.map(k => 
+      `<span class="keyword">${k}</span>`).join('');
+    tooltip.querySelector('.tooltip-documents').textContent = 
+      `${topicData.documentCount} documents • ${topicData.percentage}%`;
+    tooltip.querySelector('.tooltip-confidence').textContent = 
+      `Confidence: ${topicData.confidence}%`;
+    
+    tooltip.style.left = rect.left + 'px';
+    tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+    tooltip.classList.add('visible');
+  };
+  
+  window.hideTopicTooltip = function() {
+    tooltip.classList.remove('visible');
+  };
+});
+</script>
+
+<!-- Load external libraries -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!-- Load LDA analysis script -->
+{{ with resources.Get "js/lda-analysis.js" }}
+  {{ $ldaJS := . | js.Build | minify | fingerprint }}
+  <script src="{{ $ldaJS.RelPermalink }}" integrity="{{ $ldaJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}

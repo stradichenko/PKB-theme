@@ -22,7 +22,7 @@
 
 <h4 align="center">
 
-[![X (formerly Twitter) URL](https://img.shields.io/badge/-Share%20on%20X-gray?style=flat&logo=x)](https://x.com/intent/tweet/?text=PKB-theme!%20A%20resource%20to%20easily%20your%20launch%20personal%20blog%20&url=https://github.com/stradichenko/PKB-theme&hashtags=Hugo,pkbtheme,blog)
+[![X (formerly Twitter) URL](https://img.shields.io/badge/-Share%20on%20X-gray?style=flat&logo=x)](https://x.com/intent/tweet/?text=PKB-theme!%20A%20resource%20to%20easily%20launch%20your%20personal%20blog!%20&url=https://github.com/stradichenko/PKB-theme&hashtags=Hugo,pkbtheme,blog)
 </h4>
 
 

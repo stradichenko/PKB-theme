@@ -4,17 +4,17 @@
   "description": "Your site description here",
   "icons": [
     {
-      "src": "/my-favicon/android-chrome-192x192.png",
+      "src": "/PKB-theme/my-favicon/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/my-favicon/android-chrome-512x512.png",
+      "src": "/PKB-theme/my-favicon/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/my-favicon/favicon.ico",
+      "src": "/PKB-theme/my-favicon/favicon.ico",
       "sizes": "48x48",
       "type": "image/x-icon"
     }
