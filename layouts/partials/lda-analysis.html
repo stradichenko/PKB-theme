@@ -7,8 +7,9 @@
         <div class="lda-graph">
           <h3>Topic Distribution</h3>
           <div id="lda-chart" class="chart-responsive">
+            <!-- Remove hardcoded sample bars - they're immediately replaced by JavaScript -->
             <div id="lda-chart-bars" class="lda-chart-bars">
-              <!-- Dynamic bars will be inserted here -->
+              <!-- Chart bars will be populated by JavaScript -->
             </div>
           </div>
         </div>
@@ -22,16 +23,18 @@
               <p>Analyzing content using GPU-accelerated LDA...</p>
             </div>
           </div>
-          <!-- Hover tooltip container -->
-          <div id="topic-tooltip" class="topic-tooltip">
-            <div class="tooltip-content">
-              <h4 class="tooltip-title"></h4>
-              <div class="tooltip-keywords"></div>
-              <div class="tooltip-documents"></div>
-              <div class="tooltip-confidence"></div>
-            </div>
-          </div>
+          <!-- Tooltip container moved outside of table wrapper for better positioning -->
         </div>
+      </div>
+    </div>
+    
+    <!-- Tooltip container - positioned at component level for better accessibility -->
+    <div id="topic-tooltip" class="topic-tooltip">
+      <div class="tooltip-content">
+        <h4 class="tooltip-title"></h4>
+        <div class="tooltip-keywords"></div>
+        <div class="tooltip-documents"></div>
+        <div class="tooltip-confidence"></div>
       </div>
     </div>
     
@@ -68,58 +71,126 @@
 </script>
 
 <!-- Load LDA CSS -->
-{{ with resources.Get "css/lda-analysis.css" }}
+{{ with resources.Get "css/components/lda-analysis.css" }}
   {{ $ldaCSS := . | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $ldaCSS.RelPermalink }}" integrity="{{ $ldaCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ end }}
 
-<!-- Mobile interaction script -->
+<!-- Optimized mobile interaction and tooltip script -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const toggleBtn = document.getElementById('toggle-view');
-  const container = document.querySelector('.lda-container');
-  const toggleText = document.querySelector('.toggle-text');
-  const tooltip = document.getElementById('topic-tooltip');
+(function() {
+  'use strict';
+  
+  // Cache DOM elements and state
+  let toggleBtn, container, toggleText, tooltip;
   let showingTable = false;
   
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', function() {
-      showingTable = !showingTable;
-      if (showingTable) {
-        container.classList.add('show-table');
-        toggleText.textContent = 'Switch to Chart View';
-      } else {
-        container.classList.remove('show-table');
-        toggleText.textContent = 'Switch to Table View';
+  document.addEventListener('DOMContentLoaded', function() {
+    // Cache elements once
+    toggleBtn = document.getElementById('toggle-view');
+    container = document.querySelector('.lda-container');
+    toggleText = document.querySelector('.toggle-text');
+    tooltip = document.getElementById('topic-tooltip');
+    
+    // Initialize mobile toggle functionality
+    if (toggleBtn && container && toggleText) {
+      toggleBtn.addEventListener('click', handleToggleView);
+    }
+    
+    // Initialize tooltip functions for LDA script
+    initializeTooltipFunctions();
+  });
+  
+  function handleToggleView() {
+    showingTable = !showingTable;
+    
+    if (showingTable) {
+      container.classList.add('show-table');
+      toggleText.textContent = 'Switch to Chart View';
+    } else {
+      container.classList.remove('show-table');
+      toggleText.textContent = 'Switch to Table View';
+    }
+  }
+  
+  function initializeTooltipFunctions() {
+    if (!tooltip) return;
+    
+    // Global tooltip functions for LDA script
+    window.showTopicTooltip = function(event, topicData) {
+      if (!tooltip || !topicData) return;
+      
+      // Update tooltip content
+      const titleEl = tooltip.querySelector('.tooltip-title');
+      const keywordsEl = tooltip.querySelector('.tooltip-keywords');
+      const documentsEl = tooltip.querySelector('.tooltip-documents');
+      const confidenceEl = tooltip.querySelector('.tooltip-confidence');
+      
+      if (titleEl) titleEl.textContent = `Topic ${topicData.id}: ${topicData.label}`;
+      
+      if (keywordsEl && topicData.keywords) {
+        keywordsEl.innerHTML = topicData.keywords
+          .map(k => `<span class="keyword">${k}</span>`)
+          .join('');
+      }
+      
+      if (documentsEl) {
+        documentsEl.textContent = `${topicData.documentCount} documents • ${topicData.percentage}%`;
+      }
+      
+      if (confidenceEl) {
+        confidenceEl.textContent = `Confidence: ${topicData.confidence}%`;
+      }
+      
+      // Position tooltip
+      const rect = event.target.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      
+      // Calculate position with viewport bounds checking
+      let left = rect.left;
+      let top = rect.top - tooltipRect.height - 10;
+      
+      // Adjust if tooltip would go off-screen
+      if (left + tooltipRect.width > window.innerWidth) {
+        left = window.innerWidth - tooltipRect.width - 10;
+      }
+      if (left < 10) left = 10;
+      
+      if (top < 10) {
+        top = rect.bottom + 10;
+      }
+      
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+      tooltip.classList.add('visible');
+    };
+    
+    window.hideTopicTooltip = function() {
+      if (tooltip) {
+        tooltip.classList.remove('visible');
+      }
+    };
+    
+    // Hide tooltip when clicking elsewhere
+    document.addEventListener('click', function(event) {
+      if (tooltip && !event.target.closest('.topic-bar-container')) {
+        window.hideTopicTooltip();
       }
     });
   }
-  
-  // Global function for LDA script to use
-  window.showTopicTooltip = function(event, topicData) {
-    const rect = event.target.getBoundingClientRect();
-    tooltip.querySelector('.tooltip-title').textContent = `Topic ${topicData.id}: ${topicData.label}`;
-    tooltip.querySelector('.tooltip-keywords').innerHTML = topicData.keywords.map(k => 
-      `<span class="keyword">${k}</span>`).join('');
-    tooltip.querySelector('.tooltip-documents').textContent = 
-      `${topicData.documentCount} documents • ${topicData.percentage}%`;
-    tooltip.querySelector('.tooltip-confidence').textContent = 
-      `Confidence: ${topicData.confidence}%`;
-    
-    tooltip.style.left = rect.left + 'px';
-    tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
-    tooltip.classList.add('visible');
-  };
-  
-  window.hideTopicTooltip = function() {
-    tooltip.classList.remove('visible');
-  };
-});
+})();
 </script>
 
-<!-- Load external libraries -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
-<script src="https://d3js.org/d3.v7.min.js"></script>
+<!-- Load external libraries with error handling -->
+<script>
+// Check if libraries are already loaded to avoid duplicates
+if (typeof tf === 'undefined') {
+  document.write('<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"><\/script>');
+}
+if (typeof d3 === 'undefined') {
+  document.write('<script src="https://d3js.org/d3.v7.min.js"><\/script>');
+}
+</script>
 
 <!-- Load LDA analysis script -->
 {{ with resources.Get "js/lda-analysis.js" }}
