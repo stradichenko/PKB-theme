@@ -3,6 +3,7 @@
 @import 'global/reset.css';
 
 /* Component imports */
+@import 'components/dropdown.css';
 @import 'components/knowledge-graph.css';
 @import 'components/toc.css';
 @import 'components/table.css';

@@ -1,5 +1,5 @@
 {{- /*
-Renders a menu for the given menu ID.
+Renders a menu for the given menu ID with dropdown support.
 
 @context {page} page The current page.
 @context {string} menuID The menu ID.
@@ -21,31 +21,54 @@ Renders a menu for the given menu ID.
   {{- $level := .level }}
   {{- range .menuEntries }}
     {{- $attrs := dict "href" .URL }}
+    {{- $liClass := "" }}
+    {{- $linkClass := "" }}
+    
     {{- if $page.IsMenuCurrent .Menu . }}
+      {{- $linkClass = "active" }}
       {{- $attrs = merge $attrs (dict "class" "active" "aria-current" "page") }}
     {{- else if $page.HasMenuCurrent .Menu .}}
+      {{- $linkClass = "ancestor" }}
       {{- $attrs = merge $attrs (dict "class" "ancestor" "aria-current" "true") }}
     {{- end }}
+    
+    {{- if .Children }}
+      {{- $liClass = "dropdown" }}
+    {{- end }}
+    
     {{- $name := .Name }}
     {{- with .Identifier }}
       {{- with T . }}
         {{- $name = . }}
       {{- end }}
     {{- end }}
-    <li role="none">
-      <a
-        role="menuitem"
-        {{- if .Children }} aria-haspopup="true" aria-expanded="false"{{- end }}
-        {{- range $k, $v := $attrs }}
-          {{- with $v }}
-            {{- printf " %s=%q" $k $v | safeHTMLAttr }}
-          {{- end }}
-        {{- end -}}
-      >{{ $name }}</a>
-      {{- with .Children }}
-        <ul role="menu" class="submenu level-{{ add $level 1 }}">
-          {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" . "level" (add $level 1)) }}
+    
+    <li role="none"{{ with $liClass }} class="{{ . }}"{{ end }}>
+      {{- if .Children }}
+        <button
+          role="menuitem"
+          class="dropdown-toggle {{ $linkClass }}"
+          aria-haspopup="true"
+          aria-expanded="false"
+          data-dropdown-toggle
+        >
+          {{ $name }}
+          <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+          </svg>
+        </button>
+        <ul role="menu" class="dropdown-menu submenu level-{{ add $level 1 }}">
+          {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .Children "level" (add $level 1)) }}
         </ul>
+      {{- else }}
+        <a
+          role="menuitem"
+          {{- range $k, $v := $attrs }}
+            {{- with $v }}
+              {{- printf " %s=%q" $k $v | safeHTMLAttr }}
+            {{- end }}
+          {{- end -}}
+        >{{ $name }}</a>
       {{- end }}
     </li>
   {{- end }}

@@ -15,9 +15,12 @@
 
     <h1 class="site-title"><a href="{{ .Site.Home.RelPermalink }}">{{ site.Title }}</a></h1>
     
-    <nav class="main-nav" id="main-nav">
-      {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
-    </nav>
+    <!-- Wrap navigation in a relative container for proper dropdown positioning -->
+    <div class="nav-wrapper" style="position: relative;">
+      <nav class="main-nav" id="main-nav">
+        {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+      </nav>
+    </div>
   </div>
   
   <!-- Right section: Controls and search (search is rightmost) -->
@@ -67,9 +70,19 @@
   </div>
 </div>
 
+<!-- Add dropdown CSS -->
+{{ $dropdownCSS := resources.Get "css/components/dropdown.css" }}
+{{ if $dropdownCSS }}
+  {{ $dropdownCSS = $dropdownCSS | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $dropdownCSS.RelPermalink }}" integrity="{{ $dropdownCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
+
 <!-- Add share modal CSS -->
-{{ $shareModalCSS := resources.Get "css/share-modal.css" | minify | fingerprint }}
-<link rel="stylesheet" href="{{ $shareModalCSS.RelPermalink }}" integrity="{{ $shareModalCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ $shareModalCSS := resources.Get "css/share-modal.css" }}
+{{ if $shareModalCSS }}
+  {{ $shareModalCSS = $shareModalCSS | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $shareModalCSS.RelPermalink }}" integrity="{{ $shareModalCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
 
 <!-- Share Link Modal - simplified markup -->
 <div id="share-modal" class="share-modal">
@@ -100,13 +113,26 @@
   </div>
 </div>
 
+<!-- Add dropdown.js -->
+{{ $dropdownJS := resources.Get "js/dropdown.js" }}
+{{ if $dropdownJS }}
+  {{ $dropdownJS = $dropdownJS | minify | fingerprint }}
+  <script src="{{ $dropdownJS.RelPermalink }}" integrity="{{ $dropdownJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}
+
 <!-- Add menu.js before the closing body tag -->
-{{ $menuJS := resources.Get "js/menu.js" | minify | fingerprint }}
-<script src="{{ $menuJS.RelPermalink }}" integrity="{{ $menuJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ $menuJS := resources.Get "js/menu.js" }}
+{{ if $menuJS }}
+  {{ $menuJS = $menuJS | minify | fingerprint }}
+  <script src="{{ $menuJS.RelPermalink }}" integrity="{{ $menuJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}
 
 <!-- Use external theme toggle script instead of inline -->
-{{ $themeToggleJS := resources.Get "js/theme-toggle.js" | minify | fingerprint }}
-<script src="{{ $themeToggleJS.RelPermalink }}" integrity="{{ $themeToggleJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ $themeToggleJS := resources.Get "js/theme-toggle.js" }}
+{{ if $themeToggleJS }}
+  {{ $themeToggleJS = $themeToggleJS | minify | fingerprint }}
+  <script src="{{ $themeToggleJS.RelPermalink }}" integrity="{{ $themeToggleJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}
 
 <!-- Share link script -->
 <script>

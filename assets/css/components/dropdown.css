@@ -1,0 +1,199 @@
+/* Dropdown Menu Component Styles */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border-radius: var(--dropdown-border-radius);
+  transition: background-color 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.dropdown-toggle:hover {
+  background-color: var(--header-nav-link-hover-bg);
+}
+
+.dropdown-toggle .dropdown-arrow {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown.open .dropdown-toggle .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--dropdown-bg);
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-border-radius);
+  box-shadow: var(--dropdown-shadow);
+  min-width: var(--dropdown-min-width);
+  max-height: var(--dropdown-max-height);
+  overflow-y: auto;
+  z-index: var(--dropdown-z-index);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+/* Special z-index for header dropdowns */
+.site-header .dropdown-menu,
+.header-container .dropdown-menu {
+  z-index: var(--z-index-header-dropdown);
+}
+
+.dropdown.open .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: var(--dropdown-item-padding);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--dropdown-item-hover-bg);
+  color: var(--dropdown-item-hover-color);
+  outline: none;
+}
+
+.dropdown-item.active {
+  background-color: var(--color-primary);
+  color: var(--text-color-inverse);
+}
+
+/* Nested dropdown support */
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-left: 2px;
+}
+
+.dropdown-submenu .dropdown-arrow {
+  margin-left: auto;
+  transform: rotate(-90deg);
+}
+
+.dropdown-submenu.open .dropdown-arrow {
+  transform: rotate(90deg);
+}
+
+/* Header-specific dropdown positioning */
+.header-container .dropdown {
+  position: static; /* Allow dropdown to escape header bounds */
+}
+
+.header-container .dropdown-menu {
+  position: absolute;
+  top: calc(100% + 5px); /* Add small gap below header */
+  z-index: var(--z-index-header-dropdown);
+}
+
+/* Ensure header dropdowns appear above page content */
+.header-left .dropdown-menu,
+.header-right .dropdown-menu {
+  z-index: var(--z-index-header-dropdown);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    max-height: none;
+    z-index: auto;
+  }
+  
+  .dropdown.open .dropdown-menu {
+    display: block;
+  }
+  
+  .dropdown-menu:not(.open) {
+    display: none;
+  }
+  
+  /* Mobile header dropdowns */
+  .header-container .dropdown-menu {
+    position: static;
+    z-index: auto;
+  }
+}
+
+/* Accessibility improvements */
+.dropdown-toggle[aria-expanded="true"] {
+  background-color: var(--dropdown-item-hover-bg);
+  color: var(--dropdown-item-hover-color);
+}
+
+.dropdown-item:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+/* Animation for mobile menu integration */
+.mobile-dropdown .dropdown-menu {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fix for page header overlapping dropdowns */
+.page-header {
+  z-index: calc(var(--z-index-header) - 1); /* Lower than header */
+}
+
+/* Ensure dropdown menus are always above page content */
+.dropdown-menu {
+  isolation: isolate; /* Create new stacking context */
+}
