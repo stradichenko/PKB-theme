@@ -74,33 +74,13 @@
   overflow-y: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: var(--color-primary) rgba(0, 0, 0, 0.1); /* Firefox */
   /* Remove top and bottom margins */
   margin-top: 0;
   margin-bottom: 0;
+  /* Scrollbar styling now handled globally - no need for specific styles */
 }
 
-/* Webkit scrollbar styling */
-.table-container::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.table-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  background-color: var(--color-primary);
-  border-radius: 4px;
-  opacity: 0.7;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-primary-variant);
-}
+/* Remove redundant scrollbar styling - now handled globally */
 
 #zipf-data {
   width: 100%;
@@ -416,18 +396,6 @@
 
 [data-theme="dark"] .zipf-save-option:hover {
   background-color: rgba(var(--dark-primary-rgb), 0.2);
-}
-
-[data-theme="dark"] .table-container::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-[data-theme="dark"] .zipf-explanation-container {
-  background-color: rgba(255, 255, 255, 0.03);
-}
-
-[data-theme="dark"] .zipf-corpus-explanation {
-  background-color: rgba(var(--dark-primary-rgb), 0.1);
 }
 
 /* Responsive adjustments */

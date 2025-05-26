@@ -10,6 +10,10 @@
         <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous"></script>
     {{ end }}
     
+    <!-- Load scrollbar fade functionality -->
+    {{ $scrollbarFadeJS := resources.Get "js/scrollbar-fade.js" | minify }}
+    <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
+
     <!-- Include analytics scripts -->
     {{ partial "analytics.html" . }}
 </head>

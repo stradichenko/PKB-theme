@@ -555,3 +555,16 @@
 .lda-table-wrapper {
   overflow: hidden; /* Prevent content from breaking layout */
 }
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  max-height: 200px; /* Set a maximum height */
+  overflow-y: auto; /* Make it scrollable */
+  padding-right: var(--spacing-xs); /* Add padding for scrollbar */
+}
+
+.filter-options.hidden {
+  display: none;
+}

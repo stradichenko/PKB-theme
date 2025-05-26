@@ -108,6 +108,16 @@
   --border-radius: 6px;
   --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
   
+  /* Scrollbar styling variables */
+  --scrollbar-width: 8px; /* Thinner scrollbar */
+  --scrollbar-height: 8px;
+  --scrollbar-track-bg: transparent; /* Transparent track */
+  --scrollbar-thumb-bg: var(--color-primary);
+  --scrollbar-thumb-hover-bg: var(--color-primary-variant);
+  --scrollbar-border-radius: 4px; /* Smaller radius for thinner scrollbar */
+  --scrollbar-thin-width: 6px; /* Even thinner variant */
+  --scrollbar-thin-height: 6px;
+  
   /* Layout - Header - consolidated with core colors */
   --header-height: 60px;
   --header-bg-color: #2c3e50; /* Consistent dark header in both themes */
@@ -382,4 +392,55 @@ a:hover, a:focus {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ------------------------------------------------------------------------- */
+/* SCROLLBAR STYLES                                                          */
+/* ------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+  position: absolute; /* Force overlay positioning globally */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Always transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  border-radius: var(--scrollbar-border-radius);
+  opacity: 0.2; /* Lower default opacity */
+  transition: opacity 0.15s ease; /* Faster transition */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-bg);
+  opacity: 0.8; /* More visible on hover */
+}
+
+::-webkit-scrollbar-button {
+  display: none; /* Remove arrows globally */
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent; /* Transparent corner */
+}
+
+/* Dark theme scrollbar styles */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: transparent; /* Keep transparent in dark theme */
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  opacity: 0.2; /* Lower default opacity */
+  transition: opacity 0.15s ease; /* Faster transition */
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-bg);
+  opacity: 0.8; /* More visible on hover */
 }
