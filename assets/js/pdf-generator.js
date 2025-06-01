@@ -18,9 +18,9 @@
       content: '.post-content', 
       metadata: '.page-metadata'
     },
-    print: {
-      windowFeatures: 'width=800,height=600',
-      loadTimeout: 2000
+    display: {
+      windowFeatures: 'width=1024,height=768,scrollbars=yes,resizable=yes',
+      loadTimeout: 1000
     }
   };
 
@@ -167,43 +167,77 @@
       const printContent = this.preparePrintContent();
       
       if (DEBUG) {
-        console.log('PDF generator: opening print window');
+        console.log('PDF generator: opening display window');
         console.log('PDF generator: content length:', printContent.length);
       }
       
-      // Create print window - this should work on localhost
-      const printWindow = window.open('', '_blank', CONFIG.print.windowFeatures);
+      // Create display window - opens in new tab
+      const displayWindow = window.open('', '_blank', CONFIG.display.windowFeatures);
       
-      if (!printWindow) {
+      if (!displayWindow) {
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const errorMsg = isLocalhost 
-          ? 'Could not open print window. This might be a browser popup blocker. Try allowing popups for localhost.'
-          : 'Could not open print window. Please check popup blockers.';
+          ? 'Could not open display window. This might be a browser popup blocker. Try allowing popups for localhost.'
+          : 'Could not open display window. Please check popup blockers.';
         throw new Error(errorMsg);
       }
 
-      printWindow.document.write(printContent);
-      printWindow.document.close();
+      displayWindow.document.write(printContent);
+      displayWindow.document.close();
       
-      // Wait for content to load, then print
-      printWindow.onload = () => {
-        if (DEBUG) console.log('PDF generator: print window loaded, triggering print');
+      // Wait for content to load, then focus window
+      displayWindow.onload = () => {
+        if (DEBUG) console.log('PDF generator: display window loaded');
         
         setTimeout(() => {
-          printWindow.print();
+          displayWindow.focus();
           
-          // Optional: close window after printing (commented out for user control)
-          // printWindow.onafterprint = () => printWindow.close();
-        }, 500);
+          // Add print button to the document for user control
+          this.addPrintControls(displayWindow);
+        }, 300);
       };
 
       // Fallback timeout in case onload doesn't fire
       setTimeout(() => {
-        if (printWindow && !printWindow.closed) {
-          if (DEBUG) console.log('PDF generator: fallback timeout triggered');
-          printWindow.print();
+        if (displayWindow && !displayWindow.closed) {
+          if (DEBUG) console.log('PDF generator: fallback focus triggered');
+          displayWindow.focus();
+          this.addPrintControls(displayWindow);
         }
-      }, CONFIG.print.loadTimeout);
+      }, CONFIG.display.loadTimeout);
+    }
+
+    addPrintControls(targetWindow) {
+      if (!targetWindow || targetWindow.closed) return;
+      
+      try {
+        const doc = targetWindow.document;
+        const controlsContainer = doc.createElement('div');
+        controlsContainer.innerHTML = `
+          <div class="pdf-controls">
+            <button onclick="window.print()" class="print-btn">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"/>
+                <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 8.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
+              </svg>
+              Print / Save as PDF
+            </button>
+            <button onclick="window.close()" class="close-btn">Close</button>
+          </div>
+        `;
+        
+        // Insert controls at the top of the document
+        const firstChild = doc.body.firstChild;
+        if (firstChild) {
+          doc.body.insertBefore(controlsContainer, firstChild);
+        } else {
+          doc.body.appendChild(controlsContainer);
+        }
+        
+        if (DEBUG) console.log('PDF generator: print controls added');
+      } catch (error) {
+        console.warn('Could not add print controls:', error);
+      }
     }
 
     preparePrintContent() {
@@ -308,6 +342,51 @@
           padding: 0;
           max-width: none;
         }
+
+        /* PDF Controls Bar */
+        .pdf-controls {
+          position: sticky;
+          top: 0;
+          background: #f8f9fa;
+          border-bottom: 1px solid #ddd;
+          padding: 1rem;
+          text-align: center;
+          z-index: 1000;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .pdf-controls button {
+          margin: 0 0.5rem;
+          padding: 0.5rem 1rem;
+          border: 1px solid #007bff;
+          background: #007bff;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        
+        .pdf-controls button:hover {
+          background: #0056b3;
+        }
+        
+        .pdf-controls .close-btn {
+          background: #6c757d;
+          border-color: #6c757d;
+        }
+        
+        .pdf-controls .close-btn:hover {
+          background: #545b62;
+        }
+
+        @media print {
+          .pdf-controls {
+            display: none !important;
+          }
+        }
         
         .pdf-header {
           border-bottom: 2px solid #4a90e2;
@@ -344,6 +423,9 @@
         .pdf-content {
           font-size: 12px;
           line-height: 1.7;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 0 2rem;
         }
         
         /* Typography */
@@ -458,20 +540,19 @@
           color: #666;
         }
         
-        /* Hide elements that shouldn't appear in print */
+        /* Hide elements that shouldn't appear in display */
         .pdf-button,
         .post-actions,
         .toc-sidebar,
         .sidenote-section,
-        button,
         .tooltip,
-        nav,
+        nav:not(.pdf-nav),
         header:not(.pdf-header),
         footer:not(.pdf-footer) {
           display: none !important;
         }
         
-        /* Page breaks */
+        /* Page breaks for print */
         h1, h2, h3, h4, h5, h6 {
           page-break-after: avoid;
         }
