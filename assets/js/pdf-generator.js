@@ -13,7 +13,7 @@
   
   const CONFIG = {
     selectors: {
-      button: 'generate-pdf',
+      button: 'pdf-generate-btn', // Match existing ID
       title: '.post-title',
       content: '.post-content', 
       metadata: '.page-metadata'
