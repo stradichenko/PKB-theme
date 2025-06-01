@@ -72,8 +72,7 @@
 /* -------------- Responsive -------------- */
 @media (max-width: var(--breakpoint-sm)) {
   .pdf-button span {
-    /* Show "View" instead of hiding completely */
-    content: "View";
+    display: none;
   }
   
   .pdf-button {

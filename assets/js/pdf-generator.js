@@ -172,7 +172,7 @@
       }
       
       // Create display window - opens in new tab
-      const displayWindow = window.open('', '_blank', CONFIG.display.windowFeatures);
+      const displayWindow = window.open('', '_blank');
       
       if (!displayWindow) {
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -188,13 +188,7 @@
       // Wait for content to load, then focus window
       displayWindow.onload = () => {
         if (DEBUG) console.log('PDF generator: display window loaded');
-        
-        setTimeout(() => {
-          displayWindow.focus();
-          
-          // Add print button to the document for user control
-          this.addPrintControls(displayWindow);
-        }, 300);
+        displayWindow.focus();
       };
 
       // Fallback timeout in case onload doesn't fire
@@ -202,42 +196,8 @@
         if (displayWindow && !displayWindow.closed) {
           if (DEBUG) console.log('PDF generator: fallback focus triggered');
           displayWindow.focus();
-          this.addPrintControls(displayWindow);
         }
       }, CONFIG.display.loadTimeout);
-    }
-
-    addPrintControls(targetWindow) {
-      if (!targetWindow || targetWindow.closed) return;
-      
-      try {
-        const doc = targetWindow.document;
-        const controlsContainer = doc.createElement('div');
-        controlsContainer.innerHTML = `
-          <div class="pdf-controls">
-            <button onclick="window.print()" class="print-btn">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"/>
-                <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 8.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
-              </svg>
-              Print / Save as PDF
-            </button>
-            <button onclick="window.close()" class="close-btn">Close</button>
-          </div>
-        `;
-        
-        // Insert controls at the top of the document
-        const firstChild = doc.body.firstChild;
-        if (firstChild) {
-          doc.body.insertBefore(controlsContainer, firstChild);
-        } else {
-          doc.body.appendChild(controlsContainer);
-        }
-        
-        if (DEBUG) console.log('PDF generator: print controls added');
-      } catch (error) {
-        console.warn('Could not add print controls:', error);
-      }
     }
 
     preparePrintContent() {
@@ -339,53 +299,8 @@
           color: #000;
           background: #fff;
           margin: 0;
-          padding: 0;
-          max-width: none;
-        }
-
-        /* PDF Controls Bar */
-        .pdf-controls {
-          position: sticky;
-          top: 0;
-          background: #f8f9fa;
-          border-bottom: 1px solid #ddd;
           padding: 1rem;
-          text-align: center;
-          z-index: 1000;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .pdf-controls button {
-          margin: 0 0.5rem;
-          padding: 0.5rem 1rem;
-          border: 1px solid #007bff;
-          background: #007bff;
-          color: white;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 14px;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        
-        .pdf-controls button:hover {
-          background: #0056b3;
-        }
-        
-        .pdf-controls .close-btn {
-          background: #6c757d;
-          border-color: #6c757d;
-        }
-        
-        .pdf-controls .close-btn:hover {
-          background: #545b62;
-        }
-
-        @media print {
-          .pdf-controls {
-            display: none !important;
-          }
+          max-width: none;
         }
         
         .pdf-header {
@@ -421,11 +336,10 @@
         }
         
         .pdf-content {
-          font-size: 12px;
+          font-size: 14px;
           line-height: 1.7;
           max-width: 800px;
           margin: 0 auto;
-          padding: 0 2rem;
         }
         
         /* Typography */
@@ -466,10 +380,9 @@
           border: 1px solid #e0e0e0;
           border-left: 4px solid #4a90e2;
           padding: 1rem;
-          font-size: 10px;
+          font-size: 12px;
           overflow: visible;
           white-space: pre-wrap;
-          page-break-inside: avoid;
           margin: 1rem 0;
           font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
         }
@@ -477,7 +390,7 @@
         .pdf-content code {
           background: #f0f0f0;
           padding: 0.2rem 0.4rem;
-          font-size: 11px;
+          font-size: 13px;
           border-radius: 3px;
           font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
         }
@@ -486,8 +399,7 @@
         .pdf-content table {
           border-collapse: collapse;
           width: 100%;
-          font-size: 10px;
-          page-break-inside: avoid;
+          font-size: 12px;
           margin: 1rem 0;
         }
         
@@ -523,7 +435,6 @@
         .pdf-content img {
           max-width: 100%;
           height: auto;
-          page-break-inside: avoid;
           display: block;
           margin: 1rem auto;
         }
@@ -536,7 +447,7 @@
         
         .pdf-content a::after {
           content: " (" attr(href) ")";
-          font-size: 9px;
+          font-size: 11px;
           color: #666;
         }
         
@@ -552,16 +463,11 @@
           display: none !important;
         }
         
-        /* Page breaks for print */
-        h1, h2, h3, h4, h5, h6 {
-          page-break-after: avoid;
-        }
-        
         .pdf-footer {
           margin-top: 3rem;
           padding-top: 1rem;
           border-top: 1px solid #ddd;
-          font-size: 10px;
+          font-size: 12px;
           color: #666;
           text-align: center;
         }
