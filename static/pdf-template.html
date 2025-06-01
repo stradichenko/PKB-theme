@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{TITLE}}</title>
+  <style>
+    /* Custom PDF Template Styles */
+    @page {
+      margin: 2cm;
+      size: A4;
+      @top-center {
+        content: "{{TITLE}}";
+        font-size: 10px;
+        color: #666;
+      }
+      @bottom-center {
+        content: "Page " counter(page) " of " counter(pages);
+        font-size: 10px;
+        color: #666;
+      }
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      color: #000;
+      background: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .pdf-header {
+      border-bottom: 2px solid #4a90e2;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+    }
+    
+    .pdf-header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 28px;
+      font-weight: bold;
+      color: #1a2633;
+    }
+    
+    .page-metadata {
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .page-metadata svg {
+      display: none;
+    }
+    
+    .pdf-content {
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    
+    /* Typography */
+    .pdf-content h1 { 
+      font-size: 22px; 
+      margin: 2rem 0 1rem 0; 
+      color: #1a2633;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+    
+    .pdf-content h2 { 
+      font-size: 20px; 
+      margin: 1.5rem 0 0.75rem 0; 
+      color: #1a2633;
+    }
+    
+    .pdf-content h3 { 
+      font-size: 18px; 
+      margin: 1.25rem 0 0.5rem 0; 
+      color: #1a2633;
+    }
+    
+    .pdf-content h4 { 
+      font-size: 16px; 
+      margin: 1rem 0 0.5rem 0; 
+      color: #1a2633;
+    }
+    
+    .pdf-content p {
+      margin: 0.75rem 0;
+      text-align: justify;
+    }
+    
+    /* Code blocks */
+    .pdf-content pre {
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      border-left: 4px solid #4a90e2;
+      padding: 1rem;
+      font-size: 10px;
+      overflow: visible;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+      margin: 1rem 0;
+    }
+    
+    .pdf-content code {
+      background: #f0f0f0;
+      padding: 0.2rem 0.4rem;
+      font-size: 11px;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    }
+    
+    /* Blockquotes */
+    .pdf-content blockquote {
+      border-left: 4px solid #4a90e2;
+      margin: 1.5rem 0;
+      padding-left: 1.5rem;
+      font-style: italic;
+      color: #555;
+      background: #f9f9f9;
+      padding: 1rem 1rem 1rem 1.5rem;
+    }
+    
+    /* Tables */
+    .pdf-content table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 10px;
+      page-break-inside: avoid;
+      margin: 1rem 0;
+    }
+    
+    .pdf-content th,
+    .pdf-content td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    
+    .pdf-content th {
+      background: #f5f5f5;
+      font-weight: bold;
+      color: #1a2633;
+    }
+    
+    .pdf-content tr:nth-child(even) {
+      background: #fafafa;
+    }
+    
+    /* Lists */
+    .pdf-content ul,
+    .pdf-content ol {
+      margin: 0.75rem 0;
+      padding-left: 2rem;
+    }
+    
+    .pdf-content li {
+      margin: 0.25rem 0;
+    }
+    
+    /* Images */
+    .pdf-content img {
+      max-width: 100%;
+      height: auto;
+      page-break-inside: avoid;
+      display: block;
+      margin: 1rem auto;
+      border: 1px solid #eee;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* Links */
+    .pdf-content a {
+      color: #4a90e2;
+      text-decoration: none;
+    }
+    
+    .pdf-content a:after {
+      content: " (" attr(href) ")";
+      font-size: 9px;
+      color: #666;
+    }
+    
+    /* Hide elements */
+    .pdf-button,
+    .toc-sidebar,
+    .sidenote-section,
+    button,
+    .tooltip,
+    .post-actions {
+      display: none !important;
+    }
+    
+    /* Page breaks */
+    .page-break {
+      page-break-before: always;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+    }
+    
+    /* Footer with page numbers */
+    @page {
+      @bottom-right {
+        content: "Generated from PKB Theme";
+        font-size: 8px;
+        color: #999;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="pdf-header">
+    <h1>{{TITLE}}</h1>
+    <div class="page-metadata">
+      {{METADATA}}
+    </div>
+  </header>
+  
+  <main class="pdf-content">
+    {{CONTENT}}
+  </main>
+</body>
+</html>

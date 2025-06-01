@@ -16,8 +16,16 @@
   <article class="main-content">
     <header class="post-header">
       <div class="post-header-container">
-        <h1 class="post-title">{{ .Title }}</h1>
+        <div class="post-title-wrapper">
+          <h1 class="post-title">{{ .Title }}</h1>
+          <div class="post-actions">
+            {{/* PDF button moved to metadata section */}}
+          </div>
+        </div>
         <div class="page-metadata">
+          <!-- PDF Button - positioned first in metadata -->
+          {{ partial "pdf-button.html" . }}
+          
           <!-- Author -->
           {{ with .Params.author }}
           <div class="page-author">
@@ -145,11 +153,25 @@
 {{ $bibtexJS := resources.Get "js/bibtex.js" }}
 {{ $scripts = $scripts | append $bibtexJS }}
 
+<!-- Add PDF button resources -->
+{{ with resources.Get "css/components/pdf-button.css" }}
+  {{ $styles = $styles | append . }}
+{{ end }}
+
+{{ $pdfJS := resources.Get "js/pdf-generator.js" }}
+{{ if $pdfJS }}
+  {{ $scripts = $scripts | append $pdfJS }}
+{{ else }}
+  {{ warnf "PDF generator script not found: js/pdf-generator.js" }}
+{{ end }}
+
 <!-- Output the combined and minified resources -->
 <!-- Scripts -->
 {{ if gt (len $scripts) 0 }}
   {{ $combinedScripts := $scripts | resources.Concat "js/single-page.js" | minify | fingerprint }}
   <script src="{{ $combinedScripts.RelPermalink }}" integrity="{{ $combinedScripts.Data.Integrity }}" crossorigin="anonymous" defer></script>
+{{ else }}
+  {{ warnf "No scripts to bundle on single page" }}
 {{ end }}
 
 <!-- Styles -->

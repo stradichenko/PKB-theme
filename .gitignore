@@ -56,3 +56,6 @@ exampleSite/.hugo_build.lock
 # Cache directories
 .cache/
 tmp/
+
+# instructions for developers
+.github/instructions/

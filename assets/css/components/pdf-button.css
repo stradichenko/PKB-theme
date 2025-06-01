@@ -1,0 +1,95 @@
+/* -------------- PDF Button Component -------------- */
+.page-pdf {
+  display: inline-flex;
+  align-items: center;
+  margin-right: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.pdf-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pdf-button:hover {
+  background-color: var(--color-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.pdf-button:active {
+  transform: translateY(0);
+}
+
+.pdf-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pdf-button.loading {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+.pdf-button svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* -------------- Integration with Metadata -------------- */
+.page-metadata .page-pdf {
+  /* Match styling of other metadata items */
+  font-size: var(--font-size-small);
+  color: var(--text-color-secondary);
+}
+
+.page-metadata .pdf-button {
+  /* Smaller size to match metadata context */
+  padding: calc(var(--spacing-xs) / 2) var(--spacing-xs);
+  font-size: var(--font-size-small);
+}
+
+/* -------------- Responsive -------------- */
+@media (max-width: var(--breakpoint-sm)) {
+  .pdf-button span {
+    display: none;
+  }
+  
+  .pdf-button {
+    padding: var(--spacing-xs);
+  }
+  
+  .page-pdf {
+    margin-right: var(--spacing-sm);
+  }
+}
+
+/* -------------- Dark Theme -------------- */
+[data-theme="dark"] .pdf-button {
+  background-color: var(--color-primary);
+  color: var(--text-color-primary);
+}
+
+[data-theme="dark"] .pdf-button:hover {
+  background-color: var(--color-secondary);
+}
