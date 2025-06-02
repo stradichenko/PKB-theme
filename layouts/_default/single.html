@@ -165,6 +165,11 @@
   {{ warnf "PDF generator script not found: js/pdf-generator.js" }}
 {{ end }}
 
+<!-- Add PDF print styles to the styles bundle -->
+{{ with resources.Get "css/components/pdf-print.css" }}
+  {{ $styles = $styles | append . }}
+{{ end }}
+
 <!-- Output the combined and minified resources -->
 <!-- Scripts -->
 {{ if gt (len $scripts) 0 }}

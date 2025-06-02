@@ -1,0 +1,340 @@
+/* -------------- PDF Print Styles -------------- */
+/* SIMPLIFIED FOR BROWSER PRINT COMPATIBILITY */
+@media print {
+  @page {
+    margin: 2cm;
+    size: A4;
+    @top-center {
+      content: string(doc-title);
+      font-size: 10px;
+      color: #666;
+    }
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 10px;
+      color: #666;
+    }
+    @bottom-right {
+      content: "Generated from PKB Theme";
+      font-size: 8px;
+      color: #999;
+    }
+  }
+  
+  /* Force print color adjustment */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* ============================================ */
+  /* NUCLEAR HIDING - SIMPLE SELECTORS ONLY     */
+  /* ============================================ */
+  
+  /* Hide all non-content elements */
+  header,
+  footer,
+  nav,
+  aside,
+  .header-container,
+  .header-left,
+  .header-right,
+  .header-controls,
+  .nav-wrapper,
+  .main-nav,
+  .burger-button,
+  .logo-link,
+  .site-logo,
+  .site-title,
+  .theme-toggle,
+  .share-link-btn,
+  .navigation,
+  .breadcrumb,
+  .pagination,
+  .footer-social-links,
+  .footer-info,
+  .social-link,
+  .footer-environment,
+  .share-modal,
+  .qrcode-container,
+  .share-url-container,
+  .copy-url-btn,
+  .toc-sidebar,
+  .toc-wrapper,
+  .toc-container,
+  .toc-toggle,
+  .sidenote-section,
+  .sidebar,
+  button,
+  .button,
+  .btn,
+  input,
+  textarea,
+  select,
+  .form-control,
+  .tooltip,
+  .popover,
+  .modal,
+  .search-box,
+  .search-form,
+  .header-button,
+  .page-pdf,
+  .pdf-button,
+  svg {
+    display: none !important;
+  }
+  
+  /* ============================================ */
+  /* DOCUMENT STRUCTURE - HARDCODED VALUES ONLY */
+  /* ============================================ */
+  
+  html, 
+  body {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.6 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* Layout container */
+  .layout-container {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  
+  /* Main content */
+  .main-content,
+  article {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Post header */
+  .post-header,
+  .post-header-container,
+  .post-title-wrapper {
+    display: block !important;
+    background: white !important;
+    margin: 0 0 24px 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Post title */
+  .post-title,
+  h1.post-title {
+    string-set: doc-title content();
+    display: block !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    color: #1a2633 !important;
+    margin: 0 0 24px 0 !important;
+    padding: 0 0 12px 0 !important;
+    text-align: center !important;
+    border-bottom: 2px solid #4a90e2 !important;
+    page-break-after: avoid !important;
+    background: white !important;
+  }
+  
+  /* Page metadata */
+  .page-metadata {
+    display: block !important;
+    width: 100% !important;
+    font-size: 11px !important;
+    color: #666 !important;
+    margin: 0 0 32px 0 !important;
+    padding: 0 0 16px 0 !important;
+    text-align: center !important;
+    border-bottom: 1px solid #ddd !important;
+    background: white !important;
+  }
+  
+  /* Metadata items */
+  .page-metadata > * {
+    display: inline !important;
+    margin: 0 8px 0 0 !important;
+    padding: 0 !important;
+    color: #666 !important;
+    background: white !important;
+  }
+  
+  .page-metadata span,
+  .page-metadata time,
+  .page-metadata a {
+    display: inline !important;
+    color: #4a90e2 !important;
+    background: white !important;
+    text-decoration: none !important;
+  }
+  
+  /* Content area */
+  .post-content {
+    display: block !important;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Content elements */
+  .post-content h1,
+  .post-content h2,
+  .post-content h3,
+  .post-content h4,
+  .post-content h5,
+  .post-content h6 {
+    display: block !important;
+    visibility: visible !important;
+    color: #1a2633 !important;
+    margin: 16px 0 8px 0 !important;
+    page-break-after: avoid !important;
+    font-weight: 700 !important;
+  }
+  
+  .post-content h1 { font-size: 20px !important; }
+  .post-content h2 { font-size: 18px !important; }
+  .post-content h3 { font-size: 16px !important; }
+  .post-content h4 { font-size: 14px !important; }
+  
+  .post-content p {
+    display: block !important;
+    visibility: visible !important;
+    color: black !important;
+    margin: 8px 0 !important;
+    text-align: justify !important;
+    orphans: 3 !important;
+    widows: 3 !important;
+    line-height: 1.6 !important;
+  }
+  
+  /* Lists */
+  .post-content ul,
+  .post-content ol {
+    display: block !important;
+    visibility: visible !important;
+    margin: 8px 0 !important;
+    padding-left: 24px !important;
+  }
+  
+  .post-content li {
+    display: list-item !important;
+    visibility: visible !important;
+    color: black !important;
+    margin: 4px 0 !important;
+  }
+  
+  /* Images */
+  .post-content img {
+    display: block !important;
+    visibility: visible !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 12px auto !important;
+    border: 1px solid #eee !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Tables */
+  .post-content table {
+    display: table !important;
+    visibility: visible !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+    font-size: 10px !important;
+    margin: 12px 0 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .post-content th,
+  .post-content td {
+    display: table-cell !important;
+    visibility: visible !important;
+    border: 1px solid #ddd !important;
+    padding: 6px !important;
+    text-align: left !important;
+    color: black !important;
+  }
+  
+  .post-content th {
+    background: #f5f5f5 !important;
+    font-weight: 700 !important;
+    color: #1a2633 !important;
+  }
+  
+  /* Code blocks */
+  .post-content pre {
+    display: block !important;
+    visibility: visible !important;
+    background: #f8f8f8 !important;
+    border: 1px solid #e0e0e0 !important;
+    border-left: 4px solid #4a90e2 !important;
+    padding: 12px !important;
+    font-size: 10px !important;
+    white-space: pre-wrap !important;
+    page-break-inside: avoid !important;
+    margin: 12px 0 !important;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  }
+  
+  .post-content code {
+    background: #f0f0f0 !important;
+    padding: 2px 4px !important;
+    font-size: 10px !important;
+    border-radius: 2px !important;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+    color: black !important;
+  }
+  
+  /* Blockquotes */
+  .post-content blockquote {
+    display: block !important;
+    visibility: visible !important;
+    border-left: 4px solid #4a90e2 !important;
+    margin: 16px 0 !important;
+    padding: 12px 12px 12px 16px !important;
+    font-style: italic !important;
+    color: #555 !important;
+    background: #f9f9f9 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Links */
+  .post-content a {
+    color: #4a90e2 !important;
+    text-decoration: none !important;
+    visibility: visible !important;
+  }
+  
+  .post-content a[href^="http"]:after {
+    content: " (" attr(href) ")" !important;
+    font-size: 9px !important;
+    color: #666 !important;
+    word-break: break-all !important;
+  }
+  
+  .post-content a[href^="#"]:after,
+  .post-content a[href^="/"]:after {
+    content: none !important;
+  }
+  
+  /* Page breaks */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid !important;
+  }
+  
+  blockquote, pre, table {
+    page-break-inside: avoid !important;
+  }
+}

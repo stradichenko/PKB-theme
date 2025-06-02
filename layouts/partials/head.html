@@ -10,6 +10,10 @@
         <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous"></script>
     {{ end }}
     
+    <!-- PDF Generator -->
+    {{ $pdfJS := resources.Get "js/pdf-generator.js" | minify | fingerprint }}
+    <script src="{{ $pdfJS.RelPermalink }}" integrity="{{ $pdfJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    
     <!-- Load scrollbar fade functionality -->
     {{ $scrollbarFadeJS := resources.Get "js/scrollbar-fade.js" | minify }}
     <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
