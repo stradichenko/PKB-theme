@@ -1,5 +1,5 @@
 <h1 align="center">
-  PKB-theme |<a href="https://stradichenko.github.io/PKB-theme/"> Demo</a>
+  PKB-theme |<a href="https://stradichenko.github.io/PKB-theme/">Demo</a>
 </h1>
 
 <h3 align="center">
@@ -27,7 +27,7 @@
 
 
 ## About
-This is the supplementary theme meant for the [CMS-PKB-Blogger project](https://github.com/stradichenko/PKB-Blogger/tree/main). This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). 
+This template is meant for a blog oriented towards a [Personal Knowledge Management (PKB)](https://www.wikiwand.com/en/Personal_knowledge_base). The theme is inspired in some subjects of [Edward Tufte's work](https://edwardtufte.github.io/tufte-css/), the PKB, and Gwerns' [blog design](https://gwern.net/design). Meant to work in conjuction with for the [CMS-PKB-Blogger project](https://github.com/stradichenko/PKB-Blogger/tree/main).
 
 ## Installation
 ⚠️ For the most part of the instructions we assume that you are creating a site from scratch.
@@ -43,26 +43,48 @@ From your project's root directory, initiate the hugo module system and add the 
 
 # 0. Create boilerplate files for your site, replace placeholder title (in case of testing locally anything like <example.com/my-blog> works fine)
 hugo new site <your-site>
+cd <your-site>
 
-# 1. Initialize HUGO module to go.mod
-hugo mod init github.com/stradichenko/PKB-theme
+# 1.2 To initialize say your blog as a module using Github for example; by creating a go.mod file
+hugo mod init github.com/<your-username>/<your-blog>
 
-# 2. Create config.toml with module config
-cat <<EOF >> config.toml
+# 2. add theme module to site
+cat <<EOF >> hugo.toml
+
 [module]
   [[module.imports]]
     path = 'github.com/stradichenko/PKB-theme'
 EOF
 
-# 3. Download the theme
-hugo mod get github.com/stradichenko/PKB-theme
+# 2.1 for better file organization
+mkdir -p config/_default/ config/development && mv ./hugo.toml config/_default/
+curl -L -o config/development/hugo.toml https://github.com/stradichenko/PKB-theme/raw/main/config/development/hugo.toml
 
-# 4. This will use HUGO to Auto-create archetype for the user to customize
-curl -L -o archetypes/default.md https://github.com/stradichenko/PKB-theme/raw/main/archetypes/default.md
+# 3. Download the theme as a module
+hugo mod get
+
+# removes_unused Dependencies not referenced in config, updates checksum, Verifies module integrity. optimizes module dependency tree
+hugo mod tidy
+
+# Verify what changed
+git diff go.mod go.sum
+
+# vendoring
+hugo mod vendor
+
+# 4. This will copy params for the user to customize
+curl -L -o config/_default/params.toml https://github.com/stradichenko/PKB-theme/raw/main/config/_default/params.toml
+
+# just to make sure the the theme was imported 
+hugo mod graph
+# > github.com/<your-username>/<your-blog> github.com/stradichenko/PKB-theme@v0.0.1
+
+# test blog with drafts
+rm -rf .cache/hugo/ resources/ public/ tmp/ .hugo_build.lock && hugo server --source . --noHTTPCache --renderToMemory --disableFastRender --ignoreCache --gc --logLevel debug -D -e development
 
 ```
-The easiest way to keep the module updated while allowing you to populate the theme with your preferences is to copy the archetype (or any other personalized files) from the theme into their site’s own archetypes/ directory. Since Hugo gives precedence to local files over module files, any customizations (such as personal profile information) remain in place even if the theme updates.
-Since Hugo gives precedence to local files over module files, any customizations (such as personal profile information) remain in place even if the theme updates.
+
+The easiest way to keep the module updated while allowing you to populate the theme with your preferences is to copy the params (or any other personalized files) from the theme into their site’s own archetypes/ directory. Since Hugo gives precedence to local files over module files, any customizations (such as personal profile information) remain in place even if the theme updates.
 
 ### As Git submodule
 

@@ -2,9 +2,6 @@ baseURL      = "https://stradichenko.github.io/PKB-theme/"
 #languageCode = "en-us"
 title        = "PKB-theme Demo"
 
-# publish the site into ../docs for GitHub Pages
-#publishDir = "docs"
-
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderHooks]
