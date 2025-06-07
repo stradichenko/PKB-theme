@@ -2,7 +2,7 @@
   <h2 class="contribution-title">Activity Calendar</h2>
   <div class="contribution-calendar">
     <div class="calendar-box">
-      {{ $posts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+      {{ $posts := where .Site.RegularPages "Type" "in" .Site.Params.taxonomies.mainSections }}
       
       {{ $now := now }}
       {{ $today := $now.Format "2006-01-02" }}

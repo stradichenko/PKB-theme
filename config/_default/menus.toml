@@ -1,17 +1,17 @@
 [[main]]
     name = 'Posts'
     pageRef = '/posts'
-    weight = 20
+    weight = 10
     
 [[main]]
     name = 'Docs'
     pageRef = '/docs'
-    weight = 30
+    weight = 20
 
 [[main]]
     name = 'About'
-    pageRef = '/about'
-    weight = 50
+    url = '/about/'
+    weight = 30
 
 [[footer]]
     name = 'Terms'

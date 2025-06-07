@@ -1,6 +1,8 @@
 [contact]
   email = 'info@example.org'
   phone = '+1 206-555-1212'
+  profileName = "Your Name"
+  profilePicture = "images/profile.png"
   
 [social]
   linkedin = "https://linkedin.com/in/your-profile"
@@ -10,9 +12,6 @@
   github = "https://github.com/your-profile"
   email = "your-email@example.com"
 
-mainSections = ["posts", "docs", "projects"]  # sections to include in contribution calendar
-
-# Analytics configuration options
 [analytics]
   # Uncomment and configure the analytics system you want to use
   
@@ -45,5 +44,27 @@ mainSections = ["posts", "docs", "projects"]  # sections to include in contribut
   #customText = """"""
 
 [taxonomies]
+  mainSections = ["posts", "docs", "projects"]
   category = 'categories'
   tag = 'tags'
+
+[about]
+  profileDescription = "A brief description"
+  aboutText = """
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pellentesque non justo vehicula blandit. Phasellus nec hendrerit nunc. Vestibulum semper aliquet lorem, at congue massa lobortis vel. Aliquam vehicula lacus aliquam libero facilisis, eu accumsan nisl auctor. Integer ultricies turpis id bibendum porta. Ut sodales, nisl id convallis mollis, massa felis ullamcorper dui, ut ornare velit diam sed nisl. Maecenas quis maximus mi, viverra tempus magna. Nunc elementum, arcu eu dictum tempor, tortor augue commodo leo, at vestibulum mi turpis eleifend arcu. Suspendisse sodales turpis sit amet felis commodo feugiat.
+
+Suspendisse consectetur dolor urna, aliquet ultricies eros cursus dignissim. Donec sed urna eget tortor rhoncus viverra. Phasellus maximus feugiat lectus, ut euismod libero imperdiet non. Nullam fringilla massa volutpat, rhoncus sapien at, lacinia lectus. Donec erat metus, mattis id posuere ut, venenatis in lectus. Etiam ut erat sed orci placerat mollis. Aliquam orci libero, aliquet sit amet arcu nec, varius pulvinar velit. Etiam sodales pretium dolor in ultricies. Proin volutpat venenatis est, sed porta nulla dignissim eget. Donec luctus non odio vitae tempor. Maecenas facilisis ipsum nec eros rhoncus malesuada. Duis laoreet tortor eu luctus pretium. Proin vel eleifend ligula, et pellentesque metus. 
+"""
+
+interestsTitle = "Skills & Interests"
+
+interests = [
+  "Bioinformatics",
+  "Scientometric tools",
+  "Epigenetics",
+  "AI in Healthcare",
+  "Data Visualization",
+  "Academic Research",
+  "Open Source Software",
+  "Scientific Communication"
+]
