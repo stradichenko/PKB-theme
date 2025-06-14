@@ -19,7 +19,7 @@ A personal knowledge base (PKB) is a system for storing, organizing, and retriev
 
 A PKB is a personalized system that helps you collect, connect, and cultivate your ideas and information. Unlike traditional note-taking, a PKB emphasizes connections between concepts.
 
-For formatting your notes properly, refer to our [Markdown tester](/posts/post-1/) guide.
+For formatting your notes properly, refer to our [Markdown tester](/posts/post-1) guide.
 
 ## Popular PKB Methods
 
