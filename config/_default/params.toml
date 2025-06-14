@@ -46,6 +46,7 @@
   mainSections = ["posts", "docs", "projects"]
   category = 'categories'
   tag = 'tags'
+  series = 'series'
 
 [about]
   profileDescription = "A brief description"

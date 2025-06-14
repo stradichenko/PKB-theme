@@ -16,7 +16,7 @@
              loading="lazy">
       </div>
       <h2 class="profile-name">{{ .Site.Params.contact.profilename | default "Your Name" }}</h2>
-      <p class="profile-description">{{ .Site.Params.contact.profiledescription | default "A short description about yourself." }}</p>
+      <p class="profile-description">{{ .Site.Params.about.profiledescription | default "A short description about yourself." }}</p>
       <div class="social-links">
         {{ with .Site.Params.social }}
           {{ if or .linkedin .twitter .instagram .orcid .github .email }}

@@ -71,8 +71,8 @@ git diff go.mod go.sum
 # 4.1 This will copy params for the user to customize his blog
 curl -L -o config/_default/params.toml https://github.com/stradichenko/PKB-theme/raw/main/config/_default/params.toml
 
-# 4.2 The baseline about page
-curl -L -o layouts/page/about.html https://github.com/stradichenko/PKB-theme/raw/main/layouts/page/about.html
+# 4.2 To render the about page
+curl -L -o content/about.md https://github.com/stradichenko/PKB-theme/raw/main/exampleSite/content/about.md
 
 # 4.2 The menu itemos for the header
 curl -L -o config/_default/menus.toml https://github.com/stradichenko/PKB-theme/raw/main/config/_default/menus.toml

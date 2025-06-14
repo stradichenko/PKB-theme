@@ -6,6 +6,11 @@ lastmod: {{ .Date }}
 draft: true
 description: "" # Brief summary of the post.
 comments: false  # Enable Remark42 comments by default
+series: []
+# for more control:
+#   name:
+#   part:
+#   total:
 tags: []
 categories: []
 slug: "{{ .Name | urlize }}"
