@@ -1,0 +1,123 @@
+<script type="application/ld+json">
+{{ $baseURL := site.BaseURL }}
+{{ $siteName := site.Title }}
+{{ $seoData := site.Data.seo }}
+
+{{ if .IsHome }}
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ with $seoData.schema.organization.name }}{{ . }}{{ else }}{{ $siteName }}{{ end }}",
+  "url": "{{ $baseURL }}",
+  {{ with $seoData.schema.organization.logo }}
+  "logo": "{{ . | absURL }}",
+  {{ end }}
+  {{ with $seoData.schema.organization.contactPoint }}
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "{{ .telephone }}",
+    "contactType": "{{ .contactType }}"
+  },
+  {{ end }}
+  "sameAs": [
+    {{ $social := slice }}
+    {{ with site.Params.social.twitter }}{{ $social = $social | append . }}{{ end }}
+    {{ with site.Params.social.linkedin }}{{ $social = $social | append . }}{{ end }}
+    {{ with site.Params.social.github }}{{ $social = $social | append . }}{{ end }}
+    {{ with site.Params.social.instagram }}{{ $social = $social | append . }}{{ end }}
+    {{ with site.Params.social.orcid }}{{ $social = $social | append . }}{{ end }}
+    {{ delimit $social "\",\n    \"" | printf "\"%s\"" | safeJS }}
+  ]
+}
+{{ else if .IsPage }}
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ .Title | jsonify }},
+  "description": {{ with .Description }}{{ . | jsonify }}{{ else }}{{ .Summary | truncate 160 | jsonify }}{{ end }},
+  "url": {{ .Permalink | jsonify }},
+  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  {{ with .Params.image }}
+  "image": {
+    "@type": "ImageObject",
+    "url": {{ . | absURL | jsonify }},
+    "width": 1200,
+    "height": 630
+  },
+  {{ end }}
+  "author": {
+    "@type": "Person",
+    "name": {{ with .Params.author }}{{ . | jsonify }}{{ else }}{{ with site.Params.seo.author }}{{ . | jsonify }}{{ else }}{{ with site.Params.contact.profileName }}{{ . | jsonify }}{{ else }}"{{ $siteName }}"{{ end }}{{ end }}{{ end }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify }},
+    "url": {{ $baseURL | jsonify }}
+    {{ with $seoData.schema.organization.logo }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ . | absURL | jsonify }}
+    }
+    {{ end }}
+  },
+  {{ if .Params.categories }}
+  "articleSection": {{ index .Params.categories 0 | jsonify }},
+  {{ end }}
+  {{ if .Params.tags }}
+  "keywords": {{ delimit .Params.tags ", " | jsonify }},
+  {{ end }}
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ .Permalink | jsonify }}
+  }
+}
+{{ else }}
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": {{ .Title | jsonify }},
+  "description": {{ with .Description }}{{ . | jsonify }}{{ else }}{{ site.Params.description | jsonify }}{{ end }},
+  "url": {{ .Permalink | jsonify }},
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ $siteName | jsonify }},
+    "url": {{ $baseURL | jsonify }}
+  }
+}
+{{ end }}
+</script>
+
+{{/* Breadcrumb Schema - only for non-home pages */}}
+{{ if not .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": {{ site.BaseURL | jsonify }}
+    }
+    {{ if .Section }},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ .Section | title | jsonify }},
+      "item": {{ printf "%s%s/" site.BaseURL .Section | jsonify }}
+    }
+    {{ end }}
+    {{ if not .IsSection }},
+    {
+      "@type": "ListItem",
+      "position": {{ if .Section }}3{{ else }}2{{ end }},
+      "name": {{ .Title | jsonify }},
+      "item": {{ .Permalink | jsonify }}
+    }
+    {{ end }}
+  ]
+}
+</script>
+{{ end }}

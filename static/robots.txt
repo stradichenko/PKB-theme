@@ -1,0 +1,59 @@
+# PKB Theme Robots.txt
+# This file tells search engine crawlers which pages to crawl and which to avoid
+
+# Allow all crawlers access to all content by default
+User-agent: *
+Allow: /
+
+# Disallow crawling of admin, development, and system directories
+Disallow: /admin/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /layouts/
+Disallow: /data/
+Disallow: /config/
+
+# Disallow crawling of draft content and private sections
+Disallow: /drafts/
+Disallow: /private/
+Disallow: /_drafts/
+
+# Disallow crawling of search results and filtered views
+Disallow: /search?
+Disallow: /*?query=
+Disallow: /*?filter=
+Disallow: /*?page=
+
+# Disallow crawling of duplicate content with parameters
+Disallow: /*?utm_*
+Disallow: /*?ref=
+Disallow: /*?source=
+
+# Allow crawling of important files
+Allow: /robots.txt
+Allow: /sitemap.xml
+Allow: /sitemap*.xml
+Allow: /.well-known/
+
+# Crawl delay (optional - be respectful to servers)
+# Crawl-delay: 1
+
+# Sitemap location (Hugo generates this automatically)
+Sitemap: https://yoursite.com/sitemap.xml
+
+# Specific rules for different crawlers (optional)
+# Google Bot - no special restrictions
+User-agent: Googlebot
+Allow: /
+
+# Bing Bot - no special restrictions  
+User-agent: Bingbot
+Allow: /
+
+# Block aggressive crawlers (uncomment if needed)
+# User-agent: AhrefsBot
+# Disallow: /
+# 
+# User-agent: MJ12bot
+# Disallow: /

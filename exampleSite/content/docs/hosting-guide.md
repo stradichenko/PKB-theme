@@ -1,12 +1,10 @@
 ---
-title: "Hosting Your Hugo Site - Complete Guide"
+title: "Hosting Your Hugo Site"
 description: "Step-by-step instructions for deploying Hugo sites on popular hosting platforms"
 date: 2024-01-15
 lastmod: 2024-01-15
 toc: true
 ---
-
-# Hosting Your Hugo Site
 
 This guide covers how to deploy your Hugo site on various hosting platforms, from static site hosts to cloud providers.
 
@@ -25,8 +23,6 @@ This guide covers how to deploy your Hugo site on various hosting platforms, fro
 | Vercel | Free tier | Very Fast | ✅ | ✅ | ✅ |
 | GitLab Pages | Free | Medium | ✅ | ✅ | ✅ |
 | Firebase | Free tier | Fast | ✅ | ✅ | ✅ |
-
----
 
 ## Netlify (Recommended)
 
@@ -98,8 +94,6 @@ Create `netlify.toml` in your site root:
 **Useful Links:**
 - [Netlify Hugo Documentation](https://docs.netlify.com/configure-builds/common-configurations/hugo/)
 - [Custom Domain Setup](https://docs.netlify.com/domains-https/custom-domains/)
-
----
 
 ## GitHub Pages
 
@@ -200,8 +194,6 @@ jobs:
 - [GitHub Pages Documentation](https://docs.github.com/en/pages)
 - [Hugo on GitHub Pages](https://gohugo.io/hosting-and-deployment/hosting-on-github/)
 
----
-
 ## Vercel
 
 **Best for**: Fast builds, edge functions, developer experience
@@ -246,8 +238,6 @@ Create `vercel.json`:
 
 **Useful Links:**
 - [Vercel Hugo Documentation](https://vercel.com/docs/frameworks/hugo)
-
----
 
 ## GitLab Pages
 
@@ -532,6 +522,5 @@ Most platforms support custom headers:
 - **WebPageTest**
 - **Lighthouse CI** for automated testing
 
----
 
 This guide covers the most popular hosting options for Hugo sites. Choose based on your specific needs, technical expertise, and budget requirements.

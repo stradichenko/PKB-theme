@@ -1,7 +1,20 @@
 <head>
+    {{/* SEO Critical Resources - Must come first */}}
+    {{ partial "seo/preload-resources.html" . }}
+    
+    {{/* Consolidated Meta Tags with SEO */}}
     {{ partial "head/meta.html" . }}
+    
+    {{/* Structured Data */}}
+    {{ partial "seo/schema-org.html" . }}
+    
+    <!-- Favicon and Apple Touch Icon -->
     {{ partial "head/favicons.html" . }}
+    
+    <!-- Critical CSS -->
     {{ partial "head/critical-css.html" . }}
+    
+    <!-- Main Stylesheet -->
     {{ partial "head/styles.html" . }}
     
     <!-- JavaScript loading -->
@@ -17,6 +30,17 @@
     <!-- Load scrollbar fade functionality -->
     {{ $scrollbarFadeJS := resources.Get "js/scrollbar-fade.js" | minify }}
     <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
+
+    <!-- Site Verification Meta Tags -->
+    {{ with site.Params.seo.google_site_verification }}
+    <meta name="google-site-verification" content="{{ . }}">
+    {{ end }}
+    {{ with site.Params.seo.bing_verification }}
+    <meta name="msvalidate.01" content="{{ . }}">
+    {{ end }}
+    {{ with site.Params.seo.yandex_verification }}
+    <meta name="yandex-verification" content="{{ . }}">
+    {{ end }}
 
     <!-- Include analytics scripts -->
     {{ partial "analytics.html" . }}

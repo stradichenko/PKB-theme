@@ -1,0 +1,54 @@
+{{/* Preload critical fonts - only if enabled */}}
+{{ if site.Params.seo.preload_fonts }}
+  {{ range site.Params.fonts.preload }}
+  <link rel="preload" href="{{ .url }}" as="font" type="{{ .type | default "font/woff2" }}" crossorigin>
+  {{ end }}
+{{ end }}
+
+{{/* Preload critical CSS - only if enabled */}}
+{{ if site.Params.seo.critical_css }}
+  {{ $mainCSS := resources.Get "css/main.css" }}
+  {{ if $mainCSS }}
+    {{ $css := $mainCSS | resources.ToCSS | resources.Minify | fingerprint }}
+    <link rel="preload" href="{{ $css.RelPermalink }}" as="style">
+  {{ end }}
+{{ end }}
+
+{{/* Preload hero/featured images */}}
+{{ with .Params.image }}
+  {{ $image := resources.Get . }}
+  {{ if $image }}
+    {{ $optimized := $image.Resize "1200x630 webp" }}
+    <link rel="preload" href="{{ $optimized.RelPermalink }}" as="image">
+  {{ else }}
+    <link rel="preload" href="{{ . | absURL }}" as="image">
+  {{ end }}
+{{ end }}
+
+{{/* DNS prefetch for external resources - conditional based on analytics */}}
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//fonts.gstatic.com">
+
+{{/* Preconnect to critical third-party origins */}}
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+{{/* Conditional DNS prefetch based on enabled analytics */}}
+{{ with site.Params.analytics }}
+  {{ if .plausible }}
+    {{ $parsed := urls.Parse .plausibleScriptSrc }}
+    <link rel="dns-prefetch" href="{{ printf "%s://%s" $parsed.Scheme $parsed.Host }}">
+  {{ end }}
+  {{ if .umami }}
+    {{ $parsed := urls.Parse .umamiScriptSrc }}
+    <link rel="dns-prefetch" href="{{ printf "%s://%s" $parsed.Scheme $parsed.Host }}">
+  {{ end }}
+  {{ if .matomo }}
+    {{ $parsed := urls.Parse .matomoURL }}
+    <link rel="dns-prefetch" href="{{ printf "%s://%s" $parsed.Scheme $parsed.Host }}">
+  {{ end }}
+{{ end }}
+
+{{/* CDN prefetch only if needed */}}
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="//d3js.org">

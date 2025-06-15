@@ -1,0 +1,33 @@
+{
+  "name": "pkb-hugo-theme",
+  "version": "1.0.0",
+  "description": "PKB Hugo Theme - Optional Node.js scripts for advanced SEO automation",
+  "private": true,
+  "scripts": {
+    "build": "hugo --gc --minify",
+    "build:advanced": "npm run build && npm run optimize-images && npm run seo-audit",
+    "dev": "hugo server --disableFastRender --navigateToChanged",
+    "optimize-images": "node scripts/optimize-images.js",
+    "seo-audit": "node scripts/seo-audit.js",
+    "validate-seo": "node scripts/validate-seo.js"
+  },
+  "devDependencies": {
+    "sharp": "^0.32.0",
+    "glob": "^8.0.0",
+    "cheerio": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/pkb-theme"
+  },
+  "keywords": [
+    "hugo",
+    "theme",
+    "seo",
+    "academic",
+    "blog"
+  ]
+}

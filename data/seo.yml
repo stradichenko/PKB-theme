@@ -1,0 +1,58 @@
+meta:
+  keywords: ["Hugo", "Theme", "Blog", "Academic", "Knowledge Base", "Research"]
+  author: "PKB Theme Author"
+  robots: "index, follow"
+  default_image: "/images/default-og.jpg"
+  
+schema:
+  organization:
+    name: "PKB Theme"
+    logo: "/images/logo.png"
+    url: "https://yoursite.com"
+    contactPoint:
+      telephone: "+1-000-000-0000"
+      contactType: "customer service"
+      areaServed: "Global"
+      availableLanguage: ["English"]
+    foundingDate: "2024"
+    description: "A Hugo theme for personal knowledge base and academic blogging"
+    
+  # Additional schema types for rich snippets
+  website:
+    potentialAction:
+      - "@type": "SearchAction"
+        target: "https://yoursite.com/search?q={search_term_string}"
+        "query-input": "required name=search_term_string"
+
+social:
+  twitter: "@yourhandle"
+  facebook: "yourpage"
+  linkedin: "yourprofile"
+  
+performance:
+  critical_css: true
+  preload_fonts: true
+  lazy_load_images: true
+  
+monitoring:
+  google_site_verification: ""
+  bing_verification: ""
+  yandex_verification: ""
+
+# Additional configurations for completeness
+analytics:
+  google_analytics: ""
+  google_tag_manager: ""
+  
+# Default values for content without frontmatter
+defaults:
+  article_author: "PKB Theme Author"
+  image_alt_suffix: " - PKB Theme"
+  reading_time_words_per_minute: 200
+
+# Feature toggles
+features:
+  breadcrumbs: true
+  related_posts: true
+  estimated_reading_time: true
+  social_sharing: true

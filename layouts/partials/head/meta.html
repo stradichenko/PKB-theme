@@ -1,6 +1,109 @@
+{{/* Enhanced Meta Tags with SEO - replaces basic meta functionality */}}
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
-<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ with .Summary }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}{{ end }}">
-<meta name="apple-mobile-web-app-title" content="MyWebSite" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+
+{{/* Title with fallback logic */}}
+{{ if .IsHome }}
+  <title>{{ site.Title }}{{ with site.Params.subtitle }} | {{ . }}{{ end }}</title>
+{{ else }}
+  <title>{{ .Title }} | {{ site.Title }}</title>
+{{ end }}
+
+{{/* Description with multiple fallbacks */}}
+{{ $description := "" }}
+{{ if .Description }}
+  {{ $description = .Description }}
+{{ else if .Summary }}
+  {{ $description = .Summary }}
+{{ else if site.Params.description }}
+  {{ $description = site.Params.description }}
+{{ else }}
+  {{ $description = "A Hugo theme for personal knowledge base and blog." }}
+{{ end }}
+<meta name="description" content="{{ $description }}">
+
+{{/* Apple mobile web app */}}
+<meta name="apple-mobile-web-app-title" content="{{ site.Title }}">
+
+{{/* RSS Feed */}}
 <link rel="alternate" type="application/rss+xml" href="{{ .Site.BaseURL }}index.xml" title="{{ .Site.Title }}">
+
+{{/* Keywords from tags or SEO config */}}
+{{ $keywords := slice }}
+{{ if .Params.tags }}
+  {{ $keywords = .Params.tags }}
+{{ else if site.Params.seo.keywords }}
+  {{ $keywords = site.Params.seo.keywords }}
+{{ end }}
+{{ if gt (len $keywords) 0 }}
+  <meta name="keywords" content="{{ delimit $keywords ", " }}">
+{{ end }}
+
+{{/* Author */}}
+{{ $author := .Params.author | default site.Params.seo.author | default site.Params.contact.profileName | default "Hugo Author" }}
+<meta name="author" content="{{ $author }}">
+
+{{/* Canonical URL */}}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{/* Robots */}}
+{{ $robots := "index, follow" }}
+{{ if site.Params.seo.robots }}
+  {{ $robots = site.Params.seo.robots }}
+{{ end }}
+<meta name="robots" content="{{ $robots }}">
+
+{{/* Open Graph */}}
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+
+{{/* Open Graph Image */}}
+{{ $ogImage := "" }}
+{{ if .Params.image }}
+  {{ $ogImage = .Params.image | absURL }}
+{{ else if site.Params.seo.default_image }}
+  {{ $ogImage = site.Params.seo.default_image | absURL }}
+{{ else if site.Params.defaultImage }}
+  {{ $ogImage = site.Params.defaultImage | absURL }}
+{{ end }}
+{{ if $ogImage }}
+  <meta property="og:image" content="{{ $ogImage }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+{{ end }}
+
+{{/* Twitter Cards */}}
+<meta name="twitter:card" content="summary_large_image">
+{{ with site.Params.seo.twitter }}
+  <meta name="twitter:site" content="{{ . }}">
+{{ end }}
+{{ with site.Params.seo.twitter_creator }}
+  <meta name="twitter:creator" content="{{ . }}">
+{{ end }}
+<meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta name="twitter:description" content="{{ $description }}">
+{{ if $ogImage }}
+  <meta name="twitter:image" content="{{ $ogImage }}">
+{{ end }}
+
+{{/* Article specific meta tags */}}
+{{ if .IsPage }}
+  {{ if .Date }}
+    <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+  {{ end }}
+  {{ if .Lastmod }}
+    <meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+  {{ end }}
+  {{ with .Params.tags }}
+    {{ range . }}
+      <meta property="article:tag" content="{{ . }}">
+    {{ end }}
+  {{ end }}
+  {{ with $author }}
+    <meta property="article:author" content="{{ . }}">
+  {{ end }}
+{{ end }}

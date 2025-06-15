@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" class="interaction" data-base-url="{{ .Site.BaseURL }}">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
-  
   <!-- Critical theme initialization script - improved for persistence -->
   <script>
     (function() {
@@ -51,6 +47,7 @@
     }
   </style>
   
+  {{/* Main head partial handles all meta tags and SEO */}}
   {{ partial "head.html" . }}
   
   {{ block "head" . }}{{ end }}

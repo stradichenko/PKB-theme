@@ -68,3 +68,51 @@ interests = [
   "Open Source Software",
   "Scientific Communication"
 ]
+
+# SEO Configuration
+description = "Personal Knowledge Base - Sharing insights on bioinformatics, research, and technology"
+keywords = ["bioinformatics", "research", "technology", "knowledge base", "blog"]
+defaultImage = "images/og-default.jpg"
+tagline = "Personal Knowledge Base"
+
+# SEO Section - Single source of truth for all SEO configuration
+[seo]
+  # Meta Configuration
+  keywords = ["Hugo", "Theme", "Blog", "Academic", "Knowledge Base", "Research"]
+  author = "PKB Theme Author"
+  robots = "index, follow"
+  default_image = "/images/default-og.jpg"
+  
+  # Twitter specific (no duplication with [social])
+  twitter_creator = "@yourhandle"
+  
+  # Site Verification
+  google_site_verification = ""
+  bing_verification = ""
+  yandex_verification = ""
+  
+  # Analytics (no duplication with [analytics])
+  google_analytics = ""
+  google_tag_manager = ""
+  
+  # Performance Features
+  critical_css = true
+  preload_fonts = true
+  lazy_load_images = true
+  
+  # Content Features
+  breadcrumbs = true
+  related_posts = true
+  estimated_reading_time = true
+  social_sharing = true
+  
+  # Default values for content without frontmatter
+  article_author = "PKB Theme Author"
+  image_alt_suffix = " - PKB Theme"
+  reading_time_words_per_minute = 200
+
+# Font preloading configuration
+[fonts]
+  [[fonts.preload]]
+    url = "/fonts/inter-var.woff2"
+    type = "font/woff2"
