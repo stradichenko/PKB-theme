@@ -31,6 +31,13 @@
   --dark-text-secondary: #a0aec0; /* Secondary text color (gray blue) */
   --dark-border: #3a4755;         /* Border color (gray) */
   
+  /* RGB versions for transparency effects */
+  --light-primary-rgb: 74, 144, 226;
+  --light-secondary-rgb: 223, 45, 45;
+  --dark-primary-rgb: 233, 153, 107;
+  --dark-secondary-rgb: 255, 82, 82;
+  --color-surface-rgb: 248, 248, 248; /* For light theme surface */
+  
   /* Current theme colors - default to light theme */
   --color-primary: var(--light-primary);
   --color-primary-variant: var(--light-primary-variant);
@@ -40,42 +47,60 @@
   --color-text-primary: var(--light-text-primary);
   --color-text-secondary: var(--light-text-secondary);
   --color-border: var(--light-border);
+  --color-primary-rgb: var(--light-primary-rgb);
+  --color-secondary-rgb: var(--light-secondary-rgb);
   
-  /* Typography */
+  /* Semantic color shortcuts */
+  --text-color-heading: var(--color-text-primary);
+  --text-color-body: var(--color-text-primary);
+  --text-color-muted: rgba(26, 38, 51, 0.7);
+  --text-color-link: var(--color-primary);
+  --text-color-link-hover: var(--color-primary-variant);
+  --text-color-inverse: white;
+  --color-white: #ffffff;
+  --color-on-primary: var(--text-color-inverse);
+  
+  /* ------------------------------------------------------------------------- */
+  /* TYPOGRAPHY SYSTEM                                                         */
+  /* ------------------------------------------------------------------------- */
   --font-family-sans: 'Arial', sans-serif;
   --font-family-serif: 'Georgia', serif;
-  --font-size-base: 16px;
-  --font-size-small: 0.875rem;
-  --font-size-medium: 1rem;
+  --font-family-mono: 'Source Code Pro', 'Courier New', monospace;
+  
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-small: 0.875rem; /* Alias for consistency */
+  --font-size-base: 1rem;
+  --font-size-medium: 1rem; /* Alias for consistency */
+  --font-size-lg: 1.125rem;
   --font-size-large: 1.25rem;
   --font-size-xl: 1.5rem;
   --font-size-2xl: 1.875rem;
   --font-size-3xl: 2.25rem;
+  
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --line-height-normal: 1.6;
+  
   --line-height-tight: 1.25;
+  --line-height-normal: 1.6;
   --line-height-relaxed: 1.75;
   
-  /* Font colors - consolidated system */
-  --text-color-heading: var(--color-text-primary);
-  --text-color-body: var(--color-text-secondary);
-  --text-color-muted: rgba(26, 38, 51, 0.7); /* Based on text-primary with opacity */
-  --text-color-link: var(--color-primary);
-  --text-color-link-hover: var(--color-primary-variant);
-  --text-color-inverse: white;
-  
-  /* Spacing */
+  /* ------------------------------------------------------------------------- */
+  /* SPACING SYSTEM                                                            */
+  /* ------------------------------------------------------------------------- */
   --spacing-none: 0;
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 36px;
+  --spacing-2xl: 48px;
 
-  /* Semantic colors */
+  /* ------------------------------------------------------------------------- */
+  /* SEMANTIC COLORS                                                           */
+  /* ------------------------------------------------------------------------- */
   --color-success: #48bb78;
   --color-success-light: #9ae6b4;
   --color-warning: #ed8936;
@@ -84,6 +109,16 @@
   --color-error-light: #feb2b2;
   --color-info: #4299e1;
   --color-info-light: #bee3f8;
+  
+  /* ------------------------------------------------------------------------- */
+  /* LAYOUT TOKENS                                                             */
+  /* ------------------------------------------------------------------------- */
+  --border-radius: 6px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 8px;
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
   
   /* Responsive breakpoints */
   --breakpoint-sm: 640px;
@@ -104,80 +139,60 @@
   --z-index-popover: 1060;
   --z-index-tooltip: 1070;
   --z-index-header: 100;
-  --z-index-header-dropdown: 1100; /* Higher than regular dropdowns */
+  --z-index-header-dropdown: 1100;
   
-  /* Borders */
-  --border-radius: 6px;
-  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* ------------------------------------------------------------------------- */
+  /* COMPONENT TOKENS                                                          */
+  /* ------------------------------------------------------------------------- */
   
-  /* Scrollbar styling variables */
-  --scrollbar-width: 8px; /* Thinner scrollbar */
-  --scrollbar-height: 8px;
-  --scrollbar-track-bg: transparent; /* Transparent track */
-  --scrollbar-thumb-bg: var(--color-primary);
-  --scrollbar-thumb-hover-bg: var(--color-primary-variant);
-  --scrollbar-border-radius: 4px; /* Smaller radius for thinner scrollbar */
-  --scrollbar-thin-width: 6px; /* Even thinner variant */
-  --scrollbar-thin-height: 6px;
-  
-  /* Layout - Header - consolidated with core colors */
+  /* Header */
   --header-height: 60px;
-  --header-bg-color: #2c3e50; /* Consistent dark header in both themes */
+  --header-bg-color: #2c3e50;
   --header-text-color: var(--text-color-inverse);
   --header-logo-color: var(--color-primary);
   --header-logo-hover-color: var(--color-primary-variant);
-  --header-font-family: var(--font-family-sans);
-  --header-font-size: var(--font-size-large);
-  --header-padding: var(--spacing-md);
-  --header-shadow: var(--shadow-light);
-  --header-nav-gap: 12px;
-  --header-nav-link-color: var(--text-color-inverse);
   --header-nav-link-hover-bg: var(--color-primary);
   --header-nav-link-hover-color: var(--text-color-inverse);
   --header-border: 1px solid rgba(255, 255, 255, 0.1);
-  --search-bg-color: #3d5269; /* New variable: slightly lighter than header for search input */
+  --header-shadow: var(--shadow-light);
+  --search-bg-color: #3d5269;
   
-  /* Layout - Footer - consolidated with core colors */
+  /* Footer */
   --footer-height: 50px;
-  --footer-bg-color: #2c3e50; /* Consistent dark footer in both themes */
+  --footer-bg-color: #2c3e50;
   --footer-text-color: var(--text-color-inverse);
   --footer-border-color: rgba(255, 255, 255, 0.1);
   --footer-link-color: var(--color-primary);
   --footer-link-hover-color: var(--color-primary-variant);
-  --footer-font-family: var(--font-family-sans);
-  --footer-font-size: var(--font-size-medium);
+  --footer-social-bg: rgba(255, 255, 255, 0.1);
+  --footer-social-bg-hover: rgba(255, 255, 255, 0.15);
   --footer-padding-vertical: var(--spacing-md);
-  --footer-padding-horizontal: var(--spacing-md);
   --footer-padding-vertical-small: var(--spacing-sm);
-  --footer-padding-horizontal-small: var(--spacing-sm);
   
-  /* Layout - Body */
+  /* Body/Main */
   --body-bg-color: var(--color-background);
+  --body-text-color: var(--color-text-secondary);
   --body-font-family: var(--font-family-sans);
   --body-font-size: var(--font-size-base);
   --body-line-height: var(--line-height-normal);
   --body-padding: var(--spacing-none);
-  --body-text-color: var(--text-color-body);
-  
-  /* Layout - Main Content */
   --main-bg-color: var(--color-background);
   --main-padding: var(--spacing-sm);
-  --main-text-color: var(--text-color-body);
+  --main-text-color: var(--color-text-secondary);
   
-  /* Generic Elements */
-  --link-color: var(--text-color-link);
-  --link-hover-color: var(--text-color-link-hover);
+  /* Theme variables for shared use */
+  --theme-bg: var(--color-background);
+  --theme-text: var(--color-text-secondary);
   
-  /* Component variables */
-  --sidenote-bg-color: var(--color-surface);
+  /* Interactive elements */
   --toggle-btn-color: var(--text-color-inverse);
   --toggle-btn-bg-hover: rgba(255, 255, 255, 0.15);
   --toggle-btn-outline: var(--color-primary);
   
-  /* Dropdown menu variables */
+  /* Dropdown menu */
   --dropdown-bg: var(--color-surface);
   --dropdown-border: var(--color-border);
-  --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --dropdown-shadow: var(--shadow-medium);
   --dropdown-item-hover-bg: var(--color-primary);
   --dropdown-item-hover-color: var(--text-color-inverse);
   --dropdown-item-padding: var(--spacing-sm) var(--spacing-md);
@@ -186,52 +201,47 @@
   --dropdown-max-height: 300px;
   --dropdown-z-index: var(--z-index-dropdown);
 
-  /* Theme variables for shared use */
-  --theme-bg: var(--color-background);
-  --theme-text: var(--text-color-body);
-
-  /* Social media colors - derived from core colors */
-  --color-linkedin: var(--color-primary);        /* Using primary blue */
-  --color-twitter: var(--color-primary);         /* Using primary blue */
-  --color-instagram: var(--color-secondary);     /* Using secondary red */
-  --color-github: var(--color-text-primary);     /* Using text primary */
-  --color-orcid: var(--color-primary-variant);   /* Using primary variant green */
-
-  /* Footer specific variables */
-  --footer-social-bg: rgba(255, 255, 255, 0.1);
-  --footer-social-bg-hover: rgba(255, 255, 255, 0.15);
-
-  /* RGB versions of colors for opacity/transparency effects */
-  --light-primary-rgb: 74, 144, 226; /* RGB values for light primary color */
-  --light-secondary-rgb: 223, 45, 45; /* RGB values for light secondary color */
-  --dark-primary-rgb: 233, 153, 107; /* RGB values for dark primary color */
-  --dark-secondary-rgb: 255, 82, 82; /* RGB values for dark secondary color */
-
-  /* Graph specific colors */
-  --graph-text-color: var(--text-color-primary);
+  /* ------------------------------------------------------------------------- */
+  /* SCROLLBAR SYSTEM                                                          */
+  /* ------------------------------------------------------------------------- */
+  --scrollbar-width: 8px;
+  --scrollbar-height: 8px;
+  --scrollbar-track-bg: transparent;
+  --scrollbar-thumb-bg: var(--color-primary);
+  --scrollbar-thumb-hover-bg: var(--color-primary-variant);
+  --scrollbar-border-radius: 4px;
+  --scrollbar-thin-width: 6px;
+  --scrollbar-thin-height: 6px;
+  
+  /* ------------------------------------------------------------------------- */
+  /* GRAPH VISUALIZATION COLORS                                                */
+  /* ------------------------------------------------------------------------- */
+  --graph-text-color: var(--color-text-primary);
   --graph-link-color: var(--color-border);
   --graph-node-stroke: #fff;
   --graph-node-hover: var(--color-primary);
   
-  /* Graph category colors - expanded to 15 distinct colors */
-  --graph-category-1: var(--color-primary);         /* Primary blue */
-  --graph-category-2: var(--color-secondary);       /* Secondary red */
-  --graph-category-3: var(--color-primary-variant); /* Green variant */
-  --graph-category-4: #8e44ad;                      /* Purple */
-  --graph-category-5: #f39c12;                      /* Orange */
-  --graph-category-6: #16a085;                      /* Teal */
-  --graph-category-7: #d35400;                      /* Deep orange */
-  --graph-category-8: #2c3e50;                      /* Navy blue */
-  --graph-category-9: #27ae60;                      /* Green */
-  --graph-category-10: #c0392b;                     /* Dark red */
-  --graph-category-11: #3498db;                     /* Light blue */
-  --graph-category-12: #f1c40f;                     /* Yellow */
-  --graph-category-13: #7f8c8d;                     /* Gray */
-  --graph-category-14: #9b59b6;                     /* Violet */
-  --graph-category-15: #34495e;                     /* Dark slate */
+  /* Graph category colors - 15 distinct colors */
+  --graph-category-1: var(--color-primary);
+  --graph-category-2: var(--color-secondary);
+  --graph-category-3: var(--color-primary-variant);
+  --graph-category-4: #8e44ad;
+  --graph-category-5: #f39c12;
+  --graph-category-6: #16a085;
+  --graph-category-7: #d35400;
+  --graph-category-8: #2c3e50;
+  --graph-category-9: #27ae60;
+  --graph-category-10: #c0392b;
+  --graph-category-11: #3498db;
+  --graph-category-12: #f1c40f;
+  --graph-category-13: #7f8c8d;
+  --graph-category-14: #9b59b6;
+  --graph-category-15: #34495e;
 }
 
-/* Dark Theme CSS Variable Overrides */
+/* ------------------------------------------------------------------------- */
+/* DARK THEME OVERRIDES                                                      */
+/* ------------------------------------------------------------------------- */
 [data-theme="dark"] {
   /* Core colors */
   --color-primary: var(--dark-primary);
@@ -242,28 +252,30 @@
   --color-text-primary: var(--dark-text-primary);
   --color-text-secondary: var(--dark-text-secondary);
   --color-border: var(--dark-border);
+  --color-primary-rgb: var(--dark-primary-rgb);
+  --color-secondary-rgb: var(--dark-secondary-rgb);
+  --color-surface-rgb: 30, 42, 56; /* Dark surface RGB */
   
-  /* Font colors - automatically updated from core colors */
+  /* Typography */
   --text-color-heading: var(--color-text-primary);
   --text-color-body: var(--color-text-primary);
-  --text-color-muted: rgba(226, 232, 255, 0.7); /* Based on dark-text-primary with opacity */
+  --text-color-muted: rgba(226, 232, 255, 0.7);
   --text-color-link: var(--color-primary);
   --text-color-link-hover: var(--color-primary-variant);
   
   /* Theme variables */
   --theme-bg: var(--color-background);
-  --theme-text: var(--text-color-body);
+  --theme-text: var(--color-text-primary);
   
-  /* Toggle button colors */
+  /* Interactive elements */
   --toggle-btn-color: var(--color-primary);
   --toggle-btn-bg-hover: rgba(233, 153, 107, 0.15);
   --toggle-btn-outline: var(--color-primary);
   
-  /* Header and footer overrides */
+  /* Header and footer */
   --header-logo-color: var(--color-primary);
   --header-logo-hover-color: var(--color-primary-variant);
   --header-nav-link-hover-bg: var(--color-primary);
-  
   --footer-link-color: var(--color-primary);
   --footer-link-hover-color: var(--color-primary-variant);
   --footer-border-color: rgba(255, 255, 255, 0.05);
@@ -278,35 +290,35 @@
   --color-info: #63b3ed;
   --color-info-light: #2b6cb0;
 
-  /* Dropdown menu - dark theme */
+  /* Dropdown menu */
   --dropdown-bg: var(--color-surface);
   --dropdown-border: var(--color-border);
   --dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   --dropdown-item-hover-bg: var(--color-primary);
   --dropdown-item-hover-color: var(--color-text-primary);
   
-  /* Graph specific colors - dark theme */
-  --graph-text-color: var(--text-color-primary);
+  /* Graph colors for dark theme */
+  --graph-text-color: var(--color-text-primary);
   --graph-link-color: var(--color-border);
   --graph-node-stroke: rgba(255, 255, 255, 0.2);
   --graph-node-hover: var(--color-primary);
   
-  /* Graph category colors for dark theme - adjusted for better visibility */
-  --graph-category-1: var(--color-primary);        /* Orange in dark theme */
-  --graph-category-2: var(--color-secondary);      /* Red */
-  --graph-category-3: var(--color-primary-variant); /* Green variant */
-  --graph-category-4: #a55eea;                     /* Brighter purple */
-  --graph-category-5: #feca57;                     /* Brighter orange/yellow */
-  --graph-category-6: #1dd1a1;                     /* Brighter teal */
-  --graph-category-7: #ff9f43;                     /* Soft orange */
-  --graph-category-8: #54a0ff;                     /* Sky blue */
-  --graph-category-9: #5be7a9;                     /* Mint green */
-  --graph-category-10: #ff6b6b;                    /* Light red */
-  --graph-category-11: #48dbfb;                    /* Bright blue */
-  --graph-category-12: #f9ca24;                    /* Gold */
-  --graph-category-13: #c8d6e5;                    /* Light gray */
-  --graph-category-14: #cd84f1;                    /* Light purple */
-  --graph-category-15: #7ed6df;                    /* Aqua */
+  /* Adjusted graph category colors for dark theme visibility */
+  --graph-category-1: var(--color-primary);
+  --graph-category-2: var(--color-secondary);
+  --graph-category-3: var(--color-primary-variant);
+  --graph-category-4: #a55eea;
+  --graph-category-5: #feca57;
+  --graph-category-6: #1dd1a1;
+  --graph-category-7: #ff9f43;
+  --graph-category-8: #54a0ff;
+  --graph-category-9: #5be7a9;
+  --graph-category-10: #ff6b6b;
+  --graph-category-11: #48dbfb;
+  --graph-category-12: #f9ca24;
+  --graph-category-13: #c8d6e5;
+  --graph-category-14: #cd84f1;
+  --graph-category-15: #7ed6df;
 }
 
 /* ------------------------------------------------------------------------- */
