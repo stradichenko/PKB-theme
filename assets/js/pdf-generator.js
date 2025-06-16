@@ -93,9 +93,24 @@
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
+  document.addEventListener('DOMContentLoaded', function() {
+    // Only run on single pages (not list pages)
+    const isListPage = document.body.classList.contains('list') || 
+                      document.querySelector('.post-list') || 
+                      document.querySelector('.posts-list') ||
+                      document.querySelector('[data-page-type="list"]');
+    
+    if (isListPage) {
+        return; // Exit early for list pages
+    }
+    
+    const pdfButton = document.getElementById('pdf-generate-btn');
+    
+    if (!pdfButton) {
+        // Silent return - no error logging for missing button
+        return;
+    }
+    
     init();
-  }
+  });
 })();

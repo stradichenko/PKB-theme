@@ -1,66 +1,78 @@
-/* Core imports first */
-@import 'global/variables.css';
-@import 'global/reset.css';
+/* ===== VARIABLES - Inline from global/variables.css ===== */
+/* ...existing variables code from variables.css... */
 
-/* Component imports */
-@import 'components/dropdown.css';
-@import 'components/knowledge-graph.css';
-@import 'components/toc.css';
-@import 'components/table.css';
-@import 'components/blockquote.css';
-@import 'components/citation.css';
-@import 'components/code.css';
-@import 'components/markdown.css';
-@import 'components/pdf-print.css';
+/* ===== RESET - Inline from global/reset.css ===== */
+/* ...existing reset code from reset.css... */
 
-/* Layout imports */
-@import 'header.css';
-@import 'footer.css';
-@import 'body.css';
-@import 'sidenotes.css';
-@import 'list.css';
-@import 'filters.css';
-@import 'search.css';
+/* ===== LAYOUT STYLES ===== */
+/* Header styles - inline from header.css */
+/* ...existing header code... */
 
+/* Footer styles - inline from footer.css */
+/* ...existing footer code... */
+
+/* Body styles - inline from body.css */
+/* ...existing body code... */
+
+/* ===== COMPONENT STYLES ===== */
+/* Search styles - inline from search.css */
+/* ...existing search code... */
+
+/* List styles - inline from list.css */
+/* ...existing list code... */
+
+/* TOC styles - inline from components/toc.css */
+/* ...existing toc code... */
+
+/* Table styles - inline from components/table.css */
+/* ...existing table code... */
+
+/* Code styles - inline from components/code.css */
+/* ...existing code code... */
+
+/* PDF Print styles - inline from components/pdf-print.css */
+/* ...existing pdf-print code... */
+
+/* ===== REMAINING STYLES ===== */
 /* General styling */
 a {
-  color: var(--link-color); /* Use variable for link color */
+  color: var(--link-color);
   text-decoration: none;
 }
 
-/* Sticky footer setup - UPDATED */
+/* Sticky footer setup */
 html {
-  height: 100%; /* Required for proper sticky footer */
+  height: 100%;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Minimum full viewport height */
+  min-height: 100vh;
   margin: 0;
   padding: 0;
 }
 
 main {
-  flex: 1 0 auto; /* grow, don't shrink, respect initial size */
-  background-color: var(--main-bg-color); /* Use main background color */
-  padding: var(--main-padding); /* Use main padding */
-  color: var(--main-text-color); /* Use main text color */
+  flex: 1 0 auto;
+  background-color: var(--main-bg-color);
+  padding: var(--main-padding);
+  color: var(--main-text-color);
 }
 
 footer {
-  flex-shrink: 0; /* Prevent footer from shrinking */
+  flex-shrink: 0;
   width: 100%;
-  margin-top: auto; /* Push to bottom when content is short */
+  margin-top: auto;
 }
 
 main, .content {
-  flex: 1; /* Makes the content area expand to fill available space */
+  flex: 1;
 }
 
 /* Update TOC toggle color to use variable */
 .toc-toggle {
-  color: var(--color-primary); /* Use semantic color */
+  color: var(--color-primary);
 }
 
 /* Text selection highlight styles with semantic colors */
@@ -162,79 +174,79 @@ html code::-moz-selection {
   background: transparent; /* Transparent corner where scrollbars meet */
 }
 
-/* Show scrollbar more prominently when actively scrolling */
-*.scrolling::-webkit-scrollbar-thumb {
-  opacity: 0.7; /* More visible when scrolling */
-}
-
-/* Fade scrollbar when not actively scrolling */
-*.scrolling-fade::-webkit-scrollbar-thumb {
-  opacity: 0.1; /* Very transparent when inactive */
-}
-
-/* Firefox scrollbar styling */
-* {
-  scrollbar-width: thin; /* Always show thin scrollbar */
+  scrollbar-width: thin; /* Always show thin scrollbar */g */
   scrollbar-color: transparent transparent; /* Transparent by default */
   transition: scrollbar-color 0.15s ease; /* Faster transition */
 }
 
-/* Show Firefox scrollbar when scrolling */
-*.scrolling {
+/* Show Firefox scrollbar when scrolling */ng */
+*.scrolling {ade::-webkit-scrollbar-thumb {
   scrollbar-color: var(--scrollbar-thumb-bg) transparent;
 }
 
 /* Fade Firefox scrollbar when inactive */
 *.scrolling-fade {
   scrollbar-color: rgba(74, 144, 226, 0.1) transparent; /* Very transparent */
-}
-
+} scrollbar-color: transparent transparent; /* Transparent by default */
+  transition: scrollbar-color 0.15s ease; /* Faster transition */
 /* Thin scrollbar variant for specific elements */
 .scrollbar-thin::-webkit-scrollbar {
-  width: 6px; /* Even thinner variant */
+  width: 6px; /* Even thinner variant */ */
   height: 6px;
-  position: absolute; /* Force overlay positioning */
+  position: absolute; /* Force overlay positioning */ent;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
+} scrollbar-color: rgba(74, 144, 226, 0.1) transparent; /* Very transparent */
 }
-
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-bg);
-  border-radius: 3px;
+  background-color: var(--scrollbar-thumb-bg);s */
+  border-radius: 3px;kit-scrollbar {
   opacity: 0.2; /* Lower default opacity */
   transition: opacity 0.15s ease; /* Faster transition */
+} position: absolute; /* Force overlay positioning */
 }
-
 .scrollbar-thin::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
+  display: none;:-webkit-scrollbar-track {
+  width: 0;d: transparent;
   height: 0;
 }
-
+.scrollbar-thin::-webkit-scrollbar-thumb {
 .scrollbar-thin::-webkit-scrollbar-thumb:hover,
 .scrollbar-thin.scrolling::-webkit-scrollbar-thumb {
   opacity: 0.7; /* More visible when active */
+} transition: opacity 0.15s ease; /* Faster transition */
 }
-
 .scrollbar-thin.scrolling-fade::-webkit-scrollbar-thumb {
   opacity: 0.1; /* Very transparent when inactive */
-}
-
+} display: none;
+  width: 0;
 /* Override for specific components that need always-visible scrollbars */
 .scrollbar-always-visible::-webkit-scrollbar {
   position: absolute; /* Force overlay positioning */
-}
-
+}scrollbar-thin::-webkit-scrollbar-thumb:hover,
+.scrollbar-thin.scrolling::-webkit-scrollbar-thumb {
 .scrollbar-always-visible::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb-bg);
   opacity: 0.5; /* Always somewhat visible */
-}
-
+}scrollbar-thin.scrolling-fade::-webkit-scrollbar-thumb {
+  opacity: 0.1; /* Very transparent when inactive */
 .scrollbar-always-visible::-webkit-scrollbar-button {
   display: none;
-  width: 0;
+  width: 0; for specific components that need always-visible scrollbars */
+  height: 0;lways-visible::-webkit-scrollbar {
+} position: absolute; /* Force overlay positioning */
+}
+.scrollbar-always-visible {
+  scrollbar-width: thin;e::-webkit-scrollbar-thumb {
+  scrollbar-color: var(--scrollbar-thumb-bg) transparent;
+} opacity: 0.5; /* Always somewhat visible */
+}
+/* Force overlay behavior for all scrollable elements */
+*[style*="overflow"] {ble::-webkit-scrollbar-button {
+  scrollbar-gutter: stable both-edges; /* Prevent layout shift */
+} width: 0;
   height: 0;
 }
 

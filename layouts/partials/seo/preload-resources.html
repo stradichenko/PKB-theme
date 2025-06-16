@@ -1,26 +1,29 @@
-{{/* Preload critical fonts - only if enabled */}}
-{{ if site.Params.seo.preload_fonts }}
+{{/* Preload critical fonts - only if enabled and fonts exist */}}
+{{ if and site.Params.seo.preload_fonts site.Params.fonts.preload }}
   {{ range site.Params.fonts.preload }}
-  <link rel="preload" href="{{ .url }}" as="font" type="{{ .type | default "font/woff2" }}" crossorigin>
+    {{ $fontPath := .url }}
+    {{ if or (fileExists (printf "static%s" $fontPath)) (resources.Get (strings.TrimPrefix "/" $fontPath)) }}
+      <link rel="preload" href="{{ .url }}" as="font" type="{{ .type | default "font/woff2" }}" crossorigin>
+    {{ end }}
   {{ end }}
 {{ end }}
 
-{{/* Preload critical CSS - only if enabled */}}
+{{/* Preload critical CSS - only if enabled and CSS exists */}}
 {{ if site.Params.seo.critical_css }}
   {{ $mainCSS := resources.Get "css/main.css" }}
   {{ if $mainCSS }}
-    {{ $css := $mainCSS | resources.ToCSS | resources.Minify | fingerprint }}
+    {{ $css := $mainCSS | resources.Minify | fingerprint }}
     <link rel="preload" href="{{ $css.RelPermalink }}" as="style">
   {{ end }}
 {{ end }}
 
-{{/* Preload hero/featured images */}}
+{{/* Preload hero/featured images - with existence check */}}
 {{ with .Params.image }}
   {{ $image := resources.Get . }}
   {{ if $image }}
     {{ $optimized := $image.Resize "1200x630 webp" }}
     <link rel="preload" href="{{ $optimized.RelPermalink }}" as="image">
-  {{ else }}
+  {{ else if (fileExists (printf "static%s" .)) }}
     <link rel="preload" href="{{ . | absURL }}" as="image">
   {{ end }}
 {{ end }}

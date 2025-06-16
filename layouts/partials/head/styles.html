@@ -51,10 +51,14 @@
       "css/about-profile.css"
       "css/main.css"
   ) }}
-    {{ $cssFiles = $cssFiles | append (resources.Get .) }}
+    {{ with resources.Get . }}
+      {{ $cssFiles = $cssFiles | append . }}
+    {{ end }}
   {{ end }}
-  {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ if gt (len $cssFiles) 0 }}
+    {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
 {{ end }}
 
 <!-- Always load search CSS separately -->
@@ -64,8 +68,12 @@
 {{ end }}
 
 <!-- Theme toggle and contribution calendar CSS -->
-{{ $themeToggleCSS := resources.Get "css/theme-toggle.css" | minify | fingerprint }}
-<link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ with resources.Get "css/theme-toggle.css" }}
+  {{ $themeToggleCSS := . | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}
 
-{{ $contributionCalendarCSS := resources.Get "css/contribution-calendar.css" | minify }}
-<link rel="stylesheet" href="{{ $contributionCalendarCSS.Permalink }}">
+{{ with resources.Get "css/contribution-calendar.css" }}
+  {{ $contributionCalendarCSS := . | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $contributionCalendarCSS.RelPermalink }}" integrity="{{ $contributionCalendarCSS.Data.Integrity }}" crossorigin="anonymous">
+{{ end }}

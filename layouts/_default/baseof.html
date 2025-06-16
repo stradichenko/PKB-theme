@@ -51,6 +51,16 @@
   {{ partial "head.html" . }}
   
   {{ block "head" . }}{{ end }}
+  
+  <!-- CSS preload with proper attributes -->
+  {{ $mainCSS := resources.Get "css/main.css" }}
+  {{ if $mainCSS }}
+    {{ $css := $mainCSS | minify | fingerprint }}
+    <link rel="preload" href="{{ $css.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $css.RelPermalink }}"></noscript>
+    <!-- Fallback for immediate load if preload fails -->
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}" media="print" onload="this.media='all'">
+  {{ end }}
 </head>
 <body>
   <header>
@@ -63,21 +73,13 @@
     {{ partial "footer.html" . }}
   </footer>
   
-  <!-- Ensure theme is consistently applied -->
-  <script>
-    window.addEventListener('load', function() {
-      const theme = localStorage.getItem('theme') || 
-                    document.documentElement.getAttribute('data-theme') || 
-                    'light';
-      
-      if (theme === 'dark') {
-        document.documentElement.style.backgroundColor = '#1a202c';
-        document.body.style.backgroundColor = '#1a202c';
-        document.querySelectorAll('main, .layout-container, .container, .main-content').forEach(el => {
-          el.style.backgroundColor = '#1a202c';
-        });
-      }
-    });
-  </script>
+  <!-- PDF generator script loading for single pages only -->
+  {{ if not .IsSection }}
+    {{ $pdfGenerator := resources.Get "js/pdf-generator.js" }}
+    {{ if $pdfGenerator }}
+      {{ $pdfGeneratorMin := $pdfGenerator | minify | fingerprint }}
+      <script src="{{ $pdfGeneratorMin.RelPermalink }}" defer></script>
+    {{ end }}
+  {{ end }}
 </body>
 </html>

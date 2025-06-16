@@ -97,7 +97,7 @@ tagline = "Personal Knowledge Base"
   
   # Performance Features
   critical_css = true
-  preload_fonts = true
+  preload_fonts = false  # Disable font preloading until fonts are available
   lazy_load_images = true
   
   # Content Features
@@ -111,8 +111,8 @@ tagline = "Personal Knowledge Base"
   image_alt_suffix = " - PKB Theme"
   reading_time_words_per_minute = 200
 
-# Font preloading configuration
-[fonts]
-  [[fonts.preload]]
-    url = "/fonts/inter-var.woff2"
-    type = "font/woff2"
+# Font preloading configuration - commented out until fonts are available
+# [fonts]
+#   [[fonts.preload]]
+#     url = "/fonts/inter-var.woff2"
+#     type = "font/woff2"
