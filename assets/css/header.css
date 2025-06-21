@@ -62,7 +62,7 @@ header {
 .site-title {
   margin: 0;
   font-size: var(--font-size-xl, 1.5rem);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1;
   white-space: nowrap;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -101,10 +101,10 @@ header {
 }
 
 .main-nav a {
-  color: var(--header-text-color);
+  color: var(--header-nav-link-color);
   text-decoration: none;
   font-size: var(--font-size-medium, 1rem);
-  padding: 6px 8px; /* Reduced horizontal padding */
+  padding: var(--spacing-xs) var(--spacing-sm); /* Use CSS variables */
   border-radius: var(--border-radius, 6px);
   transition: background-color 0.2s, color 0.2s;
 }
@@ -131,6 +131,16 @@ header {
   display: flex;
   align-items: center;
   order: 2; /* Ensure search is last */
+  min-width: 0; /* Allow shrinking */
+  flex: 0 1 auto; /* Allow flexible shrinking */
+}
+
+/* Search input flexibility */
+.header-search input {
+  min-width: 120px; /* Minimum search width */
+  width: 200px; /* Default width */
+  max-width: 300px; /* Maximum width */
+  transition: width 0.2s ease;
 }
 
 /* Shared button/icon styling */
@@ -166,8 +176,8 @@ header {
 }
 
 .toggle-icon {
-  width: var(--spacing-lg);
-  height: var(--spacing-lg);
+  width: var(--spacing-md);
+  height: var(--spacing-md);
 }
 
 /* Control icon visibility */
@@ -198,7 +208,7 @@ html[data-theme="dark"] .moon-icon {
 .share-modal {
   display: none;
   position: fixed;
-  z-index: var(--z-index-modal, 1000);
+  z-index: var(--z-index-modal);
   left: 0;
   top: 0;
   width: 100%;
@@ -215,10 +225,10 @@ html[data-theme="dark"] .moon-icon {
 
 .share-modal-content {
   position: relative;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
   margin: 15% auto;
-  padding: 1.5rem;
+  padding: var(--spacing-lg);
   border-radius: var(--border-radius);
   width: 90%;
   max-width: 260px;
@@ -248,17 +258,70 @@ html[data-theme="dark"] .moon-icon {
   background: none;
   border: none;
   cursor: pointer;
-  padding: var(--spacing-xs);
+  padding: var(--spacing-sm);
   color: inherit;
   flex-shrink: 0; /* Prevent shrinking */
   margin-right: var(--spacing-sm);
 }
 
-/* Mobile navigation styles */
-@media (max-width: var(--breakpoint-md)) {
+/* Large screens - allow search to shrink more gradually */
+@media (max-width: 1200px) {
+  .header-search input {
+    width: 180px; /* Slightly smaller on smaller screens */
+  }
+}
+
+/* Medium-large screens - start compacting */
+@media (max-width: 1000px) {
+  .header-left {
+    gap: var(--spacing-md); /* Reduced gap */
+  }
+
+  .header-search input {
+    width: 150px; /* Further reduce search width */
+  }
+
+  .header-right {
+    gap: var(--spacing-sm); /* Reduced gap */
+  }
+}
+
+/* Medium screens - more compact but still functional */
+@media (max-width: 850px) {
+  .site-title {
+    font-size: var(--font-size-lg); /* Smaller title */
+  }
+
+  .header-controls {
+    gap: var(--spacing-xs); /* Tighter spacing */
+  }
+
+  .header-search input {
+    width: 120px; /* Minimum viable search width */
+  }
+
+  .header-right {
+    gap: var(--spacing-xs); /* Even tighter spacing */
+  }
+}
+
+/* Small-medium screens - hide search but keep controls */
+@media (max-width: 700px) {
+  .header-search {
+    display: none; /* Hide search when it gets too cramped */
+  }
+
+  .header-controls {
+    gap: var(--spacing-xs);
+  }
+}
+
+/* Mobile navigation styles - more lenient breakpoint */
+@media (max-width: 600px) {
   .burger-button {
     display: flex;
-    order: 2; /* Move burger after logo */
+    order: 3; /* Move burger to center position */
+    margin: 0 auto; /* Center the burger menu */
   }
 
   .site-title {
@@ -268,11 +331,21 @@ html[data-theme="dark"] .moon-icon {
   .header-left {
     justify-content: flex-start;
     gap: var(--spacing-sm);
+    flex: 0 0 auto; /* Don't grow */
   }
 
   .logo-link {
     order: 1;
     flex: 0 0 40px; /* Fixed flex basis */
+  }
+
+  /* Add center section for burger */
+  .header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1; /* Take up remaining space to center burger */
+    order: 2;
   }
 
   .main-nav {
@@ -310,19 +383,72 @@ html[data-theme="dark"] .moon-icon {
     justify-content: flex-start;
   }
 
-  /* Remove default mobile styles that break layout */
+  /* Update header container to allow centering */
   .header-container {
     flex-wrap: nowrap !important;
+    justify-content: space-between;
   }
 
   .header-left {
     flex: 0 1 auto;
     min-width: 0;
   }
+
+  /* Hide header controls on mobile to prevent overlap */
+  .header-controls {
+    display: none;
+  }
+
+  .header-search {
+    display: none;
+  }
+
+  /* Make header-right invisible but maintain layout balance */
+  .header-right {
+    flex: 0 0 40px; /* Same width as logo to balance layout */
+    min-width: 40px;
+    visibility: hidden; /* Hide but keep space */
+  }
+}
+
+/* Very small screens - only burger menu */
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0 var(--spacing-sm); /* Reduced padding */
+  }
+
+  .header-left {
+    gap: var(--spacing-xs);
+  }
+
+  .logo-link {
+    width: 32px; /* Smaller logo */
+    min-width: 32px;
+  }
+
+  .site-logo {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+  }
+
+  .burger-button {
+    min-width: 32px;
+    min-height: 32px;
+    width: 32px;
+    height: 32px;
+    padding: var(--spacing-xs);
+  }
+
+  /* Ensure only burger shows */
+  .header-controls,
+  .header-search {
+    display: none !important;
+  }
 }
 
 /* Show site title on wider screens */
-@media (min-width: calc(var(--breakpoint-md) + 1px)) {
+@media (min-width: 601px) {
   .site-title {
     display: block;
   }
