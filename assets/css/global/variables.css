@@ -12,14 +12,14 @@
 /* ------------------------------------------------------------------------- */
 :root {
   /* LIGHT THEME - 8 core colors */
-  --light-primary: #4a90e2;        /* Primary accent color (blue) */
-  --light-primary-variant: #a4bd35; /* Variant for hover states (greenish) */
+  --light-primary: #6e2468;        /* Primary accent color (blue) */
+  --light-primary-variant: #81AC70; /* Variant for hover states (greenish) */
   --light-secondary: #df2d2d;      /* Second accent color (red) */
-  --light-background: #275f85;     /* Main background color (medium blue) */
-  --light-surface: #f8f8f8;        /* Card/component surface color (light gray) */
+  --light-background: #ebeae8;     /* Main background color (medium blue) */
+  --light-surface: #e2dbda;        /* Card/component surface color (light gray) */
   --light-text-primary: #1a2633;   /* Main text color (dark blue) */
-  --light-text-secondary: #cad6ff; /* Secondary text color (light blue) */
-  --light-border: #ccc;           /* Border color (gray) */
+  --light-text-secondary: #5C6580; /* Secondary text color (light blue) */
+  --light-border: #767779;           /* Border color (gray) */
   
   /* DARK THEME - 8 core colors */
   --dark-primary: #e9996b;        /* Primary accent color (orange) */

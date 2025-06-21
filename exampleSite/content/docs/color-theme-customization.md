@@ -25,7 +25,7 @@ This can be easily done by having a grayscaled theme with very different grades 
 
 But if you want to add colors, the alternatives are more nuanced and myriad.
 
-Firstly, make a local copy of the CSS variables:
+Firstly, make sure you have a local copy of the CSS variables:
 
 ```bash
 
@@ -135,17 +135,34 @@ graph TB
 ```
 
 
-
+Is a good idea to lose some Chroma to gain more Hue
 
 --dark-secondary: #9A5B62
 --dark-primary-variant: #BA97C4
 
-Analogous base with mid lightness
---dark-background: #2C0139;
---dark-surface: #622C57;
 
-Complementary to main
+
+1. Analogous base with low lightness
+--dark-background: ;
+--dark-surface: ; /* analogous and a bit higher in lumen */
+
+
+
+Using a Square Color Harmony 
+Complementary to base
 - --dark-primary: 
 
 Analogous but striking lightness compared to main
 --
+
+since --dark-primary-variant is mostly for highlighting links on hover, a reactive effect, a complementary color to --dark-primary is recommended.
+
+
+Regarding -dark-text-secondary and --dark-border; anything low in luminescance and Chroma works well.
+
+
+High Chroma is very opinionated
+## Configuring the light theme
+
+
+--light-background
