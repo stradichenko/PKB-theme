@@ -23,14 +23,14 @@
 .sidenote {
   display: inline-block;
   position: absolute;
-  background-color: var(--sidenote-bg-color);
+  background-color: var(--sidenote-bg-color) !important; /* Ensure background color is applied */
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
   padding: var(--spacing-sm);
   width: calc(100% - var(--spacing-sm)*2); /* Adjust to parent width */
   max-width: 100%;
-  font-size: var(--font-size-sm, 0.875rem);
-  line-height: var(--line-height-tight, 1.4);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
   box-sizing: border-box;
 }
 
@@ -130,13 +130,13 @@ p > .sidenote-wrapper {
 }
 
 /* Responsive adjustments */
-@media (max-width: 1400px) {
+@media (max-width: calc(var(--breakpoint-xl) + 200px)) {
   .sidenote-section {
     max-width: 300px;
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: var(--breakpoint-lg)) {
   .sidenote-section {
     display: none; /* Hide sidenotes completely at this breakpoint */
   }

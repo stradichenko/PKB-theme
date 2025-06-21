@@ -11,8 +11,8 @@
 /* Theme toggle button specific styling */
 .theme-toggle {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
   border-radius: 50%;
   background: transparent;
   border: none;

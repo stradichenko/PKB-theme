@@ -25,7 +25,7 @@
   background-color: var(--search-bg-color); /* Use the new variable for search background */
   color: var(--header-text-color);
   border: none; /* Remove border as we're using background color for contrast */
-  padding: 0 36px 0 36px; /* Space for icons on both sides */
+  padding: 0 var(--spacing-xl) 0 var(--spacing-xl); /* Space for icons on both sides */
   font-size: var(--font-size-small);
   transition: all 0.2s ease;
 }
@@ -55,7 +55,7 @@
   align-items: center;
   justify-content: center;
   height: 38px;
-  width: 38px;
+  width: var(--spacing-xl); /* Use spacing variable instead of hardcoded 38px */
   z-index: var(--z-index-dropdown);
   pointer-events: none;
 }
@@ -75,8 +75,8 @@
 
 .search-icon svg,
 .clear-icon svg {
-  width: 18px;
-  height: 18px;
+  width: var(--spacing-md);
+  height: var(--spacing-md);
 }
 
 /* Ensure text-muted class doesn't override our colors */

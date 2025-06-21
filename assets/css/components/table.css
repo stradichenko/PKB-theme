@@ -36,21 +36,21 @@ tbody tr:nth-child(even) {
 
 /* Row hover effect */
 tbody tr:hover {
-  background-color: rgba(74, 144, 226, 0.1); /* Using color value from --light-primary */
+  background-color: rgba(var(--color-primary-rgb), 0.1);
 }
 
 /* Dark mode support */
 html[data-theme="dark"] table {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Using standard shadow since --shadow-dark isn't defined */
+  box-shadow: var(--shadow-medium);
 }
 
 html[data-theme="dark"] thead {
-  background-color: var(--color-primary); /* This will automatically use dark-primary in dark mode */
+  background-color: var(--color-primary);
 }
 
 html[data-theme="dark"] th, 
 html[data-theme="dark"] td {
-  border-color: var(--color-border); /* This will automatically use dark-border in dark mode */
+  border-color: var(--color-border);
 }
 
 html[data-theme="dark"] tbody tr:nth-child(even) {
@@ -58,7 +58,7 @@ html[data-theme="dark"] tbody tr:nth-child(even) {
 }
 
 html[data-theme="dark"] tbody tr:hover {
-  background-color: rgba(233, 153, 107, 0.15); /* Using color value from --dark-primary */
+  background-color: rgba(var(--dark-primary-rgb), 0.15);
 }
 
 /* Responsive tables */
@@ -68,8 +68,7 @@ html[data-theme="dark"] tbody tr:hover {
     overflow-x: auto;
   }
   
-  /* Auto-wrap tables in containers */
   table {
-    min-width: 650px; /* Ensures table doesn't get too cramped */
+    min-width: 650px;
   }
 }

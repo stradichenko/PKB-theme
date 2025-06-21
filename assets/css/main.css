@@ -142,8 +142,8 @@ html code::-moz-selection {
 
 /* Global scrollbar styling - applies to all scrollable elements */
 *::-webkit-scrollbar {
-  width: 8px; /* Thinner scrollbar */
-  height: 8px;
+  width: var(--scrollbar-width); /* Use variable instead of hardcoded 8px */
+  height: var(--scrollbar-height); /* Use variable instead of hardcoded 8px */
   position: absolute; /* Force overlay positioning */
 }
 
@@ -174,79 +174,69 @@ html code::-moz-selection {
   background: transparent; /* Transparent corner where scrollbars meet */
 }
 
-  scrollbar-width: thin; /* Always show thin scrollbar */g */
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin; /* Always show thin scrollbar */
   scrollbar-color: transparent transparent; /* Transparent by default */
   transition: scrollbar-color 0.15s ease; /* Faster transition */
 }
 
-/* Show Firefox scrollbar when scrolling */ng */
-*.scrolling {ade::-webkit-scrollbar-thumb {
+/* Show Firefox scrollbar when scrolling */
+*.scrolling {
   scrollbar-color: var(--scrollbar-thumb-bg) transparent;
 }
 
 /* Fade Firefox scrollbar when inactive */
 *.scrolling-fade {
-  scrollbar-color: rgba(74, 144, 226, 0.1) transparent; /* Very transparent */
-} scrollbar-color: transparent transparent; /* Transparent by default */
-  transition: scrollbar-color 0.15s ease; /* Faster transition */
+  scrollbar-color: rgba(var(--color-primary-rgb), 0.1) transparent; /* Very transparent */
+}
+
 /* Thin scrollbar variant for specific elements */
 .scrollbar-thin::-webkit-scrollbar {
-  width: 6px; /* Even thinner variant */ */
-  height: 6px;
-  position: absolute; /* Force overlay positioning */ent;
+  width: var(--scrollbar-thin-width); /* Even thinner variant */
+  height: var(--scrollbar-thin-height);
+  position: absolute; /* Force overlay positioning */
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
-} scrollbar-color: rgba(74, 144, 226, 0.1) transparent; /* Very transparent */
 }
+
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-bg);s */
-  border-radius: 3px;kit-scrollbar {
+  background-color: var(--scrollbar-thumb-bg);
+  border-radius: var(--scrollbar-border-radius);
   opacity: 0.2; /* Lower default opacity */
   transition: opacity 0.15s ease; /* Faster transition */
-} position: absolute; /* Force overlay positioning */
 }
+
 .scrollbar-thin::-webkit-scrollbar-button {
-  display: none;:-webkit-scrollbar-track {
-  width: 0;d: transparent;
+  display: none;
+  width: 0;
   height: 0;
 }
-.scrollbar-thin::-webkit-scrollbar-thumb {
+
 .scrollbar-thin::-webkit-scrollbar-thumb:hover,
 .scrollbar-thin.scrolling::-webkit-scrollbar-thumb {
   opacity: 0.7; /* More visible when active */
-} transition: opacity 0.15s ease; /* Faster transition */
 }
+
 .scrollbar-thin.scrolling-fade::-webkit-scrollbar-thumb {
   opacity: 0.1; /* Very transparent when inactive */
-} display: none;
-  width: 0;
+}
+
 /* Override for specific components that need always-visible scrollbars */
 .scrollbar-always-visible::-webkit-scrollbar {
   position: absolute; /* Force overlay positioning */
-}scrollbar-thin::-webkit-scrollbar-thumb:hover,
-.scrollbar-thin.scrolling::-webkit-scrollbar-thumb {
+}
+
 .scrollbar-always-visible::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb-bg);
   opacity: 0.5; /* Always somewhat visible */
-}scrollbar-thin.scrolling-fade::-webkit-scrollbar-thumb {
-  opacity: 0.1; /* Very transparent when inactive */
+}
+
 .scrollbar-always-visible::-webkit-scrollbar-button {
   display: none;
-  width: 0; for specific components that need always-visible scrollbars */
-  height: 0;lways-visible::-webkit-scrollbar {
-} position: absolute; /* Force overlay positioning */
-}
-.scrollbar-always-visible {
-  scrollbar-width: thin;e::-webkit-scrollbar-thumb {
-  scrollbar-color: var(--scrollbar-thumb-bg) transparent;
-} opacity: 0.5; /* Always somewhat visible */
-}
-/* Force overlay behavior for all scrollable elements */
-*[style*="overflow"] {ble::-webkit-scrollbar-button {
-  scrollbar-gutter: stable both-edges; /* Prevent layout shift */
-} width: 0;
+  width: 0;
   height: 0;
 }
 

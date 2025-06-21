@@ -65,7 +65,7 @@
 
 .label-highlight {
   opacity: 1;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   fill: var(--color-primary);
 }
 
@@ -94,7 +94,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
   padding: var(--spacing-xs);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-medium);
   z-index: 10;
   width: 200px; /* Set fixed width */
   max-width: 200px;
@@ -110,7 +110,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
   padding: var(--spacing-xs);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-medium);
   z-index: 10;
   width: 200px;
   font-size: var(--font-size-small);
@@ -230,7 +230,7 @@
 .graph-legend {
   border-radius: var(--border-radius);
   padding: var(--spacing-sm);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-light);
   font-size: var(--font-size-small);
   /* Remove background-color since it's now defined above with transparency */
 }
@@ -423,7 +423,7 @@
   min-width: 220px;
   max-height: 80vh; /* Limit to 80% of viewport height */
   overflow-y: auto; /* Make the entire dropdown scrollable if needed */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-medium);
   display: none;
   flex-direction: column;
   gap: var(--spacing-sm);
@@ -570,7 +570,7 @@
   border-radius: var(--border-radius);
   padding: var(--spacing-xs);
   min-width: 150px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-medium);
   display: none;
   flex-direction: column;
   z-index: 13;
@@ -602,7 +602,7 @@
   margin: var(--spacing-lg) 0;
   background-color: var(--color-surface);
   border-radius: var(--border-radius);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-medium);
 }
 
 .knowledge-graph-wrapper .knowledge-graph-container {

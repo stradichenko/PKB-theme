@@ -198,7 +198,7 @@
 }
 
 /* Responsive design adjustments */
-@media (min-width: 1024px) {
+@media (min-width: var(--breakpoint-lg)) {
   .calendar-container {
     width: 100%;
     justify-content: center;
@@ -213,13 +213,13 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: calc(var(--breakpoint-lg) - 1px)) {
   .calendar-container {
     min-width: auto;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-md)) {
   .calendar-box {
     padding: var(--spacing-md);
   }
@@ -271,7 +271,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: var(--breakpoint-sm)) {
   .calendar-box {
     padding: var(--spacing-sm);
   }

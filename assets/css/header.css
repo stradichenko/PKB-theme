@@ -135,8 +135,8 @@ header {
 
 /* Shared button/icon styling */
 .header-button {
-  width: 36px;
-  height: 36px;
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,8 +166,8 @@ header {
 }
 
 .toggle-icon {
-  width: 20px;
-  height: 20px;
+  width: var(--spacing-lg);
+  height: var(--spacing-lg);
 }
 
 /* Control icon visibility */
@@ -238,24 +238,24 @@ html[data-theme="dark"] .moon-icon {
 
 /* Burger menu button - prevent shrinking */
 .burger-button {
-  min-width: 40px;
-  min-height: 40px;
-  width: 40px;
-  height: 40px;
+  min-width: var(--spacing-2xl);
+  min-height: var(--spacing-2xl);
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
   display: none;
   align-items: center;
   justify-content: center;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--spacing-xs);
   color: inherit;
   flex-shrink: 0; /* Prevent shrinking */
   margin-right: var(--spacing-sm);
 }
 
 /* Mobile navigation styles */
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-md)) {
   .burger-button {
     display: flex;
     order: 2; /* Move burger after logo */
@@ -322,7 +322,7 @@ html[data-theme="dark"] .moon-icon {
 }
 
 /* Show site title on wider screens */
-@media (min-width: 769px) {
+@media (min-width: calc(var(--breakpoint-md) + 1px)) {
   .site-title {
     display: block;
   }

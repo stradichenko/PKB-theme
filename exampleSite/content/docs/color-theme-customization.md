@@ -141,8 +141,8 @@ graph TB
 --dark-primary-variant: #BA97C4
 
 Analogous base with mid lightness
---dark-background: #2C0139
---dark-surface: #622C57
+--dark-background: #2C0139;
+--dark-surface: #622C57;
 
 Complementary to main
 - --dark-primary: 
