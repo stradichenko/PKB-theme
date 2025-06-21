@@ -117,7 +117,7 @@ The simplest way to create a post is using the archetype implicitly declared by 
 
 ```bash
 # e.g.
-hugo new content content/posts/my-first-post
+hugo new content content/posts/my-first-post.md
 
 # for any other archetype it will follow the pattern:
 hugo new content content/<archetype>/<filename>
@@ -131,6 +131,9 @@ Inside your blog folder you can always use the command `hugo server` and check i
 
 ## Configure your site (WIP)
 Described at [documentation](https://github.com/stradichenko/PKB-theme/blob/main/documentation), these are the initial steps to understand how you can customize your blog to your liking.
+
+### [Color Theme Customization](https://stradichenko.github.io/PKB-theme/docs/color-theme-customization)
+
 
 ## FAQ
 ### Hugo's Theme Configuration Inheritance (Lookup Order)

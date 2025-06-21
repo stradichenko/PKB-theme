@@ -14,11 +14,15 @@
       // Set theme attribute for CSS
       document.documentElement.setAttribute('data-theme', currentTheme);
       
-      // Apply critical color directly to prevent flash
-      document.documentElement.style.backgroundColor = 
-        currentTheme === 'dark' ? '#1a202c' : '#275f85';
-      document.documentElement.style.color = 
-        currentTheme === 'dark' ? '#e2e8ff' : '#cad6ff';
+      // Apply critical colors using CSS variables with fallbacks
+      const rootStyle = document.documentElement.style;
+      if (currentTheme === 'dark') {
+        rootStyle.setProperty('--critical-bg', 'var(--dark-background, #1a202c)');
+        rootStyle.setProperty('--critical-text', 'var(--dark-text-primary, #e2e8ff)');
+      } else {
+        rootStyle.setProperty('--critical-bg', 'var(--light-background, #275f85)');
+        rootStyle.setProperty('--critical-text', 'var(--light-text-secondary, #cad6ff)');
+      }
         
       // Update localStorage to ensure persistence
       if (!savedTheme) {
@@ -29,21 +33,27 @@
   
   <!-- Critical CSS for immediate theme application -->
   <style>
-    /* Force the background color with maximum specificity */
+    /* Force the background color with maximum specificity using CSS variables */
     html[data-theme="dark"],
     html[data-theme="dark"] body,
     html[data-theme="dark"] main,
     html[data-theme="dark"] .content {
-      background-color: #1a202c !important;
-      color: #e2e8ff !important;
+      background-color: var(--dark-background, #1a202c) !important;
+      color: var(--dark-text-primary, #e2e8ff) !important;
     }
     
     html[data-theme="light"],
     html[data-theme="light"] body,
     html[data-theme="light"] main,
     html[data-theme="light"] .content {
-      background-color: #275f85 !important;
-      color: #cad6ff !important;
+      background-color: var(--light-background, #275f85) !important;
+      color: var(--light-text-secondary, #cad6ff) !important;
+    }
+    
+    /* Apply critical colors immediately */
+    html {
+      background-color: var(--critical-bg, var(--color-background));
+      color: var(--critical-text, var(--color-text-primary));
     }
   </style>
   

@@ -28,6 +28,8 @@ But if you want to add colors, the alternatives are more nuanced and myriad.
 Firstly, make a local copy of the CSS variables:
 
 ```bash
+
+mkdir -p assets/css/global/
 curl -L -o assets/css/global/variables.css https://github.com/stradichenko/PKB-theme/raw/main/assets/css/global/variables.css
 ```
 
@@ -131,3 +133,19 @@ graph TB
     style M fill:#ed8936,color:#fff
     style O fill:#8e44ad,color:#fff
 ```
+
+
+
+
+--dark-secondary: #9A5B62
+--dark-primary-variant: #BA97C4
+
+Analogous base with mid lightness
+--dark-background: #2C0139
+--dark-surface: #622C57
+
+Complementary to main
+- --dark-primary: 
+
+Analogous but striking lightness compared to main
+--
