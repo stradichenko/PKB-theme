@@ -23,8 +23,13 @@
           </div>
         </div>
         <div class="page-metadata">
-          <!-- PDF Button - positioned first in metadata -->
+
+            <!-- PDF Button - positioned after TTS -->
           {{ partial "pdf-button.html" . }}
+          <!-- TTS Button - positioned first in metadata -->
+          {{ partial "tts-button.html" . }}
+          
+
           
           <!-- Author -->
           {{ with .Params.author }}
@@ -158,11 +163,22 @@
   {{ $styles = $styles | append . }}
 {{ end }}
 
+<!-- Add TTS button resources -->
+{{ with resources.Get "css/components/tts-button.css" }}
+  {{ $styles = $styles | append . }}
+{{ end }}
+
 {{ $pdfJS := resources.Get "js/pdf-generator.js" }}
+{{ $ttsJS := resources.Get "js/tts.js" }}
 {{ if $pdfJS }}
   {{ $scripts = $scripts | append $pdfJS }}
 {{ else }}
   {{ warnf "PDF generator script not found: js/pdf-generator.js" }}
+{{ end }}
+{{ if $ttsJS }}
+  {{ $scripts = $scripts | append $ttsJS }}
+{{ else }}
+  {{ warnf "TTS script not found: js/tts.js" }}
 {{ end }}
 
 <!-- Add PDF print styles to the styles bundle -->
