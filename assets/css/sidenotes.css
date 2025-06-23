@@ -136,13 +136,31 @@ p > .sidenote-wrapper {
   }
 }
 
-@media (max-width: var(--breakpoint-lg)) {
+@media (max-width: 1200px) {
   .sidenote-section {
-    display: none; /* Hide sidenotes completely at this breakpoint */
+    display: none !important; /* Force hide sidenotes on medium screens */
   }
   
   .sidenote {
-    display: none; /* Ensure sidenotes are hidden */
+    display: none !important; /* Ensure sidenotes are hidden */
+  }
+  
+  /* Show references inline instead */
+  .sidenote-ref {
+    display: inline-block;
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: var(--breakpoint-lg)) {
+  .sidenote-section {
+    display: none !important; /* Hide sidenotes completely at this breakpoint */
+  }
+  
+  .sidenote {
+    display: none !important; /* Ensure sidenotes are hidden */
   }
   
   /* Show references inline instead */

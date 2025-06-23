@@ -30,7 +30,7 @@ html body .layout-container .main-content .post-header {
 }
 
 .post-header-container {
-  padding-bottom: var(--spacing-md) !important;
+  padding-bottom: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   gap: var(--spacing-md) !important;
@@ -43,8 +43,8 @@ html body .layout-container .main-content .post-header {
   flex-wrap: wrap !important;
   gap: 1.2rem !important;
   margin-top: 0 !important; /* Removed top margin */
-  margin-bottom: var(--spacing-sm) !important;
-  padding-bottom: 0.5rem !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
   font-size: 0.9rem !important;
   color: var(--text-color-secondary) !important;
   background: none !important;
@@ -120,6 +120,37 @@ html body .layout-container .main-content .tag-link {
   margin: 0.1rem 0.1rem !important;
 }
 
+/* Tooltip for truncated tags/categories in metadata */
+.more-indicator {
+  position: relative !important;
+  color: var(--color-primary) !important;
+  cursor: pointer !important;
+  font-weight: var(--font-weight-bold) !important;
+}
+
+.more-indicator:hover::after {
+  content: attr(data-tooltip) !important;
+  position: absolute !important;
+  bottom: 100% !important;
+  left: 0 !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--text-color-primary) !important;
+  padding: 0.5rem !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  z-index: 100 !important;
+  white-space: normal !important;
+  font-size: 0.8rem !important;
+  pointer-events: none !important;
+  min-width: 150px !important;
+  max-width: 300px !important;
+  text-align: left !important;
+  transform: translateY(-5px) !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
 /* Content separation */
 .post-content {
   margin-top: 0.5rem !important; /* Reduced from 1rem */
@@ -130,13 +161,32 @@ html body .layout-container .main-content .tag-link {
   overflow: visible !important;
 }
 
-/* Dark mode adjustments with highest specificity */
-html[data-theme="dark"] body .layout-container .main-content .post-title {
-  border-bottom-color: var(--color-primary) !important;
+/* Sidenote styling for better word wrapping and responsive behavior */
+.sidenote-section {
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+  hyphens: auto !important;
+  word-break: break-word !important;
+  max-width: 250px !important;
+  line-height: 1.4 !important;
+  white-space: normal !important;
+  /* Force aggressive word breaking for long words */
+  overflow-wrap: break-word !important;
+  /* Webkit specific for better Chrome support */
+  -webkit-hyphens: auto !important;
+  -moz-hyphens: auto !important;
+  -ms-hyphens: auto !important;
 }
 
-html[data-theme="dark"] body .layout-container .main-content .tag-link {
-  background-color: rgba(233, 153, 107, 0.1) !important;
+/* Hide sidenotes on short screens (height-based media query) */
+@media screen and (max-height: 600px) {
+  .sidenote-section {
+    display: none !important;
+  }
+  
+  .main-content {
+    max-width: 85ch !important;
+  }
 }
 
 .layout-container {
@@ -167,11 +217,65 @@ html[data-theme="dark"] body .layout-container .main-content .tag-link {
   }
 }
 
+@media screen and (max-width: 1200px) {
+  /* Hide sidenotes and adjust layout for medium screens */
+  .layout-container {
+    grid-template-columns: minmax(250px, 1fr) 3fr;
+    grid-template-areas: "toc main";
+  }
+  
+  .sidenote-section {
+    display: none;
+  }
+  
+  .main-content {
+    max-width: 80ch; /* Increase max-width when sidenotes are hidden */
+  }
+}
+
 @media screen and (max-width: 1000px) {
   .toc-sidebar {
     display: none;
   }
+  
+  .layout-container {
+    grid-template-columns: 1fr;
+    grid-template-areas: "main";
+    max-width: none;
+    padding: 0 1rem;
+  }
+  
   .main-content {
     flex: 1 1 auto;
+    max-width: 75ch; /* Optimal reading width for mobile */
+    margin: 0 auto; /* Center the content */
+    padding: 0;
+  }
+  
+  .sidenote-section {
+    display: none;
+  }
+}
+
+/* Mobile-specific adjustments */
+@media screen and (max-width: 768px) {
+  .layout-container {
+    padding: 0 0.75rem;
+  }
+  
+  .main-content {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
+/* Very small screens */
+@media screen and (max-width: 480px) {
+  .layout-container {
+    padding: 0 0.5rem;
+  }
+  
+  .main-content {
+    max-width: 100%;
   }
 }
