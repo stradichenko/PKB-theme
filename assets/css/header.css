@@ -305,10 +305,10 @@ html[data-theme="dark"] .moon-icon {
   }
 }
 
-/* Small-medium screens - hide search but keep controls */
-@media (max-width: 700px) {
-  .header-search {
-    display: none; /* Hide search when it gets too cramped */
+/* Small-medium screens - keep controls and search visible */
+@media (max-width: 800px) {
+  .header-search input {
+    width: 100px; /* Smaller search input */
   }
 
   .header-controls {
@@ -317,7 +317,7 @@ html[data-theme="dark"] .moon-icon {
 }
 
 /* Mobile navigation styles - more lenient breakpoint */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .burger-button {
     display: flex;
     order: 3; /* Move burger to center position */
@@ -394,20 +394,27 @@ html[data-theme="dark"] .moon-icon {
     min-width: 0;
   }
 
-  /* Hide header controls on mobile to prevent overlap */
+  /* Keep header controls and search visible on mobile */
   .header-controls {
-    display: none;
+    display: flex; /* Keep controls visible */
+    gap: var(--spacing-xs);
   }
 
   .header-search {
-    display: none;
+    display: flex; /* Keep search visible */
   }
 
-  /* Make header-right invisible but maintain layout balance */
+  .header-search input {
+    width: 80px; /* Very compact search input */
+    min-width: 60px;
+  }
+
+  /* Make header-right maintain its content */
   .header-right {
-    flex: 0 0 40px; /* Same width as logo to balance layout */
-    min-width: 40px;
-    visibility: hidden; /* Hide but keep space */
+    flex: 0 0 auto; /* Auto width based on content */
+    min-width: 0;
+    visibility: visible; /* Keep visible */
+    gap: var(--spacing-xs);
   }
 }
 
@@ -440,15 +447,23 @@ html[data-theme="dark"] .moon-icon {
     padding: var(--spacing-xs);
   }
 
-  /* Ensure only burger shows */
-  .header-controls,
+  /* Ensure only burger shows on very small screens but keep controls */
+  .header-controls {
+    gap: var(--spacing-xs); /* Keep controls but with minimal spacing */
+  }
+
   .header-search {
-    display: none !important;
+    display: flex; /* Keep search visible */
+  }
+
+  .header-search input {
+    width: 60px; /* Minimal search input */
+    min-width: 50px;
   }
 }
 
 /* Show site title on wider screens */
-@media (min-width: 601px) {
+@media (min-width: 769px) {
   .site-title {
     display: block;
   }
