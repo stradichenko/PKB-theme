@@ -1,0 +1,19 @@
+{{- /* filepath: /home/gespitia/projects/PKB-theme/layouts/index.json */ -}}
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections | first 1000 -}}
+[
+{{- range $index, $page := $pages -}}
+  {{- if gt $index 0 -}},{{- end }}
+  {
+    "id": {{ $page.File.UniqueID | jsonify }},
+    "title": {{ $page.Title | jsonify }},
+    "content": {{ $page.Plain | jsonify }},
+    "summary": {{ $page.Summary | jsonify }},
+    "url": {{ $page.RelPermalink | jsonify }},
+    "date": {{ $page.Date.Format "2006-01-02" | jsonify }},
+    "section": {{ $page.Section | jsonify }},
+    "type": {{ $page.Type | jsonify }},
+    "tags": {{ $page.Params.tags | jsonify }},
+    "categories": {{ $page.Params.categories | jsonify }}
+  }
+{{- end -}}
+]

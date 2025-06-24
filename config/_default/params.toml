@@ -42,11 +42,21 @@
 [footer]
   #customText = """"""
 
+[search]
+  enabled = true
+  includeContent = true
+  contentLimit = 500
+
 [taxonomies]
-  mainSections = ["posts", "docs", "projects"]
+  # mainSections defines which Hugo content sections to include in various theme features:
+  # - Search index generation (/index.json) - only pages from these sections are searchable
+  # - Zipf's Law analysis - word frequency analysis from titles, descriptions, tags, categories
+  # - Contribution calendar - activity tracking based on post creation/modification dates
+  # - Content filtering throughout the theme (e.g., recent posts, related content)
+  # Common values: ["posts", "docs", "blog", "articles", "projects"]
+  mainSections = ["posts", "docs"]
   category = 'categories'
   tag = 'tags'
-  series = 'series'
 
 [about]
   profileDescription = "A brief description"

@@ -1,21 +1,19 @@
 baseURL      = "https://stradichenko.github.io/PKB-theme/"
-#languageCode = "en-us"
-title        = "PKB-theme Demo"
+languageCode = "en-us"
+title        = "PKB Theme Example"
 
-[markup]
-  [markup.goldmark]
-    [markup.goldmark.renderHooks]
-      [markup.goldmark.renderHooks.image]
-        enableDefault = true
-      [markup.goldmark.renderHooks.link]
-        enableDefault = true
-    [markup.goldmark.renderer]
-      unsafe = true  # This allows raw HTML in markdown files
+# Essential for search functionality
+[outputs]
+  home = ['html', 'rss', 'json']
+  page = ['html']
+  section = ['html', 'rss']
+
+[params]
+  mainSections = ["posts", "docs"]
 
 [module]
   [[module.imports]]
     path = "github.com/stradichenko/PKB-theme"
-    # version = "v1.0.0"  # optional pin once you have tags
 
     [[module.imports.mounts]]
       source = "static" # inside the theme repo
