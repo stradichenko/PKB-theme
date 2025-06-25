@@ -18,7 +18,7 @@
 
   FuzzySearch.prototype.loadSearchData = function() {
     var self = this;
-    var indexUrl = '/index.json';
+    var indexUrl = window.location.origin + '/index.json';
     
     return fetch(indexUrl)
       .then(function(response) {
@@ -45,7 +45,7 @@
         console.info('2. In params.toml: taxonomies.mainSections = ["posts", "docs", etc.]');
         console.info('3. File exists: layouts/index.json');
         console.info('4. Content exists in mainSections directories');
-        console.info('Current URL attempted:', window.location.origin + indexUrl);
+        console.info('Current URL attempted:', indexUrl);
         self.searchData = [];
         self.buildSearchIndex();
       });
