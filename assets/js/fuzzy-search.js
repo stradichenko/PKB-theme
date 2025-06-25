@@ -18,12 +18,14 @@
 
   FuzzySearch.prototype.loadSearchData = function() {
     var self = this;
-    return fetch('/index.json')
+    var indexUrl = '/index.json';
+    
+    return fetch(indexUrl)
       .then(function(response) {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error('Search index not found (HTTP ' + response.status + ')');
+          throw new Error('Search index not found (HTTP ' + response.status + ') at ' + indexUrl);
         }
       })
       .then(function(data) {
@@ -38,10 +40,12 @@
       })
       .catch(function(error) {
         console.warn('Could not load search data:', error.message);
-        console.info('Debug: Check if /index.json exists and contains valid data');
-        console.info('Required: outputs.home = ["html", "rss", "json"] in hugo.toml');
-        console.info('Required: mainSections configured in params');
-        console.info('Required: layouts/index.json template exists');
+        console.info('GitHub Pages Debug: Ensure these Hugo config settings:');
+        console.info('1. In hugo.toml: outputs.home = ["HTML", "RSS", "JSON"]');
+        console.info('2. In params.toml: taxonomies.mainSections = ["posts", "docs", etc.]');
+        console.info('3. File exists: layouts/index.json');
+        console.info('4. Content exists in mainSections directories');
+        console.info('Current URL attempted:', window.location.origin + indexUrl);
         self.searchData = [];
         self.buildSearchIndex();
       });
@@ -135,8 +139,8 @@
       return [{
         id: 'no-index',
         title: 'Search index not available',
-        content: 'Configure outputs.home to include JSON and set taxonomies.mainSections in your config.',
-        summary: 'Search requires proper Hugo configuration',
+        content: 'For GitHub Pages: Check hugo.toml outputs.home includes JSON, verify layouts/index.json exists, and ensure content exists in mainSections.',
+        summary: 'Search requires proper Hugo configuration and content',
         url: '#',
         type: 'info',
         score: 1,
