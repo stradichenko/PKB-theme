@@ -18,8 +18,23 @@
 
   FuzzySearch.prototype.loadSearchData = function() {
     var self = this;
-    // Use relative URL to work with both local and subpath deployments
+    // Use relative URL - this will work with any baseURL including subpaths
     var indexUrl = '/index.json';
+    
+    // For sites with subpath (like GitHub Pages), get the full path from current location
+    var currentPath = window.location.pathname;
+    var basePath = '';
+    
+    // If we're in a subpath (not root), extract the base path
+    if (currentPath !== '/' && currentPath.indexOf('/') === 0) {
+      var pathParts = currentPath.split('/').filter(function(part) { return part.length > 0; });
+      // For GitHub Pages format like /PKB-theme/, the first part is usually the repo name
+      if (pathParts.length > 0 && currentPath.startsWith('/' + pathParts[0] + '/')) {
+        basePath = '/' + pathParts[0];
+      }
+    }
+    
+    indexUrl = basePath + '/index.json';
     
     return fetch(indexUrl)
       .then(function(response) {
@@ -52,9 +67,10 @@
         console.info('2. In params.toml: taxonomies.mainSections = ["posts", "docs", etc.]');
         console.info('3. File exists: layouts/index.json');
         console.info('4. Content exists in mainSections directories');
-        console.info('5. For GitHub Pages with subpath: check baseURL ends with slash');
-        console.info('Current base URL:', window.location.origin);
-        console.info('Attempted fetch URL:', window.location.origin + indexUrl);
+        console.info('5. For GitHub Pages: baseURL should match your site URL exactly');
+        console.info('Current pathname:', currentPath);
+        console.info('Constructed base path:', basePath);
+        console.info('Final fetch URL:', window.location.origin + indexUrl);
         self.searchData = [];
         self.buildSearchIndex();
       });

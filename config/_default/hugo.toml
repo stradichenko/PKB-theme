@@ -400,12 +400,12 @@ enableGitInfo = true
 [outputs]
   # JSON output is required for search functionality
   # The search index (/index.json) includes only pages from sections defined in params.taxonomies.mainSections
-  home = ['html', 'rss', 'json']  # Add JSON output for search index
-  page = ['html']
-  rss = ['rss']
-  section = ['html', 'rss']
-  taxonomy = ['html', 'rss']
-  term = ['html', 'rss']
+  home = ['HTML', 'RSS', 'JSON']  # Ensure JSON is included for search
+  page = ['HTML']
+  rss = ['RSS']
+  section = ['HTML', 'RSS']
+  taxonomy = ['HTML', 'RSS']
+  term = ['HTML', 'RSS']
 
 
 [permalinks]
