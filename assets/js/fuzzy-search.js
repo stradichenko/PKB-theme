@@ -18,20 +18,27 @@
 
   FuzzySearch.prototype.loadSearchData = function() {
     var self = this;
-    var indexUrl = window.location.origin + '/index.json';
+    // Use relative URL to work with both local and subpath deployments
+    var indexUrl = '/index.json';
     
     return fetch(indexUrl)
       .then(function(response) {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error('Search index not found (HTTP ' + response.status + ') at ' + indexUrl);
+          throw new Error('Search index not found (HTTP ' + response.status + ') at ' + window.location.origin + indexUrl);
         }
       })
       .then(function(data) {
         if (Array.isArray(data) && data.length > 0) {
-          self.searchData = data;
-          console.log('Search index loaded with ' + data.length + ' pages');
+          // Check if we got debug info indicating no real content
+          if (data.length === 1 && data[0].id === 'debug-info') {
+            console.warn('Search index contains only debug info:', data[0].content);
+            self.searchData = [];
+          } else {
+            self.searchData = data;
+            console.log('Search index loaded with ' + data.length + ' pages');
+          }
         } else {
           console.warn('Search index is empty or invalid');
           self.searchData = [];
@@ -45,7 +52,9 @@
         console.info('2. In params.toml: taxonomies.mainSections = ["posts", "docs", etc.]');
         console.info('3. File exists: layouts/index.json');
         console.info('4. Content exists in mainSections directories');
-        console.info('Current URL attempted:', indexUrl);
+        console.info('5. For GitHub Pages with subpath: check baseURL ends with slash');
+        console.info('Current base URL:', window.location.origin);
+        console.info('Attempted fetch URL:', window.location.origin + indexUrl);
         self.searchData = [];
         self.buildSearchIndex();
       });
