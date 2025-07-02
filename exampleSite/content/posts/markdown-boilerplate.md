@@ -318,10 +318,229 @@ Standard markdown footnotes[^1] work like this.
 ## Conclusion
 
 This boilerplate demonstrates the range of markdown features and proper sidenote usage {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}. For practical applications and performance considerations {{< cite "miller2022" "/bibtex/references.bib" "chicago" "true" >}}, see our guides on Digital Gardening. As noted in seminal work {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}, proper documentation is essential.
-<div style="color: blue;">
-  Custom HTML can be included directly in markdown files if your renderer supports it.
-</div>
 
-## Conclusion
+## Diagrams
 
-This boilerplate demonstrates the range of markdown features and proper sidenote usage {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}. For practical applications and performance considerations {{< cite "miller2022" "/bibtex/references.bib" "chicago" "true" >}}, see our guides on Digital Gardening. As noted in seminal work {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}, proper documentation is essential.
+This theme supports both Mermaid diagrams and GoAT ASCII diagrams for visualizing complex information.
+
+### Mermaid Diagrams
+
+Mermaid diagrams are created using fenced code blocks with the `mermaid` language identifier. They render dynamically and are perfect for interactive documentation.
+
+#### Basic Flowchart
+
+```mermaid
+graph TD
+    A[Start Process] --> B{Check Input}
+    B -->|Valid| C[Process Data]
+    B -->|Invalid| D[Show Error]
+    C --> E[Save Results]
+    D --> F[Request New Input]
+    E --> G[End]
+    F --> B
+```
+
+**Markdown source:**
+
+```mermaid
+graph TD
+    A[Start Process] --> B{Check Input}
+    B -->|Valid| C[Process Data]
+    B -->|Invalid| D[Show Error]
+```
+
+
+```mermaid {align="center" zoom="true"}
+graph LR
+  If --> Then
+  Then --> Else
+```
+
+{{< sidenote >}}
+Flowcharts are excellent for showing decision processes and workflows. Use rectangles for processes, diamonds for decisions, and circles for start/end points.
+{{< /sidenote >}}
+
+#### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant API
+    participant Database
+    
+    User->>Frontend: Submit Form
+    Frontend->>API: POST /api/data
+    API->>Database: INSERT query
+    Database-->>API: Success
+    API-->>Frontend: 200 OK
+    Frontend-->>User: Show Success Message
+```
+
+#### Gantt Chart
+
+```mermaid
+gantt
+    title Project Development Schedule
+    dateFormat YYYY-MM-DD
+    section Analysis
+    Requirements Gathering    :done, req, 2024-01-01, 2024-01-15
+    System Design           :done, design, 2024-01-16, 2024-02-01
+    section Development  
+    Backend Development     :active, backend, 2024-02-01, 2024-03-15
+    Frontend Development    :frontend, 2024-02-15, 2024-04-01
+    section Testing
+    Unit Testing           :testing, after backend, 10d
+    Integration Testing    :integration, after frontend, 5d
+```
+
+#### Class Diagram
+
+```mermaid
+classDiagram
+    class User {
+        -String email
+        -String password
+        +login()
+        +logout()
+        +updateProfile()
+    }
+    class Post {
+        -String title
+        -String content
+        -Date createdAt
+        +publish()
+        +archive()
+    }
+    class Comment {
+        -String text
+        -Date timestamp
+        +edit()
+        +delete()
+    }
+    
+    User ||--o{ Post : creates
+    Post ||--o{ Comment : has
+    User ||--o{ Comment : writes
+```
+
+#### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    USER {
+        int id PK
+        string email UK
+        string name
+        datetime created_at
+    }
+    POST {
+        int id PK
+        int user_id FK
+        string title
+        text content
+        datetime published_at
+    }
+    COMMENT {
+        int id PK
+        int post_id FK
+        int user_id FK
+        text content
+        datetime created_at
+    }
+    
+    USER ||--o{ POST : writes
+    POST ||--o{ COMMENT : has
+    USER ||--o{ COMMENT : makes
+```
+
+#### Git Graph
+
+```mermaid
+gitgraph
+    commit id: "Initial commit"
+    branch feature
+    checkout feature
+    commit id: "Add new feature"
+    commit id: "Fix bug in feature"
+    checkout main
+    commit id: "Hotfix security issue"
+    merge feature
+    commit id: "Release v1.0"
+```
+
+### GoAT ASCII Diagrams
+
+GoAT diagrams use ASCII art for simple, text-based visualizations that work well in plain text environments.
+
+#### System Architecture
+
+```goat
+                    .-----------.
+                   |  Load      |
+                   |  Balancer  |
+                    '-----------'
+                         |
+          .--------------|--------------.
+         |               |               |
+    .---------.     .---------.     .---------.
+   | Web      |    | Web      |    | Web      |
+   | Server 1 |    | Server 2 |    | Server 3 |
+    '---------'     '---------'     '---------'
+         |               |               |
+          '-------.------'-------.-------'
+                   |               |
+              .---------.     .---------.
+             | Database |    |  Cache   |
+             |  Server  |    |  Server  |
+              '---------'     '---------'
+```
+
+#### Data Flow
+
+```goat
+   Input Data
+       |
+       v
+ .-----------.
+|  Validate  |
+|    Data    |
+ '-----------'
+       |
+       v
+ .-----------.      .-----------.
+| Transform  |---->|   Error   |
+|    Data    |     | Handling  |
+ '-----------'      '-----------'
+       |                 |
+       v                 v
+ .-----------.      .-----------.
+|   Store    |     |    Log    |
+|  Results   |     |  Errors   |
+ '-----------'      '-----------'
+```
+
+### Diagram Best Practices
+
+**Mermaid Advantages:**
+- Interactive and clickable elements
+- Professional appearance
+- Wide variety of diagram types
+- Automatic layout and styling
+- Good for complex relationships
+
+**GoAT Advantages:**  
+- Works in plain text environments
+- Fast rendering (server-side)
+- Copy-pasteable as ASCII art
+- Minimal dependencies
+- Good for simple diagrams
+
+**Usage Guidelines:**
+- Use Mermaid for complex, interactive diagrams
+- Use GoAT for simple diagrams that need to work everywhere
+- Both types export well to PDF
+- Keep diagrams focused on one concept
+- Add sidenotes to explain complex diagram elements
+
+Diagrams are powerful tools for explaining complex concepts. Choose the right type based on your audience and medium - Mermaid for web-first content, GoAT for documentation that might be viewed as plain text.
