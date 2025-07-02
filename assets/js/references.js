@@ -1,24 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('References script loaded');
   
+  // Check if we're in print mode or about to print
+  const isInPrintMode = window.matchMedia && window.matchMedia('print').matches;
+  
+  // Don't initialize if we're already in print mode
+  if (isInPrintMode) {
+    console.log('Print mode detected, skipping references initialization');
+    return;
+  }
+  
   // Create references with a delay to ensure the DOM is ready
-  setTimeout(initReferences, 1500); // Increased from 1000ms
+  setTimeout(initReferences, 1500);
   
   // Also handle the custom event
   document.addEventListener('sidenotesProcessed', () => {
     console.log('sidenotesProcessed event received');
-    setTimeout(initReferences, 800); // Increased from 500ms
+    setTimeout(initReferences, 800);
   });
   
   // Listen for load event as well
   window.addEventListener('load', () => {
     console.log('Window loaded');
-    setTimeout(initReferences, 800); // Increased from 500ms
+    setTimeout(initReferences, 800);
+  });
+  
+  // Handle print events to prevent interference
+  window.addEventListener('beforeprint', () => {
+    console.log('Before print event - ensuring references are stable');
+    // Ensure references are created before print
+    initReferences();
+    // Small delay to let DOM settle
+    setTimeout(() => {
+      console.log('References ready for print');
+    }, 100);
+  });
+  
+  // Clean up after print if needed
+  window.addEventListener('afterprint', () => {
+    console.log('After print event');
   });
 });
 
 function initReferences() {
   console.log('Initializing references');
+  
+  // Check if we're in the middle of printing
+  if (window.matchMedia && window.matchMedia('print').matches) {
+    console.log('Print mode active, skipping dynamic references creation');
+    return;
+  }
   
   // Find all sidenotes on the page - specifically look in sidenote-section for better reliability
   const sidenoteSection = document.querySelector('.sidenote-section');
@@ -44,6 +75,9 @@ function initReferences() {
   const referencesContainer = document.createElement('div');
   referencesContainer.id = 'sidenotes-references';
   referencesContainer.className = 'references-container';
+  
+  // Add print-friendly attributes
+  referencesContainer.setAttribute('data-print-ready', 'true');
   
   // Add heading
   const heading = document.createElement('h3');
@@ -90,6 +124,9 @@ function initReferences() {
     
     // Make sure the container is visible
     referencesContainer.style.display = 'block';
+    
+    // Mark as ready for print
+    referencesContainer.classList.add('print-ready');
     
     return;
   }

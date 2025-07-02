@@ -19,6 +19,9 @@
     constructor() {
       this.button = null;
       this.initialized = false;
+      this.isProcessing = false;
+      this.boundHandleClick = null;
+      this.boundHandleKeydown = null;
       this.init();
     }
 
@@ -43,22 +46,64 @@
     }
 
     bindEvents() {
-      this.button.addEventListener('click', this.handleClick.bind(this));
-      this.button.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.handleClick(e);
-        }
-      });
+      // Remove any existing listeners first
+      this.unbindEvents();
+      
+      // Create bound functions to enable proper removal
+      this.boundHandleClick = this.handleClick.bind(this);
+      this.boundHandleKeydown = this.handleKeydown.bind(this);
+      
+      this.button.addEventListener('click', this.boundHandleClick);
+      this.button.addEventListener('keydown', this.boundHandleKeydown);
+      
+      if (DEBUG) console.log('PDF generator events bound');
+    }
+    
+    unbindEvents() {
+      if (this.button && this.boundHandleClick) {
+        this.button.removeEventListener('click', this.boundHandleClick);
+        this.button.removeEventListener('keydown', this.boundHandleKeydown);
+        if (DEBUG) console.log('PDF generator events unbound');
+      }
+    }
+    
+    handleKeydown(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.handleClick(e);
+      }
     }
 
     handleClick(e) {
       e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       
-      if (this.button.disabled) return;
+      if (DEBUG) console.log('PDF button clicked, processing:', this.isProcessing);
       
-      // Direct print without loading animation
-      window.print();
+      // Prevent multiple simultaneous calls
+      if (this.isProcessing || this.button.disabled) {
+        if (DEBUG) console.log('PDF generation already in progress, ignoring click');
+        return;
+      }
+      
+      this.isProcessing = true;
+      
+      // Debounce mechanism - prevent rapid clicks
+      setTimeout(() => {
+        try {
+          if (DEBUG) console.log('Triggering print dialog');
+          window.print();
+        } catch (error) {
+          console.error('Error triggering print:', error);
+        } finally {
+          // Reset processing state after a short delay
+          setTimeout(() => {
+            this.isProcessing = false;
+            if (DEBUG) console.log('PDF processing state reset');
+          }, 1000);
+        }
+      }, 50);
     }
 
     showLoading() {
@@ -83,34 +128,52 @@
       
       this.button.setAttribute('aria-label', 'Generate PDF from current page');
     }
+    
+    destroy() {
+      this.unbindEvents();
+      this.button = null;
+      this.initialized = false;
+      this.isProcessing = false;
+      if (DEBUG) console.log('PDF generator destroyed');
+    }
   }
 
   function init() {
     try {
+      // Clean up any existing instance
+      if (window.PDFGeneratorInstance && typeof window.PDFGeneratorInstance.destroy === 'function') {
+        window.PDFGeneratorInstance.destroy();
+      }
+      
       window.PDFGeneratorInstance = new PDFGenerator();
     } catch (error) {
       console.error('PDF Generator initialization failed:', error);
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    // Only run on single pages (not list pages)
-    const isListPage = document.body.classList.contains('list') || 
-                      document.querySelector('.post-list') || 
-                      document.querySelector('.posts-list') ||
-                      document.querySelector('[data-page-type="list"]');
+  // Use a flag to prevent multiple DOMContentLoaded bindings
+  if (!window.PDFGeneratorDOMLoaded) {
+    window.PDFGeneratorDOMLoaded = true;
     
-    if (isListPage) {
-        return; // Exit early for list pages
-    }
-    
-    const pdfButton = document.getElementById('pdf-generate-btn');
-    
-    if (!pdfButton) {
-        // Silent return - no error logging for missing button
-        return;
-    }
-    
-    init();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+      // Only run on single pages (not list pages)
+      const isListPage = document.body.classList.contains('list') || 
+                        document.querySelector('.post-list') || 
+                        document.querySelector('.posts-list') ||
+                        document.querySelector('[data-page-type="list"]');
+      
+      if (isListPage) {
+          return; // Exit early for list pages
+      }
+      
+      const pdfButton = document.getElementById('pdf-generate-btn');
+      
+      if (!pdfButton) {
+          // Silent return - no error logging for missing button
+          return;
+      }
+      
+      init();
+    });
+  }
 })();

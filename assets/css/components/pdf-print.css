@@ -1,23 +1,13 @@
 /* -------------- PDF Print Styles -------------- */
-/* SIMPLIFIED FOR BROWSER PRINT COMPATIBILITY */
+/* MINIMAL ACADEMIC STYLE - ARXIV INSPIRED */
 @media print {
   @page {
-    margin: 2cm;
+    margin: 2.5cm 2cm;
     size: A4;
-    @top-center {
-      content: string(doc-title);
-      font-size: 10px;
-      color: #666;
-    }
     @bottom-center {
-      content: "Page " counter(page) " of " counter(pages);
-      font-size: 10px;
+      content: counter(page);
+      font-size: 9px;
       color: #666;
-    }
-    @bottom-right {
-      content: "Generated from PKB Theme";
-      font-size: 8px;
-      color: #999;
     }
   }
   
@@ -85,18 +75,18 @@
   }
   
   /* ============================================ */
-  /* DOCUMENT STRUCTURE - HARDCODED VALUES ONLY */
+  /* DOCUMENT STRUCTURE - ACADEMIC STYLE        */
   /* ============================================ */
   
   html, 
   body {
     background: white !important;
-    color: black !important;
+    color: #000 !important;
     margin: 0 !important;
     padding: 0 !important;
-    font-family: Arial, sans-serif !important;
-    font-size: 12px !important;
-    line-height: 1.6 !important;
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
     width: 100% !important;
     height: auto !important;
   }
@@ -116,9 +106,9 @@
     display: block !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 20px !important;
+    padding: 0 !important;
     background: white !important;
-    color: black !important;
+    color: #000 !important;
   }
   
   /* Post header */
@@ -127,43 +117,44 @@
   .post-title-wrapper {
     display: block !important;
     background: white !important;
-    margin: 0 0 24px 0 !important;
+    margin: 0 0 24pt 0 !important;
     padding: 0 !important;
+    text-align: center !important;
   }
   
   /* Post title */
   .post-title,
   h1.post-title {
-    string-set: doc-title content();
     display: block !important;
-    font-size: 24px !important;
+    font-size: 16pt !important;
     font-weight: 700 !important;
-    color: #1a2633 !important;
-    margin: 0 0 24px 0 !important;
-    padding: 0 0 12px 0 !important;
+    font-family: "Arial", "Helvetica", sans-serif !important;
+    color: #000 !important;
+    margin: 0 0 18pt 0 !important;
+    padding: 0 !important;
     text-align: center !important;
-    border-bottom: 2px solid #4a90e2 !important;
     page-break-after: avoid !important;
     background: white !important;
+    line-height: 1.2 !important;
   }
   
   /* Page metadata */
   .page-metadata {
     display: block !important;
     width: 100% !important;
-    font-size: 11px !important;
+    font-size: 10pt !important;
     color: #666 !important;
-    margin: 0 0 32px 0 !important;
-    padding: 0 0 16px 0 !important;
+    margin: 0 0 24pt 0 !important;
+    padding: 0 !important;
     text-align: center !important;
-    border-bottom: 1px solid #ddd !important;
     background: white !important;
+    font-style: italic !important;
   }
   
   /* Metadata items */
   .page-metadata > * {
     display: inline !important;
-    margin: 0 8px 0 0 !important;
+    margin: 0 12pt 0 0 !important;
     padding: 0 !important;
     color: #666 !important;
     background: white !important;
@@ -173,7 +164,7 @@
   .page-metadata time,
   .page-metadata a {
     display: inline !important;
-    color: #4a90e2 !important;
+    color: #666 !important;
     background: white !important;
     text-decoration: none !important;
   }
@@ -183,9 +174,10 @@
     display: block !important;
     width: 100% !important;
     background: white !important;
-    color: black !important;
+    color: #000 !important;
     margin: 0 !important;
     padding: 0 !important;
+    text-align: justify !important;
   }
   
   /* Content elements */
@@ -197,26 +189,29 @@
   .post-content h6 {
     display: block !important;
     visibility: visible !important;
-    color: #1a2633 !important;
-    margin: 16px 0 8px 0 !important;
+    color: #000 !important;
+    margin: 18pt 0 9pt 0 !important;
     page-break-after: avoid !important;
     font-weight: 700 !important;
+    font-family: "Arial", "Helvetica", sans-serif !important;
+    text-align: left !important;
   }
   
-  .post-content h1 { font-size: 20px !important; }
-  .post-content h2 { font-size: 18px !important; }
-  .post-content h3 { font-size: 16px !important; }
-  .post-content h4 { font-size: 14px !important; }
+  .post-content h1 { font-size: 14pt !important; }
+  .post-content h2 { font-size: 13pt !important; }
+  .post-content h3 { font-size: 12pt !important; }
+  .post-content h4 { font-size: 11pt !important; font-weight: 600 !important; }
   
   .post-content p {
     display: block !important;
     visibility: visible !important;
-    color: black !important;
-    margin: 8px 0 !important;
+    color: #000 !important;
+    margin: 0 0 9pt 0 !important;
     text-align: justify !important;
     orphans: 3 !important;
     widows: 3 !important;
-    line-height: 1.6 !important;
+    line-height: 1.5 !important;
+    text-indent: 0 !important;
   }
   
   /* Lists */
@@ -224,15 +219,16 @@
   .post-content ol {
     display: block !important;
     visibility: visible !important;
-    margin: 8px 0 !important;
-    padding-left: 24px !important;
+    margin: 9pt 0 !important;
+    padding-left: 18pt !important;
   }
   
   .post-content li {
     display: list-item !important;
     visibility: visible !important;
-    color: black !important;
-    margin: 4px 0 !important;
+    color: #000 !important;
+    margin: 3pt 0 !important;
+    line-height: 1.4 !important;
   }
   
   /* Images */
@@ -241,8 +237,7 @@
     visibility: visible !important;
     max-width: 100% !important;
     height: auto !important;
-    margin: 12px auto !important;
-    border: 1px solid #eee !important;
+    margin: 12pt auto !important;
     page-break-inside: avoid !important;
   }
   
@@ -252,76 +247,83 @@
     visibility: visible !important;
     border-collapse: collapse !important;
     width: 100% !important;
-    font-size: 10px !important;
-    margin: 12px 0 !important;
+    font-size: 10pt !important;
+    margin: 12pt auto !important;
     page-break-inside: avoid !important;
+    border: none !important;
   }
   
   .post-content th,
   .post-content td {
     display: table-cell !important;
     visibility: visible !important;
-    border: 1px solid #ddd !important;
-    padding: 6px !important;
+    border: none !important;
+    border-bottom: 1px solid #ccc !important;
+    padding: 3pt 6pt !important;
     text-align: left !important;
-    color: black !important;
+    color: #000 !important;
+    vertical-align: top !important;
   }
   
   .post-content th {
-    background: #f5f5f5 !important;
+    border-bottom: 2px solid #000 !important;
     font-weight: 700 !important;
-    color: #1a2633 !important;
+    color: #000 !important;
+  }
+  
+  .post-content thead th {
+    border-top: 2px solid #000 !important;
   }
   
   /* Code blocks */
   .post-content pre {
     display: block !important;
     visibility: visible !important;
-    background: #f8f8f8 !important;
-    border: 1px solid #e0e0e0 !important;
-    border-left: 4px solid #4a90e2 !important;
-    padding: 12px !important;
-    font-size: 10px !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+    padding: 9pt !important;
+    font-size: 9pt !important;
     white-space: pre-wrap !important;
     page-break-inside: avoid !important;
-    margin: 12px 0 !important;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+    margin: 12pt 0 !important;
+    font-family: "Courier New", Courier, monospace !important;
+    line-height: 1.3 !important;
   }
   
   .post-content code {
-    background: #f0f0f0 !important;
-    padding: 2px 4px !important;
-    font-size: 10px !important;
-    border-radius: 2px !important;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-    color: black !important;
+    background: #f8f8f8 !important;
+    padding: 1pt 2pt !important;
+    font-size: 9pt !important;
+    font-family: "Courier New", Courier, monospace !important;
+    color: #000 !important;
   }
   
   /* Blockquotes */
   .post-content blockquote {
     display: block !important;
     visibility: visible !important;
-    border-left: 4px solid #4a90e2 !important;
-    margin: 16px 0 !important;
-    padding: 12px 12px 12px 16px !important;
+    margin: 12pt 18pt !important;
+    padding: 0 !important;
     font-style: italic !important;
-    color: #555 !important;
-    background: #f9f9f9 !important;
+    color: #000 !important;
+    background: white !important;
     page-break-inside: avoid !important;
+    border: none !important;
   }
   
   /* Links */
   .post-content a {
-    color: #4a90e2 !important;
-    text-decoration: none !important;
+    color: #000 !important;
+    text-decoration: underline !important;
     visibility: visible !important;
   }
   
   .post-content a[href^="http"]:after {
-    content: " (" attr(href) ")" !important;
-    font-size: 9px !important;
+    content: " [" attr(href) "]" !important;
+    font-size: 8pt !important;
     color: #666 !important;
     word-break: break-all !important;
+    font-weight: normal !important;
   }
   
   .post-content a[href^="#"]:after,
@@ -334,7 +336,70 @@
     page-break-after: avoid !important;
   }
   
-  blockquote, pre, table {
+  blockquote, pre, table, img {
     page-break-inside: avoid !important;
+  }
+  
+  /* ============================================ */
+  /* REFERENCES SECTION - PRINT SPECIFIC        */
+  /* ============================================ */
+  
+  /* Ensure references container is visible in print */
+  .references-container,
+  #sidenotes-references {
+    display: block !important;
+    visibility: visible !important;
+    background: white !important;
+    color: #000 !important;
+    margin: 24pt 0 0 0 !important;
+    padding: 0 !important;
+    page-break-before: auto !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* References title */
+  .references-title {
+    display: block !important;
+    visibility: visible !important;
+    font-size: 13pt !important;
+    font-weight: 700 !important;
+    font-family: "Arial", "Helvetica", sans-serif !important;
+    color: #000 !important;
+    margin: 0 0 12pt 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    page-break-after: avoid !important;
+    background: white !important;
+  }
+  
+  /* References list */
+  .references-list {
+    display: block !important;
+    visibility: visible !important;
+    margin: 0 !important;
+    padding-left: 18pt !important;
+    background: white !important;
+  }
+  
+  .references-list li {
+    display: list-item !important;
+    visibility: visible !important;
+    color: #000 !important;
+    margin: 6pt 0 !important;
+    line-height: 1.4 !important;
+    font-size: 10pt !important;
+    list-style-type: decimal !important;
+  }
+  
+  /* ============================================ */
+  /* ACADEMIC SPACING */
+  /* ============================================ */
+  
+  .post-content > *:first-child {
+    margin-top: 0 !important;
+  }
+  
+  .post-content > *:last-child {
+    margin-bottom: 0 !important;
   }
 }
