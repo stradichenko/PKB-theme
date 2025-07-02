@@ -7,15 +7,10 @@ categories = ["guides", "reference", "documentation", "writing", "web developmen
 toc = true
 sidenotes = true
 comments = true
+math = true
 author = "Your Name"
 description = "A comprehensive boilerplate showcasing all markdown features and sidenote usage"
 +++
-
-
-
-
-
-
 
 This document demonstrates all standard Markdown features along with proper sidenote usage. This resource is the central reference for all content creators building a [Digital Garden](/posts/digital-garden/) or implementing the [Zettelkasten Method](/posts/zettelkasten-method/).
 
@@ -25,11 +20,9 @@ Effective typography forms the foundation of digital writing. As explained by {{
 
 Modern web development has evolved significantly {{< cite "zhang2023" "/bibtex/references.bib" "apa" "true" >}}. This evolution continues to shape how we build websites {{< cite "zhang2023" "/bibtex/references.bib" "apa" "true" >}} and manage content {{< cite "brown2021" "/bibtex/references.bib" "mla" "true" >}}.
 
-Sidenotes work great with lists to provide additional context for specific items without breaking the list flow {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}. Pay attention to this line. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. 
+Sidenotes work great with lists to provide additional context for specific items without breaking the list flow {{< cite "smith2020" "/bibtex/references.bib" "apa" "true" >}}. Pay attention to this line. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context.
 
 **Bold text** and *italic text* are straightforward. You can also have ***bold italic text*** and ~~strikethrough~~ {{< sidenote >}} **Sidenotes can contain formatting too!** Use them for supplementary information that doesn't interrupt the main text flow. {{< /sidenote >}}. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context. Sidenotes work great with lists to provide additional context.
-
-
 
 Plain text with a sidenote. {{< sidenote >}}
 This is a standard sidenote. Use it for brief asides or clarifications.
@@ -147,14 +140,23 @@ Academic-style writing often uses sidenotes for citations.¹{{< sidenote >}}
 
 ## Math Expressions
 
-This theme supports mathematical expressions using KaTeX/MathJax rendering.
+This theme supports mathematical expressions using KaTeX rendering. **Important**: Make sure to add `math = true` to your page's frontmatter to enable math rendering.
+
+### Math Syntax Guidelines
+
+**For math to render properly in Hugo:**
+- Use single dollar signs `$...$` for inline math
+- Use double dollar signs `$$...$$` for display (block) math
+- Use single backslashes `\` for LaTeX commands (not double `\\`)
+- Line breaks in equations use `\\` (double backslashes)
+- No need to escape dollar signs - Hugo's KaTeX configuration handles them properly
 
 ### Inline Math
 
-Inline math is wrapped in single dollar signs: $E = mc^2$, $\alpha + \beta = \gamma$, $\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$
+Inline math is wrapped with single dollar signs: $E = mc^2$, $\alpha + \beta = \gamma$, $\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$
 
 {{< sidenote >}}
-Inline math integrates seamlessly with your text flow for simple expressions and variables.
+Inline math integrates seamlessly with your text flow for simple expressions and variables. The syntax is `$E = mc^2$` which renders as $E = mc^2$.
 {{< /sidenote >}}
 
 ### Block Math
@@ -164,6 +166,13 @@ For standalone equations, use double dollar signs:
 $$
 \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
 $$
+
+**Markdown source:**
+```
+$$
+\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+```
 
 ### Equation Arrays and Alignment
 
@@ -175,6 +184,16 @@ f(x) &= (a+b)^2 \\
 &= a^2 + 2ab + b^2
 \end{align}
 $$
+
+**Markdown source:**
+```
+$$
+\begin{align}
+f(x) &= (a+b)^2 \\
+&= a^2 + 2ab + b^2
+\end{align}
+$$
+```
 
 ### Matrices
 
@@ -193,6 +212,24 @@ cx + dy
 \end{bmatrix}
 $$
 
+**Markdown source:**
+```
+$$
+\begin{pmatrix}
+a & b \\
+c & d
+\end{pmatrix}
+\begin{bmatrix}
+x \\
+y
+\end{bmatrix} =
+\begin{bmatrix}
+ax + by \\
+cx + dy
+\end{bmatrix}
+$$
+```
+
 ### Complex Notation
 
 $$
@@ -209,11 +246,62 @@ $$
 \tag{1} E = mc^2
 $$
 
+**Markdown source:**
+```
+$$
+\tag{1} E = mc^2
+$$
+```
+
 ### Chemical Equations
+
+Chemical equations use the `\ce{}` command from the mhchem extension:
 
 $$
 \ce{H2O + CO2 -> H2CO3}
 $$
+
+**Markdown source:**
+```
+$$
+\ce{H2O + CO2 -> H2CO3}
+$$
+```
+
+**More chemical equation examples:**
+
+Simple reaction:
+$$
+\ce{2H2 + O2 -> 2H2O}
+$$
+
+With states of matter:
+$$
+\ce{NaCl(s) + H2O(l) -> Na+(aq) + Cl-(aq)}
+$$
+
+Complex reaction with charges:
+$$
+\ce{MnO4^- + 8H+ + 5e^- -> Mn^2+ + 4H2O}
+$$
+
+Equilibrium reaction:
+$$
+\ce{N2 + 3H2 <=> 2NH3}
+$$
+
+**Chemical equation syntax tips:**
+- Use `\ce{}` to wrap the entire chemical equation
+- `->` for reactions, `<=>` for equilibrium
+- `+` and `-` for charges: `Na+`, `Cl-`
+- `(s)`, `(l)`, `(g)`, `(aq)` for states of matter
+- Numbers are automatically formatted: `H2O`, `2NH3`
+
+**Troubleshooting:**
+- If math doesn't render, check that `math = true` is in your frontmatter
+- Ensure you're using the correct delimiters (`$` for inline, `$$` for display)
+- For complex expressions, test in smaller parts first
+- Check browser console for KaTeX errors
 
 ## Footnotes
 
@@ -223,6 +311,13 @@ Standard markdown footnotes[^1] work like this.
 
 ## HTML in Markdown
 
+<div style="color: blue;">
+  Custom HTML can be included directly in markdown files if your renderer supports it.
+</div>
+
+## Conclusion
+
+This boilerplate demonstrates the range of markdown features and proper sidenote usage {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}. For practical applications and performance considerations {{< cite "miller2022" "/bibtex/references.bib" "chicago" "true" >}}, see our guides on Digital Gardening. As noted in seminal work {{< cite "johnson2019" "/bibtex/references.bib" "apa" "true" >}}, proper documentation is essential.
 <div style="color: blue;">
   Custom HTML can be included directly in markdown files if your renderer supports it.
 </div>
