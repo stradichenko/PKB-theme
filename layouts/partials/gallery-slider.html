@@ -1,0 +1,489 @@
+{{- $images := .images -}}
+{{- $id := .id | default "gallery" -}}
+{{- $autoplay := .autoplay | default false -}}
+{{- $interval := .interval | default 5000 -}}
+{{- $showThumbnails := .showThumbnails | default true -}}
+
+<div class="gallery-slider" id="{{ $id }}" data-autoplay="{{ $autoplay }}" data-interval="{{ $interval }}">
+  <!-- Main slider container -->
+  <div class="gallery-slider__container">
+    <!-- Image slides -->
+    <div class="gallery-slider__track" role="region" aria-label="Image gallery">
+      {{- range $index, $image := $images }}
+      <div class="gallery-slider__slide {{ if eq $index 0 }}gallery-slider__slide--active{{ end }}" 
+           data-slide="{{ $index }}"
+           role="group" 
+           aria-roledescription="slide"
+           aria-label="Slide {{ add $index 1 }} of {{ len $images }}">
+        <img src="{{ $image.src }}" 
+             alt="{{ $image.alt | default $image.caption }}"
+             class="gallery-slider__image"
+             loading="{{ if eq $index 0 }}eager{{ else }}lazy{{ end }}">
+        {{- if $image.caption }}
+        <div class="gallery-slider__caption">
+          {{ $image.caption | markdownify }}
+        </div>
+        {{- end }}
+      </div>
+      {{- end }}
+    </div>
+
+    <!-- Navigation arrows -->
+    <button class="gallery-slider__nav gallery-slider__nav--prev" 
+            aria-label="Previous image"
+            type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15,18 9,12 15,6"></polyline>
+      </svg>
+    </button>
+    
+    <button class="gallery-slider__nav gallery-slider__nav--next" 
+            aria-label="Next image"
+            type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9,18 15,12 9,6"></polyline>
+      </svg>
+    </button>
+
+    <!-- Slide indicators -->
+    <div class="gallery-slider__indicators" role="tablist" aria-label="Slide navigation">
+      {{- range $index, $image := $images }}
+      <button class="gallery-slider__indicator {{ if eq $index 0 }}gallery-slider__indicator--active{{ end }}"
+              data-slide="{{ $index }}"
+              role="tab"
+              aria-label="Go to slide {{ add $index 1 }}"
+              aria-selected="{{ if eq $index 0 }}true{{ else }}false{{ end }}"
+              type="button">
+      </button>
+      {{- end }}
+    </div>
+  </div>
+
+  <!-- Thumbnail strip (optional) -->
+  {{- if and $showThumbnails (gt (len $images) 1) }}
+  <div class="gallery-slider__thumbnails">
+    {{- range $index, $image := $images }}
+    <button class="gallery-slider__thumbnail {{ if eq $index 0 }}gallery-slider__thumbnail--active{{ end }}"
+            data-slide="{{ $index }}"
+            aria-label="Show slide {{ add $index 1 }}"
+            type="button">
+      <img src="{{ $image.thumb | default $image.src }}" 
+           alt="{{ $image.alt | default $image.caption }}"
+           class="gallery-slider__thumbnail-image">
+    </button>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  <!-- Lightbox overlay -->
+  <div class="gallery-lightbox" id="{{ $id }}-lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="gallery-lightbox__backdrop"></div>
+    <div class="gallery-lightbox__container">
+      <!-- Close button -->
+      <button class="gallery-lightbox__close" aria-label="Close lightbox" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      
+      <!-- Main lightbox image -->
+      <div class="gallery-lightbox__content">
+        <img src="" alt="" class="gallery-lightbox__image">
+        <div class="gallery-lightbox__caption"></div>
+      </div>
+      
+      <!-- Navigation arrows -->
+      <button class="gallery-lightbox__nav gallery-lightbox__nav--prev" aria-label="Previous image" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15,18 9,12 15,6"></polyline>
+        </svg>
+      </button>
+      
+      <button class="gallery-lightbox__nav gallery-lightbox__nav--next" aria-label="Next image" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9,18 15,12 9,6"></polyline>
+        </svg>
+      </button>
+      
+      <!-- Image counter -->
+      <div class="gallery-lightbox__counter">
+        <span class="gallery-lightbox__current">1</span> / <span class="gallery-lightbox__total">{{ len $images }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gallery slider JavaScript -->
+<script>
+(function() {
+  class GallerySlider {
+    constructor(element) {
+      this.element = element;
+      this.track = element.querySelector('.gallery-slider__track');
+      this.slides = element.querySelectorAll('.gallery-slider__slide');
+      this.indicators = element.querySelectorAll('.gallery-slider__indicator');
+      this.thumbnails = element.querySelectorAll('.gallery-slider__thumbnail');
+      this.prevBtn = element.querySelector('.gallery-slider__nav--prev');
+      this.nextBtn = element.querySelector('.gallery-slider__nav--next');
+      
+      // Lightbox elements
+      this.lightbox = element.querySelector('.gallery-lightbox');
+      this.lightboxImage = this.lightbox.querySelector('.gallery-lightbox__image');
+      this.lightboxCaption = this.lightbox.querySelector('.gallery-lightbox__caption');
+      this.lightboxClose = this.lightbox.querySelector('.gallery-lightbox__close');
+      this.lightboxPrev = this.lightbox.querySelector('.gallery-lightbox__nav--prev');
+      this.lightboxNext = this.lightbox.querySelector('.gallery-lightbox__nav--next');
+      this.lightboxCurrent = this.lightbox.querySelector('.gallery-lightbox__current');
+      this.lightboxBackdrop = this.lightbox.querySelector('.gallery-lightbox__backdrop');
+      
+      this.currentSlide = 0;
+      this.totalSlides = this.slides.length;
+      this.autoplay = element.dataset.autoplay === 'true';
+      this.interval = parseInt(element.dataset.interval) || 5000;
+      this.autoplayTimer = null;
+      this.isLightboxOpen = false;
+      
+      // Store image data for lightbox
+      this.imageData = Array.from(this.slides).map(slide => {
+        const img = slide.querySelector('.gallery-slider__image');
+        const caption = slide.querySelector('.gallery-slider__caption');
+        return {
+          src: img.src,
+          alt: img.alt,
+          caption: caption ? caption.innerHTML : ''
+        };
+      });
+      
+      this.init();
+    }
+    
+    init() {
+      if (this.totalSlides <= 1) return;
+      
+      this.bindEvents();
+      this.updateSlide(0);
+      
+      // Set initial height
+      setTimeout(() => this.adjustContainerHeight(), 100);
+      
+      if (this.autoplay) {
+        this.startAutoplay();
+      }
+    }
+    
+    bindEvents() {
+      this.prevBtn?.addEventListener('click', () => this.prevSlide());
+      this.nextBtn?.addEventListener('click', () => this.nextSlide());
+      
+      this.indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => this.goToSlide(index));
+      });
+      
+      this.thumbnails.forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', () => this.goToSlide(index));
+      });
+      
+      // Open lightbox when clicking on images
+      this.slides.forEach((slide, index) => {
+        const img = slide.querySelector('.gallery-slider__image');
+        img.addEventListener('click', () => {
+          // Always use the current slide index, not the clicked slide index
+          this.openLightbox(this.currentSlide);
+        });
+        img.style.cursor = 'pointer'; // Add visual feedback
+      });
+      
+      this.thumbnails.forEach((thumbnail, index) => {
+        // Regular click for navigation
+        thumbnail.addEventListener('click', (e) => {
+          // Only navigate if it's not a special click
+          if (!e.ctrlKey && !e.metaKey && e.button !== 2) {
+            this.goToSlide(index);
+          }
+        });
+        
+        // Special clicks for lightbox
+        thumbnail.addEventListener('click', (e) => {
+          if (e.ctrlKey || e.metaKey || e.button === 2) {
+            e.preventDefault();
+            this.goToSlide(index); // Navigate first
+            setTimeout(() => this.openLightbox(index), 50); // Then open lightbox
+          }
+        });
+        
+        // Double-click to open lightbox
+        thumbnail.addEventListener('dblclick', (e) => {
+          e.preventDefault();
+          this.goToSlide(index); // Navigate first
+          setTimeout(() => this.openLightbox(index), 50); // Then open lightbox
+        });
+      });
+      
+      // Lightbox events - ensure these are bound properly
+      if (this.lightboxClose) {
+        this.lightboxClose.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.closeLightbox();
+        });
+      }
+      
+      if (this.lightboxBackdrop) {
+        this.lightboxBackdrop.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.closeLightbox();
+        });
+      }
+      
+      if (this.lightboxPrev) {
+        this.lightboxPrev.addEventListener('click', () => this.lightboxPrevImage());
+      }
+      
+      if (this.lightboxNext) {
+        this.lightboxNext.addEventListener('click', () => this.lightboxNextImage());
+      }
+      
+      // Keyboard navigation - use arrow function to maintain 'this' context
+      this.keyboardHandler = (e) => {
+        if (this.isLightboxOpen) {
+          switch(e.key) {
+            case 'Escape':
+              e.preventDefault();
+              e.stopPropagation();
+              this.closeLightbox();
+              break;
+            case 'ArrowLeft':
+              e.preventDefault();
+              this.lightboxPrevImage();
+              break;
+            case 'ArrowRight':
+              e.preventDefault();
+              this.lightboxNextImage();
+              break;
+          }
+        } else if (this.element.contains(document.activeElement)) {
+          switch(e.key) {
+            case 'ArrowLeft':
+              e.preventDefault();
+              this.prevSlide();
+              break;
+            case 'ArrowRight':
+              e.preventDefault();
+              this.nextSlide();
+              break;
+            case 'Enter':
+            case ' ':
+              if (e.target.classList.contains('gallery-slider__image')) {
+                e.preventDefault();
+                this.openLightbox(this.currentSlide);
+              }
+              break;
+          }
+        }
+      };
+      
+      // Bind keyboard handler
+      document.addEventListener('keydown', this.keyboardHandler);
+      
+      // Pause autoplay on hover
+      this.element.addEventListener('mouseenter', () => this.pauseAutoplay());
+      this.element.addEventListener('mouseleave', () => this.resumeAutoplay());
+      
+      // Handle window resize to maintain proper proportions
+      this.resizeHandler = () => {
+        if (this.isLightboxOpen) {
+          this.constrainImageToViewport();
+        } else {
+          // Adjust gallery height on resize
+          this.adjustContainerHeight();
+        }
+      };
+      
+      window.addEventListener('resize', this.resizeHandler);
+    }
+    
+    openLightbox(index) {
+      this.isLightboxOpen = true;
+      // Ensure we're using the correct index
+      const targetIndex = index !== undefined ? index : this.currentSlide;
+      this.updateLightboxImage(targetIndex);
+      this.lightbox.setAttribute('aria-hidden', 'false');
+      this.lightbox.classList.add('gallery-lightbox--active');
+      document.body.style.overflow = 'hidden';
+      this.pauseAutoplay();
+      
+      // Focus the close button for accessibility
+      setTimeout(() => this.lightboxClose.focus(), 100);
+    }
+    
+    closeLightbox() {
+      this.isLightboxOpen = false;
+      this.lightbox.setAttribute('aria-hidden', 'true');
+      this.lightbox.classList.remove('gallery-lightbox--active');
+      document.body.style.overflow = '';
+      this.resumeAutoplay();
+    }
+    
+    updateLightboxImage(index) {
+      // Ensure index is within bounds
+      const safeIndex = Math.max(0, Math.min(index, this.totalSlides - 1));
+      const imageData = this.imageData[safeIndex];
+      
+      this.lightboxImage.src = imageData.src;
+      this.lightboxImage.alt = imageData.alt;
+      this.lightboxCaption.innerHTML = imageData.caption;
+      this.lightboxCurrent.textContent = safeIndex + 1;
+      
+      // Update the current slide to match lightbox
+      this.currentSlide = safeIndex;
+      
+      // Ensure image loads with proper constraints
+      this.lightboxImage.onload = () => {
+        this.constrainImageToViewport();
+      };
+      
+      // Update navigation button states
+      this.lightboxPrev.style.display = this.totalSlides > 1 ? 'flex' : 'none';
+      this.lightboxNext.style.display = this.totalSlides > 1 ? 'flex' : 'none';
+    }
+
+    constrainImageToViewport() {
+      const img = this.lightboxImage;
+      
+      // Get viewport dimensions
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // Account for padding and controls
+      const padding = 160; // Space for nav buttons and controls
+      const mobilePadding = window.innerWidth <= 768 ? 120 : padding;
+      
+      const maxWidth = viewportWidth - mobilePadding;
+      const maxHeight = viewportHeight - mobilePadding;
+      
+      // Set constraints via CSS
+      img.style.maxWidth = `${maxWidth}px`;
+      img.style.maxHeight = `${maxHeight}px`;
+    }
+    
+    lightboxPrevImage() {
+      const prevIndex = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+      this.updateLightboxImage(prevIndex);
+      this.updateSlide(prevIndex); // Sync gallery with lightbox
+    }
+    
+    lightboxNextImage() {
+      const nextIndex = (this.currentSlide + 1) % this.totalSlides;
+      this.updateLightboxImage(nextIndex);
+      this.updateSlide(nextIndex); // Sync gallery with lightbox
+    }
+    
+    updateSlide(index) {
+      // Update active slide
+      this.slides.forEach((slide, i) => {
+        slide.classList.toggle('gallery-slider__slide--active', i === index);
+      });
+      
+      // Update indicators
+      this.indicators.forEach((indicator, i) => {
+        indicator.classList.toggle('gallery-slider__indicator--active', i === index);
+        indicator.setAttribute('aria-selected', i === index);
+      });
+      
+      // Update thumbnails
+      this.thumbnails.forEach((thumbnail, i) => {
+        thumbnail.classList.toggle('gallery-slider__thumbnail--active', i === index);
+      });
+      
+      this.currentSlide = index;
+      
+      // Adjust container height to match active image
+      this.adjustContainerHeight();
+    }
+    
+    adjustContainerHeight() {
+      const activeSlide = this.slides[this.currentSlide];
+      const activeImage = activeSlide.querySelector('.gallery-slider__image');
+      
+      // Wait for image to load if not already loaded
+      if (activeImage.complete) {
+        this.setContainerHeight(activeImage);
+      } else {
+        activeImage.onload = () => {
+          this.setContainerHeight(activeImage);
+        };
+      }
+    }
+    
+    setContainerHeight(image) {
+      const container = this.element.querySelector('.gallery-slider__container');
+      const track = this.track;
+      
+      // Get the natural dimensions and calculate display height
+      const containerWidth = container.offsetWidth;
+      const aspectRatio = image.naturalHeight / image.naturalWidth;
+      let displayHeight = containerWidth * aspectRatio;
+      
+      // Apply max-height constraint (70vh)
+      const maxHeight = window.innerHeight * 0.7;
+      displayHeight = Math.min(displayHeight, maxHeight);
+      
+      // Apply min-height constraint
+      const minHeight = window.innerWidth <= 640 ? 150 : 200;
+      displayHeight = Math.max(displayHeight, minHeight);
+      
+      // Set the track height to match the image
+      track.style.height = `${displayHeight}px`;
+    }
+    
+    nextSlide() {
+      const next = (this.currentSlide + 1) % this.totalSlides;
+      this.goToSlide(next);
+    }
+    
+    prevSlide() {
+      const prev = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+      this.goToSlide(prev);
+    }
+    
+    goToSlide(index) {
+      if (index >= 0 && index < this.totalSlides) {
+        this.updateSlide(index);
+        this.resetAutoplay();
+      }
+    }
+    
+    startAutoplay() {
+      if (!this.autoplay) return;
+      this.autoplayTimer = setInterval(() => this.nextSlide(), this.interval);
+    }
+    
+    pauseAutoplay() {
+      if (this.autoplayTimer) {
+        clearInterval(this.autoplayTimer);
+        this.autoplayTimer = null;
+      }
+    }
+    
+    resumeAutoplay() {
+      if (this.autoplay && !this.autoplayTimer) {
+        this.startAutoplay();
+      }
+    }
+    
+    resetAutoplay() {
+      this.pauseAutoplay();
+      this.resumeAutoplay();
+    }
+  }
+  
+  // Initialize all gallery sliders
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.gallery-slider').forEach(slider => {
+      new GallerySlider(slider);
+    });
+  });
+})();
+</script>

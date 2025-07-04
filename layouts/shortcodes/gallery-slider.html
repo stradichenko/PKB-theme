@@ -1,0 +1,79 @@
+{{- $images := slice -}}
+
+{{- /* Check if we have individual image parameters (src1, src2, etc.) */ -}}
+{{- $hasIndividualParams := false -}}
+{{- range $i := seq 1 10 -}}
+  {{- $srcParam := printf "src%d" $i -}}
+  {{- if $.Get $srcParam -}}
+    {{- $hasIndividualParams = true -}}
+    {{- break -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $hasIndividualParams -}}
+  {{- /* Build images from individual parameters */ -}}
+  {{- range $i := seq 1 10 -}}
+    {{- $srcParam := printf "src%d" $i -}}
+    {{- $altParam := printf "alt%d" $i -}}
+    {{- $captionParam := printf "caption%d" $i -}}
+    {{- $thumbParam := printf "thumb%d" $i -}}
+    {{- $src := $.Get $srcParam -}}
+    {{- if $src -}}
+      {{- $image := dict "src" $src -}}
+      {{- if $.Get $altParam -}}
+        {{- $image = merge $image (dict "alt" ($.Get $altParam)) -}}
+      {{- end -}}
+      {{- if $.Get $captionParam -}}
+        {{- $image = merge $image (dict "caption" ($.Get $captionParam)) -}}
+      {{- end -}}
+      {{- if $.Get $thumbParam -}}
+        {{- $image = merge $image (dict "thumb" ($.Get $thumbParam)) -}}
+      {{- end -}}
+      {{- $images = $images | append $image -}}
+    {{- end -}}
+  {{- end -}}
+{{- else -}}
+  {{- /* Try to get images from frontmatter or as a slice */ -}}
+  {{- $imagesParam := .Get "images" -}}
+  {{- if $imagesParam -}}
+    {{- if reflect.IsSlice $imagesParam -}}
+      {{- $images = $imagesParam -}}
+    {{- else -}}
+      {{- /* For backward compatibility, try to parse simple cases */ -}}
+      {{- $images = slice -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $id := .Get "id" | default "gallery" -}}
+{{- $autoplay := .Get "autoplay" | default false -}}
+{{- $interval := .Get "interval" | default 5000 -}}
+{{- $showThumbnails := .Get "showThumbnails" | default true -}}
+
+{{- /* Convert string booleans to actual booleans */ -}}
+{{- if eq $autoplay "true" -}}
+  {{- $autoplay = true -}}
+{{- else if eq $autoplay "false" -}}
+  {{- $autoplay = false -}}
+{{- end -}}
+
+{{- if eq $showThumbnails "true" -}}
+  {{- $showThumbnails = true -}}
+{{- else if eq $showThumbnails "false" -}}
+  {{- $showThumbnails = false -}}
+{{- end -}}
+
+{{- /* Validate that we have images */ -}}
+{{- if $images -}}
+  {{- partial "gallery-slider.html" (dict 
+    "images" $images 
+    "id" $id 
+    "autoplay" $autoplay 
+    "interval" $interval 
+    "showThumbnails" $showThumbnails
+  ) -}}
+{{- else -}}
+  <div class="gallery-slider-error">
+    <p>No images provided for gallery "{{ $id }}". Use src1, src2, etc. parameters or define images in frontmatter.</p>
+  </div>
+{{- end -}}

@@ -544,3 +544,48 @@ GoAT diagrams use ASCII art for simple, text-based visualizations that work well
 - Add sidenotes to explain complex diagram elements
 
 Diagrams are powerful tools for explaining complex concepts. Choose the right type based on your audience and medium - Mermaid for web-first content, GoAT for documentation that might be viewed as plain text.
+
+## Gallery Slider Examples
+
+The theme includes a powerful gallery slider component for showcasing multiple images with navigation controls, thumbnails, and captions.
+
+### Basic Gallery
+
+{{< gallery-slider 
+  id="basic-example"
+  src1="/images/docs/gallery-slider-doc/helenium-8985687_1280.jpg"
+  alt1="Beautiful landscape with mountains"
+  caption1="Beautiful landscape with mountains"
+  src2="/images/docs/gallery-slider-doc/karsten-winegeart-AW76trwVU08-unsplash.jpg"
+  alt2="Forest path in autumn colors"
+  caption2="Forest path in autumn colors"
+  src3="/images/docs/gallery-slider-doc/nataliya-melnychuk-V5s-XShdujI-unsplash.jpg"
+  alt3="Portrait orientation example"
+  caption3="Portrait orientation example"
+>}}
+
+{{< sidenote >}}
+The gallery slider supports both landscape and portrait images, automatically adjusting the layout. Navigation works via arrows, dots, thumbnails, and keyboard controls.
+{{< /sidenote >}}
+
+### Autoplay Gallery
+
+{{< gallery-slider 
+  id="autoplay-example"
+  autoplay="true"
+  interval="3000"
+  showThumbnails="false"
+  src1="/images/docs/gallery-slider-doc/pawel-czerwinski-mrCMyoadfBM-unsplash.jpg"
+  alt1="Auto slide 1"
+  caption1="Autoplay every 3 seconds"
+  src2="/images/docs/gallery-slider-doc/plums-8932336_1280.jpg"
+  alt2="Auto slide 2"
+  caption2="Hover to pause autoplay"
+  src3="/images/docs/gallery-slider-doc/spenser-sembrat-esoj35vCKS8-unsplash.jpg"
+  alt3="Auto slide 3"
+  caption3="Click navigation to restart timer"
+>}}
+
+{{< sidenote >}}
+Autoplay can be enabled with a custom interval. Thumbnails can be hidden for a cleaner look.
+{{< /sidenote >}}
