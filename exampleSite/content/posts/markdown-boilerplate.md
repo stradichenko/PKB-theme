@@ -10,6 +10,8 @@ comments = true
 math = true
 author = "Your Name"
 description = "A comprehensive boilerplate showcasing all markdown features and sidenote usage"
+image = "images/posts/markdown-boilerplate/sina-saadatmand-gB9hryu1q40-unsplash.jpg"
+alt = "An image showing tradition"
 +++
 
 This document demonstrates all standard Markdown features along with proper sidenote usage. This resource is the central reference for all content creators building a [Digital Garden](/posts/digital-garden/) or implementing the [Zettelkasten Method](/posts/zettelkasten-method/).

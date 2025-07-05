@@ -1,0 +1,106 @@
+/* ------------------------------------------------------------------------- */
+/* SPACING SYSTEM                                                            */
+/* ------------------------------------------------------------------------- */
+:root {
+  --spacing-none: 0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 36px;
+  --spacing-2xl: 48px;
+
+  /* ------------------------------------------------------------------------- */
+  /* LAYOUT TOKENS                                                             */
+  /* ------------------------------------------------------------------------- */
+  --border-radius: 6px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 8px;
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+  
+  /* Responsive breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  
+  /* Z-index system */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-header: 100;
+  --z-index-header-dropdown: 1100;
+
+  /* ------------------------------------------------------------------------- */
+  /* SCROLLBAR SYSTEM                                                          */
+  /* ------------------------------------------------------------------------- */
+  --scrollbar-width: 8px;
+  --scrollbar-height: 8px;
+  --scrollbar-track-bg: transparent;
+  --scrollbar-thumb-bg: var(--color-primary);
+  --scrollbar-thumb-hover-bg: var(--color-primary-variant);
+  --scrollbar-border-radius: 4px;
+  --scrollbar-thin-width: 6px;
+  --scrollbar-thin-height: 6px;
+}
+
+/* ------------------------------------------------------------------------- */
+/* SCROLLBAR STYLES                                                          */
+/* ------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+  position: absolute; /* Force overlay positioning globally */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Always transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  border-radius: var(--scrollbar-border-radius);
+  opacity: 0.2; /* Lower default opacity */
+  transition: opacity 0.15s ease; /* Faster transition */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-bg);
+  opacity: 0.8; /* More visible on hover */
+}
+
+::-webkit-scrollbar-button {
+  display: none; /* Remove arrows globally */
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent; /* Transparent corner */
+}
+
+/* Dark theme scrollbar styles */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: transparent; /* Keep transparent in dark theme */
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  opacity: 0.2; /* Lower default opacity */
+  transition: opacity 0.15s ease; /* Faster transition */
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-bg);
+  opacity: 0.8; /* More visible on hover */
+}

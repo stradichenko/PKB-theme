@@ -1,5 +1,8 @@
-/* ===== VARIABLES - Inline from global/variables.css ===== */
-/* ...existing variables code from variables.css... */
+/* ===== VARIABLES - Import specific variable files ===== */
+@import 'global/variables/core.css';
+@import 'global/variables/typography.css';
+@import 'global/variables/layout.css';
+@import 'global/variables/components.css';
 
 /* ===== RESET - Inline from global/reset.css ===== */
 /* ...existing reset code from reset.css... */
@@ -53,11 +56,16 @@ body {
   padding: 0;
 }
 
+/* The main element serves as:
+   1. Primary content container
+   2. Flex item that grows to fill available space
+   3. Styled area with consistent background/padding
+   4. Part of sticky footer layout system */
 main {
-  flex: 1 0 auto;
-  background-color: var(--main-bg-color);
-  padding: var(--main-padding);
-  color: var(--main-text-color);
+  flex: 1 0 auto;  /* Grow to fill space, don't shrink, no initial size */
+  background-color: var(--main-bg-color);  /* Theme-aware background */
+  padding: var(--main-padding);  /* Consistent content spacing */
+  color: var(--main-text-color);  /* Theme-aware text color */
 }
 
 footer {

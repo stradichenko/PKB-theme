@@ -28,9 +28,8 @@ But if you want to add colors, the alternatives are more nuanced and myriad.
 Firstly, make sure you have a local copy of the CSS variables:
 
 ```bash
-
-mkdir -p assets/css/global/
-curl -L -o assets/css/global/variables.css https://github.com/stradichenko/PKB-theme/raw/main/assets/css/global/variables.css
+mkdir -p assets/css/global/variables/
+curl -L -o assets/css/global/variables/core.css https://github.com/stradichenko/PKB-theme/raw/main/assets/css/global/variables/core.css
 ```
 
 We suggest the following strategy:
@@ -166,3 +165,6 @@ High Chroma is very opinionated
 
 
 --light-background
+
+
+60-30-10 rule

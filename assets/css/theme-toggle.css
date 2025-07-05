@@ -1,11 +1,11 @@
 /* Theme toggle button styling - updated to use consolidated font colors */
 :root {
-  /* Light mode theme variables now come from variables.css */
+  /* Theme variables now come from variables/core.css */
 }
 
-/* Dark Theme - All theme colors moved to variables.css */
+/* Dark Theme - All theme colors moved to variables/core.css */
 [data-theme="dark"] {
-  /* Theme-specific variables moved to variables.css */
+  /* Theme-specific variables moved to variables/core.css */
 }
 
 /* Theme toggle button specific styling */

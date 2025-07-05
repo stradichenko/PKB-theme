@@ -1,7 +1,10 @@
 {{ if eq hugo.Environment "development" }}
   <!-- Development mode CSS loading -->
   {{ $cssFiles := slice 
-      "css/global/variables.css"
+      "css/global/variables/core.css"
+      "css/global/variables/typography.css"
+      "css/global/variables/layout.css"
+      "css/global/variables/components.css"
       "css/global/reset.css"
       "css/body.css"
       "css/header.css"
@@ -33,7 +36,10 @@
   <!-- Production mode CSS loading -->
   {{ $cssFiles := slice }}
   {{ range (slice 
-      "css/global/variables.css"
+      "css/global/variables/core.css"
+      "css/global/variables/typography.css"
+      "css/global/variables/layout.css"
+      "css/global/variables/components.css"
       "css/global/reset.css"
       "css/body.css"
       "css/header.css"

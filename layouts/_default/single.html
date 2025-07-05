@@ -22,6 +22,28 @@
             {{/* PDF button moved to metadata section */}}
           </div>
         </div>
+        
+        <!-- Header Image -->
+        {{ with .Params.image }}
+          {{ $imagePath := . }}
+          {{ $imageExists := false }}
+          {{ with resources.Get $imagePath }}
+            {{ $imageExists = true }}
+          {{ else }}
+            {{ with fileExists (printf "static/%s" $imagePath) }}
+              {{ $imageExists = true }}
+            {{ end }}
+          {{ end }}
+          
+          {{ if $imageExists }}
+            <div class="post-header-image">
+              {{ $altText := $.Params.alt | default $.Title }}
+              <img src="{{ $imagePath | relURL }}" alt="{{ $altText }}" class="header-image">
+              <div class="header-image-overlay">{{ $altText }}</div>
+            </div>
+          {{ end }}
+        {{ end }}
+        
         <div class="page-metadata">
 
             <!-- PDF Button - positioned after TTS -->
@@ -206,6 +228,15 @@
 {{ with resources.Get "css/components/pdf-print.css" }}
   {{ $styles = $styles | append . }}
 {{ end }}
+
+<!-- Add copy button resources -->
+{{ with resources.Get "css/components/copy-button.css" }}
+  {{ $styles = $styles | append . }}
+{{ end }}
+
+<!-- Add copy button JavaScript -->
+{{ $copyButtonJS := resources.Get "js/copy-button.js" }}
+{{ $scripts = $scripts | append $copyButtonJS }}
 
 <!-- Output the combined and minified resources -->
 <!-- Scripts -->

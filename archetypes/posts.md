@@ -16,7 +16,8 @@ categories: []
 slug: "{{ .Name | urlize }}"
 toc: true
 sidenotes: true
-image: "images/{{ .Name | urlize }}.jpg"
+image: "images/{{ .Type }}/{{ .Name | urlize }}/{{ .Name | urlize }}.jpg" # make sure that the name corresponds to jpg, jpeg, png, etc.
+alt: "" # Alt text for the header image (accessibility)
 ---
 
 Add your post content here...

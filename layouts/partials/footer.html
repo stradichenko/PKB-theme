@@ -1,13 +1,13 @@
 {{ if eq hugo.Environment "development" }}
   <!-- In development, load individual CSS files with SRI but without minification -->
-  {{ $variablesCSS := resources.Get "css/global/variables.css" | toCSS | fingerprint }}
+  {{ $variablesCSS := resources.Get "css/global/variables/core.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $variablesCSS.RelPermalink }}" integrity="{{ $variablesCSS.Data.Integrity }}" crossorigin="anonymous">
   
   {{ $footerCSS := resources.Get "css/footer.css" | toCSS | fingerprint }}
   <link rel="stylesheet" href="{{ $footerCSS.RelPermalink }}" integrity="{{ $footerCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ else }}
   <!-- In production, concatenate, minify, and fingerprint -->
-  {{ $cssFiles := slice (resources.Get "css/global/variables.css") (resources.Get "css/footer.css") }}
+  {{ $cssFiles := slice (resources.Get "css/global/variables/core.css") (resources.Get "css/footer.css") }}
   {{ $footerCSS := $cssFiles | resources.Concat "css/footer-combined.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $footerCSS.RelPermalink }}" integrity="{{ $footerCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ end }}

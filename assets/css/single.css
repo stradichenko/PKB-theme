@@ -279,3 +279,67 @@ html body .layout-container .main-content .tag-link {
     max-width: 100%;
   }
 }
+
+/* Header Image Styles */
+.post-header-image {
+  margin: 0; /* Removed top and bottom margins */
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+  position: relative; /* Added for overlay positioning */
+}
+
+.header-image {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: filter 0.3s ease; /* Added transition for hover effect */
+}
+
+.header-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.8); /* Changed from gradient to solid */
+  color: white;
+  font-size: 0.9em;
+  font-style: italic;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.post-header-image:hover .header-image-overlay {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  user-select: text;
+}
+
+.post-header-image:hover .header-image {
+  filter: brightness(0.9);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .post-header-image {
+    margin: 0; /* Removed top and bottom margins for mobile too */
+  }
+  
+  .header-image {
+    max-height: 250px;
+  }
+  
+  .header-image-overlay {
+    padding: 0.75rem;
+    font-size: 0.85em;
+  }
+}
