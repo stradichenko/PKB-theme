@@ -19,7 +19,12 @@
     {{- $thumbParam := printf "thumb%d" $i -}}
     {{- $src := $.Get $srcParam -}}
     {{- if $src -}}
-      {{- $image := dict "src" $src -}}
+      {{- /* Process image URL to handle base URL properly */ -}}
+      {{- $processedSrc := $src -}}
+      {{- if hasPrefix $src "/" -}}
+        {{- $processedSrc = $src | relURL -}}
+      {{- end -}}
+      {{- $image := dict "src" $processedSrc -}}
       {{- if $.Get $altParam -}}
         {{- $image = merge $image (dict "alt" ($.Get $altParam)) -}}
       {{- end -}}
@@ -27,7 +32,12 @@
         {{- $image = merge $image (dict "caption" ($.Get $captionParam)) -}}
       {{- end -}}
       {{- if $.Get $thumbParam -}}
-        {{- $image = merge $image (dict "thumb" ($.Get $thumbParam)) -}}
+        {{- /* Process thumbnail URL as well */ -}}
+        {{- $thumbSrc := $.Get $thumbParam -}}
+        {{- if hasPrefix $thumbSrc "/" -}}
+          {{- $thumbSrc = $thumbSrc | relURL -}}
+        {{- end -}}
+        {{- $image = merge $image (dict "thumb" $thumbSrc) -}}
       {{- end -}}
       {{- $images = $images | append $image -}}
     {{- end -}}
