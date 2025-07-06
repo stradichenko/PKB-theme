@@ -1,4 +1,5 @@
 {{- $images := slice -}}
+{{- $baseURL := .Site.BaseURL | strings.TrimSuffix "/" -}}
 
 {{- /* Check if we have individual image parameters (src1, src2, etc.) */ -}}
 {{- $hasIndividualParams := false -}}
@@ -22,7 +23,6 @@
       {{- /* Process image URL to handle base URL properly */ -}}
       {{- $processedSrc := $src -}}
       {{- if hasPrefix $src "/" -}}
-        {{- $baseURL := strings.TrimSuffix site.BaseURL "/" -}}
         {{- $processedSrc = printf "%s%s" $baseURL $src -}}
       {{- end -}}
       {{- $image := dict "src" $processedSrc -}}
@@ -50,7 +50,6 @@
     {{- if reflect.IsSlice $imagesParam -}}
       {{- /* Process URLs in slice images as well */ -}}
       {{- $processedImages := slice -}}
-      {{- $baseURL := strings.TrimSuffix site.BaseURL "/" -}}
       {{- range $imagesParam -}}
         {{- $image := . -}}
         {{- if .src -}}
