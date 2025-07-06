@@ -98,13 +98,13 @@
   --gallery-nav-bg: rgba(var(--color-surface-rgb), 0.9);
   --gallery-nav-color: var(--color-text-primary);
   --gallery-nav-hover-bg: var(--color-primary);
-  --gallery-nav-hover-color: var(--color-white);
+  --gallery-nav-hover-color: var(--text-color-inverse);
   --gallery-nav-border-radius: 50%;
   --gallery-nav-shadow: var(--shadow-light);
   
   /* Indicators (dots) */
   --gallery-indicator-size: 12px;
-  --gallery-indicator-bg: rgba(255, 255, 255, 0.5);
+  --gallery-indicator-bg: var(--color-border);
   --gallery-indicator-active-bg: var(--color-primary);
   --gallery-indicator-border-radius: 50%;
   --gallery-indicator-spacing: 8px;
@@ -119,8 +119,8 @@
   --gallery-thumbnail-spacing: 8px;
   
   /* Captions */
-  --gallery-caption-bg: rgba(0, 0, 0, 0.7);
-  --gallery-caption-color: white;
+  --gallery-caption-bg: rgba(0, 0, 0, 0.8);
+  --gallery-caption-color: var(--text-color-inverse);
   --gallery-caption-padding: 12px 16px;
   --gallery-caption-font-size: var(--font-size-sm);
   --gallery-caption-line-height: 1.4;
@@ -129,14 +129,17 @@
   --gallery-lightbox-bg: rgba(0, 0, 0, 0.9);
   --gallery-lightbox-z-index: var(--z-index-modal);
   --gallery-lightbox-nav-size: 60px;
-  --gallery-lightbox-nav-bg: rgba(255, 255, 255, 0.1);
-  --gallery-lightbox-nav-hover-bg: rgba(255, 255, 255, 0.2);
-  --gallery-lightbox-nav-color: white;
+  --gallery-lightbox-nav-bg: rgba(var(--color-surface-rgb), 0.9);
+  --gallery-lightbox-nav-hover-bg: var(--color-primary);
+  --gallery-lightbox-nav-color: var(--color-text-primary);
+  --gallery-lightbox-nav-hover-color: var(--text-color-inverse);
   --gallery-lightbox-close-size: 48px;
-  --gallery-lightbox-close-bg: rgba(255, 255, 255, 0.1);
-  --gallery-lightbox-close-hover-bg: rgba(255, 255, 255, 0.2);
-  --gallery-lightbox-counter-bg: rgba(0, 0, 0, 0.5);
-  --gallery-lightbox-counter-color: white;
+  --gallery-lightbox-close-bg: rgba(var(--color-surface-rgb), 0.9);
+  --gallery-lightbox-close-hover-bg: var(--color-primary);
+  --gallery-lightbox-close-color: var(--color-text-primary);
+  --gallery-lightbox-close-hover-color: var(--text-color-inverse);
+  --gallery-lightbox-counter-bg: rgba(var(--color-surface-rgb), 0.9);
+  --gallery-lightbox-counter-color: var(--color-text-primary);
 }
 
 /* ------------------------------------------------------------------------- */
@@ -223,8 +226,8 @@
 .gallery-slider__container {
   position: relative;
   width: 100%;
-  /* Remove fixed max-height to allow dynamic sizing */
-  /* max-height: var(--gallery-slider-max-height); */
+  /* Container height will be set by JavaScript based on smallest image */
+  min-height: 200px; /* Fallback minimum height */
 }
 
 .gallery-slider__track {
@@ -232,7 +235,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  /* Add min-height for very small images */
+  /* Fixed minimum height for very small images */
   min-height: 200px;
 }
 
@@ -246,26 +249,24 @@
   transition: opacity 0.3s ease;
   display: flex;
   flex-direction: column;
-  /* Allow slide to adjust to image height */
-  height: auto;
+  /* Fixed height - no auto sizing */
   min-height: 200px;
 }
 
 .gallery-slider__slide--active {
   opacity: 1;
   z-index: 1;
-  /* Ensure active slide determines container height */
-  position: static;
+  /* Keep absolute positioning for consistent height */
+  position: absolute;
 }
 
 .gallery-slider__image {
   width: 100%;
-  height: auto;
-  /* Remove fixed max-height constraint */
-  /* max-height: var(--gallery-slider-max-height); */
-  max-height: 70vh; /* Use viewport-relative max height */
+  height: 100%;
+  /* Use object-fit to handle images that don't match container aspect ratio */
   object-fit: contain;
   display: block;
+  /* Remove max-height constraints - container height is fixed */
 }
 
 .gallery-slider__caption {
@@ -286,6 +287,8 @@
   display: block;
   /* Remove extra whitespace handling */
   white-space: normal;
+  /* Lower z-index so indicators appear above */
+  z-index: 1;
 }
 
 /* Navigation arrows */
@@ -307,6 +310,9 @@
   transition: all 0.2s ease;
   z-index: 2;
   backdrop-filter: blur(8px);
+  /* Hide by default */
+  opacity: 0;
+  visibility: hidden;
 }
 
 .gallery-slider__nav:hover {
@@ -328,15 +334,32 @@
   height: 20px;
 }
 
+/* Show navigation on gallery hover */
+.gallery-slider:hover .gallery-slider__nav {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Slide indicators */
 .gallery-slider__indicators {
   position: absolute;
-  bottom: var(--spacing-md);
+  /* Position well above the bottom to avoid caption overlap */
+  bottom: calc(var(--spacing-md) + 60px); /* 60px accounts for typical caption height */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: var(--gallery-indicator-spacing);
-  z-index: 2;
+  /* Higher z-index to appear above caption */
+  z-index: 3;
+  /* Hide by default */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* When no caption is present, position indicators normally */
+.gallery-slider__slide:not(.gallery-slider__slide--has-caption) ~ .gallery-slider__indicators {
+  bottom: var(--spacing-md);
 }
 
 .gallery-slider__indicator {
@@ -357,6 +380,12 @@
   transform: scale(1.2);
 }
 
+/* Show indicators on gallery hover */
+.gallery-slider:hover .gallery-slider__indicators {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Thumbnails */
 .gallery-slider__thumbnails {
   display: flex;
@@ -366,6 +395,29 @@
   border-top: 1px solid var(--gallery-slider-border);
   overflow-x: auto;
   scrollbar-width: thin;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  /* Hide scrollbar on webkit browsers for cleaner look */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar for webkit browsers */
+.gallery-slider__thumbnails::-webkit-scrollbar {
+  height: 4px;
+}
+
+.gallery-slider__thumbnails::-webkit-scrollbar-track {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.gallery-slider__thumbnails::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+.gallery-slider__thumbnails::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-variant);
 }
 
 .gallery-slider__thumbnail {
@@ -380,6 +432,8 @@
   transition: all 0.2s ease;
   background: none;
   padding: 0;
+  /* Ensure thumbnails don't shrink below minimum size */
+  min-width: var(--gallery-thumbnail-size);
 }
 
 .gallery-slider__thumbnail:hover {
@@ -501,18 +555,19 @@
   background: var(--gallery-lightbox-close-bg);
   border: none;
   border-radius: 50%;
-  color: var(--gallery-lightbox-nav-color);
+  color: var(--gallery-lightbox-close-color);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   backdrop-filter: blur(8px);
-  z-index: 1;
+  z-index: 10; /* Higher z-index to ensure it's above nav buttons */
 }
 
 .gallery-lightbox__close:hover {
   background: var(--gallery-lightbox-close-hover-bg);
+  color: var(--gallery-lightbox-close-hover-color);
 }
 
 .gallery-lightbox__close svg {
@@ -536,11 +591,12 @@
   justify-content: center;
   transition: all 0.2s ease;
   backdrop-filter: blur(8px);
-  z-index: 1;
+  z-index: 5; /* Lower than close button */
 }
 
 .gallery-lightbox__nav:hover {
   background: var(--gallery-lightbox-nav-hover-bg);
+  color: var(--gallery-lightbox-nav-hover-color);
   transform: translateY(-50%) scale(1.05);
 }
 
@@ -550,6 +606,8 @@
 
 .gallery-lightbox__nav--next {
   right: var(--spacing-xl);
+  /* Ensure next button doesn't overlap with close button */
+  top: calc(50% + 30px); /* Offset down slightly when close to top-right */
 }
 
 .gallery-lightbox__nav svg {
@@ -587,7 +645,7 @@
   }
   
   .gallery-lightbox__content {
-    max-width: calc(100vw - 100px); /* Smaller nav buttons on mobile */
+    max-width: calc(100vw - 100px);
     max-height: calc(100vh - 100px);
   }
   
@@ -612,6 +670,9 @@
   
   .gallery-lightbox__nav--next {
     right: var(--spacing-lg);
+    /* Reset offset on mobile */
+    top: 50%;
+    transform: translateY(-50%);
   }
   
   .gallery-lightbox__close {

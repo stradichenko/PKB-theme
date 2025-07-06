@@ -10,7 +10,7 @@
     <!-- Image slides -->
     <div class="gallery-slider__track" role="region" aria-label="Image gallery">
       {{- range $index, $image := $images }}
-      <div class="gallery-slider__slide {{ if eq $index 0 }}gallery-slider__slide--active{{ end }}" 
+      <div class="gallery-slider__slide {{ if eq $index 0 }}gallery-slider__slide--active{{ end }}{{ if $image.caption }} gallery-slider__slide--has-caption{{ end }}" 
            data-slide="{{ $index }}"
            role="group" 
            aria-roledescription="slide"
@@ -143,6 +143,7 @@
       this.interval = parseInt(element.dataset.interval) || 5000;
       this.autoplayTimer = null;
       this.isLightboxOpen = false;
+      this.containerHeight = null; // Store fixed container height
       
       // Store image data for lightbox
       this.imageData = Array.from(this.slides).map(slide => {
@@ -164,11 +165,64 @@
       this.bindEvents();
       this.updateSlide(0);
       
-      // Set initial height
-      setTimeout(() => this.adjustContainerHeight(), 100);
+      // Calculate and set fixed container height based on smallest image
+      this.calculateFixedHeight();
       
       if (this.autoplay) {
         this.startAutoplay();
+      }
+    }
+    
+    calculateFixedHeight() {
+      const container = this.element.querySelector('.gallery-slider__container');
+      const containerWidth = container.offsetWidth;
+      const minHeight = window.innerWidth <= 640 ? 200 : 250; // Minimum height
+      const maxHeight = window.innerHeight * 0.7; // Maximum height (70vh)
+      
+      let smallestHeight = maxHeight;
+      let imagesLoaded = 0;
+      
+      // Check all images to find the smallest height
+      this.slides.forEach(slide => {
+        const img = slide.querySelector('.gallery-slider__image');
+        
+        const calculateHeight = () => {
+          if (img.naturalWidth && img.naturalHeight) {
+            const aspectRatio = img.naturalHeight / img.naturalWidth;
+            const displayHeight = containerWidth * aspectRatio;
+            
+            // Apply constraints
+            const constrainedHeight = Math.max(minHeight, Math.min(displayHeight, maxHeight));
+            smallestHeight = Math.min(smallestHeight, constrainedHeight);
+          }
+          
+          imagesLoaded++;
+          if (imagesLoaded === this.totalSlides) {
+            // All images processed, set the fixed height
+            this.containerHeight = smallestHeight;
+            this.setFixedContainerHeight();
+          }
+        };
+        
+        if (img.complete && img.naturalWidth) {
+          calculateHeight();
+        } else {
+          img.onload = calculateHeight;
+          img.onerror = () => {
+            // If image fails to load, use minimum height
+            imagesLoaded++;
+            if (imagesLoaded === this.totalSlides) {
+              this.containerHeight = smallestHeight;
+              this.setFixedContainerHeight();
+            }
+          };
+        }
+      });
+    }
+    
+    setFixedContainerHeight() {
+      if (this.containerHeight) {
+        this.track.style.height = `${this.containerHeight}px`;
       }
     }
     
@@ -237,6 +291,42 @@
         });
       }
       
+      // Close lightbox when clicking outside the image
+      const lightboxContainer = this.lightbox.querySelector('.gallery-lightbox__container');
+      if (lightboxContainer) {
+        lightboxContainer.addEventListener('click', (e) => {
+          // Only close if the click target is the container itself, not its children
+          if (e.target === lightboxContainer) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.closeLightbox();
+          }
+        });
+      }
+      
+      // Prevent closing when clicking on the image or its content
+      const lightboxContent = this.lightbox.querySelector('.gallery-lightbox__content');
+      if (lightboxContent) {
+        lightboxContent.addEventListener('click', (e) => {
+          // Stop propagation to prevent container click from closing lightbox
+          e.stopPropagation();
+        });
+      }
+      
+      // Also prevent closing when clicking directly on the image
+      if (this.lightboxImage) {
+        this.lightboxImage.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+      
+      // Prevent closing when clicking on caption
+      if (this.lightboxCaption) {
+        this.lightboxCaption.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+      
       if (this.lightboxPrev) {
         this.lightboxPrev.addEventListener('click', () => this.lightboxPrevImage());
       }
@@ -291,16 +381,22 @@
       this.element.addEventListener('mouseenter', () => this.pauseAutoplay());
       this.element.addEventListener('mouseleave', () => this.resumeAutoplay());
       
-      // Handle window resize to maintain proper proportions
+      // Handle window resize - only recalculate if container width changes significantly
       this.resizeHandler = () => {
         if (this.isLightboxOpen) {
           this.constrainImageToViewport();
         } else {
-          // Adjust gallery height on resize
-          this.adjustContainerHeight();
+          // Only recalculate if width changed significantly (>50px)
+          const container = this.element.querySelector('.gallery-slider__container');
+          const currentWidth = container.offsetWidth;
+          if (Math.abs(currentWidth - this.lastContainerWidth) > 50) {
+            this.lastContainerWidth = currentWidth;
+            this.calculateFixedHeight();
+          }
         }
       };
       
+      this.lastContainerWidth = this.element.querySelector('.gallery-slider__container').offsetWidth;
       window.addEventListener('resize', this.resizeHandler);
     }
     
@@ -399,43 +495,35 @@
       
       this.currentSlide = index;
       
-      // Adjust container height to match active image
-      this.adjustContainerHeight();
+      // Scroll thumbnails to show active thumbnail
+      this.scrollToActiveThumbnail(index);
+      
+      // No need to adjust container height - it's fixed
     }
     
-    adjustContainerHeight() {
-      const activeSlide = this.slides[this.currentSlide];
-      const activeImage = activeSlide.querySelector('.gallery-slider__image');
+    scrollToActiveThumbnail(index) {
+      if (this.thumbnails.length === 0) return;
       
-      // Wait for image to load if not already loaded
-      if (activeImage.complete) {
-        this.setContainerHeight(activeImage);
-      } else {
-        activeImage.onload = () => {
-          this.setContainerHeight(activeImage);
-        };
-      }
-    }
-    
-    setContainerHeight(image) {
-      const container = this.element.querySelector('.gallery-slider__container');
-      const track = this.track;
+      const thumbnailsContainer = this.element.querySelector('.gallery-slider__thumbnails');
+      if (!thumbnailsContainer) return;
       
-      // Get the natural dimensions and calculate display height
-      const containerWidth = container.offsetWidth;
-      const aspectRatio = image.naturalHeight / image.naturalWidth;
-      let displayHeight = containerWidth * aspectRatio;
+      const activeThumbnail = this.thumbnails[index];
+      if (!activeThumbnail) return;
       
-      // Apply max-height constraint (70vh)
-      const maxHeight = window.innerHeight * 0.7;
-      displayHeight = Math.min(displayHeight, maxHeight);
+      // Get container and thumbnail dimensions
+      const containerRect = thumbnailsContainer.getBoundingClientRect();
+      const thumbnailRect = activeThumbnail.getBoundingClientRect();
       
-      // Apply min-height constraint
-      const minHeight = window.innerWidth <= 640 ? 150 : 200;
-      displayHeight = Math.max(displayHeight, minHeight);
+      // Calculate scroll position to center the active thumbnail
+      const containerCenter = containerRect.width / 2;
+      const thumbnailCenter = thumbnailRect.left - containerRect.left + (thumbnailRect.width / 2);
+      const scrollOffset = thumbnailCenter - containerCenter;
       
-      // Set the track height to match the image
-      track.style.height = `${displayHeight}px`;
+      // Smooth scroll to position
+      thumbnailsContainer.scrollTo({
+        left: thumbnailsContainer.scrollLeft + scrollOffset,
+        behavior: 'smooth'
+      });
     }
     
     nextSlide() {
