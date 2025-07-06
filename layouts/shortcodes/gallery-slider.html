@@ -22,7 +22,7 @@
       {{- /* Process image URL to handle base URL properly */ -}}
       {{- $processedSrc := $src -}}
       {{- if hasPrefix $src "/" -}}
-        {{- $processedSrc = $src | relURL -}}
+        {{- $processedSrc = $src | absURL -}}
       {{- end -}}
       {{- $image := dict "src" $processedSrc -}}
       {{- if $.Get $altParam -}}
@@ -35,7 +35,7 @@
         {{- /* Process thumbnail URL as well */ -}}
         {{- $thumbSrc := $.Get $thumbParam -}}
         {{- if hasPrefix $thumbSrc "/" -}}
-          {{- $thumbSrc = $thumbSrc | relURL -}}
+          {{- $thumbSrc = $thumbSrc | absURL -}}
         {{- end -}}
         {{- $image = merge $image (dict "thumb" $thumbSrc) -}}
       {{- end -}}
@@ -47,7 +47,21 @@
   {{- $imagesParam := .Get "images" -}}
   {{- if $imagesParam -}}
     {{- if reflect.IsSlice $imagesParam -}}
-      {{- $images = $imagesParam -}}
+      {{- /* Process URLs in slice images as well */ -}}
+      {{- $processedImages := slice -}}
+      {{- range $imagesParam -}}
+        {{- $image := . -}}
+        {{- if .src -}}
+          {{- if hasPrefix .src "/" -}}
+            {{- $image = merge $image (dict "src" (.src | absURL)) -}}
+          {{- end -}}
+          {{- if and .thumb (hasPrefix .thumb "/") -}}
+            {{- $image = merge $image (dict "thumb" (.thumb | absURL)) -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $processedImages = $processedImages | append $image -}}
+      {{- end -}}
+      {{- $images = $processedImages -}}
     {{- else -}}
       {{- /* For backward compatibility, try to parse simple cases */ -}}
       {{- $images = slice -}}
