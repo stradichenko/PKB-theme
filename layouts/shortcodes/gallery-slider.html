@@ -22,7 +22,8 @@
       {{- /* Process image URL to handle base URL properly */ -}}
       {{- $processedSrc := $src -}}
       {{- if hasPrefix $src "/" -}}
-        {{- $processedSrc = $src | absURL -}}
+        {{- $baseURL := strings.TrimSuffix site.BaseURL "/" -}}
+        {{- $processedSrc = printf "%s%s" $baseURL $src -}}
       {{- end -}}
       {{- $image := dict "src" $processedSrc -}}
       {{- if $.Get $altParam -}}
@@ -35,7 +36,7 @@
         {{- /* Process thumbnail URL as well */ -}}
         {{- $thumbSrc := $.Get $thumbParam -}}
         {{- if hasPrefix $thumbSrc "/" -}}
-          {{- $thumbSrc = $thumbSrc | absURL -}}
+          {{- $thumbSrc = printf "%s%s" $baseURL $thumbSrc -}}
         {{- end -}}
         {{- $image = merge $image (dict "thumb" $thumbSrc) -}}
       {{- end -}}
@@ -49,14 +50,15 @@
     {{- if reflect.IsSlice $imagesParam -}}
       {{- /* Process URLs in slice images as well */ -}}
       {{- $processedImages := slice -}}
+      {{- $baseURL := strings.TrimSuffix site.BaseURL "/" -}}
       {{- range $imagesParam -}}
         {{- $image := . -}}
         {{- if .src -}}
           {{- if hasPrefix .src "/" -}}
-            {{- $image = merge $image (dict "src" (.src | absURL)) -}}
+            {{- $image = merge $image (dict "src" (printf "%s%s" $baseURL .src)) -}}
           {{- end -}}
           {{- if and .thumb (hasPrefix .thumb "/") -}}
-            {{- $image = merge $image (dict "thumb" (.thumb | absURL)) -}}
+            {{- $image = merge $image (dict "thumb" (printf "%s%s" $baseURL .thumb)) -}}
           {{- end -}}
         {{- end -}}
         {{- $processedImages = $processedImages | append $image -}}
