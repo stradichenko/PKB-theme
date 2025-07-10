@@ -2,11 +2,6 @@ baseURL      = "https://stradichenko.github.io/PKB-theme/"
 #languageCode = "en-us"
 title        = "PKB-theme Demo"
 
-# Add outputs configuration for search functionality
-[outputs]
-  home = ["HTML", "RSS", "JSON"]
-  page = ["HTML"]  # Remove JSON from default pages
-  section = ["HTML", "RSS"]
 
 [markup]
   [markup.goldmark]
