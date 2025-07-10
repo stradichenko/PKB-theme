@@ -1,0 +1,127 @@
+{{- /* filepath: /home/gespitia/projects/PKB-theme/layouts/portfolio/portfolio.json */ -}}
+{{- $portfolioImages := slice -}}
+{{- $supportedFormats := slice "jpg" "jpeg" "png" "webp" "gif" "tiff" "tif" -}}
+{{- $thumbnailSizes := slice "300x300" "600x400" "1200x800" -}}
+
+{{- /* Process all images found in portfolio directory structure */ -}}
+{{- range $imagePath := (resources.Match "images/portfolio/**") -}}
+  {{- $ext := lower (path.Ext $imagePath.RelPermalink) -}}
+  {{- $cleanExt := strings.TrimLeft "." $ext -}}
+  {{- if in $supportedFormats $cleanExt -}}
+    {{- $imageResource := $imagePath -}}
+    {{- $imageData := dict -}}
+    
+    {{- /* Extract category from path */ -}}
+    {{- $pathParts := split (strings.TrimPrefix "/images/portfolio/" $imagePath.RelPermalink) "/" -}}
+    {{- $category := "general" -}}
+    {{- if gt (len $pathParts) 1 -}}
+      {{- $category = index $pathParts 0 -}}
+    {{- end -}}
+    
+    {{- /* Basic image information with prefix namespacing */ -}}
+    {{- $imageData = merge $imageData (dict 
+      "pkb_image_id" (printf "%s_%s" $category (path.BaseName $imagePath.RelPermalink))
+      "pkb_category" $category
+      "pkb_filename" (path.Base $imagePath.RelPermalink)
+      "pkb_original_width" $imageResource.Width
+      "pkb_original_height" $imageResource.Height
+      "pkb_file_size" (len $imageResource.Content)
+      "pkb_format" $cleanExt
+      "pkb_permalink" $imageResource.Permalink
+      "pkb_rel_permalink" $imageResource.RelPermalink
+    ) -}}
+    
+    {{- /* Extract EXIF data if available */ -}}
+    {{- $exifData := dict -}}
+    {{- with $imageResource.Exif -}}
+      {{- $exifData = dict 
+        "pkb_exif_make" .Tags.Make
+        "pkb_exif_model" .Tags.Model
+        "pkb_exif_lens_model" .Tags.LensModel
+        "pkb_exif_exposure_time" .Tags.ExposureTime
+        "pkb_exif_f_number" .Tags.FNumber
+        "pkb_exif_iso" .Tags.ISOSpeedRatings
+      -}}
+      {{- with .Date -}}
+        {{- $exifData = merge $exifData (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $imageData = merge $imageData $exifData -}}
+    
+    {{- /* Generate thumbnails using Hugo's image processing */ -}}
+    {{- $thumbnails := dict -}}
+    {{- range $size := $thumbnailSizes -}}
+      {{- $thumbnail := $imageResource.Fill (printf "%s Smart q85 webp" $size) -}}
+      {{- $sizeKey := printf "pkb_thumbnail_%s" (replace $size "x" "_") -}}
+      {{- $thumbnails = merge $thumbnails (dict 
+        $sizeKey (dict 
+          "url" $thumbnail.RelPermalink
+          "width" $thumbnail.Width
+          "height" $thumbnail.Height
+          "size" (len $thumbnail.Content)
+        )
+      ) -}}
+    {{- end -}}
+    {{- $imageData = merge $imageData $thumbnails -}}
+    
+    {{- /* Generate optimized versions */ -}}
+    {{- $optimizedWebP := $imageResource.Process "webp q85" -}}
+    {{- $optimizedJPEG := $imageResource.Process "jpeg q85" -}}
+    {{- $imageData = merge $imageData (dict 
+      "pkb_optimized_webp" (dict 
+        "url" $optimizedWebP.RelPermalink
+        "width" $optimizedWebP.Width
+        "height" $optimizedWebP.Height
+        "size" (len $optimizedWebP.Content)
+      )
+      "pkb_optimized_jpeg" (dict 
+        "url" $optimizedJPEG.RelPermalink
+        "width" $optimizedJPEG.Width
+        "height" $optimizedJPEG.Height
+        "size" (len $optimizedJPEG.Content)
+      )
+    ) -}}
+    
+    {{- /* Extract dominant colors */ -}}
+    {{- $colors := $imageResource.Colors -}}
+    {{- $imageData = merge $imageData (dict 
+      "pkb_dominant_colors" $colors
+    ) -}}
+    
+    {{- /* Calculate aspect ratio */ -}}
+    {{- $aspectRatio := div (float $imageResource.Width) (float $imageResource.Height) -}}
+    {{- $imageData = merge $imageData (dict 
+      "pkb_aspect_ratio" $aspectRatio
+      "pkb_orientation" (cond (gt $aspectRatio 1) "landscape" (cond (lt $aspectRatio 1) "portrait" "square"))
+    ) -}}
+    
+    {{- /* Add processing timestamp */ -}}
+    {{- $imageData = merge $imageData (dict 
+      "pkb_processed_at" (now.Format "2006-01-02T15:04:05Z07:00")
+    ) -}}
+    
+    {{- $portfolioImages = $portfolioImages | append $imageData -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Create a simple list of unique categories */ -}}
+{{- $categoryList := slice -}}
+{{- range $portfolioImages -}}
+  {{- $category := .pkb_category | default "uncategorized" -}}
+  {{- if not (in $categoryList $category) -}}
+    {{- $categoryList = $categoryList | append $category -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Output final JSON structure */ -}}
+{{- dict 
+  "portfolio_metadata" (dict 
+    "total_images" (len $portfolioImages)
+    "supported_formats" $supportedFormats
+    "generated_at" (now.Format "2006-01-02T15:04:05Z07:00")
+    "hugo_version" hugo.Version
+    "pkb_schema_version" "1.0.0"
+    "category_list" $categoryList
+  )
+  "images" $portfolioImages
+| jsonify -}}

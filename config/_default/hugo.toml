@@ -70,8 +70,14 @@ enableGitInfo = true
   anchor = 'Smart'
   bgColor = '#ffffff'
   hint = 'photo'
-  quality = 75
-  resampleFilter = 'box'
+  quality = 85
+  resampleFilter = 'Lanczos'
+  # Add EXIF processing options
+  [imaging.exif]
+    includeFields = "DateTimeOriginal|Make|Model|LensModel|ExposureTime|FNumber|ISOSpeedRatings" #  includeFields = ".*" 
+    excludeFields = ""
+    disableDate = false
+    disableLatLong = true # disableLatLong = false
 
 [markup]
   [markup.goldmark]
@@ -318,7 +324,7 @@ enableGitInfo = true
     isPlainText = true
     mediaType = 'application/json'
     noUgly = false
-    notAlternative = false
+    notAlternative = true
     path = ''
     permalinkable = false
     protocol = ''
@@ -401,9 +407,9 @@ enableGitInfo = true
   # JSON output is required for search functionality
   # The search index (/index.json) includes only pages from sections defined in params.taxonomies.mainSections
   home = ['HTML', 'RSS', 'JSON']  # Ensure JSON is included for search
-  page = ['HTML']
+  page = ['HTML', 'JSON'] # needed for portfolio.json
   rss = ['RSS']
-  section = ['HTML', 'RSS']
+  section = ['HTML', 'RSS', 'JSON']
   taxonomy = ['HTML', 'RSS']
   term = ['HTML', 'RSS']
 

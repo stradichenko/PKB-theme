@@ -5,7 +5,7 @@ title        = "PKB-theme Demo"
 # Add outputs configuration for search functionality
 [outputs]
   home = ["HTML", "RSS", "JSON"]
-  page = ["HTML"]
+  page = ["HTML"]  # Remove JSON from default pages
   section = ["HTML", "RSS"]
 
 [markup]
@@ -25,7 +25,7 @@ title        = "PKB-theme Demo"
 
     [[module.imports.mounts]]
       source = "static" # inside the theme repo
-      target = "static" # inject it into my site’s    
+      target = "static" # inject it into my site's    
 
     [[module.imports.mounts]]
       source = "assets"
@@ -42,3 +42,8 @@ title        = "PKB-theme Demo"
     [[module.imports.mounts]]
       source = "archetypes"
       target = "archetypes"
+
+    # Mount portfolio images to the correct assets path
+    [[module.mounts]]
+      source = "static/images/portfolio"
+      target = "assets/images/portfolio"
