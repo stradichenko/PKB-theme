@@ -4,7 +4,12 @@
 {{- $thumbnailSizes := slice "300x300" "600x400" "1200x800" -}}
 
 {{- /* Process all images found in portfolio directory structure */ -}}
-{{- range $imagePath := (resources.Match "images/portfolio/**") -}}
+{{- $portfolioResources := resources.Match "images/portfolio/**" -}}
+{{- if not $portfolioResources -}}
+  {{- $portfolioResources = resources.Match "static/images/portfolio/**" -}}
+{{- end -}}
+
+{{- range $imagePath := $portfolioResources -}}
   {{- $ext := lower (path.Ext $imagePath.RelPermalink) -}}
   {{- $cleanExt := strings.TrimLeft "." $ext -}}
   {{- if in $supportedFormats $cleanExt -}}
@@ -35,12 +40,12 @@
     {{- $exifData := dict -}}
     {{- with $imageResource.Exif -}}
       {{- $exifData = dict 
-        "pkb_exif_make" .Tags.Make
-        "pkb_exif_model" .Tags.Model
-        "pkb_exif_lens_model" .Tags.LensModel
-        "pkb_exif_exposure_time" .Tags.ExposureTime
-        "pkb_exif_f_number" .Tags.FNumber
-        "pkb_exif_iso" .Tags.ISOSpeedRatings
+        "pkb_exif_make" (.Tags.Make | default "")
+        "pkb_exif_model" (.Tags.Model | default "")
+        "pkb_exif_lens_model" (.Tags.LensModel | default "")
+        "pkb_exif_exposure_time" (.Tags.ExposureTime | default "")
+        "pkb_exif_f_number" (.Tags.FNumber | default "")
+        "pkb_exif_iso" (.Tags.ISOSpeedRatings | default "")
       -}}
       {{- with .Date -}}
         {{- $exifData = merge $exifData (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
