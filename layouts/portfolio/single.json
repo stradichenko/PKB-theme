@@ -144,7 +144,7 @@
     {{- $sortedFamilies = sort $sortedFamilies "count" "desc" -}}
 
     {{- $imageData = merge $imageData (dict
-      "pkb_dominant_colors" (apply $sortedColors "index" "." "hex")
+      "pkb_dominant_colors" (first 5 $hexColors)
       "pkb_color_families" (apply $sortedFamilies "index" "." "family")
       "pkb_debug_colors" $hexColors
       "pkb_debug_colors_type" (printf "%T" $hexColors)
