@@ -1,92 +1,185 @@
 {{ define "main" }}
-<div class="portfolio-container">
-  <!-- Portfolio Header -->
-  <header class="portfolio-header">
-    <h1 class="portfolio-title">{{ .Title | default "Portfolio" }}</h1>
-    {{ with .Content }}
-      <div class="portfolio-description">{{ . }}</div>
-    {{ end }}
-    
-    <!-- Filter Controls -->
-    <div class="portfolio-filters">
-      <button class="filter-btn active" data-filter="all">All</button>
-      {{ $jsonURL := (.OutputFormats.Get "JSON").Permalink }}
-      {{ if $jsonURL }}
-        {{ $jsonRes := resources.Get (replace $jsonURL (site.BaseURL) "") }}
-        {{ with $jsonRes }}
-          {{ $portfolioData := . | transform.Unmarshal }}
-          {{ range $category := $portfolioData.portfolio_metadata.category_list }}
-            <button class="filter-btn" data-filter="{{ $category }}">{{ humanize $category }}</button>
-          {{ end }}
-        {{ end }}
-      {{ end }}
+  {{- $jsonURL := (.OutputFormats.Get "JSON").RelPermalink }}
+  {{ with $jsonURL }}
+    <link rel="preload" as="fetch" href="{{ . }}" type="application/json">
+  {{ end }}
+
+  <div class="portfolio-container">
+    <header class="portfolio-header">
+      <h1 class="portfolio-title">{{ .Title | default "Portfolio" }}</h1>
+      {{ with .Content }}<div class="portfolio-description">{{ . }}</div>{{ end }}
+
+      <div class="portfolio-filters" id="portfolioFilters">
+        <button class="filter-btn active" data-filter="all">All</button>
+      </div>
+
+      <div class="portfolio-subfilters">
+        <label>Format:</label>
+        <select id="formatSelect"><option value="all">All</option></select>
+
+        <label>Orientation:</label>
+        <select id="orientationSelect">
+          <option value="all">All</option>
+          <option value="landscape">Landscape</option>
+          <option value="portrait">Portrait</option>
+          <option value="square">Square</option>
+        </select>
+
+        <label>Camera Model:</label>
+        <select id="cameraSelect"><option value="all">All</option></select>
+
+        <label>Dominant Color:</label>
+        <select id="colorSelect"><option value="all">All</option></select>
+      </div>
+
+      <div class="portfolio-stats" id="portfolioStats">
+        <span class="stat-item"><strong>0</strong> Images</span>
+        <span class="stat-item"><strong>0</strong> Categories</span>
+      </div>
+    </header>
+
+    <div class="portfolio-loading" id="portfolioLoading">
+      <div class="loading-spinner"></div>
+      <p>Loading portfolio...</p>
     </div>
-    
-    <!-- Stats -->
-    {{ $jsonURL := (.OutputFormats.Get "JSON").Permalink }}
-    {{ if $jsonURL }}
-      {{ $jsonRes := resources.Get (replace $jsonURL (site.BaseURL) "") }}
-      {{ with $jsonRes }}
-        {{ $portfolioData := . | transform.Unmarshal }}
-        <div class="portfolio-stats">
-          <span class="stat-item">
-            <strong>{{ $portfolioData.portfolio_metadata.total_images }}</strong> Images
-          </span>
-          <span class="stat-item">
-            <strong>{{ len $portfolioData.portfolio_metadata.category_list }}</strong> Categories
-          </span>
-        </div>
-      {{ end }}
-    {{ end }}
-  </header>
 
-  <!-- Loading Indicator -->
-  <div class="portfolio-loading">
-    <div class="loading-spinner"></div>
-    <p>Loading portfolio...</p>
-  </div>
+    <div class="portfolio-grid" id="portfolioGrid" data-json-url="{{ $jsonURL }}"></div>
 
-  <!-- Portfolio Grid -->
-  <div class="portfolio-grid" id="portfolioGrid" data-json-url="{{ (.OutputFormats.Get "JSON").RelPermalink }}">
-    <!-- Grid items will be dynamically inserted here -->
-  </div>
-
-  <!-- Image Overlay -->
-  <div class="portfolio-overlay" id="portfolioOverlay">
-    <div class="overlay-content">
-      <button class="overlay-close" id="overlayClose">&times;</button>
-      
-      <div class="overlay-main">
-        <div class="overlay-image-container">
-          <img class="overlay-image" id="overlayImage" alt="">
-          <div class="overlay-navigation">
-            <button class="nav-btn nav-prev" id="navPrev">&#8249;</button>
-            <button class="nav-btn nav-next" id="navNext">&#8250;</button>
-          </div>
-        </div>
-        
-        <aside class="overlay-sidebar">
-          <div class="image-metadata">
-            <h3 class="metadata-title">Image Details</h3>
-            <div class="metadata-content" id="metadataContent">
-              <!-- Metadata will be populated here -->
+    <div class="portfolio-overlay" id="portfolioOverlay">
+      <div class="overlay-content">
+        <button class="overlay-close" id="overlayClose">&times;</button>
+        <div class="overlay-main">
+          <div class="overlay-image-container">
+            <img class="overlay-image" id="overlayImage" alt="">
+            <div class="overlay-navigation">
+              <button class="nav-btn nav-prev" id="navPrev">&#8249;</button>
+              <button class="nav-btn nav-next" id="navNext">&#8250;</button>
             </div>
           </div>
-        </aside>
+          <aside class="overlay-sidebar">
+            <div class="image-metadata">
+              <h3 class="metadata-title">Image Details</h3>
+              <div class="metadata-content" id="metadataContent"></div>
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Preload critical images -->
-{{ $jsonURL := (.OutputFormats.Get "JSON").Permalink }}
-{{ if $jsonURL }}
-  {{ $jsonRes := resources.Get (replace $jsonURL (site.BaseURL) "") }}
-  {{ with $jsonRes }}
-    {{ $portfolioData := . | transform.Unmarshal }}
-    {{ range first 6 ($portfolioData.images) }}
-      <link rel="preload" as="image" href="{{ .pkb_thumbnail_300_300.url }}">
-    {{ end }}
-  {{ end }}
-{{ end }}
+  <script>
+    (async () => {
+      const url = document.getElementById('portfolioGrid').dataset.jsonUrl;
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      const gridEl = document.getElementById('portfolioGrid');
+      const filtersEl = document.getElementById('portfolioFilters');
+      const formatSelect = document.getElementById('formatSelect');
+      const orientationSelect = document.getElementById('orientationSelect');
+      const cameraSelect = document.getElementById('cameraSelect');
+      const colorSelect = document.getElementById('colorSelect');
+
+      const formats = new Set();
+      const cameras = new Set();
+      const colors = new Set();
+
+      data.portfolio_metadata.category_list.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.filter = cat;
+        btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        filtersEl.appendChild(btn);
+      });
+
+      data.images.forEach(img => {
+        formats.add(img.pkb_format);
+        if (img.pkb_exif_model) cameras.add(img.pkb_exif_model);
+        (img.pkb_dominant_colors || []).forEach(c => colors.add(c));
+      });
+
+      [...formats].sort().forEach(fmt => {
+        const option = document.createElement('option');
+        option.value = fmt;
+        option.textContent = fmt.toUpperCase();
+        formatSelect.appendChild(option);
+      });
+
+      [...cameras].sort().forEach(cam => {
+        const option = document.createElement('option');
+        option.value = cam;
+        option.textContent = cam;
+        cameraSelect.appendChild(option);
+      });
+
+      [...colors].sort().forEach(clr => {
+        const option = document.createElement('option');
+        option.value = clr;
+        option.textContent = clr;
+        colorSelect.appendChild(option);
+      });
+
+      const statsEl = document.getElementById('portfolioStats');
+      statsEl.innerHTML = `
+        <span class="stat-item"><strong>${data.portfolio_metadata.total_images}</strong> Images</span>
+        <span class="stat-item"><strong>${data.portfolio_metadata.category_list.length}</strong> Categories</span>
+      `;
+
+      const renderGrid = (category, format, orientation, camera, color) => {
+        const filtered = data.images.filter(img => {
+          const catMatch = category === 'all' || img.pkb_category === category;
+          const fmtMatch = format === 'all' || img.pkb_format === format;
+          const oriMatch = orientation === 'all' || img.pkb_orientation === orientation;
+          const camMatch = camera === 'all' || img.pkb_exif_model === camera;
+          const clrMatch = color === 'all' || (img.pkb_dominant_colors || []).includes(color);
+          return catMatch && fmtMatch && oriMatch && camMatch && clrMatch;
+        });
+
+        gridEl.innerHTML = filtered.map(img => `
+          <div class="grid-item" data-category="${img.pkb_category}" data-format="${img.pkb_format}">
+            <img src="${img.pkb_thumbnail_300_300.url}" alt="${img.pkb_filename}" />
+          </div>
+        `).join('');
+      };
+
+      let activeCategory = 'all';
+      let activeFormat = 'all';
+      let activeOrientation = 'all';
+      let activeCamera = 'all';
+      let activeColor = 'all';
+
+      renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeCategory = btn.dataset.filter;
+          renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
+        });
+      });
+
+      formatSelect.addEventListener('change', e => {
+        activeFormat = e.target.value;
+        renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
+      });
+
+      orientationSelect.addEventListener('change', e => {
+        activeOrientation = e.target.value;
+        renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
+      });
+
+      cameraSelect.addEventListener('change', e => {
+        activeCamera = e.target.value;
+        renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
+      });
+
+      colorSelect.addEventListener('change', e => {
+        activeColor = e.target.value;
+        renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
+      });
+
+      document.getElementById('portfolioLoading').style.display = 'none';
+    })();
+  </script>
 {{ end }}

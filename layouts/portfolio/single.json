@@ -1,45 +1,40 @@
-{{- /* filepath: /home/gespitia/projects/PKB-theme/layouts/portfolio/portfolio.json */ -}}
-{{- $portfolioImages := slice -}}
+{{- /* File: layouts/portfolio/single.json */ -}}
 {{- $supportedFormats := slice "jpg" "jpeg" "png" "webp" "gif" "tiff" "tif" -}}
 {{- $thumbnailSizes := slice "300x300" "600x400" "1200x800" -}}
+{{- $portfolioImages := slice -}}
 
-{{- /* Process all images found in portfolio directory structure */ -}}
-{{- $portfolioResources := resources.Match "images/portfolio/**" -}}
-{{- if not $portfolioResources -}}
-  {{- $portfolioResources = resources.Match "static/images/portfolio/**" -}}
+{{- $resources := slice -}}
+{{- with .Resources }}
+  {{- $resources = . -}}
+{{- else }}
+  {{- $resources = resources.Match "images/portfolio/**" -}}
 {{- end -}}
 
-{{- range $imagePath := $portfolioResources -}}
-  {{- $ext := lower (path.Ext $imagePath.RelPermalink) -}}
+{{- range $image := $resources -}}
+  {{- $ext := lower (path.Ext $image.RelPermalink) -}}
   {{- $cleanExt := strings.TrimLeft "." $ext -}}
   {{- if in $supportedFormats $cleanExt -}}
-    {{- $imageResource := $imagePath -}}
-    {{- $imageData := dict -}}
-    
-    {{- /* Extract category from path */ -}}
-    {{- $pathParts := split (strings.TrimPrefix "/images/portfolio/" $imagePath.RelPermalink) "/" -}}
+
+    {{- $pathParts := split (strings.TrimPrefix "/images/portfolio/" $image.RelPermalink) "/" -}}
     {{- $category := "general" -}}
     {{- if gt (len $pathParts) 1 -}}
       {{- $category = index $pathParts 0 -}}
     {{- end -}}
-    
-    {{- /* Basic image information with prefix namespacing */ -}}
-    {{- $imageData = merge $imageData (dict 
-      "pkb_image_id" (printf "%s_%s" $category (path.BaseName $imagePath.RelPermalink))
+
+    {{- $imageData := dict
+      "pkb_image_id" (printf "%s_%s" $category (path.BaseName $image.RelPermalink))
       "pkb_category" $category
-      "pkb_filename" (path.Base $imagePath.RelPermalink)
-      "pkb_original_width" $imageResource.Width
-      "pkb_original_height" $imageResource.Height
-      "pkb_file_size" (len $imageResource.Content)
+      "pkb_filename" (path.Base $image.RelPermalink)
+      "pkb_original_width" $image.Width
+      "pkb_original_height" $image.Height
+      "pkb_file_size" (len $image.Content)
       "pkb_format" $cleanExt
-      "pkb_permalink" $imageResource.Permalink
-      "pkb_rel_permalink" $imageResource.RelPermalink
-    ) -}}
-    
-    {{- /* Extract EXIF data if available */ -}}
-    {{- $exifData := dict -}}
-    {{- with $imageResource.Exif -}}
-      {{- $exifData = dict 
+      "pkb_permalink" $image.Permalink
+      "pkb_rel_permalink" $image.RelPermalink
+    -}}
+
+    {{- with $image.Exif -}}
+      {{- $exif := dict
         "pkb_exif_make" (.Tags.Make | default "")
         "pkb_exif_model" (.Tags.Model | default "")
         "pkb_exif_lens_model" (.Tags.LensModel | default "")
@@ -48,79 +43,131 @@
         "pkb_exif_iso" (.Tags.ISOSpeedRatings | default "")
       -}}
       {{- with .Date -}}
-        {{- $exifData = merge $exifData (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
+        {{- $exif = merge $exif (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
       {{- end -}}
+      {{- $imageData = merge $imageData $exif -}}
     {{- end -}}
-    {{- $imageData = merge $imageData $exifData -}}
-    
-    {{- /* Generate thumbnails using Hugo's image processing */ -}}
+
+    {{- /* Thumbnails */ -}}
     {{- $thumbnails := dict -}}
     {{- range $size := $thumbnailSizes -}}
-      {{- $thumbnail := $imageResource.Fill (printf "%s Smart q85 webp" $size) -}}
-      {{- $sizeKey := printf "pkb_thumbnail_%s" (replace $size "x" "_") -}}
-      {{- $thumbnails = merge $thumbnails (dict 
-        $sizeKey (dict 
-          "url" $thumbnail.RelPermalink
-          "width" $thumbnail.Width
-          "height" $thumbnail.Height
-          "size" (len $thumbnail.Content)
-        )
-      ) -}}
+      {{- $thumbnail := $image.Fill (printf "%s Smart q85 webp" $size) -}}
+      {{- $key := printf "pkb_thumbnail_%s" (replace $size "x" "_") -}}
+      {{- $thumbnails = merge $thumbnails (dict $key (dict
+        "url" $thumbnail.RelPermalink
+        "width" $thumbnail.Width
+        "height" $thumbnail.Height
+      )) -}}
     {{- end -}}
     {{- $imageData = merge $imageData $thumbnails -}}
-    
-    {{- /* Generate optimized versions */ -}}
-    {{- $optimizedWebP := $imageResource.Process "webp q85" -}}
-    {{- $optimizedJPEG := $imageResource.Process "jpeg q85" -}}
-    {{- $imageData = merge $imageData (dict 
-      "pkb_optimized_webp" (dict 
+
+    {{- /* Optimized */ -}}
+    {{- $optimizedWebP := $image.Process "webp q85" -}}
+    {{- $optimizedJPEG := $image.Process "jpeg q85" -}}
+    {{- $imageData = merge $imageData (dict
+      "pkb_optimized_webp" (dict
         "url" $optimizedWebP.RelPermalink
         "width" $optimizedWebP.Width
         "height" $optimizedWebP.Height
-        "size" (len $optimizedWebP.Content)
       )
-      "pkb_optimized_jpeg" (dict 
+      "pkb_optimized_jpeg" (dict
         "url" $optimizedJPEG.RelPermalink
         "width" $optimizedJPEG.Width
         "height" $optimizedJPEG.Height
-        "size" (len $optimizedJPEG.Content)
       )
     ) -}}
-    
-    {{- /* Extract dominant colors */ -}}
-    {{- $colors := $imageResource.Colors -}}
-    {{- $imageData = merge $imageData (dict 
-      "pkb_dominant_colors" $colors
-    ) -}}
-    
-    {{- /* Calculate aspect ratio */ -}}
-    {{- $aspectRatio := div (float $imageResource.Width) (float $imageResource.Height) -}}
-    {{- $imageData = merge $imageData (dict 
+
+    {{- /* Aspect Ratio & Orientation */ -}}
+    {{- $aspectRatio := div (float $image.Width) (float $image.Height) -}}
+    {{- $orientation := cond (gt $aspectRatio 1.05) "landscape" (cond (lt $aspectRatio 0.95) "portrait" "square") -}}
+    {{- $imageData = merge $imageData (dict
       "pkb_aspect_ratio" $aspectRatio
-      "pkb_orientation" (cond (gt $aspectRatio 1) "landscape" (cond (lt $aspectRatio 1) "portrait" "square"))
+      "pkb_orientation" $orientation
     ) -}}
-    
-    {{- /* Add processing timestamp */ -}}
-    {{- $imageData = merge $imageData (dict 
+
+    {{- /* Dominant Colors & Classification */ -}}
+    {{- $colorSample := $image.Fit "32x32" -}}
+    {{- $colors := $colorSample.Colors -}}
+
+    {{- $hexColors := slice -}}
+    {{- range $colors }}
+      {{- $hex := .String -}}
+      {{- $hexColors = $hexColors | append $hex -}}
+    {{- end -}}
+
+    {{- $colorCounts := dict -}}
+    {{- $familyCounts := dict -}}
+
+    {{- range $hex := $hexColors }}
+      {{- $hex := lower (trim $hex " ") -}}
+      {{- if and (ge (len $hex) 7) (eq (slice $hex 0 1) "#") -}}
+        {{- $count := add (or (index $colorCounts $hex) 0) 1 -}}
+        {{- $colorCounts = merge $colorCounts (dict $hex $count) -}}
+        {{- $rStr := slice $hex 1 3 -}}
+        {{- $gStr := slice $hex 3 5 -}}
+        {{- $bStr := slice $hex 5 7 -}}
+        {{- $r := 0 -}}
+        {{- $g := 0 -}}
+        {{- $b := 0 -}}
+        {{- with (printf "0x%s" $rStr) }}{{- $r = int . -}}{{- end -}}
+        {{- with (printf "0x%s" $gStr) }}{{- $g = int . -}}{{- end -}}
+        {{- with (printf "0x%s" $bStr) }}{{- $b = int . -}}{{- end -}}
+        {{- $diffRG := sub $r $g -}}
+        {{- $absRG := cond (lt $diffRG 0) (mul $diffRG -1) $diffRG -}}
+        {{- $diffGB := sub $g $b -}}
+        {{- $absGB := cond (lt $diffGB 0) (mul $diffGB -1) $diffGB -}}
+        {{- $fam := cond (and (gt $r 240) (gt $g 240) (gt $b 240)) "white"
+              (cond (and (lt $r 30) (lt $g 30) (lt $b 30)) "black"
+              (cond (and (lt $absRG 10) (lt $absGB 10)) "gray"
+              (cond (and (gt $r $g) (gt $r $b)) "red"
+              (cond (and (gt $g $r) (gt $g $b)) "green"
+              (cond (and (gt $b $r) (gt $b $g)) "blue"
+              (cond (and (gt $r 200) (gt $g 180) (lt $b 100)) "yellow"
+              (cond (and (gt $r 100) (lt $g 80) (gt $b 100)) "purple"
+              (cond (and (gt $r 150) (gt $g 100) (lt $b 80)) "brown"
+              "other")))))))) -}}
+        {{- $fc := add (or (index $familyCounts $fam) 0) 1 -}}
+        {{- $familyCounts = merge $familyCounts (dict $fam $fc) -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $sortedColors := slice -}}
+    {{- range $hex, $count := $colorCounts }}
+      {{- $sortedColors = $sortedColors | append (dict "hex" $hex "count" $count) -}}
+    {{- end -}}
+    {{- $sortedColors = sort $sortedColors "count" "desc" -}}
+
+    {{- $sortedFamilies := slice -}}
+    {{- range $fam, $count := $familyCounts }}
+      {{- $sortedFamilies = $sortedFamilies | append (dict "family" $fam "count" $count) -}}
+    {{- end -}}
+    {{- $sortedFamilies = sort $sortedFamilies "count" "desc" -}}
+
+    {{- $imageData = merge $imageData (dict
+      "pkb_dominant_colors" (apply $sortedColors "index" "." "hex")
+      "pkb_color_families" (apply $sortedFamilies "index" "." "family")
+      "pkb_debug_colors" $hexColors
+      "pkb_debug_colors_type" (printf "%T" $hexColors)
+    ) -}}
+
+    {{- $imageData = merge $imageData (dict
       "pkb_processed_at" (now.Format "2006-01-02T15:04:05Z07:00")
     ) -}}
-    
+
     {{- $portfolioImages = $portfolioImages | append $imageData -}}
   {{- end -}}
 {{- end -}}
 
-{{- /* Create a simple list of unique categories */ -}}
 {{- $categoryList := slice -}}
-{{- range $portfolioImages -}}
-  {{- $category := .pkb_category | default "uncategorized" -}}
-  {{- if not (in $categoryList $category) -}}
-    {{- $categoryList = $categoryList | append $category -}}
+{{- range $portfolioImages }}
+  {{- $cat := .pkb_category | default "uncategorized" -}}
+  {{- if not (in $categoryList $cat) }}
+    {{- $categoryList = $categoryList | append $cat -}}
   {{- end -}}
 {{- end -}}
 
-{{- /* Output final JSON structure */ -}}
-{{- dict 
-  "portfolio_metadata" (dict 
+{{- dict
+  "portfolio_metadata" (dict
     "total_images" (len $portfolioImages)
     "supported_formats" $supportedFormats
     "generated_at" (now.Format "2006-01-02T15:04:05Z07:00")

@@ -7,13 +7,16 @@ class PortfolioManager {
     this.observer = null;
     this.isLoading = false;
     this.currentFilter = 'all';
-    
+
     this.init();
   }
 
   async init() {
     try {
       await this.loadPortfolioData();
+      if (!this.portfolioData || !Array.isArray(this.portfolioData.images)) {
+        throw new Error('Portfolio data or images missing');
+      }
       this.setupElements();
       this.createMasonryGrid();
       this.setupLazyLoading();
@@ -27,19 +30,37 @@ class PortfolioManager {
 
   async loadPortfolioData() {
     const grid = document.getElementById('portfolioGrid');
-    const jsonUrl = grid.dataset.jsonUrl;
-    
+    let jsonUrl = grid ? grid.dataset.jsonUrl : null;
+
     if (!jsonUrl) {
       throw new Error('Portfolio JSON URL not found');
     }
 
-    const response = await fetch(jsonUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to load portfolio data: ${response.status}`);
+    // Ensure absolute path
+    if (!jsonUrl.startsWith('/')) {
+      jsonUrl = '/' + jsonUrl;
     }
-    
-    this.portfolioData = await response.json();
-    this.currentImages = [...this.portfolioData.images];
+
+    try {
+      const response = await fetch(jsonUrl, { cache: "reload" });
+      if (!response.ok) {
+        throw new Error(`Failed to load portfolio data: ${response.status}`);
+      }
+      const data = await response.json();
+
+      // Adapt for single.json structure: images array and portfolio_metadata
+      if (!data || !Array.isArray(data.images)) {
+        throw new Error('Portfolio JSON missing images array');
+      }
+      this.portfolioData = {
+        images: data.images,
+        metadata: data.portfolio_metadata || {}
+      };
+      this.currentImages = [...data.images];
+    } catch (err) {
+      console.error('Error fetching or parsing portfolio JSON:', err);
+      throw err;
+    }
   }
 
   setupElements() {
@@ -57,12 +78,13 @@ class PortfolioManager {
   }
 
   createMasonryGrid() {
+    if (!this.elements.grid) return;
     this.elements.grid.innerHTML = '';
-    
+
     // Create masonry columns
     const columnCount = this.getColumnCount();
     const columns = [];
-    
+
     for (let i = 0; i < columnCount; i++) {
       const column = document.createElement('div');
       column.className = 'masonry-column';
@@ -83,18 +105,20 @@ class PortfolioManager {
     item.className = `portfolio-item ${image.pkb_orientation}`;
     item.dataset.category = image.pkb_category;
     item.dataset.index = index;
-    
+
     // Use smallest thumbnail for grid display
     const thumbnail = image.pkb_thumbnail_300_300;
-    const aspectRatio = thumbnail.height / thumbnail.width;
-    
+    const aspectRatio = thumbnail && thumbnail.width && thumbnail.height
+      ? thumbnail.height / thumbnail.width
+      : 1;
+
     item.innerHTML = `
       <div class="item-container" style="aspect-ratio: ${1/aspectRatio}">
         <img 
           class="portfolio-image lazy-load" 
-          data-src="${thumbnail.url}"
-          data-full="${image.pkb_optimized_webp.url}"
-          alt="${image.pkb_filename}"
+          data-src="${thumbnail ? thumbnail.url : ''}"
+          data-full="${image.pkb_optimized_webp ? image.pkb_optimized_webp.url : ''}"
+          alt="${image.pkb_filename || ''}"
           loading="lazy"
         >
         <div class="item-overlay">
@@ -111,12 +135,12 @@ class PortfolioManager {
 
     // Add click handler
     item.addEventListener('click', () => this.openOverlay(index));
-    
+
     return item;
   }
 
   getShortestColumn(columns) {
-    return columns.reduce((shortest, column) => 
+    return columns.reduce((shortest, column) =>
       column.offsetHeight < shortest.offsetHeight ? column : shortest
     );
   }
@@ -156,7 +180,7 @@ class PortfolioManager {
 
   loadImage(img) {
     const placeholder = img.parentElement.querySelector('.loading-placeholder');
-    
+
     img.addEventListener('load', () => {
       img.classList.add('loaded');
       if (placeholder) placeholder.style.display = 'none';
@@ -177,17 +201,25 @@ class PortfolioManager {
     });
 
     // Overlay controls
-    this.elements.overlayClose.addEventListener('click', () => this.closeOverlay());
-    this.elements.navPrev.addEventListener('click', () => this.navigateImage(-1));
-    this.elements.navNext.addEventListener('click', () => this.navigateImage(1));
+    if (this.elements.overlayClose) {
+      this.elements.overlayClose.addEventListener('click', () => this.closeOverlay());
+    }
+    if (this.elements.navPrev) {
+      this.elements.navPrev.addEventListener('click', () => this.navigateImage(-1));
+    }
+    if (this.elements.navNext) {
+      this.elements.navNext.addEventListener('click', () => this.navigateImage(1));
+    }
 
     // Keyboard navigation
     document.addEventListener('keydown', (e) => this.handleKeyboard(e));
 
     // Close overlay on background click
-    this.elements.overlay.addEventListener('click', (e) => {
-      if (e.target === this.elements.overlay) this.closeOverlay();
-    });
+    if (this.elements.overlay) {
+      this.elements.overlay.addEventListener('click', (e) => {
+        if (e.target === this.elements.overlay) this.closeOverlay();
+      });
+    }
 
     // Window resize
     let resizeTimeout;
@@ -209,7 +241,7 @@ class PortfolioManager {
     if (filter === 'all') {
       this.currentImages = [...this.portfolioData.images];
     } else {
-      this.currentImages = this.portfolioData.images.filter(img => 
+      this.currentImages = this.portfolioData.images.filter(img =>
         img.pkb_category === filter
       );
     }
@@ -222,47 +254,55 @@ class PortfolioManager {
   openOverlay(index) {
     this.currentIndex = index;
     const image = this.currentImages[index];
-    
-    this.elements.overlay.classList.add('active');
-    document.body.classList.add('overlay-open');
-    
+
+    if (!image) return;
+
+    if (this.elements.overlay) {
+      this.elements.overlay.classList.add('active');
+      document.body.classList.add('overlay-open');
+    }
+
     this.loadOverlayImage(image);
     this.updateMetadata(image);
     this.updateNavigation();
   }
 
   closeOverlay() {
-    this.elements.overlay.classList.remove('active');
-    document.body.classList.remove('overlay-open');
+    if (this.elements.overlay) {
+      this.elements.overlay.classList.remove('active');
+      document.body.classList.remove('overlay-open');
+    }
   }
 
   loadOverlayImage(image) {
     const img = this.elements.overlayImage;
-    
+    if (!img) return;
+
     // Show loading state
     img.classList.add('loading');
-    
+
     // Use WebP if supported, fallback to JPEG
-    const imageUrl = this.supportsWebP() ? 
-      image.pkb_optimized_webp.url : 
-      image.pkb_optimized_jpeg.url;
-    
+    const imageUrl = this.supportsWebP() && image.pkb_optimized_webp
+      ? image.pkb_optimized_webp.url
+      : (image.pkb_optimized_jpeg ? image.pkb_optimized_jpeg.url : '');
+
     img.addEventListener('load', () => {
       img.classList.remove('loading');
     }, { once: true });
-    
+
     img.src = imageUrl;
-    img.alt = image.pkb_filename;
+    img.alt = image.pkb_filename || '';
   }
 
   updateMetadata(image) {
+    if (!this.elements.metadataContent) return;
     const metadata = this.generateMetadataHTML(image);
     this.elements.metadataContent.innerHTML = metadata;
   }
 
   generateMetadataHTML(image) {
     const formatFileSize = (bytes) => {
-      if (bytes === 0) return '0 Bytes';
+      if (!bytes || bytes === 0) return '0 Bytes';
       const k = 1024;
       const sizes = ['Bytes', 'KB', 'MB', 'GB'];
       const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -274,7 +314,7 @@ class PortfolioManager {
         <h4>File Information</h4>
         <div class="metadata-item">
           <span class="label">Filename:</span>
-          <span class="value">${image.pkb_filename}</span>
+          <span class="value">${image.pkb_filename || ''}</span>
         </div>
         <div class="metadata-item">
           <span class="label">Category:</span>
@@ -286,7 +326,7 @@ class PortfolioManager {
         </div>
         <div class="metadata-item">
           <span class="label">Format:</span>
-          <span class="value">${image.pkb_format.toUpperCase()}</span>
+          <span class="value">${(image.pkb_format || '').toUpperCase()}</span>
         </div>
         <div class="metadata-item">
           <span class="label">File Size:</span>
@@ -294,7 +334,7 @@ class PortfolioManager {
         </div>
         <div class="metadata-item">
           <span class="label">Aspect Ratio:</span>
-          <span class="value">${image.pkb_aspect_ratio.toFixed(2)}</span>
+          <span class="value">${image.pkb_aspect_ratio ? image.pkb_aspect_ratio.toFixed(2) : ''}</span>
         </div>
       </div>
       
@@ -343,7 +383,7 @@ class PortfolioManager {
       <div class="metadata-section">
         <h4>Colors</h4>
         <div class="color-palette">
-          ${image.pkb_dominant_colors.map(color => 
+          ${(image.pkb_dominant_colors || []).map(color =>
             `<div class="color-swatch" style="background-color: ${color}" title="${color}"></div>`
           ).join('')}
         </div>
@@ -354,18 +394,20 @@ class PortfolioManager {
   updateNavigation() {
     const hasPrev = this.currentIndex > 0;
     const hasNext = this.currentIndex < this.currentImages.length - 1;
-    
-    this.elements.navPrev.style.display = hasPrev ? 'block' : 'none';
-    this.elements.navNext.style.display = hasNext ? 'block' : 'none';
+
+    if (this.elements.navPrev)
+      this.elements.navPrev.style.display = hasPrev ? 'block' : 'none';
+    if (this.elements.navNext)
+      this.elements.navNext.style.display = hasNext ? 'block' : 'none';
   }
 
   navigateImage(direction) {
     const newIndex = this.currentIndex + direction;
-    
+
     if (newIndex >= 0 && newIndex < this.currentImages.length) {
       this.currentIndex = newIndex;
       const image = this.currentImages[this.currentIndex];
-      
+
       this.loadOverlayImage(image);
       this.updateMetadata(image);
       this.updateNavigation();
@@ -373,8 +415,8 @@ class PortfolioManager {
   }
 
   handleKeyboard(e) {
-    if (!this.elements.overlay.classList.contains('active')) return;
-    
+    if (!this.elements.overlay || !this.elements.overlay.classList.contains('active')) return;
+
     switch (e.key) {
       case 'Escape':
         this.closeOverlay();
@@ -397,16 +439,20 @@ class PortfolioManager {
   }
 
   hideLoading() {
-    this.elements.loading.style.display = 'none';
+    if (this.elements.loading) {
+      this.elements.loading.style.display = 'none';
+    }
   }
 
   showError(message) {
-    this.elements.loading.innerHTML = `
-      <div class="error-message">
-        <p>${message}</p>
-        <button onclick="location.reload()">Retry</button>
-      </div>
-    `;
+    if (this.elements.loading) {
+      this.elements.loading.innerHTML = `
+        <div class="error-message">
+          <p>${message}</p>
+          <button onclick="location.reload()">Retry</button>
+        </div>
+      `;
+    }
   }
 
   supportsWebP() {
@@ -417,6 +463,7 @@ class PortfolioManager {
   }
 
   humanize(str) {
+    if (!str) return '';
     return str.charAt(0).toUpperCase() + str.slice(1).replace(/[-_]/g, ' ');
   }
 }
