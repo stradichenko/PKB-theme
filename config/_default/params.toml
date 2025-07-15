@@ -47,6 +47,8 @@
   includeContent = true
   contentLimit = 500
 
+math = true
+
 [taxonomies]
   # mainSections defines which Hugo content sections to include in various theme features:
   # - Search index generation (/index.json) - only pages from these sections are searchable
@@ -126,3 +128,5 @@ tagline = "Personal Knowledge Base"
 #   [[fonts.preload]]
 #     url = "/fonts/inter-var.woff2"
 #     type = "font/woff2"
+
+

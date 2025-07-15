@@ -1,0 +1,44 @@
+.goat svg {
+  max-width: 100%;
+  height: auto;
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border, #e1e5e9);
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.goat text {
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 14px;
+  fill: var(--color-text, #333333);
+}
+
+.goat path,
+.goat line,
+.goat rect,
+.goat circle {
+  stroke: var(--color-text, #333333);
+  fill: none;
+  stroke-width: 1;
+}
+
+.goat rect.filled {
+  fill: var(--color-primary-light, #f0f8ff);
+}
+
+[data-theme="dark"] .goat svg {
+  background: var(--dark-background, #1a202c);
+  border-color: var(--dark-border, #2d3748);
+}
+
+[data-theme="dark"] .goat text {
+  fill: var(--dark-text, #e2e8f0);
+}
+
+[data-theme="dark"] .goat path,
+[data-theme="dark"] .goat line,
+[data-theme="dark"] .goat rect,
+[data-theme="dark"] .goat circle {
+  stroke: var(--dark-text, #e2e8f0);
+}

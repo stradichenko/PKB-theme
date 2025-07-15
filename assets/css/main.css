@@ -36,6 +36,9 @@
 /* PDF Print styles - inline from components/pdf-print.css */
 /* ...existing pdf-print code... */
 
+/* GoAT Diagrams */
+@import "components/goat-diagrams.css";
+
 /* ===== REMAINING STYLES ===== */
 /* General styling */
 a {

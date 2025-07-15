@@ -169,13 +169,6 @@ $$
 \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
 $$
 
-**Markdown source:**
-```
-$$
-\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-$$
-```
-
 ### Equation Arrays and Alignment
 
 For multiple aligned equations:
@@ -186,16 +179,6 @@ f(x) &= (a+b)^2 \\
 &= a^2 + 2ab + b^2
 \end{align}
 $$
-
-**Markdown source:**
-```
-$$
-\begin{align}
-f(x) &= (a+b)^2 \\
-&= a^2 + 2ab + b^2
-\end{align}
-$$
-```
 
 ### Matrices
 
@@ -214,46 +197,20 @@ cx + dy
 \end{bmatrix}
 $$
 
-**Markdown source:**
-```
-$$
-\begin{pmatrix}
-a & b \\
-c & d
-\end{pmatrix}
-\begin{bmatrix}
-x \\
-y
-\end{bmatrix} =
-\begin{bmatrix}
-ax + by \\
-cx + dy
-\end{bmatrix}
-$$
-```
-
 ### Complex Notation
 
 $$
 \iiint_V \vec{F} \cdot d\vec{v} = \oiint_S \vec{F} \cdot d\vec{S}
 $$
 
-{{< sidenote >}}
 The above is Gauss's divergence theorem, showing volume integrals can be converted to surface integrals. Complex mathematical expressions benefit from sidenotes that explain the concepts without cluttering the formula.
-{{< /sidenote >}}
+
 
 ### Numbered Equations
 
 $$
 \tag{1} E = mc^2
 $$
-
-**Markdown source:**
-```
-$$
-\tag{1} E = mc^2
-$$
-```
 
 ### Chemical Equations
 
@@ -262,13 +219,6 @@ Chemical equations use the `\ce{}` command from the mhchem extension:
 $$
 \ce{H2O + CO2 -> H2CO3}
 $$
-
-**Markdown source:**
-```
-$$
-\ce{H2O + CO2 -> H2CO3}
-$$
-```
 
 **More chemical equation examples:**
 
@@ -580,6 +530,49 @@ The gallery slider supports both landscape and portrait images, automatically ad
   src1="/images/docs/gallery-slider-doc/pawel-czerwinski-mrCMyoadfBM-unsplash.jpg"
   alt1="Auto slide 1"
   caption1="Autoplay every 3 seconds"
+  src2="/images/docs/gallery-slider-doc/plums-8932336_1280.jpg"
+  alt2="Auto slide 2"
+  caption2="Hover to pause autoplay"
+  src3="/images/docs/gallery-slider-doc/spenser-sembrat-esoj35vCKS8-unsplash.jpg"
+  alt3="Auto slide 3"
+  caption3="Click navigation to restart timer"
+>}}
+
+{{< sidenote >}}
+Autoplay can be enabled with a custom interval. Thumbnails can be hidden for a cleaner look.
+{{< /sidenote >}}
+  alt2="Forest path in autumn colors"
+  caption2="Forest path in autumn colors"
+  src3="/images/docs/gallery-slider-doc/nataliya-melnychuk-V5s-XShdujI-unsplash.jpg"
+  alt3="Portrait orientation example"
+  caption3="Portrait orientation example"
+>}}
+
+{{< sidenote >}}
+The gallery slider supports both landscape and portrait images, automatically adjusting the layout. Navigation works via arrows, dots, thumbnails, and keyboard controls.
+{{< /sidenote >}}
+
+### Autoplay Gallery
+
+{{< gallery-slider 
+  id="autoplay-example"
+  autoplay="true"
+  interval="3000"
+  showThumbnails="false"
+  src1="/images/docs/gallery-slider-doc/pawel-czerwinski-mrCMyoadfBM-unsplash.jpg"
+  alt1="Auto slide 1"
+  caption1="Autoplay every 3 seconds"
+  src2="/images/docs/gallery-slider-doc/plums-8932336_1280.jpg"
+  alt2="Auto slide 2"
+  caption2="Hover to pause autoplay"
+  src3="/images/docs/gallery-slider-doc/spenser-sembrat-esoj35vCKS8-unsplash.jpg"
+  alt3="Auto slide 3"
+  caption3="Click navigation to restart timer"
+>}}
+
+{{< sidenote >}}
+Autoplay can be enabled with a custom interval. Thumbnails can be hidden for a cleaner look.
+{{< /sidenote >}}
   src2="/images/docs/gallery-slider-doc/plums-8932336_1280.jpg"
   alt2="Auto slide 2"
   caption2="Hover to pause autoplay"

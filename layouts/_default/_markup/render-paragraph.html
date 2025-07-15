@@ -1,0 +1,11 @@
+{{- $content := .Inner | strings.TrimSpace -}}
+{{- if and (hasPrefix $content "$$") (hasSuffix $content "$$") -}}
+  {{/* Block math - output directly without <p> wrapper */}}
+  {{ $content | safeHTML }}
+{{- else if and (hasPrefix $content "$") (hasSuffix $content "$") (not (strings.Contains $content "\n")) (not (strings.Contains $content " ")) -}}
+  {{/* Single inline math expression - output directly without <p> wrapper */}}
+  {{ $content | safeHTML }}
+{{- else -}}
+  {{/* All other content including paragraphs with inline math - wrap in <p> and let KaTeX process */}}
+  <p>{{ $content }}</p>
+{{- end -}}

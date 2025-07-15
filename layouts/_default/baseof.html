@@ -60,6 +60,10 @@
   {{/* Main head partial handles all meta tags and SEO */}}
   {{ partial "head.html" . }}
   
+  {{ if .Param "math" }}
+    {{ partialCached "math.html" . }}
+  {{ end }}
+  
   {{ block "head" . }}{{ end }}
   
   <!-- CSS preload with proper attributes -->

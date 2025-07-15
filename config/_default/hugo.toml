@@ -89,6 +89,15 @@ enableGitInfo = true
     [markup.goldmark.renderer]
       unsafe = true  # This allows raw HTML in markdown files
 
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
+
+
+
 [mediaTypes]
   [mediaTypes.'application/json']
     delimiter = '.'
