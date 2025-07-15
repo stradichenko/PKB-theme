@@ -22,24 +22,58 @@
     startup: {
       ready() {
         MathJax.startup.defaultReady();
-        // Force re-process after page load
-        window.addEventListener('load', function() {
-          setTimeout(() => {
-            if (window.MathJax && MathJax.typesetPromise) {
-              MathJax.typesetPromise();
+        
+        // Create a more robust reprocessing function
+        window.reprocessMath = function(retryCount = 0) {
+          if (retryCount > 3) {
+            console.warn('MathJax reprocessing failed after 3 retries');
+            return;
+          }
+          
+          if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise().then(() => {
+              console.log('MathJax processing completed successfully');
+            }).catch((err) => {
+              console.warn('MathJax typeset failed, retrying...', err.message);
+              setTimeout(() => window.reprocessMath(retryCount + 1), 300);
+            });
+          } else {
+            setTimeout(() => window.reprocessMath(retryCount + 1), 200);
+          }
+        };
+        
+        // Set up mutation observer to catch dynamic content changes
+        const observer = new MutationObserver((mutations) => {
+          let hasNewMath = false;
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1) { // Element node
+                  const text = node.textContent || '';
+                  if (text.includes('$') || text.includes('\\(') || text.includes('\\[')) {
+                    hasNewMath = true;
+                  }
+                }
+              });
             }
-          }, 100);
+          });
+          
+          if (hasNewMath) {
+            setTimeout(() => window.reprocessMath(), 100);
+          }
+        });
+        
+        // Start observing after page load
+        window.addEventListener('load', () => {
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+          
+          // Initial processing after load
+          setTimeout(() => window.reprocessMath(), 150);
         });
       }
-    }
-  };
-  
-  // Add a global function to re-process math when needed
-  window.reprocessMath = function() {
-    if (window.MathJax && MathJax.typesetPromise) {
-      MathJax.typesetPromise().catch(function (err) {
-        console.log('MathJax typeset failed: ' + err.message);
-      });
     }
   };
 </script>

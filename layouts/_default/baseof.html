@@ -107,22 +107,44 @@
   <!-- Math processing helper for page refreshes -->
   {{ if .Param "math" }}
   <script>
-    // Ensure MathJax processes after everything is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      // Wait a bit more for all async resources
-      setTimeout(function() {
-        if (window.reprocessMath) {
-          window.reprocessMath();
-        }
-      }, 200);
+    // Enhanced math processing with multiple triggers
+    let mathProcessingAttempts = 0;
+    
+    function ensureMathProcessing() {
+      if (mathProcessingAttempts > 5) return;
+      mathProcessingAttempts++;
+      
+      if (window.reprocessMath) {
+        window.reprocessMath();
+      } else {
+        setTimeout(ensureMathProcessing, 200);
+      }
+    }
+    
+    // Multiple event listeners to catch all scenarios
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(ensureMathProcessing, 100);
     });
     
-    // Handle page visibility change (like refreshing)
-    document.addEventListener('visibilitychange', function() {
-      if (!document.hidden && window.reprocessMath) {
-        setTimeout(window.reprocessMath, 100);
+    window.addEventListener('load', () => {
+      setTimeout(ensureMathProcessing, 200);
+    });
+    
+    // Handle page visibility changes (refreshes, tab switches)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        mathProcessingAttempts = 0; // Reset counter on visibility change
+        setTimeout(ensureMathProcessing, 150);
       }
     });
+    
+    // Fallback: check periodically if math is unprocessed
+    setInterval(() => {
+      const unprocessedMath = document.querySelectorAll('.MathJax_Preview, script[type="math/tex"]');
+      if (unprocessedMath.length > 0 && window.reprocessMath) {
+        window.reprocessMath();
+      }
+    }, 2000);
   </script>
   {{ end }}
 </body>
