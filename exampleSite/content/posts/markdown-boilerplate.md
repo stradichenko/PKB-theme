@@ -151,15 +151,15 @@ This theme supports mathematical expressions using KaTeX rendering. **Important*
 - Use double dollar signs `$$...$$` for display (block) math
 - Use single backslashes `\` for LaTeX commands (not double `\\`)
 - Line breaks in equations use `\\` (double backslashes)
-- No need to escape dollar signs - Hugo's KaTeX configuration handles them properly
+- Dollar signs are handled properly when delimiters match between Hugo and MathJax
 
 ### Inline Math
 
 Inline math is wrapped with single dollar signs: $E = mc^2$, $\alpha + \beta = \gamma$, $\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$
 
-{{< sidenote >}}
 Inline math integrates seamlessly with your text flow for simple expressions and variables. The syntax is `$E = mc^2$` which renders as $E = mc^2$.
-{{< /sidenote >}}
+
+\E = mc^2\
 
 ### Block Math
 
