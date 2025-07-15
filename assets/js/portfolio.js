@@ -7,6 +7,13 @@ class PortfolioManager {
     this.observer = null;
     this.isLoading = false;
     this.currentFilter = 'all';
+    this.activeFilters = {
+      category: 'all',
+      format: 'all',
+      orientation: 'all',
+      camera: 'all',
+      color: 'all'
+    };
 
     this.init();
   }
@@ -73,7 +80,12 @@ class PortfolioManager {
       navPrev: document.getElementById('navPrev'),
       navNext: document.getElementById('navNext'),
       loading: document.querySelector('.portfolio-loading'),
-      filterBtns: document.querySelectorAll('.filter-btn')
+      filterBtns: document.querySelectorAll('.filter-btn'),
+      clearFiltersBtn: document.getElementById('clearFilters'),
+      formatSelect: document.getElementById('formatSelect'),
+      orientationSelect: document.getElementById('orientationSelect'),
+      cameraSelect: document.getElementById('cameraSelect'),
+      colorSelect: document.getElementById('colorSelect')
     };
   }
 
@@ -117,7 +129,7 @@ class PortfolioManager {
         <img 
           class="portfolio-image lazy-load" 
           data-src="${thumbnail ? thumbnail.url : ''}"
-          data-full="${image.pkb_optimized_webp ? image.pkb_optimized_webp.url : ''}"
+          data-full="${image.pkb_optimized ? image.pkb_optimized.url : ''}"
           alt="${image.pkb_filename || ''}"
           loading="lazy"
         >
@@ -200,6 +212,40 @@ class PortfolioManager {
       btn.addEventListener('click', (e) => this.handleFilter(e));
     });
 
+    // Clear filters button
+    if (this.elements.clearFiltersBtn) {
+      this.elements.clearFiltersBtn.addEventListener('click', () => this.clearAllFilters());
+    }
+
+    // Sub-filter dropdowns
+    if (this.elements.formatSelect) {
+      this.elements.formatSelect.addEventListener('change', (e) => {
+        this.activeFilters.format = e.target.value;
+        this.applyFilters();
+      });
+    }
+
+    if (this.elements.orientationSelect) {
+      this.elements.orientationSelect.addEventListener('change', (e) => {
+        this.activeFilters.orientation = e.target.value;
+        this.applyFilters();
+      });
+    }
+
+    if (this.elements.cameraSelect) {
+      this.elements.cameraSelect.addEventListener('change', (e) => {
+        this.activeFilters.camera = e.target.value;
+        this.applyFilters();
+      });
+    }
+
+    if (this.elements.colorSelect) {
+      this.elements.colorSelect.addEventListener('change', (e) => {
+        this.activeFilters.color = e.target.value;
+        this.applyFilters();
+      });
+    }
+
     // Overlay controls
     if (this.elements.overlayClose) {
       this.elements.overlayClose.addEventListener('click', () => this.closeOverlay());
@@ -231,24 +277,59 @@ class PortfolioManager {
 
   handleFilter(e) {
     const filter = e.target.dataset.filter;
+    this.activeFilters.category = filter;
     this.currentFilter = filter;
 
     // Update active button
     this.elements.filterBtns.forEach(btn => btn.classList.remove('active'));
     e.target.classList.add('active');
 
-    // Filter images
-    if (filter === 'all') {
-      this.currentImages = [...this.portfolioData.images];
-    } else {
-      this.currentImages = this.portfolioData.images.filter(img =>
-        img.pkb_category === filter
-      );
-    }
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    // Filter images based on all active filters
+    this.currentImages = this.portfolioData.images.filter(img => {
+      const catMatch = this.activeFilters.category === 'all' || img.pkb_category === this.activeFilters.category;
+      const fmtMatch = this.activeFilters.format === 'all' || img.pkb_format === this.activeFilters.format;
+      const oriMatch = this.activeFilters.orientation === 'all' || img.pkb_orientation === this.activeFilters.orientation;
+      const camMatch = this.activeFilters.camera === 'all' || img.pkb_exif_model === this.activeFilters.camera;
+      const clrMatch = this.activeFilters.color === 'all' || (img.pkb_color_families || []).includes(this.activeFilters.color);
+      
+      return catMatch && fmtMatch && oriMatch && camMatch && clrMatch;
+    });
 
     // Recreate grid
     this.createMasonryGrid();
     this.observeLazyImages();
+  }
+
+  clearAllFilters() {
+    // Reset all filters to default
+    this.activeFilters = {
+      category: 'all',
+      format: 'all',
+      orientation: 'all',
+      camera: 'all',
+      color: 'all'
+    };
+    this.currentFilter = 'all';
+
+    // Reset UI elements
+    this.elements.filterBtns.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.filter === 'all') {
+        btn.classList.add('active');
+      }
+    });
+
+    if (this.elements.formatSelect) this.elements.formatSelect.value = 'all';
+    if (this.elements.orientationSelect) this.elements.orientationSelect.value = 'all';
+    if (this.elements.cameraSelect) this.elements.cameraSelect.value = 'all';
+    if (this.elements.colorSelect) this.elements.colorSelect.value = 'all';
+
+    // Apply filters (which will show all images)
+    this.applyFilters();
   }
 
   openOverlay(index) {
@@ -281,10 +362,8 @@ class PortfolioManager {
     // Show loading state
     img.classList.add('loading');
 
-    // Use WebP if supported, fallback to JPEG
-    const imageUrl = this.supportsWebP() && image.pkb_optimized_webp
-      ? image.pkb_optimized_webp.url
-      : (image.pkb_optimized_jpeg ? image.pkb_optimized_jpeg.url : '');
+    // Use the optimized image from our simplified structure
+    const imageUrl = image.pkb_optimized ? image.pkb_optimized.url : '';
 
     img.addEventListener('load', () => {
       img.classList.remove('loading');

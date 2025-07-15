@@ -3,20 +3,27 @@
   {{ with $jsonURL }}
     <link rel="preload" as="fetch" href="{{ . }}" type="application/json">
   {{ end }}
+  
+  <!-- Add portfolio CSS -->
+  <link rel="stylesheet" href="/assets/css/portfolio.css">
 
   <div class="portfolio-container">
     <header class="portfolio-header">
       <h1 class="portfolio-title">{{ .Title | default "Portfolio" }}</h1>
       {{ with .Content }}<div class="portfolio-description">{{ . }}</div>{{ end }}
+    </header>
 
-      <div class="portfolio-filters" id="portfolioFilters">
-        <button class="filter-btn active" data-filter="all">All</button>
-      </div>
+    <div class="portfolio-filters" id="portfolioFilters">
+      <button class="filter-btn active" data-filter="all">All</button>
+    </div>
 
-      <div class="portfolio-subfilters">
+    <div class="portfolio-subfilters">
+      <div class="subfilter-group">
         <label>Format:</label>
         <select id="formatSelect"><option value="all">All</option></select>
+      </div>
 
+      <div class="subfilter-group">
         <label>Orientation:</label>
         <select id="orientationSelect">
           <option value="all">All</option>
@@ -24,19 +31,27 @@
           <option value="portrait">Portrait</option>
           <option value="square">Square</option>
         </select>
+      </div>
 
+      <div class="subfilter-group">
         <label>Camera Model:</label>
         <select id="cameraSelect"><option value="all">All</option></select>
+      </div>
 
+      <div class="subfilter-group">
         <label>Dominant Color:</label>
         <select id="colorSelect"><option value="all">All</option></select>
       </div>
 
-      <div class="portfolio-stats" id="portfolioStats">
-        <span class="stat-item"><strong>0</strong> Images</span>
-        <span class="stat-item"><strong>0</strong> Categories</span>
+      <div class="subfilter-group">
+        <button id="clearFilters" class="clear-filters-btn">Clear All Filters</button>
       </div>
-    </header>
+    </div>
+
+    <div class="portfolio-stats" id="portfolioStats">
+      <span class="stat-item"><strong>0</strong> Images</span>
+      <span class="stat-item"><strong>0</strong> Categories</span>
+    </div>
 
     <div class="portfolio-loading" id="portfolioLoading">
       <div class="loading-spinner"></div>
@@ -120,7 +135,7 @@
     [...colors].sort().forEach(clr => {
       const option = document.createElement('option');
       option.value = clr;
-      option.textContent = clr;
+      option.textContent = clr.charAt(0).toUpperCase() + clr.slice(1);
       colorSelect.appendChild(option);
     });
 
@@ -151,7 +166,7 @@
         const fmtMatch = format === 'all' || img.pkb_format === format;
         const oriMatch = orientation === 'all' || img.pkb_orientation === orientation;
         const camMatch = camera === 'all' || img.pkb_exif_model === camera;
-        const clrMatch = color === 'all' || (img.pkb_dominant_colors || []).includes(color);
+        const clrMatch = color === 'all' || (img.pkb_color_families || []).includes(color);
         return catMatch && fmtMatch && oriMatch && camMatch && clrMatch;
       });
 
@@ -166,7 +181,7 @@
             return `
               <div class="portfolio-item" data-category="${img.pkb_category}" data-format="${img.pkb_format}" style="width: 100%;">
                 <div class="item-container" style="aspect-ratio: ${width} / ${height}; width: 100%;">
-                  <img class="portfolio-image" src="${img.pkb_thumbnail_300_300.url}" alt="${img.pkb_filename}" loading="lazy" style="width: 100%; height: 100%;" />
+                  <img class="portfolio-image" src="${img.pkb_thumbnail_300_300.url}" alt="${img.pkb_filename}" loading="lazy" style="width: 100%; height: 100%;" data-full-src="${img.pkb_optimized.url}" />
                   <div class="item-overlay">
                     <div class="item-info">
                       <span class="item-category">${img.pkb_category}</span>
@@ -224,6 +239,25 @@
 
     colorSelect.addEventListener('change', e => {
       activeColor = e.target.value;
+      renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
+    });
+
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      activeCategory = 'all';
+      activeFormat = 'all';
+      activeOrientation = 'all';
+      activeCamera = 'all';
+      activeColor = 'all';
+
+      // Fix: Properly reset the category filter buttons
+      filtersEl.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      filtersEl.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+
+      formatSelect.value = 'all';
+      orientationSelect.value = 'all';
+      cameraSelect.value = 'all';
+      colorSelect.value = 'all';
+
       renderGrid(activeCategory, activeFormat, activeOrientation, activeCamera, activeColor);
     });
 
