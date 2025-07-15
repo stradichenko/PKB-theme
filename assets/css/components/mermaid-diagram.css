@@ -1,0 +1,340 @@
+/* Mermaid Diagram Container */
+.mermaid-diagram-container {
+  position: relative;
+  margin: var(--spacing-lg) 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  overflow: visible; /* Allow buttons to extend outside if needed */
+}
+
+pre.mermaid {
+  position: relative;
+  padding: var(--spacing-md);
+  min-height: 200px;
+  width: 100%;
+  text-align: center;
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  overflow: visible; /* Don't clip mermaid content */
+  white-space: pre-wrap; /* Allow text wrapping for better display */
+}
+
+/* Ensure mermaid SVG renders properly */
+pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Hide the raw mermaid text once it's processed */
+pre.mermaid[data-processed="true"] {
+  font-size: 0; /* Hide the text content */
+}
+
+pre.mermaid[data-processed="true"] svg {
+  font-size: initial; /* Restore font size for SVG text */
+}
+
+/* Diagram Actions - positioned relative to container, not pre */
+.diagram-actions {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+  z-index: 10;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.mermaid-diagram-container:hover .diagram-actions {
+  opacity: 1;
+}
+
+/* Save Dropdown */
+.diagram-save-dropdown {
+  position: relative;
+}
+
+.diagram-save-button,
+.fullscreen-save-button {
+  background-color: rgba(var(--color-surface-rgb, 248, 248, 248), 0.95);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.diagram-save-button:hover,
+.fullscreen-save-button:hover {
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.save-options-dropdown,
+.fullscreen-save-options-dropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-xs));
+  right: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs);
+  min-width: 150px;
+  box-shadow: var(--shadow-medium);
+  display: none;
+  flex-direction: column;
+  z-index: 15;
+}
+
+.save-options-dropdown.active,
+.fullscreen-save-options-dropdown.active {
+  display: flex;
+}
+
+.save-option {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-color-primary);
+  font-size: var(--font-size-small);
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.save-option:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+}
+
+/* Fullscreen Button */
+.diagram-fullscreen-button {
+  background-color: rgba(var(--color-surface-rgb, 248, 248, 248), 0.95);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.diagram-fullscreen-button:hover {
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Fullscreen Overlay */
+.diagram-fullscreen-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(var(--color-background-rgb), 0.95);
+  backdrop-filter: blur(8px);
+  z-index: var(--z-index-modal, 1000);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.diagram-fullscreen-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.diagram-fullscreen-overlay .overlay-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-lg);
+}
+
+/* Fullscreen pre.mermaid - positioned directly in overlay content */
+.diagram-fullscreen-overlay pre.mermaid {
+  position: relative;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-large);
+  width: 95vw;
+  height: 90vh;
+  overflow: auto;
+  min-height: auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  white-space: pre-wrap;
+}
+
+/* Remove any ::before pseudo-element in fullscreen mode */
+.diagram-fullscreen-overlay pre.mermaid.fullscreen-mermaid::before,
+.diagram-fullscreen-overlay pre.mermaid::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Make sure the SVG inside fullscreen mermaid scales to fill available space */
+.diagram-fullscreen-overlay pre.mermaid svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain;
+}
+
+/* Hide raw text in fullscreen as well */
+.diagram-fullscreen-overlay pre.mermaid[data-processed="true"] {
+  font-size: 0;
+}
+
+.diagram-fullscreen-overlay pre.mermaid[data-processed="true"] svg {
+  font-size: initial;
+}
+
+/* Fullscreen Actions - positioned relative to the fullscreen pre.mermaid */
+.fullscreen-actions {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+  z-index: 12;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.diagram-fullscreen-overlay:hover .fullscreen-actions {
+  opacity: 1;
+}
+
+.close-fullscreen-button {
+  background-color: rgba(var(--color-surface-rgb, 248, 248, 248), 0.95);
+  color: var(--text-color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.close-fullscreen-button:hover {
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Mermaid Theme Integration */
+.mermaid-diagram-container .mermaid,
+.diagram-fullscreen-overlay .mermaid {
+  background-color: transparent !important;
+}
+
+/* Ensure mermaid SVG doesn't interfere with buttons */
+.mermaid-diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mermaid-diagram-container {
+    margin: var(--spacing-md) 0;
+  }
+  
+  pre.mermaid {
+    padding: var(--spacing-sm);
+  }
+  
+  .diagram-actions {
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+  }
+  
+  .diagram-fullscreen-overlay pre.mermaid {
+    width: 98vw;
+    height: 95vh;
+    padding: var(--spacing-sm);
+  }
+  
+  .fullscreen-actions {
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+  }
+  
+  .save-options-dropdown,
+  .fullscreen-save-options-dropdown {
+    min-width: 130px;
+  }
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .diagram-save-button,
+[data-theme="dark"] .fullscreen-save-button,
+[data-theme="dark"] .diagram-fullscreen-button,
+[data-theme="dark"] .close-fullscreen-button {
+  background-color: rgba(var(--dark-surface-rgb, 32, 32, 32), 0.95);
+  border-color: var(--dark-border);
+  color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .save-options-dropdown,
+[data-theme="dark"] .fullscreen-save-options-dropdown {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .save-option {
+  color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .diagram-fullscreen-overlay pre.mermaid {
+  background-color: var(--dark-surface);
+}
+
+[data-theme="dark"] .diagram-fullscreen-overlay {
+  background-color: rgba(var(--dark-background-rgb), 0.95);
+}
+[data-theme="dark"] .fullscreen-diagram-container {
+  background-color: var(--dark-surface);
+}
+
+[data-theme="dark"] .diagram-fullscreen-overlay {
+  background-color: rgba(var(--dark-background-rgb), 0.95);
+}

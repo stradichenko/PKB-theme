@@ -99,8 +99,74 @@
   <!-- Mermaid diagram support -->
   {{ if .Store.Get "hasMermaid" }}
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true });
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+        themeVariables: {
+          primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+          primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color-primary').trim(),
+          primaryBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
+          lineColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
+          secondaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-surface').trim(),
+          tertiaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim()
+        }
+      });
+      
+      // Render all mermaid diagrams
+      const mermaidElements = document.querySelectorAll('.mermaid-diagram .mermaid');
+      mermaidElements.forEach((element, index) => {
+        const graphDefinition = element.textContent;
+        const id = `mermaid-${index}-${Date.now()}`;
+        
+        mermaid.render(id, graphDefinition).then(({svg}) => {
+          element.innerHTML = svg;
+          
+          // Initialize diagram enhancements after rendering
+          if (typeof initializeMermaidEnhancements === 'function') {
+            setTimeout(() => initializeMermaidEnhancements(), 100);
+          }
+        }).catch((error) => {
+          console.error('Mermaid rendering error:', error);
+          element.innerHTML = `<div class="mermaid-error">Error rendering diagram: ${error.message}</div>`;
+        });
+      });
+      
+      // Handle theme changes
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (mutation.attributeName === 'data-theme') {
+            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+            mermaid.initialize({
+              theme: newTheme,
+              themeVariables: {
+                primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
+                primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color-primary').trim(),
+                primaryBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
+                lineColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
+                secondaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-surface').trim(),
+                tertiaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim()
+              }
+            });
+            
+            // Re-render all diagrams with new theme
+            mermaidElements.forEach((element, index) => {
+              const graphDefinition = element.getAttribute('data-original-content') || element.textContent;
+              const id = `mermaid-${index}-${Date.now()}`;
+              
+              mermaid.render(id, graphDefinition).then(({svg}) => {
+                element.innerHTML = svg;
+              }).catch((error) => {
+                console.error('Mermaid re-rendering error:', error);
+              });
+            });
+          }
+        });
+      });
+      observer.observe(document.documentElement, { attributes: true });
+    });
   </script>
   {{ end }}
   

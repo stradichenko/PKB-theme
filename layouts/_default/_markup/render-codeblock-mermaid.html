@@ -1,4 +1,6 @@
-<pre class="mermaid">
-  {{- .Inner | htmlEscape | safeHTML -}}
-</pre>
 {{ .Page.Store.Set "hasMermaid" true }}
+
+{{ $diagramId := printf "mermaid-%d" (now.Unix) }}
+{{ $content := .Inner | htmlEscape | safeHTML }}
+
+{{ partial "mermaid-diagram.html" (dict "id" $diagramId "content" $content) }}

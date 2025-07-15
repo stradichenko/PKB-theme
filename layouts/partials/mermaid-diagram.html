@@ -1,0 +1,158 @@
+<div class="mermaid-diagram-container">
+  <pre class="mermaid" data-diagram-id="{{ .id | default (printf "mermaid-%d" (now.Unix)) }}" data-original-content="{{ .content }}">{{ .content }}</pre>
+  
+  <div class="diagram-actions">
+    <div class="diagram-save-dropdown">
+      <button class="diagram-save-button" aria-label="Save diagram as image" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+        </svg>
+      </button>
+      <div class="save-options-dropdown">
+        <button class="save-option" data-format="png">Save as PNG</button>
+        <button class="save-option" data-format="svg">Save as SVG</button>
+        <button class="save-option" data-format="jpeg">Save as JPEG</button>
+      </div>
+    </div>
+    
+    <button class="diagram-fullscreen-button" aria-label="View diagram in fullscreen">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="diagram-fullscreen-overlay">
+  <div class="overlay-content">
+    <!-- Fullscreen mermaid diagram will be cloned here and will use flex to take available space -->
+    
+    <div class="fullscreen-actions">
+      <div class="diagram-save-dropdown">
+        <button class="fullscreen-save-button" aria-label="Save diagram as image" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+          </svg>
+        </button>
+        <div class="fullscreen-save-options-dropdown">
+          <button class="save-option" data-format="png" data-target="fullscreen">Save as PNG</button>
+          <button class="save-option" data-format="svg" data-target="fullscreen">Save as SVG</button>
+          <button class="save-option" data-format="jpeg" data-target="fullscreen">Save as JPEG</button>
+        </div>
+      </div>
+      
+      <button class="close-fullscreen-button" aria-label="Close fullscreen view">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Load Mermaid.js library -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<script type="text/javascript">
+  // Initialize mermaid first, then our enhancements
+  document.addEventListener('DOMContentLoaded', function() {
+    // Configure mermaid
+    mermaid.initialize({ 
+      startOnLoad: true,
+      theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+      securityLevel: 'loose',
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true
+      },
+      sequence: {
+        useMaxWidth: true
+      },
+      gantt: {
+        useMaxWidth: true
+      },
+      class: {
+        useMaxWidth: true
+      },
+      state: {
+        useMaxWidth: true
+      },
+      er: {
+        useMaxWidth: true
+      },
+      journey: {
+        useMaxWidth: true
+      },
+      pie: {
+        useMaxWidth: true
+      }
+    });
+    
+    // Wait for mermaid to process diagrams, then add our enhancements
+    setTimeout(function() {
+      if (typeof initializeMermaidEnhancements === 'function') {
+        initializeMermaidEnhancements();
+      }
+    }, 100);
+  });
+  
+  // Update mermaid theme when theme changes
+  const themeObserver = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      if (mutation.attributeName === 'data-theme') {
+        const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+        mermaid.initialize({ 
+          startOnLoad: true,
+          theme: newTheme,
+          securityLevel: 'loose',
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true
+          },
+          sequence: {
+            useMaxWidth: true
+          },
+          gantt: {
+            useMaxWidth: true
+          },
+          class: {
+            useMaxWidth: true
+          },
+          state: {
+            useMaxWidth: true
+          },
+          er: {
+            useMaxWidth: true
+          },
+          journey: {
+            useMaxWidth: true
+          },
+          pie: {
+            useMaxWidth: true
+          }
+        });
+        
+        // Re-render existing diagrams
+        document.querySelectorAll('.mermaid').forEach(element => {
+          if (element.getAttribute('data-processed')) {
+            element.removeAttribute('data-processed');
+            const originalContent = element.getAttribute('data-original-content') || element.textContent;
+            element.innerHTML = originalContent;
+            mermaid.init(undefined, element);
+          }
+        });
+      }
+    });
+  });
+  themeObserver.observe(document.documentElement, { attributes: true });
+</script>
+
+{{ $mermaidScript := resources.Get "js/mermaid-diagram.js" }}
+{{ if $mermaidScript }}
+  {{ $mermaidScript = $mermaidScript | resources.ExecuteAsTemplate "js/mermaid-diagram.js" . | resources.Minify | fingerprint }}
+  <script src="{{ $mermaidScript.RelPermalink }}" integrity="{{ $mermaidScript.Data.Integrity }}"></script>
+{{ else }}
+  {{ errorf "Required file 'mermaid-diagram.js' not found in assets/js/ directory" }}
+{{ end }}
