@@ -1,12 +1,46 @@
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <script>
-  MathJax = {
+  window.MathJax = {
     tex: {
-      displayMath: [['\\[', '\\]'], ['$$', '$$']],  // block
-      inlineMath: [['\\(', '\\)'], ['$', '$']],     // inline - single dollar signs
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      packages: {'[+]': ['ams']},
+      autoload: {
+        color: [],
+        colorv2: ['color']
+      }
     },
-    loader:{
-      load: ['ui/safe']
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      ignoreHtmlClass: 'tex2jax_ignore',
+      processHtmlClass: 'tex2jax_process'
     },
+    loader: {
+      load: ['[tex]/ams', '[tex]/color']
+    },
+    startup: {
+      ready() {
+        MathJax.startup.defaultReady();
+        // Force re-process after page load
+        window.addEventListener('load', function() {
+          setTimeout(() => {
+            if (window.MathJax && MathJax.typesetPromise) {
+              MathJax.typesetPromise();
+            }
+          }, 100);
+        });
+      }
+    }
+  };
+  
+  // Add a global function to re-process math when needed
+  window.reprocessMath = function() {
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise().catch(function (err) {
+        console.log('MathJax typeset failed: ' + err.message);
+      });
+    }
   };
 </script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
