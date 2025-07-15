@@ -159,8 +159,6 @@ Inline math is wrapped with single dollar signs: $E = mc^2$, $\alpha + \beta = \
 
 Inline math integrates seamlessly with your text flow for simple expressions and variables. The syntax is `$E = mc^2$` which renders as $E = mc^2$.
 
-\E = mc^2\
-
 ### Block Math
 
 For standalone equations, use double dollar signs:
@@ -516,9 +514,7 @@ The theme includes a powerful gallery slider component for showcasing multiple i
   caption3="Portrait orientation example"
 >}}
 
-{{< sidenote >}}
 The gallery slider supports both landscape and portrait images, automatically adjusting the layout. Navigation works via arrows, dots, thumbnails, and keyboard controls.
-{{< /sidenote >}}
 
 ### Autoplay Gallery
 
@@ -538,36 +534,34 @@ The gallery slider supports both landscape and portrait images, automatically ad
   caption3="Click navigation to restart timer"
 >}}
 
-{{< sidenote >}}
 Autoplay can be enabled with a custom interval. Thumbnails can be hidden for a cleaner look.
-{{< /sidenote >}}
-  alt2="Forest path in autumn colors"
-  caption2="Forest path in autumn colors"
+
+### Gallery with Custom Options
+
+{{< gallery-slider 
+  id="custom-example"
+  showThumbnails="true"
+  autoplay="false"
+  src1="/images/docs/gallery-slider-doc/helenium-8985687_1280.jpg"
+  alt1="Custom gallery example 1"
+  caption1="Gallery with all features enabled"
+  src2="/images/docs/gallery-slider-doc/karsten-winegeart-AW76trwVU08-unsplash.jpg"
+  alt2="Custom gallery example 2"
+  caption2="Navigate with arrows, dots, or thumbnails"
   src3="/images/docs/gallery-slider-doc/nataliya-melnychuk-V5s-XShdujI-unsplash.jpg"
-  alt3="Portrait orientation example"
-  caption3="Portrait orientation example"
+  alt3="Custom gallery example 3"
+  caption3="Support for both landscape and portrait"
 >}}
 
-{{< sidenote >}}
-The gallery slider supports both landscape and portrait images, automatically adjusting the layout. Navigation works via arrows, dots, thumbnails, and keyboard controls.
-{{< /sidenote >}}
+**Gallery Features:**
+- **Navigation**: Arrow keys, click arrows, dot indicators, thumbnail clicks
+- **Autoplay**: Optional with customizable intervals
+- **Responsive**: Adapts to different screen sizes
+- **Keyboard Support**: Left/right arrow keys, Escape to close
+- **Touch Support**: Swipe gestures on mobile devices
+- **Accessibility**: Proper ARIA labels and keyboard navigation
 
-### Autoplay Gallery
-
-{{< gallery-slider 
-  id="autoplay-example"
-  autoplay="true"
-  interval="3000"
-  showThumbnails="false"
-  src1="/images/docs/gallery-slider-doc/pawel-czerwinski-mrCMyoadfBM-unsplash.jpg"
-  alt1="Auto slide 1"
-  caption1="Autoplay every 3 seconds"
-  src2="/images/docs/gallery-slider-doc/plums-8932336_1280.jpg"
-  alt2="Auto slide 2"
-  caption2="Hover to pause autoplay"
-  src3="/images/docs/gallery-slider-doc/spenser-sembrat-esoj35vCKS8-unsplash.jpg"
-  alt3="Auto slide 3"
-  caption3="Click navigation to restart timer"
+The gallery component is fully accessible and works with keyboard navigation. Each image can have individual captions for better context.
 >}}
 
 {{< sidenote >}}
@@ -581,6 +575,4 @@ Autoplay can be enabled with a custom interval. Thumbnails can be hidden for a c
   caption3="Click navigation to restart timer"
 >}}
 
-{{< sidenote >}}
 Autoplay can be enabled with a custom interval. Thumbnails can be hidden for a cleaner look.
-{{< /sidenote >}}
