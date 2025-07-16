@@ -243,7 +243,7 @@ function openDiagramFullscreen(container) {
             
             mermaid.init(undefined, diagramClone);
             
-            // After rendering, ensure SVG fills the container
+            // After rendering, ensure SVG fills the container and setup click handler
             setTimeout(() => {
                 const svg = diagramClone.querySelector('svg');
                 if (svg) {
@@ -260,12 +260,102 @@ function openDiagramFullscreen(container) {
                     if (viewBox) {
                         svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
                     }
+                    
+                    // Setup click-to-exit functionality
+                    setupClickToExit(svg, overlay);
                 }
             }, 100);
             
         } catch (e) {
             console.warn('Could not re-initialize mermaid in fullscreen:', e);
         }
+    }
+}
+
+/**
+ * Setup click-to-exit functionality for fullscreen mode
+ */
+function setupClickToExit(svg, overlay) {
+    // Add click handler to the overlay itself (background)
+    const overlayContent = overlay.querySelector('.overlay-content');
+    
+    if (overlayContent) {
+        overlayContent.addEventListener('click', function(event) {
+            // Check if click was on an actual diagram element
+            const clickedElement = event.target;
+            
+            // List of mermaid element types that should NOT close the overlay
+            const diagramElements = [
+                'rect', 'circle', 'ellipse', 'polygon', 'path', 'text', 'tspan',
+                'line', 'polyline', 'marker', 'use', 'image'
+            ];
+            
+            // Check if the clicked element is a diagram element
+            const isDiagramElement = diagramElements.includes(clickedElement.tagName.toLowerCase());
+            
+            // Also check if the clicked element has mermaid-specific classes or is within diagram structure
+            const hasMermaidClass = clickedElement.className && 
+                                   (typeof clickedElement.className === 'string' ? 
+                                    clickedElement.className : 
+                                    clickedElement.className.baseVal || '').match(/(node|edge|label|cluster|edgePath|edgeLabel)/);
+            
+            // Check if clicking on UI elements (buttons, dropdowns)
+            const isUIElement = clickedElement.closest('.fullscreen-actions') || 
+                               clickedElement.closest('.fullscreen-save-options-dropdown') ||
+                               clickedElement.matches('button') ||
+                               clickedElement.closest('button');
+            
+            // Don't close if clicking on diagram elements
+            if (isDiagramElement || hasMermaidClass) {
+                return;
+            }
+            
+            // Don't close if clicking on UI elements
+            if (isUIElement) {
+                return;
+            }
+            
+            // Close the overlay for all other clicks (background, pre.mermaid container, etc.)
+            closeFullscreenOverlay(overlay);
+        });
+    }
+    
+    // Prevent event bubbling from all diagram elements to ensure they don't trigger overlay close
+    const g = svg.querySelector('g');
+    if (g) {
+        // Get all diagram elements and add click event listeners to stop propagation
+        const allDiagramElements = g.querySelectorAll('rect, circle, ellipse, polygon, path, text, tspan, line, polyline, marker, use, image, g[class*="node"], g[class*="edge"], g[class*="label"]');
+        
+        allDiagramElements.forEach(element => {
+            element.addEventListener('click', function(event) {
+                // Stop propagation to prevent closing the overlay when clicking on diagram elements
+                event.stopPropagation();
+            });
+        });
+        
+        // Also handle dynamically added elements by checking the event target
+        g.addEventListener('click', function(event) {
+            const clickedElement = event.target;
+            const diagramElements = [
+                'rect', 'circle', 'ellipse', 'polygon', 'path', 'text', 'tspan',
+                'line', 'polyline', 'marker', 'use', 'image'
+            ];
+            
+            // If it's a diagram element, stop propagation
+            if (diagramElements.includes(clickedElement.tagName.toLowerCase())) {
+                event.stopPropagation();
+            }
+            
+            // Also check for mermaid classes
+            const hasMermaidClass = clickedElement.className && 
+                                   (typeof clickedElement.className === 'string' ? 
+                                    clickedElement.className : 
+                                    clickedElement.className.baseVal || '').match(/(node|edge|label|cluster|edgePath|edgeLabel)/);
+            
+            if (hasMermaidClass) {
+                event.stopPropagation();
+            }
+        });
     }
 }
 

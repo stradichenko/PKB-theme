@@ -212,6 +212,34 @@ pre.mermaid[data-processed="true"] svg {
   object-fit: contain;
 }
 
+/* Indicate that the overlay content is clickable */
+.diagram-fullscreen-overlay .overlay-content {
+  cursor: pointer;
+}
+
+/* Ensure diagram elements have appropriate cursor and are clearly not clickable for closing */
+.diagram-fullscreen-overlay pre.mermaid svg rect,
+.diagram-fullscreen-overlay pre.mermaid svg circle,
+.diagram-fullscreen-overlay pre.mermaid svg ellipse,
+.diagram-fullscreen-overlay pre.mermaid svg polygon,
+.diagram-fullscreen-overlay pre.mermaid svg path,
+.diagram-fullscreen-overlay pre.mermaid svg text,
+.diagram-fullscreen-overlay pre.mermaid svg tspan,
+.diagram-fullscreen-overlay pre.mermaid svg line,
+.diagram-fullscreen-overlay pre.mermaid svg polyline {
+  cursor: default !important;
+}
+
+/* Style for mermaid container in fullscreen to indicate it doesn't close overlay */
+.diagram-fullscreen-overlay pre.mermaid {
+  cursor: default;
+}
+
+/* Style for the clickable background */
+.mermaid-background-clickable {
+  cursor: pointer !important;
+}
+
 /* Hide raw text in fullscreen as well */
 .diagram-fullscreen-overlay pre.mermaid[data-processed="true"] {
   font-size: 0;

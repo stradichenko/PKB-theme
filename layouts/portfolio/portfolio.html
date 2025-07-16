@@ -139,12 +139,6 @@
       colorSelect.appendChild(option);
     });
 
-    const statsEl = document.getElementById('portfolioStats');
-    statsEl.innerHTML = `
-      <span class="stat-item"><strong>${data.portfolio_metadata.total_images}</strong> Images</span>
-      <span class="stat-item"><strong>${data.portfolio_metadata.category_list.length}</strong> Categories</span>
-    `;
-
     function getColumnCount() {
       if (window.innerWidth < 600) return 1;
       if (window.innerWidth < 900) return 2;
@@ -169,6 +163,9 @@
         const clrMatch = color === 'all' || (img.pkb_color_families || []).includes(color);
         return catMatch && fmtMatch && oriMatch && camMatch && clrMatch;
       });
+
+      // Update stats with filtered count
+      updateStats(filtered, category);
 
       const colCount = getColumnCount();
       const columns = distributeToColumns(filtered, colCount);
@@ -203,6 +200,37 @@
           img.addEventListener('error', () => img.classList.add('error'));
         }
       });
+    }
+
+    function updateStats(filteredImages, activeCategory) {
+      const statsEl = document.getElementById('portfolioStats');
+      
+      // Count unique categories in filtered results
+      const filteredCategories = new Set();
+      filteredImages.forEach(img => {
+        if (img.pkb_category) {
+          filteredCategories.add(img.pkb_category);
+        }
+      });
+
+      // Show different stats based on filter state
+      const isFiltered = activeCategory !== 'all' || 
+                        activeFormat !== 'all' || 
+                        activeOrientation !== 'all' || 
+                        activeCamera !== 'all' || 
+                        activeColor !== 'all';
+
+      if (isFiltered) {
+        statsEl.innerHTML = `
+          <span class="stat-item"><strong>${filteredImages.length}</strong> of ${data.portfolio_metadata.total_images} Images</span>
+          <span class="stat-item"><strong>${filteredCategories.size}</strong> of ${data.portfolio_metadata.category_list.length} Categories</span>
+        `;
+      } else {
+        statsEl.innerHTML = `
+          <span class="stat-item"><strong>${data.portfolio_metadata.total_images}</strong> Images</span>
+          <span class="stat-item"><strong>${data.portfolio_metadata.category_list.length}</strong> Categories</span>
+        `;
+      }
     }
 
     let activeCategory = 'all';

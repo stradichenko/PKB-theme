@@ -299,9 +299,42 @@ class PortfolioManager {
       return catMatch && fmtMatch && oriMatch && camMatch && clrMatch;
     });
 
+    // Update stats
+    this.updateStats();
+
     // Recreate grid
     this.createMasonryGrid();
     this.observeLazyImages();
+  }
+
+  updateStats() {
+    const statsEl = document.getElementById('portfolioStats');
+    if (!statsEl) return;
+
+    // Count unique categories in filtered results
+    const filteredCategories = new Set();
+    this.currentImages.forEach(img => {
+      if (img.pkb_category) {
+        filteredCategories.add(img.pkb_category);
+      }
+    });
+
+    // Check if any filters are active
+    const isFiltered = Object.values(this.activeFilters).some(filter => filter !== 'all');
+    const totalImages = this.portfolioData.images.length;
+    const totalCategories = this.portfolioData.metadata.category_list?.length || 0;
+
+    if (isFiltered) {
+      statsEl.innerHTML = `
+        <span class="stat-item"><strong>${this.currentImages.length}</strong> of ${totalImages} Images</span>
+        <span class="stat-item"><strong>${filteredCategories.size}</strong> of ${totalCategories} Categories</span>
+      `;
+    } else {
+      statsEl.innerHTML = `
+        <span class="stat-item"><strong>${totalImages}</strong> Images</span>
+        <span class="stat-item"><strong>${totalCategories}</strong> Categories</span>
+      `;
+    }
   }
 
   clearAllFilters() {
