@@ -49,8 +49,10 @@
 
   {{ partial "head.html" . }}
   {{ block "head" . }}{{ end }}
+  
+  {{/* Load MathJax only when needed */}}
   {{ if .Param "math" }}
-    {{ partialCached "math.html" . }}
+    {{ partial "math.html" . }}
   {{ end }}
 
   {{ $mainCSS := resources.Get "css/main.css" }}
@@ -118,48 +120,6 @@
         window.mermaidThemeObserver.observe(document.documentElement, { attributes: true });
       }
     });
-  </script>
-  {{ end }}
-
-  {{ if .Param "math" }}
-  <script>
-    let mathProcessingAttempts = 0;
-
-    function ensureMathProcessing() {
-      if (mathProcessingAttempts > 5) return;
-      mathProcessingAttempts++;
-
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise().catch((err) => {
-          console.warn('MathJax typeset error:', err);
-          setTimeout(ensureMathProcessing, 200);
-        });
-      } else {
-        setTimeout(ensureMathProcessing, 200);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(ensureMathProcessing, 100);
-    });
-
-    window.addEventListener('load', () => {
-      setTimeout(ensureMathProcessing, 200);
-    });
-
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        mathProcessingAttempts = 0;
-        setTimeout(ensureMathProcessing, 150);
-      }
-    });
-
-    setInterval(() => {
-      const unprocessedMath = document.querySelectorAll('script[type="math/tex"], script[type="math/tex; mode=display"]');
-      if (unprocessedMath.length > 0 && window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise();
-      }
-    }, 2000);
   </script>
   {{ end }}
 </body>

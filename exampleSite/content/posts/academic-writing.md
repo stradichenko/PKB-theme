@@ -7,6 +7,7 @@ categories = ["academia", "writing", "research", "productivity", "education"]
 toc = true
 sidenotes = true
 comments = true
+math = true
 author = "Your Name"
 description = "How to use Markdown effectively for academic writing and research papers"
 +++

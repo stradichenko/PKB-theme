@@ -5,7 +5,15 @@
       displayMath: [['$$', '$$'], ['\\[', '\\]']],
       processEscapes: true,
       processEnvironments: true,
-      packages: { '[+]': ['mhchem'] }
+      packages: {'[+]': ['base', 'ams', 'newcommand', 'mhchem']},
+      macros: {
+        // Common mathematical macros
+        R: '{\\mathbb{R}}',
+        N: '{\\mathbb{N}}',
+        Z: '{\\mathbb{Z}}',
+        Q: '{\\mathbb{Q}}',
+        C: '{\\mathbb{C}}'
+      }
     },
     options: {
       ignoreHtmlClass: 'tex2jax_ignore',
@@ -21,7 +29,7 @@
         MathJax.startup.defaultReady();
         console.log('MathJax is loaded and ready.');
 
-        // Define reprocessMath globally
+        // Define reprocessMath globally for dynamic content
         window.reprocessMath = function (retryCount = 0) {
           if (retryCount > 3) {
             console.warn('MathJax reprocessing failed after 3 retries');
@@ -42,7 +50,7 @@
           }
         };
 
-        // MutationObserver to catch new math content
+        // MutationObserver to catch dynamically added math content
         const observer = new MutationObserver((mutations) => {
           let hasNewMath = false;
           mutations.forEach((mutation) => {
@@ -63,19 +71,32 @@
           }
         });
 
-        window.addEventListener('load', () => {
+        // Start observing after initial load
+        document.addEventListener('DOMContentLoaded', () => {
           observer.observe(document.body, {
             childList: true,
             subtree: true
           });
 
-          // Initial processing after load
+          // Initial processing after DOM is ready
           setTimeout(() => window.reprocessMath(), 150);
+        });
+
+        // Additional processing on window load for safety
+        window.addEventListener('load', () => {
+          setTimeout(() => window.reprocessMath(), 300);
+        });
+
+        // Handle visibility changes (tab switching)
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) {
+            setTimeout(() => window.reprocessMath(), 150);
+          }
         });
       }
     }
   };
 </script>
 
-<!-- Load MathJax once -->
+<!-- Load MathJax script - using tex-chtml.js consistently -->
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>

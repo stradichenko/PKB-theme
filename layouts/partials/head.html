@@ -16,45 +16,6 @@
     
     <!-- Main Stylesheet -->
     {{ partial "head/styles.html" . }}
-    
-    {{/* Math Support - Load early for better rendering */}}
-    {{- if .Params.math -}}
-    <!-- MathJax Configuration - Must come before MathJax script -->
-    <script>
-    window.MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-            processEscapes: true,
-            processEnvironments: true,
-            packages: {'[+]': ['base', 'ams', 'newcommand', 'mhchem']},
-            macros: {
-                // Add common macros here if needed
-            }
-        },
-        chtml: {
-            scale: 1,
-            minScale: 0.5,
-            matchFontHeight: false
-        },
-        options: {
-            ignoreHtmlClass: 'tex2jax_ignore',
-            processHtmlClass: 'tex2jax_process'
-        },
-        startup: {
-            ready: () => {
-                MathJax.startup.defaultReady();
-                MathJax.startup.promise.then(() => {
-                    console.log('MathJax is loaded and ready.');
-                });
-            }
-        }
-    };
-    </script>
-    
-    <!-- MathJax Script -->
-    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    {{- end -}}
 
     <!-- Site Verification Meta Tags -->
     {{ with site.Params.seo.google_site_verification }}

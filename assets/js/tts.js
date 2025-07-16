@@ -429,8 +429,8 @@ class TTSController {
   }
   
   processMathElements(element) {
-    // Process MathJax rendered elements
-    const mathJaxElements = element.querySelectorAll('.MathJax, .MathJax_Display, .mjx-container');
+    // Process MathJax rendered elements - updated selectors
+    const mathJaxElements = element.querySelectorAll('.MathJax, .MathJax_Display, .mjx-container, .math-display, .math-inline');
     mathJaxElements.forEach(mathEl => {
       const spokenMath = this.convertMathToSpeech(mathEl);
       const textNode = document.createTextNode(spokenMath);
