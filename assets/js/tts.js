@@ -38,6 +38,10 @@ class TTSController {
     this.mathPatterns = this.initializeMathPatterns();
     this.chemPatterns = this.initializeChemPatterns();
     
+    // Mobile detection and rate adjustment
+    this.isMobile = this.detectMobile();
+    this.baseMobileRate = 1.4; // Higher base rate for mobile
+    
     this.init();
   }
   
@@ -1016,21 +1020,29 @@ class TTSController {
       }
     }
     
-    // Optimize settings based on voice quality and browser for natural sound
+    // Optimize settings based on voice quality, browser, and device for natural sound
+    let effectiveRate = this.currentRate;
+    
+    // Apply mobile rate adjustment
+    if (this.isMobile) {
+      effectiveRate = Math.max(0.1, Math.min(2.0, this.currentRate * this.baseMobileRate));
+      console.log(`Mobile detected: adjusting rate from ${this.currentRate} to ${effectiveRate}`);
+    }
+    
     if (this.isNeuralVoiceAvailable) {
       // Neural voices: use settings optimized for naturalness
-      this.utterance.rate = Math.max(0.1, Math.min(2.0, this.currentRate * 0.95)); // Faster
+      this.utterance.rate = Math.max(0.1, Math.min(2.0, effectiveRate * 0.95));
       this.utterance.pitch = 0.9; // Lower pitch for less robotic sound
     } else {
       // System voices: more aggressive adjustments for better naturalness
-      this.utterance.rate = Math.max(0.1, Math.min(2.0, this.currentRate * 0.85)); // Faster
+      this.utterance.rate = Math.max(0.1, Math.min(2.0, effectiveRate * 0.85));
       this.utterance.pitch = 0.8; // Lower pitch for warmer sound
     }
     
     // Browser-specific optimizations for naturalness
     if (this.browserOptimizations.limitedPitchControl) {
       this.utterance.pitch = 0.95; // Safari: slight pitch reduction within limits
-      this.utterance.rate = Math.max(0.1, Math.min(2.0, this.currentRate * 0.9)); // Faster rate for Safari
+      this.utterance.rate = Math.max(0.1, Math.min(2.0, effectiveRate * 0.9));
     }
     
     // Set volume (Chrome sometimes has issues with this)
@@ -1336,7 +1348,15 @@ class TTSController {
       // Create new utterance with safer settings
       const fallbackUtterance = new SpeechSynthesisUtterance(text);
       fallbackUtterance.voice = systemVoice;
-      fallbackUtterance.rate = Math.max(0.6, Math.min(1.5, this.currentRate * 0.8)); // Faster
+      
+      // Apply mobile rate adjustment for fallback too
+      let fallbackRate = this.currentRate * 0.8;
+      if (this.isMobile) {
+        fallbackRate = this.currentRate * this.baseMobileRate * 0.8;
+        console.log(`Mobile fallback rate: ${fallbackRate}`);
+      }
+      
+      fallbackUtterance.rate = Math.max(0.6, Math.min(1.5, fallbackRate));
       fallbackUtterance.pitch = 0.75; // Lower pitch for warmth
       fallbackUtterance.volume = 1.0;
       
@@ -1399,7 +1419,15 @@ class TTSController {
     // Try speaking without specifying a voice (let browser choose)
     const basicUtterance = new SpeechSynthesisUtterance(text);
     // Don't set voice - let Chrome use default
-    basicUtterance.rate = 0.85; // Higher rate for better pace
+    
+    // Apply mobile rate adjustment for Chrome issues too
+    let basicRate = 0.85;
+    if (this.isMobile) {
+      basicRate = this.baseMobileRate * 0.85;
+      console.log(`Mobile Chrome basic rate: ${basicRate}`);
+    }
+    
+    basicUtterance.rate = basicRate;
     basicUtterance.pitch = 0.7; // Lower pitch for less robotic sound
     basicUtterance.volume = 1.0;
     
@@ -1444,6 +1472,22 @@ class TTSController {
     
     console.log('Attempting to speak with basic utterance (no voice specified)');
     this.synth.speak(basicUtterance);
+  }
+  
+  detectMobile() {
+    // Multiple strategies to detect mobile devices
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = ['android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone', 'mobile'];
+    const hasMobileKeyword = mobileKeywords.some(keyword => userAgent.includes(keyword));
+    
+    // Check for touch capability
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    // Check screen size
+    const isSmallScreen = window.screen.width <= 768 || window.innerWidth <= 768;
+    
+    // Combine all checks
+    return hasMobileKeyword || (hasTouch && isSmallScreen);
   }
 }
 
