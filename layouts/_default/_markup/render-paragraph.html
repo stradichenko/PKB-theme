@@ -1,11 +1,11 @@
 {{- $content := .Inner | strings.TrimSpace -}}
 {{- if and (hasPrefix $content "$$") (hasSuffix $content "$$") -}}
   {{/* Block math - output directly without <p> wrapper */}}
-  {{ $content | safeHTML }}
+  <div class="math-display">{{ $content | safeHTML }}</div>
 {{- else if and (hasPrefix $content "$") (hasSuffix $content "$") (not (strings.Contains $content "\n")) (not (strings.Contains $content " ")) -}}
   {{/* Single inline math expression - output directly without <p> wrapper */}}
-  {{ $content | safeHTML }}
+  <span class="math-inline">{{ $content | safeHTML }}</span>
 {{- else -}}
-  {{/* All other content including paragraphs with inline math - wrap in <p> and let KaTeX process */}}
+  {{/* All other content including paragraphs with inline math - wrap in <p> and let MathJax process */}}
   <p>{{ $content }}</p>
 {{- end -}}

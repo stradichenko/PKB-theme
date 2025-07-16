@@ -5,50 +5,50 @@
       displayMath: [['$$', '$$'], ['\\[', '\\]']],
       processEscapes: true,
       processEnvironments: true,
-      packages: {'[+]': ['ams']},
-      autoload: {
-        color: [],
-        colorv2: ['color']
-      }
+      packages: { '[+]': ['mhchem'] }
     },
     options: {
-      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
       ignoreHtmlClass: 'tex2jax_ignore',
       processHtmlClass: 'tex2jax_process'
     },
-    loader: {
-      load: ['[tex]/ams', '[tex]/color']
+    chtml: {
+      scale: 1,
+      minScale: 0.5,
+      matchFontHeight: false
     },
     startup: {
-      ready() {
+      ready: function () {
         MathJax.startup.defaultReady();
-        
-        // Create a more robust reprocessing function
-        window.reprocessMath = function(retryCount = 0) {
+        console.log('MathJax is loaded and ready.');
+
+        // Define reprocessMath globally
+        window.reprocessMath = function (retryCount = 0) {
           if (retryCount > 3) {
             console.warn('MathJax reprocessing failed after 3 retries');
             return;
           }
-          
+
           if (window.MathJax && MathJax.typesetPromise) {
-            MathJax.typesetPromise().then(() => {
-              console.log('MathJax processing completed successfully');
-            }).catch((err) => {
-              console.warn('MathJax typeset failed, retrying...', err.message);
-              setTimeout(() => window.reprocessMath(retryCount + 1), 300);
-            });
+            MathJax.typesetPromise()
+              .then(() => {
+                console.log('MathJax processing completed successfully');
+              })
+              .catch((err) => {
+                console.warn('MathJax typeset failed, retrying...', err.message);
+                setTimeout(() => window.reprocessMath(retryCount + 1), 300);
+              });
           } else {
             setTimeout(() => window.reprocessMath(retryCount + 1), 200);
           }
         };
-        
-        // Set up mutation observer to catch dynamic content changes
+
+        // MutationObserver to catch new math content
         const observer = new MutationObserver((mutations) => {
           let hasNewMath = false;
           mutations.forEach((mutation) => {
             if (mutation.type === 'childList') {
               mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === 1) { // Element node
+                if (node.nodeType === 1) {
                   const text = node.textContent || '';
                   if (text.includes('$') || text.includes('\\(') || text.includes('\\[')) {
                     hasNewMath = true;
@@ -57,19 +57,18 @@
               });
             }
           });
-          
+
           if (hasNewMath) {
             setTimeout(() => window.reprocessMath(), 100);
           }
         });
-        
-        // Start observing after page load
+
         window.addEventListener('load', () => {
           observer.observe(document.body, {
             childList: true,
             subtree: true
           });
-          
+
           // Initial processing after load
           setTimeout(() => window.reprocessMath(), 150);
         });
@@ -77,4 +76,6 @@
     }
   };
 </script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<!-- Load MathJax once -->
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>

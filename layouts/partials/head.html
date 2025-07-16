@@ -19,14 +19,41 @@
     
     {{/* Math Support - Load early for better rendering */}}
     {{- if .Params.math -}}
-    <!-- KaTeX CSS - Preload for better performance -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"></noscript>
+    <!-- MathJax Configuration - Must come before MathJax script -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true,
+            packages: {'[+]': ['base', 'ams', 'newcommand', 'mhchem']},
+            macros: {
+                // Add common macros here if needed
+            }
+        },
+        chtml: {
+            scale: 1,
+            minScale: 0.5,
+            matchFontHeight: false
+        },
+        options: {
+            ignoreHtmlClass: 'tex2jax_ignore',
+            processHtmlClass: 'tex2jax_process'
+        },
+        startup: {
+            ready: () => {
+                MathJax.startup.defaultReady();
+                MathJax.startup.promise.then(() => {
+                    console.log('MathJax is loaded and ready.');
+                });
+            }
+        }
+    };
+    </script>
     
-    <!-- KaTeX JS - Load with high priority -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js" as="script">
+    <!-- MathJax Script -->
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     {{- end -}}
 
     <!-- Site Verification Meta Tags -->
@@ -56,34 +83,4 @@
     <!-- Load scrollbar fade functionality -->
     {{ $scrollbarFadeJS := resources.Get "js/scrollbar-fade.js" | minify }}
     <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
-
-    {{/* Math rendering scripts - Load after DOM is ready */}}
-    {{- if .Params.math -}}
-    <!-- KaTeX JS -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
-
-    <!-- KaTeX mhchem extension for chemical equations -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js" integrity="sha384-ifpG+NlgMq0kvOSGqGQxW1mJKpjjMDmZdpKGq3tbvD3WPhyshCEEYClriK/wRVU0" crossorigin="anonymous"></script>
-
-    <!-- KaTeX auto-render extension -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
-
-    <!-- KaTeX Configuration -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '$', right: '$', display: false},
-                {left: '\\(', right: '\\)', display: false},
-                {left: '\\[', right: '\\]', display: true}
-            ],
-            throwOnError: false,
-            errorColor: '#cc0000',
-            strict: false,
-            trust: true,
-        });
-    });
-    </script>
-    {{- end -}}
 </head>

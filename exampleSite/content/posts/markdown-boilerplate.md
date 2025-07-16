@@ -142,7 +142,7 @@ Academic-style writing often uses sidenotes for citations.¹{{< sidenote >}}
 
 ## Math Expressions
 
-This theme supports mathematical expressions using KaTeX rendering. **Important**: Make sure to add `math = true` to your page's frontmatter to enable math rendering.
+This theme supports mathematical expressions using MathJax rendering. **Important**: Make sure to add `math = true` to your page's frontmatter to enable math rendering.
 
 ### Math Syntax Guidelines
 
@@ -212,46 +212,47 @@ $$
 
 ### Chemical Equations
 
-Chemical equations use the `\ce{}` command from the mhchem extension:
+Chemical equations use standard LaTeX chemistry notation with MathJax:
 
 $$
-\ce{H2O + CO2 -> H2CO3}
+\mathrm{H_2O + CO_2 \rightarrow H_2CO_3}
 $$
 
 **More chemical equation examples:**
 
 Simple reaction:
 $$
-\ce{2H2 + O2 -> 2H2O}
+\mathrm{2H_2 + O_2 \rightarrow 2H_2O}
 $$
 
 With states of matter:
 $$
-\ce{NaCl(s) + H2O(l) -> Na+(aq) + Cl-(aq)}
+\mathrm{NaCl_{(s)} + H_2O_{(l)} \rightarrow Na^+_{(aq)} + Cl^-_{(aq)}}
 $$
 
 Complex reaction with charges:
 $$
-\ce{MnO4^- + 8H+ + 5e^- -> Mn^2+ + 4H2O}
+\mathrm{MnO_4^- + 8H^+ + 5e^- \rightarrow Mn^{2+} + 4H_2O}
 $$
 
 Equilibrium reaction:
 $$
-\ce{N2 + 3H2 <=> 2NH3}
+\mathrm{N_2 + 3H_2 \rightleftharpoons 2NH_3}
 $$
 
 **Chemical equation syntax tips:**
-- Use `\ce{}` to wrap the entire chemical equation
-- `->` for reactions, `<=>` for equilibrium
-- `+` and `-` for charges: `Na+`, `Cl-`
-- `(s)`, `(l)`, `(g)`, `(aq)` for states of matter
-- Numbers are automatically formatted: `H2O`, `2NH3`
+- Use `\mathrm{}` to wrap chemical formulas for proper formatting
+- `\rightarrow` for reactions, `\rightleftharpoons` for equilibrium
+- `^+` and `^-` for charges: `Na^+`, `Cl^-`
+- `_{(s)}`, `_{(l)}`, `_{(g)}`, `_{(aq)}` for states of matter
+- Subscripts use `_`: `H_2O`, `2NH_3`
+- Superscripts use `^`: `Mn^{2+}`
 
 **Troubleshooting:**
 - If math doesn't render, check that `math = true` is in your frontmatter
 - Ensure you're using the correct delimiters (`$` for inline, `$$` for display)
 - For complex expressions, test in smaller parts first
-- Check browser console for KaTeX errors
+- Check browser console for MathJax errors
 
 ## Footnotes
 

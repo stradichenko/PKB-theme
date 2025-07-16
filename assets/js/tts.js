@@ -34,6 +34,10 @@ class TTSController {
     this.progressText = document.querySelector('.tts-progress-text');
     this.overlay = document.getElementById('tts-overlay');
     
+    // Math and chemistry reading patterns
+    this.mathPatterns = this.initializeMathPatterns();
+    this.chemPatterns = this.initializeChemPatterns();
+    
     this.init();
   }
   
@@ -262,11 +266,130 @@ class TTSController {
     console.log('Prepared text length:', this.currentText.length, 'Sentences:', this.sentences.length);
   }
   
+  initializeMathPatterns() {
+    return {
+      // Greek letters
+      '\\alpha': 'alpha',
+      '\\beta': 'beta',
+      '\\gamma': 'gamma',
+      '\\delta': 'delta',
+      '\\epsilon': 'epsilon',
+      '\\theta': 'theta',
+      '\\lambda': 'lambda',
+      '\\mu': 'mu',
+      '\\pi': 'pi',
+      '\\sigma': 'sigma',
+      '\\phi': 'phi',
+      '\\omega': 'omega',
+      
+      // Mathematical operators
+      '\\pm': 'plus or minus',
+      '\\mp': 'minus or plus',
+      '\\times': 'times',
+      '\\div': 'divided by',
+      '\\cdot': 'dot',
+      '\\ast': 'asterisk',
+      '\\oplus': 'circle plus',
+      '\\ominus': 'circle minus',
+      '\\otimes': 'circle times',
+      '\\oslash': 'circle slash',
+      
+      // Relations
+      '\\leq': 'less than or equal to',
+      '\\geq': 'greater than or equal to',
+      '\\neq': 'not equal to',
+      '\\approx': 'approximately equal to',
+      '\\equiv': 'equivalent to',
+      '\\sim': 'similar to',
+      '\\propto': 'proportional to',
+      
+      // Arrows
+      '\\rightarrow': 'right arrow',
+      '\\leftarrow': 'left arrow',
+      '\\leftrightarrow': 'left right arrow',
+      '\\Rightarrow': 'implies',
+      '\\Leftarrow': 'is implied by',
+      '\\Leftrightarrow': 'if and only if',
+      '\\rightleftharpoons': 'equilibrium',
+      
+      // Functions
+      '\\sin': 'sine of',
+      '\\cos': 'cosine of',
+      '\\tan': 'tangent of',
+      '\\log': 'log of',
+      '\\ln': 'natural log of',
+      '\\exp': 'exponential of',
+      '\\sqrt': 'square root of',
+      
+      // Symbols
+      '\\infty': 'infinity',
+      '\\partial': 'partial',
+      '\\nabla': 'nabla',
+      '\\sum': 'sum',
+      '\\prod': 'product',
+      '\\int': 'integral',
+      '\\oint': 'contour integral',
+      '\\iint': 'double integral',
+      '\\iiint': 'triple integral'
+    };
+  }
+  
+  initializeChemPatterns() {
+    return {
+      // Common elements
+      'H': 'hydrogen',
+      'He': 'helium',
+      'Li': 'lithium',
+      'Be': 'beryllium',
+      'B': 'boron',
+      'C': 'carbon',
+      'N': 'nitrogen',
+      'O': 'oxygen',
+      'F': 'fluorine',
+      'Ne': 'neon',
+      'Na': 'sodium',
+      'Mg': 'magnesium',
+      'Al': 'aluminum',
+      'Si': 'silicon',
+      'P': 'phosphorus',
+      'S': 'sulfur',
+      'Cl': 'chlorine',
+      'Ar': 'argon',
+      'K': 'potassium',
+      'Ca': 'calcium',
+      'Fe': 'iron',
+      'Cu': 'copper',
+      'Zn': 'zinc',
+      'Ag': 'silver',
+      'Au': 'gold',
+      'Hg': 'mercury',
+      'Pb': 'lead',
+      
+      // Common compounds
+      'H2O': 'water',
+      'CO2': 'carbon dioxide',
+      'NaCl': 'sodium chloride',
+      'H2SO4': 'sulfuric acid',
+      'HCl': 'hydrochloric acid',
+      'NH3': 'ammonia',
+      'CH4': 'methane',
+      
+      // States
+      '(s)': 'solid',
+      '(l)': 'liquid',
+      '(g)': 'gas',
+      '(aq)': 'aqueous'
+    };
+  }
+  
   extractTextContent(element) {
     // Clone the element to avoid modifying the original
     const clone = element.cloneNode(true);
     
-    // Remove unwanted elements from the clone
+    // Process math elements first before removing them
+    this.processMathElements(clone);
+    
+    // Remove unwanted elements from the clone (updated list)
     const unwantedElements = clone.querySelectorAll(`
       script, style, 
       .tts-control-bar, .tts-overlay,
@@ -285,7 +408,6 @@ class TTSController {
       .sidebar, aside:not(.sidenote-section),
       img, figure, .image-caption,
       pre, .code-block, .highlight,
-      .math, .katex, .mathjax,
       .table-wrapper, table,
       .video, iframe, video, audio,
       .download-link, .pdf-button, .tts-button,
@@ -298,8 +420,185 @@ class TTSController {
     // Process headings and line breaks to add pauses
     this.addPausesToStructuralElements(clone);
     
-    // Get clean text content (this will preserve inline code)
+    // Get clean text content
     return clone.textContent || clone.innerText || '';
+  }
+  
+  processMathElements(element) {
+    // Process MathJax rendered elements
+    const mathJaxElements = element.querySelectorAll('.MathJax, .MathJax_Display, .mjx-container');
+    mathJaxElements.forEach(mathEl => {
+      const spokenMath = this.convertMathToSpeech(mathEl);
+      const textNode = document.createTextNode(spokenMath);
+      mathEl.parentNode.replaceChild(textNode, mathEl);
+    });
+    
+    // Process inline math delimiters
+    let content = element.innerHTML;
+    
+    // Process display math $$...$$
+    content = content.replace(/\$\$(.*?)\$\$/gs, (match, mathContent) => {
+      return ` [MATH] ${this.convertLatexToSpeech(mathContent.trim())} [END MATH] `;
+    });
+    
+    // Process inline math $...$
+    content = content.replace(/\$([^$]+)\$/g, (match, mathContent) => {
+      return ` ${this.convertLatexToSpeech(mathContent.trim())} `;
+    });
+    
+    // Process LaTeX delimiters
+    content = content.replace(/\\?\\\[(.*?)\\?\\\]/gs, (match, mathContent) => {
+      return ` [MATH] ${this.convertLatexToSpeech(mathContent.trim())} [END MATH] `;
+    });
+    
+    content = content.replace(/\\?\\\((.*?)\\?\\\)/g, (match, mathContent) => {
+      return ` ${this.convertLatexToSpeech(mathContent.trim())} `;
+    });
+    
+    element.innerHTML = content;
+  }
+  
+  convertMathToSpeech(mathElement) {
+    // Try to get the original LaTeX from data attributes or script tags
+    let latex = '';
+    
+    // Check for MathJax script tags
+    const script = mathElement.querySelector('script[type*="math/tex"]');
+    if (script) {
+      latex = script.textContent || script.innerText;
+    }
+    
+    // Check for data attributes
+    if (!latex) {
+      latex = mathElement.getAttribute('data-mathml') || 
+              mathElement.getAttribute('data-latex') || 
+              mathElement.textContent || 
+              mathElement.innerText;
+    }
+    
+    return this.convertLatexToSpeech(latex);
+  }
+  
+  convertLatexToSpeech(latex) {
+    if (!latex) return '';
+    
+    let spoken = latex;
+    
+    // Handle chemistry equations first (use mathrm content)
+    if (spoken.includes('\\mathrm{') || spoken.includes('\\ce{')) {
+      spoken = this.convertChemistryToSpeech(spoken);
+      return spoken;
+    }
+    
+    // Remove common LaTeX commands that don't need speaking
+    spoken = spoken.replace(/\\text\{([^}]+)\}/g, '$1');
+    spoken = spoken.replace(/\\mathrm\{([^}]+)\}/g, '$1');
+    spoken = spoken.replace(/\\mathbf\{([^}]+)\}/g, '$1');
+    spoken = spoken.replace(/\\mathit\{([^}]+)\}/g, '$1');
+    
+    // Handle fractions
+    spoken = spoken.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1) over ($2)');
+    
+    // Handle square roots
+    spoken = spoken.replace(/\\sqrt\{([^}]+)\}/g, 'square root of ($1)');
+    spoken = spoken.replace(/\\sqrt\[([^\]]+)\]\{([^}]+)\}/g, '$1-th root of ($2)');
+    
+    // Handle exponents and subscripts
+    spoken = spoken.replace(/\^?\{([^}]+)\}/g, ' to the power of $1 ');
+    spoken = spoken.replace(/_?\{([^}]+)\}/g, ' sub $1 ');
+    spoken = spoken.replace(/\^([a-zA-Z0-9])/g, ' to the power of $1 ');
+    spoken = spoken.replace(/_([a-zA-Z0-9])/g, ' sub $1 ');
+    
+    // Handle summations and integrals
+    spoken = spoken.replace(/\\sum_\{([^}]+)\}\^\{([^}]+)\}/g, 'sum from $1 to $2 of');
+    spoken = spoken.replace(/\\int_\{([^}]+)\}\^\{([^}]+)\}/g, 'integral from $1 to $2 of');
+    
+    // Handle matrices
+    spoken = spoken.replace(/\\begin\{([^}]+)\}(.*?)\\end\{\1\}/gs, (match, env, content) => {
+      if (env.includes('matrix')) {
+        const cleaned = content.replace(/\\\\/g, ' next row ').replace(/&/g, ' comma ');
+        return `${env} ${cleaned}`;
+      }
+      return match;
+    });
+    
+    // Handle align environments
+    spoken = spoken.replace(/\\begin\{align\*?\}(.*?)\\end\{align\*?\}/gs, (match, content) => {
+      return content.replace(/\\\\/g, ' next line ').replace(/&/g, ' equals ');
+    });
+    
+    // Replace mathematical symbols with words
+    Object.entries(this.mathPatterns).forEach(([symbol, word]) => {
+      const escapedSymbol = symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      spoken = spoken.replace(new RegExp(escapedSymbol, 'g'), ` ${word} `);
+    });
+    
+    // Handle common mathematical expressions
+    spoken = spoken.replace(/=/g, ' equals ');
+    spoken = spoken.replace(/\+/g, ' plus ');
+    spoken = spoken.replace(/(?<!minus\s)-/g, ' minus ');
+    spoken = spoken.replace(/\*/g, ' times ');
+    spoken = spoken.replace(/\//g, ' divided by ');
+    spoken = spoken.replace(/</g, ' is less than ');
+    spoken = spoken.replace(/>/g, ' is greater than ');
+    spoken = spoken.replace(/\(/g, ' open parenthesis ');
+    spoken = spoken.replace(/\)/g, ' close parenthesis ');
+    spoken = spoken.replace(/\[/g, ' open bracket ');
+    spoken = spoken.replace(/\]/g, ' close bracket ');
+    
+    // Clean up multiple spaces and trim
+    spoken = spoken.replace(/\s+/g, ' ').trim();
+    
+    return spoken || 'mathematical expression';
+  }
+  
+  convertChemistryToSpeech(latex) {
+    let spoken = latex;
+    
+    // Remove LaTeX chemistry commands
+    spoken = spoken.replace(/\\ce\{([^}]+)\}/g, '$1');
+    spoken = spoken.replace(/\\mathrm\{([^}]+)\}/g, '$1');
+    
+    // Handle chemical arrows
+    spoken = spoken.replace(/\\rightarrow/g, ' yields ');
+    spoken = spoken.replace(/\\leftarrow/g, ' comes from ');
+    spoken = spoken.replace(/\\rightleftharpoons/g, ' is in equilibrium with ');
+    spoken = spoken.replace(/->/g, ' yields ');
+    spoken = spoken.replace(/<->/g, ' is in equilibrium with ');
+    spoken = spoken.replace(/<=>/g, ' is in equilibrium with ');
+    
+    // Handle charges
+    spoken = spoken.replace(/\^(\+|\-)/g, ' ion with $1 charge');
+    spoken = spoken.replace(/\^(\d+)(\+|\-)/g, ' ion with $1 $2 charge');
+    spoken = spoken.replace(/\+/g, ' positive ');
+    spoken = spoken.replace(/\-/g, ' negative ');
+    
+    // Handle subscripts (molecule counts)
+    spoken = spoken.replace(/_(\d+)/g, ' $1');
+    spoken = spoken.replace(/(\d+)([A-Z])/g, '$1 molecules of $2');
+    
+    // Handle states of matter
+    Object.entries(this.chemPatterns).forEach(([formula, name]) => {
+      if (formula.includes('(') && formula.includes(')')) {
+        spoken = spoken.replace(new RegExp(formula.replace(/[()]/g, '\\$&'), 'g'), ` ${name} `);
+      }
+    });
+    
+    // Replace chemical formulas and elements
+    Object.entries(this.chemPatterns).forEach(([formula, name]) => {
+      if (!formula.includes('(')) {
+        const regex = new RegExp(`\\b${formula}\\b`, 'g');
+        spoken = spoken.replace(regex, name);
+      }
+    });
+    
+    // Handle coefficients
+    spoken = spoken.replace(/(\d+)\s+([a-zA-Z])/g, '$1 molecules of $2');
+    
+    // Clean up
+    spoken = spoken.replace(/\s+/g, ' ').trim();
+    
+    return spoken || 'chemical equation';
   }
   
   splitIntoSentences(text) {

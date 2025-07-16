@@ -4,17 +4,11 @@
   <!-- Critical theme initialization script - improved for persistence -->
   <script>
     (function() {
-      // Always prioritize localStorage first for persistence
       const savedTheme = localStorage.getItem('theme');
       const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      // Use the saved theme if available, otherwise check system preference
       const currentTheme = savedTheme || (prefersDarkScheme.matches ? 'dark' : 'light');
-      
-      // Set theme attribute for CSS
       document.documentElement.setAttribute('data-theme', currentTheme);
-      
-      // Apply critical colors using CSS variables with fallbacks
+
       const rootStyle = document.documentElement.style;
       if (currentTheme === 'dark') {
         rootStyle.setProperty('--critical-bg', 'var(--dark-background, #1a202c)');
@@ -23,17 +17,14 @@
         rootStyle.setProperty('--critical-bg', 'var(--light-background, #275f85)');
         rootStyle.setProperty('--critical-text', 'var(--light-text-secondary, #cad6ff)');
       }
-        
-      // Update localStorage to ensure persistence
+
       if (!savedTheme) {
         localStorage.setItem('theme', currentTheme);
       }
     })();
   </script>
-  
-  <!-- Critical CSS for immediate theme application -->
+
   <style>
-    /* Force the background color with maximum specificity using CSS variables */
     html[data-theme="dark"],
     html[data-theme="dark"] body,
     html[data-theme="dark"] main,
@@ -41,7 +32,7 @@
       background-color: var(--dark-background, #1a202c) !important;
       color: var(--dark-text-primary, #e2e8ff) !important;
     }
-    
+
     html[data-theme="light"],
     html[data-theme="light"] body,
     html[data-theme="light"] main,
@@ -49,30 +40,24 @@
       background-color: var(--light-background, #275f85) !important;
       color: var(--light-text-secondary, #cad6ff) !important;
     }
-    
-    /* Apply critical colors immediately */
+
     html {
       background-color: var(--critical-bg, var(--color-background));
       color: var(--critical-text, var(--color-text-primary));
     }
   </style>
-  
-  {{/* Main head partial handles all meta tags and SEO */}}
+
   {{ partial "head.html" . }}
-  
   {{ block "head" . }}{{ end }}
-  
   {{ if .Param "math" }}
     {{ partialCached "math.html" . }}
   {{ end }}
-  
-  <!-- CSS preload with proper attributes -->
+
   {{ $mainCSS := resources.Get "css/main.css" }}
   {{ if $mainCSS }}
     {{ $css := $mainCSS | minify | fingerprint }}
     <link rel="preload" href="{{ $css.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="{{ $css.RelPermalink }}"></noscript>
-    <!-- Fallback for immediate load if preload fails -->
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" media="print" onload="this.media='all'">
   {{ end }}
 </head>
@@ -86,8 +71,7 @@
   <footer>
     {{ partial "footer.html" . }}
   </footer>
-  
-  <!-- PDF generator script loading for single pages only -->
+
   {{ if not .IsSection }}
     {{ $pdfGenerator := resources.Get "js/pdf-generator.js" }}
     {{ if $pdfGenerator }}
@@ -96,119 +80,84 @@
     {{ end }}
   {{ end }}
 
-  <!-- Mermaid diagram support -->
   {{ if .Store.Get "hasMermaid" }}
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-    
+
     document.addEventListener('DOMContentLoaded', function() {
       mermaid.initialize({
-        startOnLoad: false,
-        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
-        themeVariables: {
-          primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
-          primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color-primary').trim(),
-          primaryBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
-          lineColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
-          secondaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-surface').trim(),
-          tertiaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim()
-        }
+        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
       });
-      
-      // Render all mermaid diagrams
+
       const mermaidElements = document.querySelectorAll('.mermaid-diagram .mermaid');
       mermaidElements.forEach((element, index) => {
+        const id = `mermaid-${index}`;
         const graphDefinition = element.textContent;
-        const id = `mermaid-${index}-${Date.now()}`;
-        
-        mermaid.render(id, graphDefinition).then(({svg}) => {
+        mermaid.render(id, graphDefinition).then(({ svg }) => {
           element.innerHTML = svg;
-          
-          // Initialize diagram enhancements after rendering
-          if (typeof initializeMermaidEnhancements === 'function') {
-            setTimeout(() => initializeMermaidEnhancements(), 100);
-          }
         }).catch((error) => {
-          console.error('Mermaid rendering error:', error);
           element.innerHTML = `<div class="mermaid-error">Error rendering diagram: ${error.message}</div>`;
         });
       });
-      
-      // Handle theme changes
-      const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-          if (mutation.attributeName === 'data-theme') {
-            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
-            mermaid.initialize({
-              theme: newTheme,
-              themeVariables: {
-                primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim(),
-                primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color-primary').trim(),
-                primaryBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
-                lineColor: getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim(),
-                secondaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-surface').trim(),
-                tertiaryColor: getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim()
-              }
-            });
-            
-            // Re-render all diagrams with new theme
-            mermaidElements.forEach((element, index) => {
-              const graphDefinition = element.getAttribute('data-original-content') || element.textContent;
-              const id = `mermaid-${index}-${Date.now()}`;
-              
-              mermaid.render(id, graphDefinition).then(({svg}) => {
-                element.innerHTML = svg;
-              }).catch((error) => {
-                console.error('Mermaid re-rendering error:', error);
+
+      if (typeof window.mermaidThemeObserver === 'undefined') {
+        window.mermaidThemeObserver = new MutationObserver(mutations => {
+          mutations.forEach(mutation => {
+            if (mutation.attributeName === 'data-theme') {
+              const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+              mermaid.initialize({ theme: newTheme });
+              mermaidElements.forEach((element, index) => {
+                const graphDefinition = element.getAttribute('data-original') || element.textContent;
+                mermaid.render(`mermaid-${index}`, graphDefinition).then(({ svg }) => {
+                  element.innerHTML = svg;
+                });
               });
-            });
-          }
+            }
+          });
         });
-      });
-      observer.observe(document.documentElement, { attributes: true });
+        window.mermaidThemeObserver.observe(document.documentElement, { attributes: true });
+      }
     });
   </script>
   {{ end }}
-  
-  <!-- Math processing helper for page refreshes -->
+
   {{ if .Param "math" }}
   <script>
-    // Enhanced math processing with multiple triggers
     let mathProcessingAttempts = 0;
-    
+
     function ensureMathProcessing() {
       if (mathProcessingAttempts > 5) return;
       mathProcessingAttempts++;
-      
-      if (window.reprocessMath) {
-        window.reprocessMath();
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise().catch((err) => {
+          console.warn('MathJax typeset error:', err);
+          setTimeout(ensureMathProcessing, 200);
+        });
       } else {
         setTimeout(ensureMathProcessing, 200);
       }
     }
-    
-    // Multiple event listeners to catch all scenarios
+
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(ensureMathProcessing, 100);
     });
-    
+
     window.addEventListener('load', () => {
       setTimeout(ensureMathProcessing, 200);
     });
-    
-    // Handle page visibility changes (refreshes, tab switches)
+
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
-        mathProcessingAttempts = 0; // Reset counter on visibility change
+        mathProcessingAttempts = 0;
         setTimeout(ensureMathProcessing, 150);
       }
     });
-    
-    // Fallback: check periodically if math is unprocessed
+
     setInterval(() => {
-      const unprocessedMath = document.querySelectorAll('.MathJax_Preview, script[type="math/tex"]');
-      if (unprocessedMath.length > 0 && window.reprocessMath) {
-        window.reprocessMath();
+      const unprocessedMath = document.querySelectorAll('script[type="math/tex"], script[type="math/tex; mode=display"]');
+      if (unprocessedMath.length > 0 && window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
       }
     }, 2000);
   </script>

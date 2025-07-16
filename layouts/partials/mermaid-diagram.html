@@ -58,6 +58,10 @@
 <script type="text/javascript">
   // Initialize mermaid first, then our enhancements
   document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if not already done
+    if (window.mermaidInitialized) return;
+    window.mermaidInitialized = true;
+    
     // Configure mermaid
     mermaid.initialize({ 
       startOnLoad: true,
@@ -98,55 +102,57 @@
     }, 100);
   });
   
-  // Update mermaid theme when theme changes
-  const themeObserver = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-      if (mutation.attributeName === 'data-theme') {
-        const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
-        mermaid.initialize({ 
-          startOnLoad: true,
-          theme: newTheme,
-          securityLevel: 'loose',
-          flowchart: {
-            useMaxWidth: true,
-            htmlLabels: true
-          },
-          sequence: {
-            useMaxWidth: true
-          },
-          gantt: {
-            useMaxWidth: true
-          },
-          class: {
-            useMaxWidth: true
-          },
-          state: {
-            useMaxWidth: true
-          },
-          er: {
-            useMaxWidth: true
-          },
-          journey: {
-            useMaxWidth: true
-          },
-          pie: {
-            useMaxWidth: true
-          }
-        });
-        
-        // Re-render existing diagrams
-        document.querySelectorAll('.mermaid').forEach(element => {
-          if (element.getAttribute('data-processed')) {
-            element.removeAttribute('data-processed');
-            const originalContent = element.getAttribute('data-original-content') || element.textContent;
-            element.innerHTML = originalContent;
-            mermaid.init(undefined, element);
-          }
-        });
-      }
+  // Update mermaid theme when theme changes - only create observer once
+  if (typeof window.mermaidThemeObserver === 'undefined') {
+    window.mermaidThemeObserver = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+          mermaid.initialize({ 
+            startOnLoad: true,
+            theme: newTheme,
+            securityLevel: 'loose',
+            flowchart: {
+              useMaxWidth: true,
+              htmlLabels: true
+            },
+            sequence: {
+              useMaxWidth: true
+            },
+            gantt: {
+              useMaxWidth: true
+            },
+            class: {
+              useMaxWidth: true
+            },
+            state: {
+              useMaxWidth: true
+            },
+            er: {
+              useMaxWidth: true
+            },
+            journey: {
+              useMaxWidth: true
+            },
+            pie: {
+              useMaxWidth: true
+            }
+          });
+          
+          // Re-render existing diagrams
+          document.querySelectorAll('.mermaid').forEach(element => {
+            if (element.getAttribute('data-processed')) {
+              element.removeAttribute('data-processed');
+              const originalContent = element.getAttribute('data-original-content') || element.textContent;
+              element.innerHTML = originalContent;
+              mermaid.init(undefined, element);
+            }
+          });
+        }
+      });
     });
-  });
-  themeObserver.observe(document.documentElement, { attributes: true });
+    window.mermaidThemeObserver.observe(document.documentElement, { attributes: true });
+  }
 </script>
 
 {{ $mermaidScript := resources.Get "js/mermaid-diagram.js" }}
