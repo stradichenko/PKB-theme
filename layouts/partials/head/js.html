@@ -1,4 +1,4 @@
-<!-- Theme initialization script - must run BEFORE CSS loads -->
+<!-- Theme initialization script - must run BEFORE CSS loads to avoid FOUC -->
 <script>
   (function() {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
@@ -6,21 +6,29 @@
                        (prefersDarkScheme.matches ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', currentTheme);
     
-    // Prevent flash of incorrect theme
+    // Prevent flash of incorrect theme background
     document.documentElement.style.backgroundColor = 
       currentTheme === 'dark' ? '#1a202c' : '#275f85';
   })();
 </script>
 
-{{- with resources.Get "js/main.js" }}
-  {{- if eq hugo.Environment "development" }}
-    {{- with . | js.Build }}
+<!-- Inline critical JS for performance -->
+{{ $criticalJS := resources.Get "js/critical.js" }}
+{{ if $criticalJS }}
+  <script>{{ $criticalJS.Content | safeJS }}</script>
+{{ end }}
+
+<!-- Main bundle (code-split, minified, fingerprinted) -->
+{{ $mainJS := resources.Get "js/main.js" }}
+{{ if $mainJS }}
+  {{ if eq hugo.Environment "development" }}
+    <!-- Unminified bundle for development -->
+    {{ with $mainJS | js.Build }}
       <script src="{{ .RelPermalink }}"></script>
-    {{- end }}
-  {{- else }}
-    {{- $opts := dict "minify" true }}
-    {{- with . | js.Build $opts | fingerprint }}
-      <script src="{{ .RelPermalink }}" integrity="{{- .Data.Integrity }}" crossorigin="anonymous"></script>
-    {{- end }}
-  {{- end }}
-{{- end }}
+    {{ end }}
+  {{ else }}
+    <!-- Minified, fingerprinted bundle for production with integrity -->
+    {{ $mainMin := $mainJS | js.Build (dict "minify" true) | fingerprint }}
+    <script src="{{ $mainMin.RelPermalink }}" integrity="{{ $mainMin.Data.Integrity }}" crossorigin="anonymous" defer></script>
+  {{ end }}
+{{ end }}

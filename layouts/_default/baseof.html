@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" class="interaction" data-base-url="{{ .Site.BaseURL }}">
 <head>
-  <!-- Critical theme initialization script - improved for persistence -->
+  <!-- 🌑 Critical theme setup (MUST stay in head) -->
   <script>
     (function() {
       const savedTheme = localStorage.getItem('theme');
@@ -24,23 +24,10 @@
     })();
   </script>
 
+  <!-- 🧱 Critical CSS for no-flash experience -->
   <style>
-    html[data-theme="dark"],
     html[data-theme="dark"] body,
-    html[data-theme="dark"] main,
-    html[data-theme="dark"] .content {
-      background-color: var(--dark-background, #1a202c) !important;
-      color: var(--dark-text-primary, #e2e8ff) !important;
-    }
-
-    html[data-theme="light"],
     html[data-theme="light"] body,
-    html[data-theme="light"] main,
-    html[data-theme="light"] .content {
-      background-color: var(--light-background, #275f85) !important;
-      color: var(--light-text-secondary, #cad6ff) !important;
-    }
-
     html {
       background-color: var(--critical-bg, var(--color-background));
       color: var(--critical-text, var(--color-text-primary));
@@ -49,12 +36,12 @@
 
   {{ partial "head.html" . }}
   {{ block "head" . }}{{ end }}
-  
-  {{/* Load MathJax only when needed */}}
+
   {{ if .Param "math" }}
     {{ partial "math.html" . }}
   {{ end }}
 
+  <!-- 🔗 Main CSS with preload -->
   {{ $mainCSS := resources.Get "css/main.css" }}
   {{ if $mainCSS }}
     {{ $css := $mainCSS | minify | fingerprint }}
@@ -63,64 +50,85 @@
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" media="print" onload="this.media='all'">
   {{ end }}
 </head>
+
 <body>
   <header>
     {{ partial "header.html" . }}
   </header>
+
   <main>
     {{ block "main" . }}{{ end }}
   </main>
+
   <footer>
     {{ partial "footer.html" . }}
   </footer>
 
-  {{ if not .IsSection }}
-    {{ $pdfGenerator := resources.Get "js/pdf-generator.js" }}
-    {{ if $pdfGenerator }}
-      {{ $pdfGeneratorMin := $pdfGenerator | minify | fingerprint }}
-      <script src="{{ $pdfGeneratorMin.RelPermalink }}" defer></script>
-    {{ end }}
-  {{ end }}
+  <!-- 📦 Defer non-critical JavaScript to the end of body -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // PDF Generator
+      {{ if not .IsSection }}
+        {{ $pdfGenerator := resources.Get "js/pdf-generator.js" }}
+        {{ if $pdfGenerator }}
+          {{ $pdfGeneratorMin := $pdfGenerator | minify | fingerprint }}
+          const pdfScript = document.createElement('script');
+          pdfScript.src = '{{ $pdfGeneratorMin.RelPermalink }}';
+          pdfScript.defer = true;
+          document.body.appendChild(pdfScript);
+        {{ end }}
+      {{ end }}
 
-  {{ if .Store.Get "hasMermaid" }}
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      // Mermaid.js
+      {{ if .Store.Get "hasMermaid" }}
+        {{ $mermaidJS := resources.Get "js/mermaid.min.js" }}
+        {{ if $mermaidJS }}
+          {{ $mermaidMin := $mermaidJS | minify | fingerprint }}
+          const mermaidPath = '{{ $mermaidMin.RelPermalink }}';
+        {{ else }}
+          const mermaidPath = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        {{ end }}
 
-    document.addEventListener('DOMContentLoaded', function() {
-      mermaid.initialize({
-        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
-      });
-
-      const mermaidElements = document.querySelectorAll('.mermaid-diagram .mermaid');
-      mermaidElements.forEach((element, index) => {
-        const id = `mermaid-${index}`;
-        const graphDefinition = element.textContent;
-        mermaid.render(id, graphDefinition).then(({ svg }) => {
-          element.innerHTML = svg;
-        }).catch((error) => {
-          element.innerHTML = `<div class="mermaid-error">Error rendering diagram: ${error.message}</div>`;
-        });
-      });
-
-      if (typeof window.mermaidThemeObserver === 'undefined') {
-        window.mermaidThemeObserver = new MutationObserver(mutations => {
-          mutations.forEach(mutation => {
-            if (mutation.attributeName === 'data-theme') {
-              const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
-              mermaid.initialize({ theme: newTheme });
-              mermaidElements.forEach((element, index) => {
-                const graphDefinition = element.getAttribute('data-original') || element.textContent;
-                mermaid.render(`mermaid-${index}`, graphDefinition).then(({ svg }) => {
-                  element.innerHTML = svg;
-                });
-              });
-            }
+        const loadMermaid = async () => {
+          const mermaid = (await import(mermaidPath)).default;
+          mermaid.initialize({
+            theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
           });
-        });
-        window.mermaidThemeObserver.observe(document.documentElement, { attributes: true });
-      }
+
+          const mermaidElements = document.querySelectorAll('.mermaid-diagram .mermaid');
+          mermaidElements.forEach((element, index) => {
+            const id = `mermaid-${index}`;
+            const graphDefinition = element.textContent;
+            mermaid.render(id, graphDefinition).then(({ svg }) => {
+              element.innerHTML = svg;
+            }).catch((error) => {
+              element.innerHTML = `<div class="mermaid-error">Error rendering diagram: ${error.message}</div>`;
+            });
+          });
+
+          // Theme switch observer
+          if (typeof window.mermaidThemeObserver === 'undefined') {
+            window.mermaidThemeObserver = new MutationObserver(mutations => {
+              mutations.forEach(mutation => {
+                if (mutation.attributeName === 'data-theme') {
+                  const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+                  mermaid.initialize({ theme: newTheme });
+                  mermaidElements.forEach((element, index) => {
+                    const graphDefinition = element.getAttribute('data-original') || element.textContent;
+                    mermaid.render(`mermaid-${index}`, graphDefinition).then(({ svg }) => {
+                      element.innerHTML = svg;
+                    });
+                  });
+                }
+              });
+            });
+            window.mermaidThemeObserver.observe(document.documentElement, { attributes: true });
+          }
+        };
+
+        loadMermaid();
+      {{ end }}
     });
   </script>
-  {{ end }}
 </body>
 </html>

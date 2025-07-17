@@ -55,3 +55,41 @@
 {{/* CDN prefetch only if needed */}}
 <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
 <link rel="dns-prefetch" href="//d3js.org">
+
+{{/* Preload critical JavaScript */}}
+{{ $criticalJS := resources.Get "js/critical.js" }}
+{{ if $criticalJS }}
+  {{ $criticalMin := $criticalJS | js.Build | minify | fingerprint }}
+  <link rel="preload" href="{{ $criticalMin.RelPermalink }}" as="script">
+{{ end }}
+
+{{/* Preload main JavaScript bundle */}}
+{{ $mainJS := resources.Get "js/main.js" }}
+{{ if $mainJS }}
+  {{ $mainMin := $mainJS | js.Build | minify | fingerprint }}
+  <link rel="preload" href="{{ $mainMin.RelPermalink }}" as="script">
+{{ end }}
+
+{{/* Preload theme toggle for better UX */}}
+{{ $themeJS := resources.Get "js/theme-toggle.js" }}
+{{ if $themeJS }}
+  {{ $themeMin := $themeJS | minify | fingerprint }}
+  <link rel="preload" href="{{ $themeMin.RelPermalink }}" as="script">
+{{ end }}
+
+{{/* Conditional preloads based on page type */}}
+{{ if eq .Type "posts" }}
+  {{ $postsJS := resources.Get "js/posts.js" }}
+  {{ if $postsJS }}
+    {{ $postsMin := $postsJS | js.Build | minify | fingerprint }}
+    <link rel="preload" href="{{ $postsMin.RelPermalink }}" as="script">
+  {{ end }}
+{{ end }}
+
+{{ if .Store.Get "hasMermaid" }}
+  {{ $mermaidJS := resources.Get "js/mermaid.min.js" }}
+  {{ if $mermaidJS }}
+    {{ $mermaidMin := $mermaidJS | minify | fingerprint }}
+    <link rel="preload" href="{{ $mermaidMin.RelPermalink }}" as="script">
+  {{ end }}
+{{ end }}

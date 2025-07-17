@@ -24,6 +24,8 @@ enableGitInfo = true
     source = '(postcss|tailwind)\.config\.js'
     target = '(css|styles|scss|sass)'
 
+  writeStats = true #Generates build statistics and dependency information Creates hugo_stats.json file in your project root. Contains information about HTML classes, IDs, and tags used across your site
+
 [caches]
   [caches.assets]
     dir = ':resourceDir/_gen'
@@ -221,7 +223,7 @@ enableGitInfo = true
   disableJSON = false
   disableSVG = false
   disableXML = false
-  minifyOutput = false
+  minifyOutput = true
   [minify.tdewolff]
     [minify.tdewolff.css]
       inline = false
@@ -250,6 +252,7 @@ enableGitInfo = true
       precision = 0
     [minify.tdewolff.xml]
       keepWhitespace = false
+
 
 [outputFormats]
   [outputFormats.amp]

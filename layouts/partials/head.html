@@ -1,47 +1,66 @@
 <head>
     {{/* SEO Critical Resources - Must come first */}}
     {{ partial "seo/preload-resources.html" . }}
-    
+
     {{/* Consolidated Meta Tags with SEO */}}
     {{ partial "head/meta.html" . }}
-    
+
     {{/* Structured Data */}}
     {{ partial "seo/schema-org.html" . }}
-    
+
     <!-- Favicon and Apple Touch Icon -->
     {{ partial "head/favicons.html" . }}
-    
+
     <!-- Critical CSS -->
     {{ partial "head/critical-css.html" . }}
-    
+
     <!-- Main Stylesheet -->
     {{ partial "head/styles.html" . }}
 
     <!-- Site Verification Meta Tags -->
     {{ with site.Params.seo.google_site_verification }}
-    <meta name="google-site-verification" content="{{ . }}">
+      <meta name="google-site-verification" content="{{ . }}">
     {{ end }}
     {{ with site.Params.seo.bing_verification }}
-    <meta name="msvalidate.01" content="{{ . }}">
+      <meta name="msvalidate.01" content="{{ . }}">
     {{ end }}
     {{ with site.Params.seo.yandex_verification }}
-    <meta name="yandex-verification" content="{{ . }}">
+      <meta name="yandex-verification" content="{{ . }}">
     {{ end }}
 
     <!-- Include analytics scripts -->
     {{ partial "analytics.html" . }}
 
-    <!-- JavaScript loading - Deferred for performance -->
+    <!-- Main JavaScript (minified & fingerprinted) -->
     {{ with resources.Get "js/main.js" }}
-        {{ $mainJS := . | js.Build | minify | fingerprint }}
-        <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+      {{ $mainJS := . | js.Build | minify | fingerprint }}
+      <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
     {{ end }}
-    
+
     <!-- PDF Generator -->
-    {{ $pdfJS := resources.Get "js/pdf-generator.js" | minify | fingerprint }}
-    <script src="{{ $pdfJS.RelPermalink }}" integrity="{{ $pdfJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
-    
-    <!-- Load scrollbar fade functionality -->
-    {{ $scrollbarFadeJS := resources.Get "js/scrollbar-fade.js" | minify }}
-    <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
+    {{ with resources.Get "js/pdf-generator.js" }}
+      {{ $pdfJS := . | minify | fingerprint }}
+      <script src="{{ $pdfJS.RelPermalink }}" integrity="{{ $pdfJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
+
+    <!-- Scrollbar Fade -->
+    {{ with resources.Get "js/scrollbar-fade.js" }}
+      {{ $scrollbarFadeJS := . | minify }}
+      <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
+    {{ end }}
+
+    <!-- Page-specific JavaScript -->
+    {{ if eq .Type "posts" }}
+      {{ with resources.Get "js/posts.js" }}
+        {{ $postsJS := . | js.Build | minify | fingerprint }}
+        <script src="{{ $postsJS.RelPermalink }}" integrity="{{ $postsJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+      {{ end }}
+    {{ end }}
+
+    {{ if .Params.search }}
+      {{ with resources.Get "js/search.js" }}
+        {{ $searchJS := . | js.Build | minify | fingerprint }}
+        <script src="{{ $searchJS.RelPermalink }}" integrity="{{ $searchJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+      {{ end }}
+    {{ end }}
 </head>
