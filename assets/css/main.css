@@ -18,6 +18,12 @@ body {
   padding: 0;
 }
 
+/* Add font loading optimization */
+body, html {
+  font-family: var(--font-family-sans);
+  font-display: swap;
+}
+
 /* The main element serves as:
    1. Primary content container
    2. Flex item that grows to fill available space
@@ -45,7 +51,16 @@ main, .content {
   color: var(--color-primary);
 }
 
-/* Text selection highlight styles with semantic colors */
+/* Ensure code fonts load properly */
+code:not([class*="language-"]):not(pre > code),
+pre,
+.code,
+.font-mono {
+  font-family: var(--font-family-mono);
+  font-display: swap;
+}
+
+/* Optimize selection styles */
 html body *::selection,
 *:not(html):not(body)::selection,
 p::selection,

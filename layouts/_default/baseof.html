@@ -31,6 +31,14 @@
     html {
       background-color: var(--critical-bg, var(--color-background));
       color: var(--critical-text, var(--color-text-primary));
+      /* Add font fallbacks for critical rendering */
+      font-family: Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-display: swap;
+    }
+    
+    /* Prevent font loading flicker */
+    * {
+      font-display: swap;
     }
   </style>
 

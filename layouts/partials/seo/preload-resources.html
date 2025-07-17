@@ -6,6 +6,10 @@
       <link rel="preload" href="{{ .url }}" as="font" type="{{ .type | default "font/woff2" }}" crossorigin>
     {{ end }}
   {{ end }}
+{{ else }}
+  {{/* Preload Google Fonts if they're being used */}}
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Arial:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 {{ end }}
 
 {{/* Preload critical CSS - only if enabled and CSS exists */}}
