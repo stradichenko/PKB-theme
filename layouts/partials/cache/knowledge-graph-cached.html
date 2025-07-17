@@ -1,0 +1,12 @@
+{{/* Cached Knowledge Graph Partial */}}
+
+{{ $cacheKey := printf "knowledge-graph-%s" (md5 (printf "%d-%s" now.Unix site.Pages)) }}
+
+{{ $graphContent := "" }}
+{{ $graphContent = partial "cache/fragment-cache.html" (dict 
+  "key" $cacheKey
+  "content" (partial "knowledge-graph.html" .)
+  "ttl" 1800
+) }}
+
+{{ $graphContent | safeHTML }}

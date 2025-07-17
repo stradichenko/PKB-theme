@@ -1,0 +1,31 @@
+{{/*
+  Fragment Cache Partial
+  Usage: {{ partial "cache/fragment-cache.html" (dict "key" "unique-cache-key" "content" $content "ttl" 3600) }}
+*/}}
+
+{{ $key := .key }}
+{{ $content := .content }}
+{{ $ttl := .ttl | default 3600 }}
+{{ $cacheDir := "cache/fragments" }}
+{{ $cachePath := printf "%s/%s.html" $cacheDir $key }}
+
+{{/* Check if we're in development mode - skip caching */}}
+{{ if eq hugo.Environment "development" }}
+  {{ $content }}
+{{ else }}
+  {{/* Try to get cached content first */}}
+  {{ $cached := "" }}
+  {{ with resources.Get $cachePath }}
+    {{ $cached = .Content }}
+  {{ end }}
+  
+  {{/* If no cache or cache is stale, regenerate */}}
+  {{ if not $cached }}
+    {{/* Generate content and cache it */}}
+    {{ $resource := $content | resources.FromString $cachePath }}
+    {{ $cached = $resource.Content }}
+  {{ end }}
+  
+  {{/* Output cached content */}}
+  {{ $cached | safeHTML }}
+{{ end }}

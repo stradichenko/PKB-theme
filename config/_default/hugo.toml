@@ -28,26 +28,25 @@ enableGitInfo = true
 
 [caches]
   [caches.assets]
-    dir = ':resourceDir/_gen'
-    maxAge = -1
+    dir = ":resourceDir/_gen"
+    maxAge = "1h"
+  
   [caches.getcsv]
-    dir = ':cacheDir/:project'
-    maxAge = -1
+    maxAge = "10s"
+  
   [caches.getjson]
-    dir = ':cacheDir/:project'
-    maxAge = -1
+    maxAge = "10s"
+  
   [caches.getresource]
-    dir = ':cacheDir/:project'
-    maxAge = -1
+    maxAge = "1h"
+  
   [caches.images]
-    dir = ':resourceDir/_gen'
-    maxAge = -1
-#  [caches.misc]
-#    dir = ':cacheDir/:project'
-#    maxAge = -1
+    dir = ":resourceDir/_gen"
+    maxAge = "1h"
+  
   [caches.modules]
-    dir = ':cacheDir/modules'
-    maxAge = -1
+    dir = ":cacheDir/modules"
+    maxAge = "1h"
 
 [cascade]
 

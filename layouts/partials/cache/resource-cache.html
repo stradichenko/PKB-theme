@@ -1,0 +1,66 @@
+{{/* 
+  Resource Cache Partial
+  Pre-processes and caches resource bundles
+*/}}
+
+{{ $bundleKey := .bundleKey | default "default" }}
+{{ $resources := .resources }}
+{{ $type := .type | default "css" }}
+{{ $minify := .minify | default true }}
+
+{{ $cacheKey := printf "%s-%s-%s" $bundleKey $type (md5 (printf "%v" $resources)) }}
+
+{{ if eq hugo.Environment "development" }}
+  {{/* Development: Load individual files with basic processing */}}
+  {{ range $resources }}
+    {{ with resources.Get . }}
+      {{ if eq $type "css" }}
+        {{ $processed := . | fingerprint }}
+        <link rel="stylesheet" href="{{ $processed.RelPermalink }}" integrity="{{ $processed.Data.Integrity }}" crossorigin="anonymous">
+      {{ else if eq $type "js" }}
+        {{ $processed := . | js.Build | fingerprint }}
+        <script src="{{ $processed.RelPermalink }}" integrity="{{ $processed.Data.Integrity }}" crossorigin="anonymous" defer></script>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ else }}
+  {{/* Production: Use cached bundles */}}
+  {{ $bundlePath := printf "cache/bundles/%s.%s" $cacheKey $type }}
+  {{ $cached := resources.Get $bundlePath }}
+  
+  {{ if not $cached }}
+    {{/* Create new bundle */}}
+    {{ $bundle := slice }}
+    {{ range $resources }}
+      {{ with resources.Get . }}
+        {{ $bundle = $bundle | append . }}
+      {{ end }}
+    {{ end }}
+    
+    {{ if gt (len $bundle) 0 }}
+      {{ $combined := $bundle | resources.Concat (printf "%s-bundle.%s" $bundleKey $type) }}
+      {{ if $minify }}
+        {{ if eq $type "css" }}
+          {{ $combined = $combined | resources.Minify }}
+        {{ else if eq $type "js" }}
+          {{ $combined = $combined | js.Build | resources.Minify }}
+        {{ end }}
+      {{ end }}
+      {{ $final := $combined | fingerprint }}
+      
+      {{/* Output the final resource */}}
+      {{ if eq $type "css" }}
+        <link rel="stylesheet" href="{{ $final.RelPermalink }}" integrity="{{ $final.Data.Integrity }}" crossorigin="anonymous">
+      {{ else if eq $type "js" }}
+        <script src="{{ $final.RelPermalink }}" integrity="{{ $final.Data.Integrity }}" crossorigin="anonymous" defer></script>
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{/* Use cached bundle */}}
+    {{ if eq $type "css" }}
+      <link rel="stylesheet" href="{{ $cached.RelPermalink }}" integrity="{{ $cached.Data.Integrity }}" crossorigin="anonymous">
+    {{ else if eq $type "js" }}
+      <script src="{{ $cached.RelPermalink }}" integrity="{{ $cached.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
+  {{ end }}
+{{ end }}

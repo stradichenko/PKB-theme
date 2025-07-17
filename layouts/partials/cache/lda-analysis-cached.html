@@ -1,0 +1,12 @@
+{{/* Cached LDA Analysis Partial */}}
+
+{{ $cacheKey := printf "lda-analysis-%s" (md5 (printf "%d-%d" now.Unix (len site.Pages))) }}
+
+{{ $ldaContent := "" }}
+{{ $ldaContent = partial "cache/fragment-cache.html" (dict 
+  "key" $cacheKey
+  "content" (partial "lda-analysis.html" .)
+  "ttl" 3600
+) }}
+
+{{ $ldaContent | safeHTML }}

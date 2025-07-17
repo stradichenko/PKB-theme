@@ -28,36 +28,24 @@
     "css/main.css"
 }}
 
-{{ if eq hugo.Environment "development" }}
-  <!-- Development mode: load individual files with fingerprinting -->
-  {{ range $coreCSS }}
-    {{ with resources.Get . }}
-      {{ $css := . | fingerprint }}
-      <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
-    {{ end }}
-  {{ end }}
-{{ else }}
-  <!-- Production mode: concat, minify, and fingerprint -->
-  {{ $cssResources := slice }}
-  {{ range $coreCSS }}
-    {{ with resources.Get . }}
-      {{ $cssResources = $cssResources | append . }}
-    {{ end }}
-  {{ end }}
-  {{ if gt (len $cssResources) 0 }}
-    {{ $combined := $cssResources | resources.Concat "css/all.css" | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $combined.RelPermalink }}" integrity="{{ $combined.Data.Integrity }}" crossorigin="anonymous">
-  {{ end }}
-{{ end }}
+{{/* Use the new caching system */}}
+{{ partial "cache/resource-cache.html" (dict 
+  "bundleKey" "core-styles"
+  "resources" $coreCSS
+  "type" "css"
+  "minify" true
+) }}
 
 <!-- Load independent styles always -->
-{{ range slice
+{{ $independentCSS := slice
     "css/search.css"
     "css/theme-toggle.css"
     "css/contribution-calendar.css"
 }}
-  {{ with resources.Get . }}
-    {{ $independent := . | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $independent.RelPermalink }}" integrity="{{ $independent.Data.Integrity }}" crossorigin="anonymous">
-  {{ end }}
-{{ end }}
+
+{{ partial "cache/resource-cache.html" (dict 
+  "bundleKey" "independent-styles"
+  "resources" $independentCSS
+  "type" "css"
+  "minify" true
+) }}

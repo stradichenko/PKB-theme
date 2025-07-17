@@ -3,7 +3,7 @@
   (function() {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
     const currentTheme = localStorage.getItem('theme') || 
-                       (prefersDarkScheme.matches ? 'dark' : 'light');
+                         (prefersDarkScheme.matches ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', currentTheme);
     
     // Prevent flash of incorrect theme background
@@ -18,17 +18,15 @@
   <script>{{ $criticalJS.Content | safeJS }}</script>
 {{ end }}
 
-<!-- Main bundle (code-split, minified, fingerprinted) -->
-{{ $mainJS := resources.Get "js/main.js" }}
-{{ if $mainJS }}
-  {{ if eq hugo.Environment "development" }}
-    <!-- Unminified bundle for development -->
-    {{ with $mainJS | js.Build }}
-      <script src="{{ .RelPermalink }}"></script>
-    {{ end }}
-  {{ else }}
-    <!-- Minified, fingerprinted bundle for production with integrity -->
-    {{ $mainMin := $mainJS | js.Build (dict "minify" true) | fingerprint }}
-    <script src="{{ $mainMin.RelPermalink }}" integrity="{{ $mainMin.Data.Integrity }}" crossorigin="anonymous" defer></script>
-  {{ end }}
+<!-- Main JS bundle using cache -->
+{{ $mainJSFiles := slice "js/main.js" }}
+{{ if .Params.search }}
+  {{ $mainJSFiles = $mainJSFiles | append "js/search.js" }}
 {{ end }}
+
+{{ partial "cache/resource-cache.html" (dict 
+  "bundleKey" "main-scripts"
+  "resources" $mainJSFiles
+  "type" "js"
+  "minify" true
+) }}
