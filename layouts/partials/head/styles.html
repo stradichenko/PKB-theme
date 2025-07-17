@@ -1,93 +1,63 @@
+{{/* Define shared CSS files list */}}
+{{ $coreCSS := slice
+    "css/global/variables/core.css"
+    "css/global/variables/typography.css"
+    "css/global/variables/layout.css"
+    "css/global/variables/components.css"
+    "css/global/reset.css"
+    "css/body.css"
+    "css/header.css"
+    "css/footer.css"
+    "css/sidenotes.css"
+    "css/components/toc.css"
+    "css/components/table.css"
+    "css/components/blockquote.css"
+    "css/components/citation.css"
+    "css/components/code.css"
+    "css/components/markdown.css"
+    "css/components/knowledge-graph.css"
+    "css/components/lda-analysis.css"
+    "css/components/pdf-button.css"
+    "css/components/tts-button.css"
+    "css/components/mermaid-diagram.css"
+    "css/list.css"
+    "css/filters.css"
+    "css/components/recent-posts-grid.css"
+    "css/about-profile.css"
+    "css/portfolio.css"
+    "css/main.css"
+}}
+
 {{ if eq hugo.Environment "development" }}
-  <!-- Development mode CSS loading -->
-  {{ $cssFiles := slice 
-      "css/global/variables/core.css"
-      "css/global/variables/typography.css"
-      "css/global/variables/layout.css"
-      "css/global/variables/components.css"
-      "css/global/reset.css"
-      "css/body.css"
-      "css/header.css"
-      "css/footer.css"
-      "css/sidenotes.css"
-      "css/components/toc.css"
-      "css/components/table.css"
-      "css/components/blockquote.css"
-      "css/components/citation.css"
-      "css/components/code.css"
-      "css/components/markdown.css"
-      "css/components/knowledge-graph.css"
-      "css/components/lda-analysis.css"
-      "css/components/pdf-button.css"
-      "css/components/tts-button.css"
-      "css/components/mermaid-diagram.css"
-      "css/list.css"
-      "css/filters.css"
-      "css/components/recent-posts-grid.css"
-      "css/about-profile.css"
-      "css/portfolio.css"
-      "css/main.css"
-  }}
-  {{ range $cssFiles }}
+  <!-- Development mode: load individual files with fingerprinting -->
+  {{ range $coreCSS }}
     {{ with resources.Get . }}
       {{ $css := . | fingerprint }}
       <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
     {{ end }}
   {{ end }}
 {{ else }}
-  <!-- Production mode CSS loading -->
-  {{ $cssFiles := slice }}
-  {{ range (slice 
-      "css/global/variables/core.css"
-      "css/global/variables/typography.css"
-      "css/global/variables/layout.css"
-      "css/global/variables/components.css"
-      "css/global/reset.css"
-      "css/body.css"
-      "css/header.css"
-      "css/footer.css"
-      "css/sidenotes.css"
-      "css/components/toc.css"
-      "css/components/table.css"
-      "css/components/blockquote.css"
-      "css/components/citation.css"
-      "css/components/code.css"
-      "css/components/markdown.css"
-      "css/components/knowledge-graph.css"
-      "css/components/lda-analysis.css"
-      "css/components/pdf-button.css"
-      "css/components/tts-button.css"
-      "css/components/mermaid-diagram.css"
-      "css/list.css"
-      "css/filters.css"
-      "css/components/recent-posts-grid.css"
-      "css/about-profile.css"
-      "css/portfolio.css"
-      "css/main.css"
-  ) }}
+  <!-- Production mode: concat, minify, and fingerprint -->
+  {{ $cssResources := slice }}
+  {{ range $coreCSS }}
     {{ with resources.Get . }}
-      {{ $cssFiles = $cssFiles | append . }}
+      {{ $cssResources = $cssResources | append . }}
     {{ end }}
   {{ end }}
-  {{ if gt (len $cssFiles) 0 }}
-    {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ if gt (len $cssResources) 0 }}
+    {{ $combined := $cssResources | resources.Concat "css/all.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $combined.RelPermalink }}" integrity="{{ $combined.Data.Integrity }}" crossorigin="anonymous">
   {{ end }}
 {{ end }}
 
-<!-- Always load search CSS separately -->
-{{ with resources.Get "css/search.css" }}
-  {{ $searchCSS := . | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $searchCSS.RelPermalink }}" integrity="{{ $searchCSS.Data.Integrity }}" crossorigin="anonymous">
-{{ end }}
-
-<!-- Theme toggle and contribution calendar CSS -->
-{{ with resources.Get "css/theme-toggle.css" }}
-  {{ $themeToggleCSS := . | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
-{{ end }}
-
-{{ with resources.Get "css/contribution-calendar.css" }}
-  {{ $contributionCalendarCSS := . | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $contributionCalendarCSS.RelPermalink }}" integrity="{{ $contributionCalendarCSS.Data.Integrity }}" crossorigin="anonymous">
+<!-- Load independent styles always -->
+{{ range slice
+    "css/search.css"
+    "css/theme-toggle.css"
+    "css/contribution-calendar.css"
+}}
+  {{ with resources.Get . }}
+    {{ $independent := . | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $independent.RelPermalink }}" integrity="{{ $independent.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
 {{ end }}

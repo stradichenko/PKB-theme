@@ -1,7 +1,28 @@
 {{ define "main" }}
+{{ $hasTOC := and .Params.toc .TableOfContents }}
+{{ $hasCategories := .Params.categories }}
+{{ $hasTags := .Params.tags }}
+{{ $showComments := ne .Params.comments false }}
+{{ $author := .Params.author }}
+
+{{/* Pre-format dates with proper variable scoping */}}
+{{ $dateMachine := "" }}
+{{ $dateHuman := "" }}
+{{ with .Date }}
+  {{ $dateMachine = . | time.Format "2006-01-02T15:04:05-07:00" }}
+  {{ $dateHuman = . | time.Format ":date_long" }}
+{{ end }}
+
+{{ $lastmodMachine := "" }}
+{{ $lastmodHuman := "" }}
+{{ with .Lastmod }}
+  {{ $lastmodMachine = . | time.Format "2006-01-02T15:04:05-07:00" }}
+  {{ $lastmodHuman = . | time.Format ":date_long" }}
+{{ end }}
+
 <div class="layout-container">
-  <!-- TOC sidebar conditionally rendered -->
-  {{ if and .Params.toc .TableOfContents }}
+
+  {{ if $hasTOC }}
     <aside class="toc-sidebar">
       <div class="toc">
         <h2>Table of Contents</h2>
@@ -12,9 +33,6 @@
     </aside>
   {{ end }}
 
-
-  
-  <!-- Main content -->
   <article class="main-content">
     <header class="post-header">
       <div class="post-header-container">
@@ -24,51 +42,42 @@
             {{/* PDF button moved to metadata section */}}
           </div>
         </div>
-        
-        <!-- Header Image -->
+
         {{ with .Params.image }}
           {{ $imagePath := . }}
-          {{ $imageExists := false }}
-          {{ with resources.Get $imagePath }}
-            {{ $imageExists = true }}
-          {{ else }}
-            {{ with fileExists (printf "static/%s" $imagePath) }}
-              {{ $imageExists = true }}
-            {{ end }}
+          {{ $imageExists := resources.Get $imagePath }}
+          {{ if not $imageExists }}
+            {{ $imageExists = fileExists (printf "static/%s" $imagePath) }}
           {{ end }}
-          
           {{ if $imageExists }}
             <div class="post-header-image">
               {{ $altText := $.Params.alt | default $.Title }}
-              <img src="{{ $imagePath | relURL }}" alt="{{ $altText }}" class="header-image">
+              <img src="{{ $imagePath | relURL }}" alt="{{ $altText }}" class="header-image" />
               <div class="header-image-overlay">{{ $altText }}</div>
             </div>
           {{ end }}
         {{ end }}
-        
+
         <div class="page-metadata">
 
-            <!-- PDF Button - positioned after TTS -->
-          {{ partial "pdf-button.html" . }}
-          <!-- TTS Button - positioned first in metadata -->
+          <!-- TTS Button - positioned first -->
           {{ partial "tts-button.html" . }}
-          
 
-          
+          <!-- PDF Button -->
+          {{ partial "pdf-button.html" . }}
+
           <!-- Author -->
-          {{ with .Params.author }}
-          <div class="page-author">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-            </svg>
-            <span>{{ . }}</span>
-          </div>
+          {{ with $author }}
+            <div class="page-author">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+              </svg>
+              <span>{{ . }}</span>
+            </div>
           {{ end }}
-          
+
           <!-- Created Date -->
-          {{ with .Date }}
-            {{ $dateMachine := . | time.Format "2006-01-02T15:04:05-07:00" }}
-            {{ $dateHuman := . | time.Format ":date_long" }}
+          {{ if ne $dateMachine "" }}
             <div class="page-date">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
@@ -76,183 +85,106 @@
               <span>Created: <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time></span>
             </div>
           {{ end }}
-          
+
           <!-- Updated Date -->
-          {{ if ne .Lastmod .Date }}
-            {{ with .Lastmod }}
-              {{ $lastmodMachine := . | time.Format "2006-01-02T15:04:05-07:00" }}
-              {{ $lastmodHuman := . | time.Format ":date_long" }}
-              <div class="page-updated">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                </svg>
-                <span>Updated: <time datetime="{{ $lastmodMachine }}">{{ $lastmodHuman }}</time></span>
-              </div>
-            {{ end }}
+          {{ if and (ne .Lastmod .Date) (ne $lastmodMachine "") }}
+            <div class="page-updated">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+              </svg>
+              <span>Updated: <time datetime="{{ $lastmodMachine }}">{{ $lastmodHuman }}</time></span>
+            </div>
           {{ end }}
-          
-          <!-- Categories - Updated with folder icon -->
-          {{ if .Params.categories }}
-          <div class="page-categories">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
-            </svg>
-            {{ $maxCategories := 2 }}
-            {{ $categoryCount := len .Params.categories }}
-            {{ $allCategories := .Params.categories }}
-            
-            {{ range $index, $category := .Params.categories }}
-              {{ if lt $index $maxCategories }}
-                {{- if gt $index 0 }}, {{ end -}}
+
+          <!-- Categories -->
+          {{ if $hasCategories }}
+            <div class="page-categories">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
+              </svg>
+              {{ $maxCategories := 2 }}
+              {{ $shownCategories := first $maxCategories .Params.categories }}
+              {{ range $index, $category := $shownCategories }}
+                {{ if gt $index 0 }}, {{ end -}}
                 <a href="{{ "categories/" | relLangURL }}{{ $category | urlize }}/" class="category-link">{{ $category }}</a>
-              {{ else if eq $index $maxCategories }}
-                {{ $remainingCategories := after $maxCategories $allCategories }}
+              {{ end }}
+              {{ $remainingCategories := after $maxCategories .Params.categories }}
+              {{ if gt (len $remainingCategories) 0 }}
                 <span class="more-indicator" data-tooltip="{{ delimit $remainingCategories ", " }}">...</span>
-                {{ break }}
               {{ end }}
-            {{- end }}
-          </div>
+            </div>
           {{ end }}
-          
+
           <!-- Tags -->
-          {{ if .Params.tags }}
-          <div class="page-tags">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"/>
-              <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
-            </svg>
-            {{ $maxTags := 3 }}
-            {{ $tagCount := len .Params.tags }}
-            {{ $allTags := .Params.tags }}
-            
-            {{ range $index, $tag := .Params.tags }}
-              {{ if lt $index $maxTags }}
-                {{- if gt $index 0 }}, {{ end -}}
+          {{ if $hasTags }}
+            <div class="page-tags">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"/>
+                <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+              </svg>
+              {{ $maxTags := 3 }}
+              {{ $shownTags := first $maxTags .Params.tags }}
+              {{ range $index, $tag := $shownTags }}
+                {{ if gt $index 0 }}, {{ end -}}
                 <a href="{{ "tags/" | relLangURL }}{{ $tag | urlize }}/" class="tag-link">{{ $tag }}</a>
-              {{ else if eq $index $maxTags }}
-                {{ $remainingTags := after $maxTags $allTags }}
-                <span class="more-indicator" data-tooltip="{{ delimit $remainingTags ", " }}">...</span>
-                {{ break }}
               {{ end }}
-            {{- end }}
-          </div>
+              {{ $remainingTags := after $maxTags .Params.tags }}
+              {{ if gt (len $remainingTags) 0 }}
+                <span class="more-indicator" data-tooltip="{{ delimit $remainingTags ", " }}">...</span>
+              {{ end }}
+            </div>
           {{ end }}
+
         </div>
       </div>
     </header>
-    
+
     <div class="post-content">
       {{ .Content }}
     </div>
-    
-    <!-- References will be inserted here by JavaScript -->
-    
-    <!-- Add comments section -->
-    {{ if ne .Params.comments false }}
-      {{ if .Site.Params.comments.remark42.enabled }}
-        {{ partial "comments/remark42.html" . }}
-      {{ end }}
+
+    {{ if and $showComments .Site.Params.comments.remark42.enabled }}
+      {{ partial "comments/remark42.html" . }}
     {{ end }}
+
   </article>
 
-  <!-- Sidenotes section -->
   <aside class="sidenote-section">
     <!-- Sidenotes will be collected and placed here -->
   </aside>
 </div>
 
-<!-- Resource bundling for scripts and styles based on page requirements -->
-{{ $scripts := slice }}
-{{ $styles := slice }}
-
-<!-- Add tooltip styles -->
-{{ with resources.Get "css/tooltip.css" }}
-  {{ $styles = $styles | append . }}
+{{/* Bundling resources - minimal and clear */}}
+{{ $scripts := slice
+  (resources.Get "js/sidenotes.js")
+  (resources.Get "js/references.js")
+  (resources.Get "js/tooltip.js")
+  (resources.Get "js/table-wrapper.js")
+  (resources.Get "js/bibtex.js")
+  (resources.Get "js/pdf-generator.js")
+  (resources.Get "js/tts.js")
+  (resources.Get "js/copy-button.js")
+}}
+{{ if $hasTOC }}
+  {{ $scripts = $scripts | append (resources.Get "js/toc.js") }}
 {{ end }}
 
-<!-- Unconditionally add sidenotes resources -->
-{{ with resources.Get "css/references.css" }}
-  {{ $styles = $styles | append . }}
-{{ end }}
+{{ $styles := slice
+  (resources.Get "css/tooltip.css")
+  (resources.Get "css/references.css")
+  (resources.Get "css/single.css")
+  (resources.Get "css/components/pdf-button.css")
+  (resources.Get "css/components/tts-button.css")
+  (resources.Get "css/components/pdf-print.css")
+  (resources.Get "css/components/copy-button.css")
+}}
 
-{{ $sidenotesJS := resources.Get "js/sidenotes.js" }}
-{{ $referencesJS := resources.Get "js/references.js" }}
-{{ $scripts = $scripts | append $sidenotesJS $referencesJS }}
+{{/* Combine and output scripts and styles */}}
+{{ $combinedScripts := $scripts | resources.Concat "js/single-page.js" | minify | fingerprint }}
+<script src="{{ $combinedScripts.RelPermalink }}" integrity="{{ $combinedScripts.Data.Integrity }}" crossorigin="anonymous" defer></script>
 
-<!-- Add single.css LAST for styling specific to single posts to ensure precedence -->
-{{ with resources.Get "css/single.css" }}
-  {{ $styles = $styles | append . }}
-{{ end }}
-
-<!-- Add TOC resources if needed -->
-{{ if and .Params.toc .TableOfContents }}
-  {{ $tocJS := resources.Get "js/toc.js" }}
-  {{ $scripts = $scripts | append $tocJS }}
-{{ end }}
-
-<!-- Add tooltip.js -->
-{{ $tooltipJS := resources.Get "js/tooltip.js" }}
-{{ $scripts = $scripts | append $tooltipJS }}
-
-<!-- Always include table-wrapper.js -->
-{{ $tableWrapperJS := resources.Get "js/table-wrapper.js" }}
-{{ $scripts = $scripts | append $tableWrapperJS }}
-
-<!-- Add BibTeX support -->
-{{ $bibtexJS := resources.Get "js/bibtex.js" }}
-{{ $scripts = $scripts | append $bibtexJS }}
-
-<!-- Add PDF button resources -->
-{{ with resources.Get "css/components/pdf-button.css" }}
-  {{ $styles = $styles | append . }}
-{{ end }}
-
-<!-- Add TTS button resources -->
-{{ with resources.Get "css/components/tts-button.css" }}
-  {{ $styles = $styles | append . }}
-{{ end }}
-
-{{ $pdfJS := resources.Get "js/pdf-generator.js" }}
-{{ $ttsJS := resources.Get "js/tts.js" }}
-{{ if $pdfJS }}
-  {{ $scripts = $scripts | append $pdfJS }}
-{{ else }}
-  {{ warnf "PDF generator script not found: js/pdf-generator.js" }}
-{{ end }}
-{{ if $ttsJS }}
-  {{ $scripts = $scripts | append $ttsJS }}
-{{ else }}
-  {{ warnf "TTS script not found: js/tts.js" }}
-{{ end }}
-
-<!-- Add PDF print styles to the styles bundle -->
-{{ with resources.Get "css/components/pdf-print.css" }}
-  {{ $styles = $styles | append . }}
-{{ end }}
-
-<!-- Add copy button resources -->
-{{ with resources.Get "css/components/copy-button.css" }}
-  {{ $styles = $styles | append . }}
-{{ end }}
-
-<!-- Add copy button JavaScript -->
-{{ $copyButtonJS := resources.Get "js/copy-button.js" }}
-{{ $scripts = $scripts | append $copyButtonJS }}
-
-<!-- Output the combined and minified resources -->
-<!-- Scripts -->
-{{ if gt (len $scripts) 0 }}
-  {{ $combinedScripts := $scripts | resources.Concat "js/single-page.js" | minify | fingerprint }}
-  <script src="{{ $combinedScripts.RelPermalink }}" integrity="{{ $combinedScripts.Data.Integrity }}" crossorigin="anonymous" defer></script>
-{{ else }}
-  {{ warnf "No scripts to bundle on single page" }}
-{{ end }}
-
-<!-- Styles -->
-{{ if gt (len $styles) 0 }}
-  {{ $combinedStyles := $styles | resources.Concat "css/single-page.css" | resources.Minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $combinedStyles.RelPermalink }}" integrity="{{ $combinedStyles.Data.Integrity }}" crossorigin="anonymous">
-{{ end }}
+{{ $combinedStyles := $styles | resources.Concat "css/single-page.css" | resources.Minify | fingerprint }}
+<link rel="stylesheet" href="{{ $combinedStyles.RelPermalink }}" integrity="{{ $combinedStyles.Data.Integrity }}" crossorigin="anonymous">
 
 {{ end }}

@@ -3,100 +3,78 @@
   <div class="contribution-calendar">
     <div class="calendar-box">
       {{ $posts := where .Site.RegularPages "Type" "in" .Site.Params.taxonomies.mainSections }}
-      
+
       {{ $now := now }}
-      {{ $today := $now.Format "2006-01-02" }}
       {{ $startDate := $now.AddDate 0 0 -365 }}
-      
-      <!-- Create map of dates and activity count -->
+
+      <!-- Build a map of dates to activity counts -->
       {{ $dateMap := dict }}
       {{ range $posts }}
-        {{ $lastmod := .Lastmod.Format "2006-01-02" }}
-        {{ $created := .Date.Format "2006-01-02" }}
-        
-        {{ if (index $dateMap $created) }}
-          {{ $currentCount := index $dateMap $created }}
-          {{ $dateMap = merge $dateMap (dict $created (add $currentCount 1)) }}
-        {{ else }}
-          {{ $dateMap = merge $dateMap (dict $created 1) }}
-        {{ end }}
-        
-        {{ if ne $lastmod $created }}
-          {{ if (index $dateMap $lastmod) }}
-            {{ $currentCount := index $dateMap $lastmod }}
-            {{ $dateMap = merge $dateMap (dict $lastmod (add $currentCount 1)) }}
-          {{ else }}
-            {{ $dateMap = merge $dateMap (dict $lastmod 1) }}
-          {{ end }}
+        {{ $dates := slice (.Date.Format "2006-01-02") (.Lastmod.Format "2006-01-02") }}
+        {{ range $date := $dates }}
+          {{ $count := index $dateMap $date | default 0 }}
+          {{ $dateMap = merge $dateMap (dict $date (add $count 1)) }}
         {{ end }}
       {{ end }}
-      
-      <!-- Calculate month positions for the calendar period -->
+
+      <!-- Calculate month label positions -->
       {{ $monthPositions := dict }}
-      {{ $currentDate := $startDate }}
-      {{ $endDate := $now }}
       {{ $lastMonth := "" }}
-  
-      <!-- Loop through all days to find month start positions -->
       {{ range $dayOffset := seq 0 365 }}
-        {{ $date := $startDate.AddDate 0 0 $dayOffset }}
-        {{ $monthName := $date.Format "Jan" }}
+        {{ $intDayOffset := int $dayOffset }}
+        {{ $date := $startDate.AddDate 0 0 $intDayOffset }}
         {{ $month := $date.Format "2006-01" }}
-        
-        <!-- If we encounter a new month, record its position -->
         {{ if ne $month $lastMonth }}
-          {{ $weekNum := div $dayOffset 7 }}
-          {{ $position := add 0.0 (mul $weekNum 14) }}
+          {{ $monthName := $date.Format "Jan" }}
+          {{ $weekNum := div $intDayOffset 7 }}
+          {{ $position := mul $weekNum 14 }}
           {{ $monthPositions = merge $monthPositions (dict $monthName $position) }}
           {{ $lastMonth = $month }}
         {{ end }}
       {{ end }}
-      
-      <!-- Generate calendar visualization -->
+
+      <!-- Calendar visualization -->
       <div class="calendar-container">
         <div class="calendar-wrapper">
+
+          <!-- Month labels -->
           <div class="calendar-months">
-            <!-- Output months with their calculated positions -->
-            {{ range $month, $position := $monthPositions }}
-              <div class="month-label" data-month="{{ $month }}" style="left: {{ $position }}px;">{{ $month }}</div>
+            {{ range $month, $pos := $monthPositions }}
+              <div class="month-label" data-month="{{ $month }}" style="left: {{ $pos }}px;">{{ $month }}</div>
             {{ end }}
           </div>
-          
+
+          <!-- Calendar grid: 7 rows (days), 52 cols (weeks) -->
           <div class="calendar-cells">
-            {{ range $i := seq 0 6 }}
+            {{ range $dayOfWeek := seq 0 6 }}
               <div class="calendar-row">
-                {{ range $j := seq 0 51 }}
-                  {{ $dayOffset := add (mul $j 7) $i }}
-                  {{ $currentDate := $startDate.AddDate 0 0 (int $dayOffset) }}
+                {{ range $week := seq 0 51 }}
+                  {{ $dayOffset := add (mul $week 7) $dayOfWeek }}
+                  {{ $intDayOffset := int $dayOffset }}
+                  {{ $currentDate := $startDate.AddDate 0 0 $intDayOffset }}
                   {{ $dateStr := $currentDate.Format "2006-01-02" }}
-                  {{ $month := $currentDate.Format "Jan" }}
+                  {{ $monthName := $currentDate.Format "Jan" }}
                   {{ $count := index $dateMap $dateStr | default 0 }}
-                  {{ $level := 0 }}
-                  {{ if gt $count 0 }}
-                    {{ if gt $count 10 }}
-                      {{ $level = 4 }}
-                    {{ else if gt $count 7 }}
-                      {{ $level = 3 }}
-                    {{ else if gt $count 4 }}
-                      {{ $level = 2 }}
-                    {{ else }}
-                      {{ $level = 1 }}
-                    {{ end }}
-                  {{ end }}
+
+                  {{/* Determine level by count */}}
+                  {{ $level := cond (gt $count 10) 4 (cond (gt $count 7) 3 (cond (gt $count 4) 2 (cond (gt $count 0) 1 0))) }}
+
                   <div 
                     class="calendar-cell level-{{ $level }}" 
                     data-date="{{ $dateStr }}" 
-                    data-month="{{ $month }}"
-                    data-count="{{ $count }}"
+                    data-month="{{ $monthName }}" 
+                    data-count="{{ $count }}" 
                     title="{{ $dateStr }}: {{ $count }} activities"
                   ></div>
                 {{ end }}
               </div>
             {{ end }}
           </div>
+
         </div>
       </div>
-      
+
+      <!-- Legend -->
       <div class="calendar-legend">
         <span class="legend-label">Less</span>
         <div class="legend-cells">
