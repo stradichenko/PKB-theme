@@ -21,10 +21,21 @@
 {{ with .Params.image }}
   {{ $image := resources.Get . }}
   {{ if $image }}
-    {{ $optimized := $image.Resize "1200x630 webp" }}
-    <link rel="preload" href="{{ $optimized.RelPermalink }}" as="image">
-  {{ else if (fileExists (printf "static%s" .)) }}
-    <link rel="preload" href="{{ . | absURL }}" as="image">
+    {{ $optimized := $image.Resize "800x400" }}
+    <link rel="preload" 
+          href="{{ $optimized.RelPermalink }}" 
+          as="image" 
+          imagesrcset="{{ $optimized.RelPermalink }} 800w"
+          imagesizes="(max-width: 800px) 100vw, 800px">
+  {{ end }}
+{{ end }}
+
+{{/* Preload first portfolio images */}}
+{{ if eq .Type "portfolio" }}
+  {{ $images := .Resources.ByType "image" }}
+  {{ range first 4 $images }}
+    {{ $thumb := .Resize "300x300" }}
+    <link rel="preload" href="{{ $thumb.RelPermalink }}" as="image">
   {{ end }}
 {{ end }}
 

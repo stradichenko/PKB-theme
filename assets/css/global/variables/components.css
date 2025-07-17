@@ -266,7 +266,10 @@
   /* Use object-fit to handle images that don't match container aspect ratio */
   object-fit: contain;
   display: block;
-  /* Remove max-height constraints - container height is fixed */
+  /* Add explicit aspect ratio support */
+  aspect-ratio: attr(width) / attr(height);
+  /* Prevent layout shift during loading */
+  min-height: 200px;
 }
 
 .gallery-slider__caption {

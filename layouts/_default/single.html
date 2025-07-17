@@ -50,9 +50,24 @@
             {{ $imageExists = fileExists (printf "static/%s" $imagePath) }}
           {{ end }}
           {{ if $imageExists }}
+            {{/* Try to get image dimensions if possible */}}
+            {{ $altText := $.Params.alt | default $.Title }}
+            {{ $imgResource := resources.Get $imagePath }}
+            {{ $width := "" }}
+            {{ $height := "" }}
+            {{ if $imgResource }}
+              {{ $width = $imgResource.Width }}
+              {{ $height = $imgResource.Height }}
+            {{ end }}
             <div class="post-header-image">
-              {{ $altText := $.Params.alt | default $.Title }}
-              <img src="{{ $imagePath | relURL }}" alt="{{ $altText }}" class="header-image" />
+              <img 
+          src="{{ $imagePath | relURL }}" 
+          alt="{{ $altText }}" 
+          class="header-image"
+          {{ with $width }}width="{{ . }}"{{ end }}
+          {{ with $height }}height="{{ . }}"{{ end }}
+          style="{{ if and $width $height }}aspect-ratio: {{ $width }}/{{ $height }};{{ end }}"
+              />
               <div class="header-image-overlay">{{ $altText }}</div>
             </div>
           {{ end }}
