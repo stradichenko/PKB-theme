@@ -67,6 +67,11 @@ enableGitInfo = true
   lastmod = [':git', 'lastmod', 'modified', 'date', 'publishdate', 'pubdate', 'published']
   publishDate = ['publishdate', 'pubdate', 'published', 'date']
 
+ignoreFiles = [ "\\.qmd$", "\\.ipynb$", "\\.py$" ]
+enableEmoji = true
+enableRobotsTXT = true
+
+
 [imaging]
   anchor = 'Smart'
   bgColor = '#ffffff'
@@ -515,9 +520,9 @@ enableGitInfo = true
     disableInlineCSS = false
 
 [sitemap]
-  changeFreq = ''
+  changeFreq = 'weekly'
   disable = false
   filename = 'sitemap.xml'
-  priority = -1
+  priority = 0.5
 
 uglyURLs = false

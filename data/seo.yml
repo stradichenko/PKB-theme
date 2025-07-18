@@ -1,9 +1,76 @@
 meta:
-  keywords: ["Hugo", "Theme", "Blog", "Academic", "Knowledge Base", "Research"]
-  author: "PKB Theme Author"
+  # Core SEO meta tags
+  title: "PKB Theme - Personal Knowledge Base"
+  description: "A modern Hugo theme for building personal knowledge bases and blogs"
+  keywords: ["Hugo", "Theme", "Blog", "Personal Knowledge Base", "PKB", "Documentation", "Notes"]
+  author: "Your Name"
   robots: "index, follow"
-  default_image: "/images/default-og.jpg"
+  language: "en"
+  charset: "UTF-8"
+  viewport: "width=device-width, initial-scale=1.0"
   
+  # OpenGraph meta tags
+  og:
+    type: "website"
+    site_name: "PKB Theme"
+    locale: "en_US"
+    default_image: "/images/default-og.jpg"
+    image_width: 1200
+    image_height: 630
+    image_alt: "PKB Theme - Personal Knowledge Base"
+  
+  # Twitter Card meta tags
+  twitter:
+    card: "summary_large_image"
+    site: "@yourhandle"
+    creator: "@yourhandle"
+    
+  # Additional meta tags
+  theme_color: "#000000"
+  msapplication_tilecolor: "#000000"
+  canonical_base_url: "https://yoursite.com"
+
+# Security and Privacy Headers
+security:
+  content_security_policy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'"
+  referrer_policy: "strict-origin-when-cross-origin"
+  x_frame_options: "DENY"
+  x_content_type_options: "nosniff"
+  x_xss_protection: "1; mode=block"
+
+# Performance optimizations
+performance:
+  critical_css: true
+  preload_fonts: true
+  lazy_load_images: true
+  preconnect_domains:
+    - "https://fonts.googleapis.com"
+    - "https://fonts.gstatic.com"
+    - "https://www.google-analytics.com"
+  dns_prefetch:
+    - "//cdnjs.cloudflare.com"
+    - "//ajax.googleapis.com"
+
+# Robots.txt template configuration
+robots:
+  # Optional crawl delay in seconds
+  crawl_delay: 1
+  
+  # Crawlers to block completely (uncomment and customize as needed)
+  blocked_crawlers:
+    # - "AhrefsBot"
+    # - "MJ12bot"
+    # - "SemrushBot"
+  
+  # Custom disallow rules (add your own patterns)
+  custom_disallow:
+    # - "Disallow: /temp/"
+    # - "Disallow: /backup/"
+  
+  # Sitemap location
+  sitemap_url: "/sitemap.xml"
+
+# Schema.org structured data
 schema:
   organization:
     name: "PKB Theme"
@@ -12,43 +79,99 @@ schema:
     contactPoint:
       telephone: "+1-000-000-0000"
       contactType: "customer service"
-      areaServed: "Global"
-      availableLanguage: ["English"]
-    foundingDate: "2024"
-    description: "A Hugo theme for personal knowledge base and academic blogging"
-    
-  # Additional schema types for rich snippets
+    sameAs:
+      - "https://twitter.com/yourhandle"
+      - "https://github.com/yourusername"
+  
   website:
-    potentialAction:
-      - "@type": "SearchAction"
-        target: "https://yoursite.com/search?q={search_term_string}"
-        "query-input": "required name=search_term_string"
+    name: "PKB Theme"
+    url: "https://yoursite.com"
+    description: "A modern Hugo theme for building personal knowledge bases"
+    inLanguage: "en"
+    
+  breadcrumb:
+    enabled: true
+    
+  article:
+    author_type: "Person"
+    publisher_type: "Organization"
 
+# Social media profiles
 social:
   twitter: "@yourhandle"
   facebook: "yourpage"
   linkedin: "yourprofile"
+  github: "yourusername"
+  # Additional social platforms
+  youtube: "yourchannel"
+  instagram: "yourprofile"
+  mastodon: "yourhandle@instance.social"
+
+# Internationalization and localization
+i18n:
+  default_language: "en"
+  languages:
+    - code: "en"
+      name: "English"
+      weight: 1
+    # Add more languages as needed
+    # - code: "es"
+    #   name: "Español"
+    #   weight: 2
   
-performance:
-  critical_css: true
-  preload_fonts: true
-  lazy_load_images: true
-  
+  # hreflang configuration
+  hreflang:
+    enabled: true
+    x_default: "en"
+
+# Local SEO (if applicable)
+local_seo:
+  business_name: ""
+  address: ""
+  city: ""
+  state: ""
+  postal_code: ""
+  country: ""
+  phone: ""
+  geo_coordinates:
+    latitude: ""
+    longitude: ""
+
+# Content feeds
+feeds:
+  rss:
+    enabled: true
+    limit: 20
+    full_content: false
+  json_feed:
+    enabled: true
+    limit: 20
+  atom:
+    enabled: false
+
+# Monitoring and verification
 monitoring:
   google_site_verification: ""
   bing_verification: ""
   yandex_verification: ""
+  pinterest_verification: ""
+  facebook_domain_verification: ""
 
-# Additional configurations for completeness
+# Analytics and tracking
 analytics:
   google_analytics: ""
   google_tag_manager: ""
-  
+  google_search_console: ""
+  bing_webmaster: ""
+  yandex_metrica: ""
+
 # Default values for content without frontmatter
 defaults:
   article_author: "PKB Theme Author"
   image_alt_suffix: " - PKB Theme"
   reading_time_words_per_minute: 200
+  default_section: "blog"
+  default_type: "article"
 
 # Feature toggles
 features:
@@ -56,3 +179,33 @@ features:
   related_posts: true
   estimated_reading_time: true
   social_sharing: true
+  comments: true
+  search: true
+  dark_mode: true
+  print_styles: true
+  
+# Advanced SEO features
+advanced:
+  # Canonical URL handling
+  canonical:
+    enabled: true
+    trailing_slash: false
+  
+  # Pagination meta tags
+  pagination:
+    prev_next_links: true
+    
+  # Image optimization
+  images:
+    webp_fallback: true
+    responsive_images: true
+    default_quality: 85
+    
+  # AMP support
+  amp:
+    enabled: false
+    
+  # PWA manifest
+  pwa:
+    enabled: false
+    manifest_path: "/manifest.json"
