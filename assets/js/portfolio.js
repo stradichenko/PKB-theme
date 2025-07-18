@@ -267,11 +267,15 @@ class PortfolioManager {
       });
     }
 
-    // Window resize
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => this.handleResize(), 250);
+    // Window resize with centralized debounce
+    const debouncedResize = window.PKBUtils.debounce(() => this.handleResize(), 250);
+    window.addEventListener('resize', debouncedResize);
+    
+    // Store cleanup function
+    this.cleanup = this.cleanup || [];
+    this.cleanup.push(() => {
+      window.removeEventListener('resize', debouncedResize);
+      debouncedResize.cancel();
     });
   }
 

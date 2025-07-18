@@ -66,8 +66,13 @@
             }
           });
 
+          // Use debounced math reprocessing to prevent excessive calls
+          const debouncedMathReprocess = window.PKBUtils?.debounce(() => {
+            if (window.reprocessMath) window.reprocessMath();
+          }, 150) || (() => setTimeout(() => window.reprocessMath(), 150));
+
           if (hasNewMath) {
-            setTimeout(() => window.reprocessMath(), 100);
+            debouncedMathReprocess();
           }
         });
 
@@ -79,18 +84,27 @@
           });
 
           // Initial processing after DOM is ready
-          setTimeout(() => window.reprocessMath(), 150);
+          const debouncedMathReprocess = window.PKBUtils?.debounce(() => {
+            if (window.reprocessMath) window.reprocessMath();
+          }, 150) || (() => setTimeout(() => window.reprocessMath(), 150));
+          debouncedMathReprocess();
         });
 
         // Additional processing on window load for safety
         window.addEventListener('load', () => {
-          setTimeout(() => window.reprocessMath(), 300);
+          const debouncedMathReprocess = window.PKBUtils?.debounce(() => {
+            if (window.reprocessMath) window.reprocessMath();
+          }, 150) || (() => setTimeout(() => window.reprocessMath(), 150));
+          debouncedMathReprocess();
         });
 
         // Handle visibility changes (tab switching)
         document.addEventListener('visibilitychange', () => {
           if (!document.hidden) {
-            setTimeout(() => window.reprocessMath(), 150);
+            const debouncedMathReprocess = window.PKBUtils?.debounce(() => {
+              if (window.reprocessMath) window.reprocessMath();
+            }, 150) || (() => setTimeout(() => window.reprocessMath(), 150));
+            debouncedMathReprocess();
           }
         });
       }

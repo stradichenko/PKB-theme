@@ -228,17 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Sidenote background color:', style.getPropertyValue('--sidenote-bg-color'));
   console.log('Main background color:', style.getPropertyValue('--main-bg-color'));
   
-  // Debounce function for handling events efficiently
-  function debounce(func, wait) {
-    let timeout;
-    return function() {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, arguments), wait);
-    };
-  }
-  
   // Handle window resize with faster response
-  window.addEventListener('resize', debounce(positionAllSidenotes, 150)); // Faster resize handling (was 200ms)
+  const debouncedResize = window.PKBUtils.debounce(positionAllSidenotes, 150);
+  window.addEventListener('resize', debouncedResize);
   
   // Handle image loading
   document.querySelectorAll('img, video, iframe').forEach(media => {
