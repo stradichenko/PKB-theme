@@ -60,3 +60,6 @@ tmp/
 # instructions for developers
 .github/instructions/
 Trace-*.json # Debugging files
+
+# integration for Quarto
+/.quarto/

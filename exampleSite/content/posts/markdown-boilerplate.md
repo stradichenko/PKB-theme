@@ -408,16 +408,21 @@ erDiagram
 #### Git Graph
 
 ```mermaid
-gitgraph
-    commit id: "Initial commit"
-    branch feature
-    checkout feature
-    commit id: "Add new feature"
-    commit id: "Fix bug in feature"
-    checkout main
-    commit id: "Hotfix security issue"
-    merge feature
-    commit id: "Release v1.0"
+%%| label: fig-mermaid-git
+%%| fig-cap: Git a load of this!
+%%| fig-alt: An example Git graph, drawn using Mermaid.
+
+gitGraph
+  commit
+  commit
+  branch develop
+  checkout develop
+  commit
+  commit
+  checkout main
+  merge develop
+  commit
+  commit
 ```
 
 ### GoAT ASCII Diagrams

@@ -1,0 +1,69 @@
+---
+title: "Hello, Quarto"
+date: "2025-07-19"
+categories: 
+  - Python
+  - R
+  - Bash
+format: 
+    hugo-md:
+        fig-format: svg
+        code-fold: true
+engine: knitr
+jupyter: python3
+---
+
+## Polar Axis (Python)
+
+A line plot on a polar axis.
+
+```{python}
+#| label: fig-polar
+#| fig-cap: "A line plot on a polar axis"
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+r = np.arange(0, 2, 0.01)
+theta = 2 * np.pi * r
+fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+ax.plot(theta, r)
+ax.set_rticks([0.5, 1, 1.5, 2])
+ax.grid(True)
+plt.show()
+```
+
+## Summary Statistics (R)
+
+Using base R to summarize the `cars` dataset:
+
+```{r}
+summary(cars)
+```
+
+## Histogram in R
+
+A basic histogram using base R:
+
+```{r}
+hist(cars$speed, col = "skyblue", main = "Histogram of Speed", xlab = "Speed (mph)")
+```
+
+## ggplot2 Chart (R)
+
+A modern histogram using `ggplot2`:
+
+```{r}
+library(ggplot2)
+
+ggplot(cars, aes(x = speed)) +
+  geom_histogram(binwidth = 2, fill = "tomato", color = "white") +
+  labs(title = "Speed Distribution (ggplot2)", x = "Speed", y = "Count") +
+  theme_minimal()
+```
+
+## Bash Output
+
+```{bash}
+echo "Quarto supports multiple languages!"
+```
