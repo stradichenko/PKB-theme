@@ -30,6 +30,14 @@ Here we test various **bold text**, *italic text*, and ***bold italic*** combina
 > 
 > — Author Name
 
+{{< warning >}}
+This is a warning message using the new warning shortcode. It's perfect for highlighting important information that users should pay attention to.
+{{< /warning >}}
+
+{{< note >}}
+This is a note using the new note shortcode. Use it for additional information, tips, or clarifications that complement the main content.
+{{< /note >}}
+
 ### Lists and Organization
 
 Unordered lists work great for:

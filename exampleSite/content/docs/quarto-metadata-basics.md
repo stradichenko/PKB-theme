@@ -1,7 +1,5 @@
 ---
 title: "Quarto Metadata Basics"
-author: "PKB Theme Documentation"
-date: 2025-01-17T17:26:20+02:00
 lastmod: 2025-01-17T17:26:20+02:00
 draft: false
 description: "Complete guide to configuring Quarto document metadata, including YAML front matter, execution options, and PKB theme integration."
@@ -74,7 +72,6 @@ title: "Multi-Format Document"
 format:
   html:
     toc: true
-    code-fold: false
     theme: cosmo
   hugo-md:
     toc: true
@@ -374,11 +371,14 @@ link-citations: true
 
 ### YAML Syntax Rules
 
+{{< warning >}}
+**YAML Syntax Requirements:**
 1. **Indentation**: Use 2 spaces (no tabs)
 2. **Quotes**: Use quotes for strings with special characters
 3. **Lists**: Use hyphen notation or bracket notation
 4. **Booleans**: Use `true`/`false` (lowercase)
 5. **Dates**: Use ISO 8601 format
+{{< /warning >}}
 
 ### Common Mistakes to Avoid
 
@@ -449,6 +449,9 @@ format:
 
 ### Common Error Messages
 
+{{< note >}}
+**Common Issues and Solutions:**
+
 1. **YAML parsing errors**:
    ```bash
    # Check for indentation and syntax
@@ -468,6 +471,7 @@ format:
    date: 2025-01-17T10:30:00+02:00
    lastmod: 2025-01-17T10:30:00+02:00
    ```
+{{< /note >}}
 
 ### Debugging Tips
 
@@ -492,25 +496,6 @@ Create a snippet for consistent metadata:
 {
   "Quarto PKB Post": {
     "prefix": "qpkb",
-    "body": [
-      "---",
-      "title: \"$1\"",
-      "author: \"$2\"",
-      "date: $CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND+02:00",
-      "lastmod: $CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND+02:00",
-      "draft: true",
-      "description: \"$3\"",
-      "tags: [$4]",
-      "categories: [$5]",
-      "slug: \"$6\"",
-      "toc: true",
-      "sidenotes: true",
-      "format: hugo-md",
-      "jupyter: python3",
-      "---",
-      "",
-      "$0"
-    ],
     "description": "Quarto document with PKB theme metadata"
   }
 }
@@ -552,6 +537,21 @@ jupyter: python3
 Your content here...
 EOF
 
+echo "Created new Quarto post: $DIR/index.qmd"
+```
+
+## Conclusion
+
+Proper metadata configuration is essential for creating professional Quarto documents that integrate seamlessly with the PKB theme. Remember to:
+
+- Use consistent YAML syntax and formatting
+- Include all required Hugo front matter fields
+- Configure Quarto-specific execution options appropriately
+- Validate your metadata before publishing
+- Use templates and snippets for consistency
+- Test rendering across different formats
+
+With these fundamentals, you'll be able to create well-structured, properly configured documents that take full advantage of both Quarto's capabilities and the PKB theme's features.
 echo "Created new Quarto post: $DIR/index.qmd"
 ```
 

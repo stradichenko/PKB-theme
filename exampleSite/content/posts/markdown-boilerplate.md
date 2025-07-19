@@ -99,15 +99,23 @@ def hello_world():
 Code explanations can be placed in sidenotes, keeping the code block clean while providing context.
 {{< /sidenote >}}
 
-## Blockquotes
+## Blockquotes and Special Quotes
 
-> This is a blockquote.
+> This is a standard blockquote.
 > 
 > It can span multiple lines.
 
 {{< sidenote >}}
 Provide information about the quote source or additional context here.
 {{< /sidenote >}}
+
+{{< warning >}}
+**Important:** Always backup your data before making significant changes to your system. This warning helps ensure you don't lose important work.
+{{< /warning >}}
+
+{{< note >}}
+**Tip:** You can combine multiple markdown elements within these quote containers, including **bold text**, *italic text*, and even `inline code`.
+{{< /note >}}
 
 ## Tables
 
