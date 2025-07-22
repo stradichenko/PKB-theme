@@ -12,6 +12,24 @@
   <link rel="stylesheet" href="{{ $footerCSS.RelPermalink }}" integrity="{{ $footerCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ end }}
 
+<!-- Matomo Analytics -->
+{{ if .Site.Params.analytics.matomo }}
+<script>
+  var _paq = window._paq = window._paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  _paq.push(['disableCookies']);  // Disable Cookies / Use Cookie-less Tracking
+  (function() {
+    var u="{{ .Site.Params.analytics.matomoURL }}";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '{{ .Site.Params.analytics.matomoSiteId }}']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+{{ end }}
+<!-- End Matomo Code -->
+
 <!-- Remove the footer tag as it's already in the main template -->
 <div class="footer-social-links">
   {{ with .Site.Params.social }}

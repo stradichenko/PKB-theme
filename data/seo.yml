@@ -1,38 +1,38 @@
 meta:
   # Core SEO meta tags
-  title: "PKB Theme - Personal Knowledge Base"
-  description: "A modern Hugo theme for building personal knowledge bases and blogs"
-  keywords: ["Hugo", "Theme", "Blog", "Personal Knowledge Base", "PKB", "Documentation", "Notes"]
-  author: "Your Name"
+  title: "PKB Theme - Personal Knowledge Base" # CHANGE: Update with your site title
+  description: "A modern Hugo theme for building personal knowledge bases and blogs" # CHANGE: Update with your site description
+  keywords: ["Hugo", "Theme", "Blog", "Personal Knowledge Base", "PKB", "Documentation", "Notes"] # CHANGE: Replace with your relevant keywords
+  author: "Your Name" # CHANGE: Replace with your actual name
   robots: "index, follow"
-  language: "en"
+  language: "en" # CHANGE: Update if using a different language
   charset: "UTF-8"
   viewport: "width=device-width, initial-scale=1.0"
   
   # OpenGraph meta tags
   og:
     type: "website"
-    site_name: "PKB Theme"
-    locale: "en_US"
-    default_image: "/images/default-og.jpg"
+    site_name: "PKB Theme" # CHANGE: Update with your site name
+    locale: "en_US" # CHANGE: Update if using different locale
+    default_image: "/images/default-og.jpg" # CHANGE: Replace with your default social media image path
     image_width: 1200
     image_height: 630
-    image_alt: "PKB Theme - Personal Knowledge Base"
+    image_alt: "PKB Theme - Personal Knowledge Base" # CHANGE: Update alt text for your image
   
   # Twitter Card meta tags
   twitter:
     card: "summary_large_image"
-    site: "@yourhandle"
-    creator: "@yourhandle"
+    site: "@yourhandle" # CHANGE: Replace with your Twitter handle
+    creator: "@yourhandle" # CHANGE: Replace with your Twitter handle
     
   # Additional meta tags
-  theme_color: "#000000"
-  msapplication_tilecolor: "#000000"
-  canonical_base_url: "https://yoursite.com"
+  theme_color: var(--color-primary) # CHANGE: Uses the primary color from your CSS variables
+  msapplication_tilecolor: var(--color-primary) # CHANGE: Uses the primary color from your CSS variables
+  canonical_base_url: "https://yoursite.com" # CHANGE: Replace with your actual domain
 
 # Security and Privacy Headers
 security:
-  content_security_policy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'"
+  content_security_policy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'" # CHANGE: Modify based on your external resources
   referrer_policy: "strict-origin-when-cross-origin"
   x_frame_options: "DENY"
   x_content_type_options: "nosniff"
@@ -43,11 +43,11 @@ performance:
   critical_css: true
   preload_fonts: true
   lazy_load_images: true
-  preconnect_domains:
+  preconnect_domains: # CHANGE: Update with domains you actually use
     - "https://fonts.googleapis.com"
     - "https://fonts.gstatic.com"
     - "https://www.google-analytics.com"
-  dns_prefetch:
+  dns_prefetch: # CHANGE: Update with CDNs you actually use
     - "//cdnjs.cloudflare.com"
     - "//ajax.googleapis.com"
 
@@ -73,21 +73,21 @@ robots:
 # Schema.org structured data
 schema:
   organization:
-    name: "PKB Theme"
-    logo: "/images/logo.png"
-    url: "https://yoursite.com"
+    name: "PKB Theme" # CHANGE: Replace with your organization/personal brand name
+    logo: "/images/logo.png" # CHANGE: Replace with your actual logo path
+    url: "https://yoursite.com" # CHANGE: Replace with your actual domain
     contactPoint:
-      telephone: "+1-000-000-0000"
+      telephone: "+1-000-000-0000" # CHANGE: Replace with your actual phone number or remove if not applicable
       contactType: "customer service"
-    sameAs:
+    sameAs: # CHANGE: Replace with your actual social media profiles
       - "https://twitter.com/yourhandle"
       - "https://github.com/yourusername"
   
   website:
-    name: "PKB Theme"
-    url: "https://yoursite.com"
-    description: "A modern Hugo theme for building personal knowledge bases"
-    inLanguage: "en"
+    name: "PKB Theme" # CHANGE: Replace with your site name
+    url: "https://yoursite.com" # CHANGE: Replace with your actual domain
+    description: "A modern Hugo theme for building personal knowledge bases" # CHANGE: Update with your site description
+    inLanguage: "en" # CHANGE: Update if using different language
     
   breadcrumb:
     enabled: true
@@ -97,19 +97,19 @@ schema:
     publisher_type: "Organization"
 
 # Social media profiles
-social:
-  twitter: "@yourhandle"
-  facebook: "yourpage"
-  linkedin: "yourprofile"
-  github: "yourusername"
+social: # CHANGE: Replace all handles with your actual social media profiles
+  twitter: "@yourhandle" # CHANGE: Your Twitter handle
+  facebook: "yourpage" # CHANGE: Your Facebook page name
+  linkedin: "yourprofile" # CHANGE: Your LinkedIn profile name
+  github: "yourusername" # CHANGE: Your GitHub username
   # Additional social platforms
-  youtube: "yourchannel"
-  instagram: "yourprofile"
-  mastodon: "yourhandle@instance.social"
+  youtube: "yourchannel" # CHANGE: Your YouTube channel name
+  instagram: "yourprofile" # CHANGE: Your Instagram handle
+  mastodon: "yourhandle@instance.social" # CHANGE: Your Mastodon handle and instance
 
 # Internationalization and localization
 i18n:
-  default_language: "en"
+  default_language: "en" # CHANGE: Update if your primary language is different
   languages:
     - code: "en"
       name: "English"
@@ -122,20 +122,20 @@ i18n:
   # hreflang configuration
   hreflang:
     enabled: true
-    x_default: "en"
+    x_default: "en" # CHANGE: Update if your default language is different
 
-# Local SEO (if applicable)
+# Local SEO (if applicable) - CHANGE: Fill in if you have a physical business location
 local_seo:
-  business_name: ""
-  address: ""
-  city: ""
-  state: ""
-  postal_code: ""
-  country: ""
-  phone: ""
+  business_name: "" # CHANGE: Your business name if applicable
+  address: "" # CHANGE: Your business address
+  city: "" # CHANGE: Your city
+  state: "" # CHANGE: Your state/province
+  postal_code: "" # CHANGE: Your postal/zip code
+  country: "" # CHANGE: Your country
+  phone: "" # CHANGE: Your business phone number
   geo_coordinates:
-    latitude: ""
-    longitude: ""
+    latitude: "" # CHANGE: Your location coordinates if applicable
+    longitude: "" # CHANGE: Your location coordinates if applicable
 
 # Content feeds
 feeds:
@@ -149,26 +149,26 @@ feeds:
   atom:
     enabled: false
 
-# Monitoring and verification
+# Monitoring and verification - CHANGE: Add your actual verification codes
 monitoring:
-  google_site_verification: ""
-  bing_verification: ""
-  yandex_verification: ""
-  pinterest_verification: ""
-  facebook_domain_verification: ""
+  google_site_verification: "" # CHANGE: Your Google Search Console verification code
+  bing_verification: "" # CHANGE: Your Bing Webmaster verification code
+  yandex_verification: "" # CHANGE: Your Yandex verification code
+  pinterest_verification: "" # CHANGE: Your Pinterest verification code
+  facebook_domain_verification: "" # CHANGE: Your Facebook domain verification code
 
-# Analytics and tracking
+# Analytics and tracking - CHANGE: Add your actual tracking IDs
 analytics:
-  google_analytics: ""
-  google_tag_manager: ""
-  google_search_console: ""
-  bing_webmaster: ""
-  yandex_metrica: ""
+  google_analytics: "" # CHANGE: Your Google Analytics tracking ID
+  google_tag_manager: "" # CHANGE: Your Google Tag Manager ID
+  google_search_console: "" # CHANGE: Your Search Console property ID
+  bing_webmaster: "" # CHANGE: Your Bing Webmaster site ID
+  yandex_metrica: "" # CHANGE: Your Yandex Metrica counter ID
 
 # Default values for content without frontmatter
 defaults:
-  article_author: "PKB Theme Author"
-  image_alt_suffix: " - PKB Theme"
+  article_author: "PKB Theme Author" # CHANGE: Your default author name
+  image_alt_suffix: " - PKB Theme" # CHANGE: Your site name for image alt text
   reading_time_words_per_minute: 200
   default_section: "blog"
   default_type: "article"
@@ -189,7 +189,7 @@ advanced:
   # Canonical URL handling
   canonical:
     enabled: true
-    trailing_slash: false
+    trailing_slash: false # CHANGE: Set to true if you prefer URLs with trailing slashes
   
   # Pagination meta tags
   pagination:
