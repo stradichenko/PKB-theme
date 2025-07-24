@@ -31,14 +31,14 @@ Matomo (formerly Piwik) offers several advantages:
 ```mermaid
 flowchart TB
  subgraph subGraph0["PKB-theme Project"]
-        PKB["/home/<USER>/projects/PKB-theme/"]
-        CONFIG_TOML["config.toml<br>🔧 Analytics Configuration"]
+        PKB["/home/gespitia/projects/PKB-theme/"]
+        CONFIG_TOML["config/_default/hugo.toml<br>🔧 Analytics Configuration"]
         SEO_YML["data/seo.yml<br>🚀 Performance Config"]
   end
- subgraph subGraph1["Core Configuration"]
+ subgraph subGraph1["Core Docker Configuration"]
         DOCKER_COMPOSE["docker-compose.yml<br>🐳 Container Orchestration"]
+        DOCKER_OVERRIDE["docker-compose.override.yml<br>🔧 Development Overrides"]
         ENV_FILE[".env<br>🔐 Environment Variables"]
-        MATOMO["/home/<USER>/projects/matomo-analytics/"]
   end
  subgraph subGraph2["Database Configuration"]
         POSTGRES_CONF["postgresql.conf<br>🗄️ Database Tuning"]
@@ -49,142 +49,167 @@ flowchart TB
   end
  subgraph subGraph4["Backup & Monitoring"]
         BACKUP_SCRIPT["backup-script.sh<br>💾 Database Backup"]
+        BACKUP_CLEANUP["backup-cleanup.sh<br>🧹 Cleanup Script"]
         MONITOR_SCRIPT["monitor-matomo.sh<br>📊 Health Check"]
   end
- subgraph subGraph5["Runtime Directories"]
-        CONFIG_DIR["config/<br>📁 Matomo Config (Auto-created)"]
+ subgraph subGraph5["Runtime Directories (Auto-created)"]
+        CONFIG_DIR["config/<br>📁 Matomo Config"]
         LOGS_DIR["logs/<br>📋 Application Logs"]
         PLUGINS_DIR["plugins/<br>🔌 Custom Plugins"]
         BACKUPS_DIR["backups/<br>💾 Database Backups"]
   end
- subgraph subGraph6["Matomo Analytics Project"]
+ subgraph subGraph6["Existing Config Files"]
+        MATOMO_CONFIG["config/config.ini.php<br>⚙️ Matomo Settings (Auto-generated)"]
+        GLOBAL_CONFIG["config/global.ini.php<br>📋 Global Settings (Read-only)"]
+        PLUGIN_CONFIGS["plugins/*/config/<br>🔌 Plugin Configurations"]
+  end
+ subgraph subGraph7["Matomo Analytics Project"]
+        MATOMO_ROOT["/home/gespitia/projects/matomo-analytics/"]
         subGraph1
         subGraph2
         subGraph3
         subGraph4
         subGraph5
+        subGraph6
   end
- subgraph subGraph7["System Configuration (Optional)"]
-        SYSTEM["/etc/ (System Level)"]
-        NGINX_CONF["/etc/nginx/sites-available/matomo-analytics<br>🌐 Reverse Proxy"]
+ subgraph subGraph8["System Configuration (Optional)"]
+        NGINX_CONF["nginx-analytics.conf<br>🌐 Reverse Proxy"]
+        SYSTEM_NGINX["/etc/nginx/sites-available/<br>📁 System Nginx Config"]
         SYSTEMD_SERVICE["/etc/systemd/system/matomo-docker.service<br>🔄 Auto-start Service"]
         CRON_JOBS["/etc/cron.d/matomo<br>⏰ Scheduled Tasks"]
   end
- subgraph subGraph8["Project Structure"]
+ subgraph subGraph9["Project Structure Overview"]
         subGraph0
-        subGraph6
         subGraph7
+        subGraph8
   end
- subgraph subGraph9["Dependencies & Relationships"]
-  end
+
     PKB --> CONFIG_TOML & SEO_YML
-    MATOMO --> DOCKER_COMPOSE & ENV_FILE & POSTGRES_CONF & POSTGRES_INIT & REDIS_CONF & BACKUP_SCRIPT & MONITOR_SCRIPT & CONFIG_DIR & LOGS_DIR & PLUGINS_DIR & BACKUPS_DIR
-    SYSTEM --> NGINX_CONF & SYSTEMD_SERVICE & CRON_JOBS
+    MATOMO_ROOT --> DOCKER_COMPOSE & DOCKER_OVERRIDE & ENV_FILE & POSTGRES_CONF & POSTGRES_INIT & REDIS_CONF & BACKUP_SCRIPT & BACKUP_CLEANUP & MONITOR_SCRIPT
+    MATOMO_ROOT -.-> CONFIG_DIR & LOGS_DIR & PLUGINS_DIR & BACKUPS_DIR
+    CONFIG_DIR --> MATOMO_CONFIG & GLOBAL_CONFIG
+    PLUGINS_DIR --> PLUGIN_CONFIGS
+    NGINX_CONF -.-> SYSTEM_NGINX
     ENV_FILE -.-> DOCKER_COMPOSE
     POSTGRES_CONF -.-> DOCKER_COMPOSE
     REDIS_CONF -.-> DOCKER_COMPOSE
     BACKUP_SCRIPT -.-> DOCKER_COMPOSE & CRON_JOBS
+    BACKUP_CLEANUP -.-> DOCKER_COMPOSE
     POSTGRES_INIT -.-> DOCKER_COMPOSE
-    DOCKER_COMPOSE -.-> CONFIG_DIR & LOGS_DIR & PLUGINS_DIR & BACKUPS_DIR
     CONFIG_TOML -.-> NGINX_CONF
     NGINX_CONF -.-> SYSTEMD_SERVICE
     MONITOR_SCRIPT -.-> CRON_JOBS
+    
      CONFIG_TOML:::pkb
      SEO_YML:::pkb
      DOCKER_COMPOSE:::coreConfig
+     DOCKER_OVERRIDE:::coreConfig
      ENV_FILE:::coreConfig
      POSTGRES_CONF:::dbConfig
      POSTGRES_INIT:::dbConfig
      REDIS_CONF:::cacheConfig
      BACKUP_SCRIPT:::monitoring
+     BACKUP_CLEANUP:::monitoring
      MONITOR_SCRIPT:::monitoring
      CONFIG_DIR:::runtime
      LOGS_DIR:::runtime
      PLUGINS_DIR:::runtime
      BACKUPS_DIR:::runtime
+     MATOMO_CONFIG:::existing
+     GLOBAL_CONFIG:::existing
+     PLUGIN_CONFIGS:::existing
      NGINX_CONF:::system
      SYSTEMD_SERVICE:::system
      CRON_JOBS:::system
+     
     classDef coreConfig fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef dbConfig fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
     classDef cacheConfig fill:#fff3e0,stroke:#e65100,stroke-width:2px
     classDef monitoring fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
     classDef runtime fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef existing fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
     classDef system fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef pkb fill:#e0f2f1,stroke:#00695c,stroke-width:2px
 ```
 
+## Diagram Internet to files
+```mermaid
+flowchart TB
+
+
+```
 
 Here are the suggested file locations and names for each configuration:
 
 ## Directory tree
 
 ```bash
-/home/<USER>/projects/
+/home/gespitia/projects/
 ├── PKB-theme/
-│   ├── config.toml                    # Analytics configuration
+│   ├── config/_default/
+│   │   └── hugo.toml                  # Analytics configuration
 │   └── data/
 │       └── seo.yml                    # Performance & preconnect settings
 │
 ├── matomo-analytics/
-│   ├── docker-compose.yml             # Container orchestration
-│   ├── .env                           # Environment variables (passwords/secrets)
-│   ├── postgresql.conf                # PostgreSQL performance tuning
-│   ├── redis.conf                     # Redis cache configuration
-│   ├── backup-script.sh               # Database backup automation
-│   ├── monitor-matomo.sh              # Health monitoring script
+│   ├── docker-compose.yml             # ✅ Container orchestration
+│   ├── docker-compose.override.yml    # 🆕 Development overrides
+│   ├── .env                           # ✅ Environment variables (passwords/secrets)
+│   ├── postgresql.conf                # ✅ PostgreSQL performance tuning
+│   ├── redis.conf                     # ✅ Redis cache configuration
+│   ├── backup-script.sh               # 🆕 Database backup automation
+│   ├── backup-cleanup.sh              # 🆕 Backup cleanup script
+│   ├── monitor-matomo.sh              # ✅ Health monitoring script
+│   ├── nginx-analytics.conf           # 🆕 Nginx proxy config (renamed from 'server {')
 │   │
-│   ├── config/                        # Auto-created by Matomo
-│   │   └── config.ini.php             # Matomo configuration (auto-generated)
+│   ├── config/                        # ✅ Auto-created by Matomo
+│   │   ├── config.ini.php             # ✅ Matomo configuration (auto-generated)
+│   │   └── global.ini.php             # ✅ Global settings (read-only)
 │   │
-│   ├── logs/                          # Application logs directory
+│   ├── logs/                          # ✅ Application logs directory
 │   │   └── (log files...)
 │   │
-│   ├── plugins/                       # Custom Matomo plugins
-│   │   └── (plugin files...)
+│   ├── plugins/                       # ✅ Custom Matomo plugins
+│   │   ├── Actions/config/config.php  # ✅ Plugin configurations
+│   │   ├── API/config/config.php      # ✅ (many plugin configs exist)
+│   │   └── (other plugin files...)
 │   │
-│   ├── backups/                       # Database backup storage
+│   ├── backups/                       # 🆕 Database backup storage
 │   │   └── (backup files...)
 │   │
-│   └── postgres-init/                 # PostgreSQL initialization
-│       └── 01-init.sql                # Database setup script
+│   └── postgres-init/                 # ✅ PostgreSQL initialization
+│       └── 01-init.sql                # ✅ Database setup script
 │
 └── (other projects...)
 
-/etc/                                  # System-level configuration
-├── nginx/
-│   └── sites-available/
-│       └── matomo-analytics           # Nginx reverse proxy config
-│
-├── systemd/
-│   └── system/
-│       └── matomo-docker.service      # Auto-start service
-│
-└── cron.d/
-    └── matomo                         # Scheduled tasks (archiving/monitoring)
+# Legend:
+# ✅ = Files that already exist in your setup
+# 🆕 = New files to be created
 ```
 
 ## FIle Creation Commands
 ```bash
 # 1. Create main directory structure
-mkdir -p /home/<USER>/projects/matomo-analytics/{config,logs,plugins,backups,postgres-init}
+mkdir -p /home/gespitia/projects/matomo-analytics/{config,logs,plugins,backups,postgres-init}
 
 # 2. Create core configuration files
-touch /home/<USER>/projects/matomo-analytics/.env
-touch /home/<USER>/projects/matomo-analytics/docker-compose.yml
-touch /home/<USER>/projects/matomo-analytics/postgresql.conf
-touch /home/<USER>/projects/matomo-analytics/redis.conf
+touch /home/gespitia/projects/matomo-analytics/.env
+touch /home/gespitia/projects/matomo-analytics/docker-compose.yml
+touch /home/gespitia/projects/matomo-analytics/docker-compose.override.yml
+touch /home/gespitia/projects/matomo-analytics/postgresql.conf
+touch /home/gespitia/projects/matomo-analytics/redis.conf
 
 # 3. Create scripts
-touch /home/<USER>/projects/matomo-analytics/backup-script.sh
-touch /home/<USER>/projects/matomo-analytics/monitor-matomo.sh
+touch /home/gespitia/projects/matomo-analytics/backup-script.sh
+touch /home/gespitia/projects/matomo-analytics/backup-cleanup.sh
+touch /home/gespitia/projects/matomo-analytics/monitor-matomo.sh
 
 # 4. Create PostgreSQL init script
-touch /home/<USER>/projects/matomo-analytics/postgres-init/01-init.sql
+touch /home/gespitia/projects/matomo-analytics/postgres-init/01-init.sql
 
 # 5. Set permissions for scripts
-chmod +x /home/<USER>/projects/matomo-analytics/backup-script.sh
-chmod +x /home/<USER>/projects/matomo-analytics/monitor-matomo.sh
+chmod +x /home/gespitia/projects/matomo-analytics/backup-script.sh
+chmod +x /home/gespitia/projects/matomo-analytics/monitor-matomo.sh
 
 # 6. System files (require sudo)
 sudo touch /etc/nginx/sites-available/matomo-analytics
@@ -192,8 +217,8 @@ sudo touch /etc/systemd/system/matomo-docker.service
 sudo touch /etc/cron.d/matomo
 
 # 7. <YOUR-SITE> integration (files already exist, just need modification)
-# Edit: /home/<USER>/projects/<YOUR-SITE>/config/_default/hugo.toml
-# Edit: /home/<USER>/projects/<YOUR-SITE>/data/seo.yml
+# Edit: /home/gespitia/projects/<YOUR-SITE>/config/_default/hugo.toml
+# Edit: /home/gespitia/projects/<YOUR-SITE>/data/seo.yml
 ```
 
 ```bash
@@ -213,50 +238,41 @@ services:
   matomo:
     image: matomo:5-apache
     restart: unless-stopped
-    # COMMENT: Removed full volume mount to avoid conflicts with specific subfolder mounts
-    # volumes:
-    #   - matomo_data:/var/www/html
     volumes:
-      # Use individual volume binds for clarity and control
       - ./config:/var/www/html/config:rw
       - ./logs:/var/www/html/logs:rw
       - ./plugins:/var/www/html/plugins:rw
     environment:
       - MATOMO_DATABASE_HOST=db
-      - MATOMO_DATABASE_ADAPTER=pdo_pgsql
+      - MATOMO_DATABASE_ADAPTER=PDO\PGSQL
       - MATOMO_DATABASE_TABLES_PREFIX=matomo_
       - MATOMO_DATABASE_USERNAME=matomo
-      - MATOMO_DATABASE_PASSWORD=${DB_PASSWORD}
+      - MATOMO_DATABASE_PASSWORD=${DB_PASSWORD}       # ensure DB_PASSWORD is set in .env
       - MATOMO_DATABASE_DBNAME=matomo
       - MATOMO_DATABASE_PORT=5432
-      - MATOMO_GENERAL_SALT=${MATOMO_SALT}
-      # MODIFY: Adjust based on your traffic
-      - PHP_MEMORY_LIMIT=768M  # Increase from 512M
+      - MATOMO_GENERAL_SALT=${MATOMO_SALT}            # ensure MATOMO_SALT is set in .env
+      - PHP_MEMORY_LIMIT=768M
       - PHP_MAX_EXECUTION_TIME=300
       - PHP_UPLOAD_MAX_FILESIZE=50M
       - PHP_POST_MAX_SIZE=50M
-      # ADD: These missing critical settings
       - MATOMO_ASSUME_SECURE_PROTOCOL=1
       - MATOMO_FORCE_SSL=1
       - MATOMO_PROXY_CLIENT_HEADERS=HTTP_X_FORWARDED_FOR,HTTP_X_REAL_IP
       - MATOMO_PROXY_HOST_HEADERS=HTTP_X_FORWARDED_HOST
-      - MATOMO_TRUSTED_HOSTS=analytics.yourdomain.com,localhost # <<--- Adjust this
-      # MODIFY: Redis connection details
-      - MATOMO_CACHE_BACKEND=redis
-      - MATOMO_CACHE_HOST=redis
-      - MATOMO_CACHE_PORT=6379
-      - MATOMO_CACHE_DATABASE=14
+      - MATOMO_TRUSTED_HOSTS=analytics.yourdomain.com,localhost # ! Modify this line with your domain
     ports:
       - "127.0.0.1:8080:80"
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
-      # FIX: Simpler and more robust healthcheck
-      test: ["CMD-SHELL", "curl -fs http://localhost || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://localhost/matomo.php || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
     networks:
       - matomo_network
     deploy:
@@ -268,19 +284,16 @@ services:
           memory: 512M
           cpus: '0.25'
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: 10m
+        max-file: '3'
 
   db:
     image: postgres:16-alpine
     restart: unless-stopped
     volumes:
-      # COMMENT: Removed PGDATA mismatch
-      # - db_data:/var/lib/postgresql/data
-      # CHANGED: Explicit pgdata subfolder for clarity with PGDATA
-      - db_data:/var/lib/postgresql/data/pgdata
+      - db_data:/var/lib/postgresql/data
       - ./postgres-init:/docker-entrypoint-initdb.d:ro
       - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
     environment:
@@ -288,19 +301,16 @@ services:
       - POSTGRES_USER=matomo
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      # ADD: PostgreSQL performance tuning
-      - POSTGRES_SHARED_BUFFERS=128MB
-      - POSTGRES_MAX_CONNECTIONS=100
     command:
       - postgres
       - -c
       - config_file=/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U matomo -d matomo"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - matomo_network
     deploy:
@@ -309,23 +319,23 @@ services:
           memory: 512M
           cpus: '0.5'
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: 10m
+        max-file: '3'
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
     volumes:
       - redis_data:/data
-      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
-    command: redis-server /usr/local/etc/redis/redis.conf
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
+      interval: 10s
+      timeout: 5s
       retries: 3
+      start_period: 10s
     networks:
       - matomo_network
     deploy:
@@ -334,10 +344,10 @@ services:
           memory: 256M
           cpus: '0.25'
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: 10m
+        max-file: '3'
 
   db-backup:
     image: postgres:16-alpine
@@ -345,16 +355,15 @@ services:
     volumes:
       - ./backups:/backups
       - ./backup-script.sh:/backup-script.sh:ro
-      # ADD: Backup retention script
       - ./backup-cleanup.sh:/backup-cleanup.sh:ro
     environment:
       - PGPASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=matomo
       - POSTGRES_USER=matomo
       - POSTGRES_HOST=db
-      # ADD: Backup configuration
       - BACKUP_RETENTION_DAYS=30
       - BACKUP_COMPRESSION=gzip
+      - TZ=Europe/Madrid                             # ensure cron runs at local times
     command: >
       sh -c "
         apk add --no-cache dcron gzip &&
@@ -368,8 +377,6 @@ services:
       - matomo_network
 
 volumes:
-  # COMMENT: Removed matomo_data volume because full HTML path is no longer mounted
-  # matomo_data:
   db_data:
   redis_data:
 
@@ -377,10 +384,98 @@ networks:
   matomo_network:
     driver: bridge
 
-# ADD: Override file for development
-# Create docker-compose.override.yml for development settings
 ```
 </details>
+
+### analytics-proxy.conf
+Handles external web traffic on port 80. Forwards requests to your Dockerized Matomo instance. Sets the proper headers that Matomo expects when behind a proxy.
+
+**Suggested File Location:** <details> <summary><code>/home/&lt;USER&gt;/projects/matomo-analytics/analytics-proxy.conf</code></summary>
+
+```conf
+server {
+    listen 80;
+    server_name analytics.your-domain.com;  # Change to your subdomain
+    
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        
+        # Handle WebSocket connections
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        
+        # Additional headers for Matomo
+        proxy_buffering off;
+        proxy_request_buffering off;
+    }
+}
+```
+
+
+## Understanding the Network Setup (Simple Explanation)
+
+### What are Ports?
+Think of your server like a building with many doors. Each door has a number (the port):
+- **Port 80** = Main entrance (where websites normally live)
+- **Port 8080** = Back door (where your Matomo container runs)
+- **Port 443** = Secure entrance (for HTTPS websites)
+
+### What is a Proxy?
+A proxy is like a receptionist at the main entrance:
+1. Visitors come to your main door (Port 80)
+2. The receptionist (Nginx proxy) takes their request
+3. The receptionist walks to the back door (Port 8080) where Matomo lives
+4. Gets the response from Matomo
+5. Brings it back to the visitor at the main entrance
+
+### Why Do You Need This?
+```
+Internet → Port 80 (Nginx) → Port 8080 (Docker Matomo)
+```
+
+**Without proxy:** Visitors would need to type `yoursite.com:8080` (ugly and confusing)
+**With proxy:** Visitors type `analytics.yoursite.com` (clean and professional)
+
+### Your Current Setup
+- **Docker Matomo** runs on `127.0.0.1:8080` (only accessible from your server)
+- **Nginx proxy** runs on port 80 (accessible from internet)
+- **Domain** `analytics.krotanote.xyz` points to your server's IP address
+
+### analytics-proxy.conf
+**File Location:** `/home/<USER>/projects/matomo-analytics/analytics-proxy.conf`
+
+```nginx
+server {
+    listen 80;
+    server_name analytics.your-domain.com;  # Change to your subdomain
+    
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        
+        # Handle WebSocket connections
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        
+        # Additional headers for Matomo
+        proxy_buffering off;
+        proxy_request_buffering off;
+    }
+}
+```
+</details>
+
 
 ### Backup Strategy
 **Suggested File Location:** <details> <summary><code>/home/&lt;USER&gt;/projects/matomo-analytics/docker-compose.override.yml</code></summary>
@@ -391,21 +486,21 @@ version: '3.8'
 services:
   matomo:
     # Development settings
-    ports:
-      - "8080:80"  # Expose for development
     environment:
-      - MATOMO_DEV_MODE=1
-      - PHP_DISPLAY_ERRORS=1
+      - MATOMO_DEV_MODE=1             # Enable Matomo developer mode
+      - PHP_DISPLAY_ERRORS=1          # Show PHP errors in browser
     volumes:
-      # Add development tools
+      # Add development plugins or tools
       - ./dev-plugins:/var/www/html/plugins/dev:rw
+    ports:
+      - "8081:80"  # Use a different port for local development
 
   db:
     # Development database settings
     environment:
-      - POSTGRES_LOG_STATEMENT=all
+      - POSTGRES_LOG_STATEMENT=all    # Log all SQL statements for debugging
     ports:
-      - "5432:5432"  # Expose for development tools
+      - "5434:5432"  # Use a different port for PostgreSQL development
 ```
 </details>
 
@@ -959,7 +1054,7 @@ server {
 }
 ```
 
-4. **Complete the web installation**
+4. **Complete the web installation
 
 ## Configuration Best Practices
 
@@ -1096,3 +1191,81 @@ php console core:update
 ## Conclusion
 
 With Matomo properly set up, you gain powerful analytics capabilities while maintaining full control over your data and respecting visitor privacy. The integration with PKB-theme makes the setup process straightforward, allowing you to focus on analyzing data and improving your site rather than managing infrastructure.
+
+## Data Flow: Internet to Database
+
+```mermaid
+flowchart TD
+    VISITOR[👤 Website Visitor<br/>analytics.krotanote.xyz]
+    DNS[🔗 DNS Resolution<br/>Domain → Server IP]
+    NGINX[📡 Nginx Reverse Proxy<br/>Port 80/443 → Port 8080]
+    MATOMO[🔧 Matomo Container<br/>PHP/Apache on Port 8080]
+    REDIS[⚡ Redis Container<br/>Cache Layer]
+    DATABASE[🗄️ PostgreSQL Container<br/>Data Storage]
+    
+    CONFIG[⚙️ config/ folder<br/>Matomo Settings]
+    LOGS[📋 logs/ folder<br/>Application Logs]
+    PLUGINS[🔌 plugins/ folder<br/>Plugin Code]
+    BACKUPS[💾 backups/ folder<br/>Database Backups]
+
+    VISITOR -->|1. Request| DNS
+    DNS -->|2. Route| NGINX
+    NGINX -->|3. Proxy| MATOMO
+    MATOMO -->|4. Cache| REDIS
+    MATOMO -->|5. Store Data| DATABASE
+    MATOMO -->|6. Read Config| CONFIG
+    MATOMO -->|7. Write Logs| LOGS
+    MATOMO -->|8. Load Plugins| PLUGINS
+    DATABASE -->|9. Backup| BACKUPS
+```
+
+### Understanding the Data Flow
+
+1. **Visitor Request**: User types `analytics.krotanote.xyz` in browser
+2. **DNS Resolution**: Domain points to your server's IP address  
+3. **Reverse Proxy**: Nginx receives request on port 80/443, forwards to Docker container on port 8080
+4. **Matomo Processing**: Container serves the Matomo interface and processes tracking data
+5. **Caching Layer**: Redis stores frequently accessed data for performance
+6. **Database Storage**: PostgreSQL stores all visitor tracking data permanently
+7. **Configuration**: Matomo reads settings from mounted config files
+8. **Logging**: Application writes access/error logs to mounted log directory
+9. **Plugin System**: Custom plugins loaded from mounted plugins directory
+10. **Backup Process**: Automated backups save database to mounted backup directory
+
+### Data Path Summary
+```
+Internet → DNS → Nginx (Port 80/443) → Docker Matomo (Port 8080) → Redis + PostgreSQL
+                                    ↓
+                              Host File System (config/, logs/, plugins/, backups/)
+```
+
+This flow shows how your containerized setup isolates services while maintaining data persistence through volume mounts.
+    %% Styling
+    classDef visitor fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef network fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef container fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef storage fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef data fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class VISITOR,BROWSER visitor
+    class DNS,NGINX network
+    class MATOMO_CONTAINER,REDIS_CONTAINER,DB_CONTAINER container
+    class CONFIG_FILES,LOG_FILES,PLUGIN_FILES storage
+    class BACKUP_FILES data
+```
+
+### Understanding the Data Flow
+
+1. **Visitor Request**: User types `analytics.krotanote.xyz` in browser
+2. **DNS Resolution**: Domain points to your server's IP address
+3. **Reverse Proxy**: Nginx receives request on port 80/443, forwards to Docker container on port 8080
+4. **Matomo Response**: Container serves the Matomo interface with tracking JavaScript
+5. **JavaScript Execution**: Browser runs tracking code, sends analytics data back
+6. **Caching Layer**: Redis stores frequently accessed data for performance
+7. **Database Storage**: PostgreSQL stores all visitor tracking data permanently
+8. **Configuration**: Matomo reads settings from mounted config files
+9. **Logging**: Application writes access/error logs to mounted log directory
+10. **Plugin System**: Custom plugins loaded from mounted plugins directory
+11. **Backup Process**: Automated backups save database to mounted backup directory
+
+This flow shows how your containerized setup isolates services while maintaining data persistence through volume mounts.
