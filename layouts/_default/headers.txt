@@ -1,0 +1,9 @@
+/*
+  # Content Security Policy to allow Matomo analytics
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' {{ .Site.BaseURL | strings.TrimSuffix "/" }}/analytics http://localhost:8080; connect-src 'self' {{ .Site.BaseURL | strings.TrimSuffix "/" }}/analytics http://localhost:8080; img-src 'self' data: {{ .Site.BaseURL | strings.TrimSuffix "/" }}/analytics http://localhost:8080; style-src 'self' 'unsafe-inline'; font-src 'self' data:
+  
+  # Security headers
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin

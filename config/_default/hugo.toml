@@ -413,11 +413,25 @@ enableRobotsTXT = true
     root = false
     ugly = false
     weight = 0
+  [outputFormats.headers]
+    baseName = '_headers'
+    isHTML = false
+    isPlainText = true
+    mediaType = 'text/plain'
+    noUgly = false
+    notAlternative = true
+    path = ''
+    permalinkable = false
+    protocol = ''
+    rel = 'alternate'
+    root = true
+    ugly = false
+    weight = 0
 
 [outputs]
   # JSON output is required for search functionality
   # The search index (/index.json) includes only pages from sections defined in params.taxonomies.mainSections
-  home = ['HTML', 'RSS', 'JSON']  # Ensure JSON is included for search
+  home = ['HTML', 'RSS', 'JSON', 'headers']
   page = ['HTML', 'JSON'] # needed for portfolio.json
   rss = ['RSS']
   section = ['HTML', 'RSS', 'JSON']
