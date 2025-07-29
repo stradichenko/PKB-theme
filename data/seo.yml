@@ -168,11 +168,11 @@ monitoring:
 analytics:
   # Analytics configuration - domains will be resolved dynamically
   matomo:
-    enabled: false # Set to true to enable Matomo analytics
-    subdomain: "analytics" # Will create analytics.{your-domain.com}
-    site_id: "" # CHANGE: Your Matomo site ID
+    enabled: true
+    subdomain: "analytics"
+    site_id: "1"  # Your actual site ID
     # Optional: Override with custom domain if not using subdomain pattern
-    custom_host: "" # CHANGE: Only use if you have a custom analytics domain
+    custom_host: "http://localhost:8080"  # If using localhost
   google_analytics: "" # CHANGE: Your Google Analytics tracking ID
   google_tag_manager: "" # CHANGE: Your Google Tag Manager ID
   google_search_console: "" # CHANGE: Your Search Console property ID
