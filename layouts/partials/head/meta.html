@@ -4,7 +4,25 @@
 <meta name="format-detection" content="telephone=no">
 
 <!-- Content Security Policy -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://d3js.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self';">
+{{ $analyticsHost := "" }}
+{{ if site.Data.seo.analytics.matomo.custom_host }}
+  {{ $analyticsHost = site.Data.seo.analytics.matomo.custom_host }}
+{{ else if site.Data.seo.analytics.matomo.enabled }}
+  {{ $baseURL := urls.Parse site.BaseURL }}
+  {{ $subdomain := site.Data.seo.security.analytics_subdomain | default "analytics" }}
+  {{ $analyticsHost = printf "https://%s.%s" $subdomain $baseURL.Host }}
+{{ end }}
+
+{{ $cspBase := site.Data.seo.security.content_security_policy_base | default "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://d3js.org http://localhost:8080; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http://localhost:8080; font-src 'self' https:; connect-src 'self' http://localhost:8080; frame-src 'self'; worker-src 'self'; media-src 'self'" }}
+
+{{ if $analyticsHost }}
+  {{ $cspBase = replace $cspBase "script-src 'self' 'unsafe-inline'" (printf "script-src 'self' 'unsafe-inline' %s" $analyticsHost) }}
+  {{ $cspBase = replace $cspBase "img-src 'self' data: https:" (printf "img-src 'self' data: https: %s" $analyticsHost) }}
+  {{ $cspBase = replace $cspBase "connect-src 'self'" (printf "connect-src 'self' %s" $analyticsHost) }}
+  {{ $cspBase = replace $cspBase "frame-src 'self'" (printf "frame-src 'self' %s" $analyticsHost) }}
+{{ end }}
+
+<meta http-equiv="Content-Security-Policy" content="{{ $cspBase }}">
 
 {{/* Title with fallback logic */}}
 {{ if .IsHome }}

@@ -7,26 +7,30 @@
       _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
       _paq.push(['trackPageView']);
       _paq.push(['enableLinkTracking']);
+      
+      // CORS-friendly configuration
+      _paq.push(['setRequestMethod', 'POST']);
+      _paq.push(['enableCrossDomainLinking']);
+      
       (function() {
         var u="{{ .matomoURL | default "//localhost:8080/" }}";
         _paq.push(['setTrackerUrl', u+'matomo.php']);
         _paq.push(['setSiteId', '{{ .matomoSiteId | default "1" }}']);
         var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        g.async=true; 
+        g.src=u+'matomo.js'; 
+        g.crossOrigin = 'anonymous';
+        g.onerror = function() {
+          console.warn('Matomo: Script loading failed, attempting fallback tracking');
+          window.matomoFallbackTracking();
+        };
+        s.parentNode.insertBefore(g,s);
       })();
-    </script>
-    <!-- End Matomo Code -->
-
-    <!-- CSP-Friendly Matomo Tracking Fallback -->
-    <script>
-    // Check if standard Matomo tracking failed due to CSP
-    window.addEventListener('load', function() {
-      // If _paq is defined but matomo.js failed to load, use fallback
-      if (typeof _paq !== 'undefined' && !window.Matomo) {
-        console.warn('Matomo: Standard tracking blocked, using CSP-friendly fallback');
-        
-        // Manual tracking without loading external scripts
-        fetch('{{ .matomoURL }}matomo.php?' + new URLSearchParams({
+      
+      // CORS-aware fallback tracking function
+      window.matomoFallbackTracking = function() {
+        var trackingUrl = '{{ .matomoURL }}matomo.php';
+        var params = new URLSearchParams({
           'idsite': '{{ .matomoSiteId }}',
           'rec': '1',
           'action_name': document.title,
@@ -36,22 +40,37 @@
           'h': new Date().getHours(),
           'm': new Date().getMinutes(),
           's': new Date().getSeconds()
-        }), {
+        });
+        
+        // Try fetch with CORS
+        fetch(trackingUrl + '?' + params.toString(), {
           method: 'GET',
-          mode: 'no-cors'
+          mode: 'cors',
+          credentials: 'omit',
+          headers: {
+            'Accept': 'image/gif, image/png, */*'
+          }
         }).catch(function() {
-          // Ultimate fallback: use image pixel for tracking
+          // Final fallback: pixel tracking
           var img = document.createElement('img');
-          img.src = '{{ .matomoURL }}matomo.php?idsite={{ .matomoSiteId }}&rec=1&action_name=' + 
-                    encodeURIComponent(document.title) + '&url=' + 
-                    encodeURIComponent(window.location.href) + '&rand=' + 
-                    Math.floor(Math.random() * 1000000);
+          img.src = trackingUrl + '?' + params.toString();
           img.style.position = 'absolute';
           img.style.left = '-1000px';
           img.style.width = '1px';
           img.style.height = '1px';
+          img.crossOrigin = 'anonymous';
           document.body.appendChild(img);
         });
+      };
+    </script>
+    
+    <!-- CSP-Friendly Matomo Tracking Fallback -->
+    <script>
+    // Enhanced CORS error handling
+    window.addEventListener('load', function() {
+      if (typeof _paq !== 'undefined' && !window.Matomo) {
+        console.warn('Matomo: Standard tracking blocked, using CORS-friendly fallback');
+        window.matomoFallbackTracking();
       }
     });
     </script>
