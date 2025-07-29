@@ -32,7 +32,7 @@ meta:
 
 # Security and Privacy Headers
 security:
-  content_security_policy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'" # CHANGE: Modify based on your external resources
+  content_security_policy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com http://localhost:8080; img-src 'self' data: http://localhost:8080; style-src 'self' 'unsafe-inline'" # CHANGE: Modify based on your external resources
   referrer_policy: "strict-origin-when-cross-origin"
   x_frame_options: "DENY"
   x_content_type_options: "nosniff"
