@@ -1,9 +1,0 @@
-{{- with .Site.Params.analytics -}}
-  {{- if .shynet -}}
-    <!-- Shynet Analytics -->
-    <noscript>
-      <img src="{{ .shynetURL }}/pixel.gif?uuid={{ .shynetUUID }}">
-    </noscript>
-    <script async defer src="{{ .shynetURL }}/script.js?uuid={{ .shynetUUID }}"></script>
-  {{- end -}}
-{{- end -}}

@@ -28,9 +28,6 @@
       <meta name="yandex-verification" content="{{ . }}">
     {{ end }}
 
-    <!-- Include analytics scripts in head -->
-    {{ partial "analytics.html" . }}
-
     <!-- Main JavaScript (minified & fingerprinted) -->
     {{ with resources.Get "js/main.js" }}
       {{ $mainJS := . | js.Build | minify | fingerprint }}

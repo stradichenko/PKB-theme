@@ -45,6 +45,9 @@
   {{ partial "head.html" . }}
   {{ block "head" . }}{{ end }}
 
+  <!-- Include analytics scripts in head -->
+  {{ partial "analytics.html" . }}
+
   {{ if .Param "math" }}
     {{ partial "math.html" . }}
   {{ end }}
