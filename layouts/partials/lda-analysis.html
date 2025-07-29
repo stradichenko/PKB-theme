@@ -3,52 +3,8 @@
     <h2 class="lda-title">Topic Analysis (LDA)</h2>
     
     <div class="lda-container">
-      <div class="lda-graph-wrapper">
-        <div class="lda-graph">
-          <h3>Topic Distribution</h3>
-          <div id="lda-chart" class="chart-responsive">
-            <!-- Remove hardcoded sample bars - they're immediately replaced by JavaScript -->
-            <div id="lda-chart-bars" class="lda-chart-bars">
-              <!-- Chart bars will be populated by JavaScript -->
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="lda-table-wrapper">
-        <div class="lda-table">
-          <h3>Topic Details</h3>
-          <div id="topic-list" class="topic-list responsive-table">
-            <div class="lda-loading">
-              <p>Analyzing content using GPU-accelerated LDA...</p>
-            </div>
-          </div>
-          <!-- Tooltip container moved outside of table wrapper for better positioning -->
-        </div>
-      </div>
     </div>
     
-    <!-- Tooltip container - positioned at component level for better accessibility -->
-    <div id="topic-tooltip" class="topic-tooltip">
-      <div class="tooltip-content">
-        <h4 class="tooltip-title"></h4>
-        <div class="tooltip-keywords"></div>
-        <div class="tooltip-documents"></div>
-        <div class="tooltip-confidence"></div>
-      </div>
-    </div>
-    
-    <!-- Mobile-specific controls -->
-    <div class="lda-mobile-controls">
-      <button id="toggle-view" class="btn-toggle-view">
-        <span class="toggle-text">Switch to Table View</span>
-      </button>
-    </div>
-    
-    <div class="lda-explanation">
-      <p>This visualization uses Latent Dirichlet Allocation (LDA) to discover topics in the content. The analysis is performed using GPU acceleration via TensorFlow.js for optimal performance.</p>
-      <p class="mobile-hint">On mobile: tap topics for details, use the toggle button to switch between chart and table views.</p>
-    </div>
   </div>
 </div>
 
@@ -57,14 +13,6 @@
 [
   {{ $first := true }}
   {{ range where .Site.Pages "Section" "in" (slice "posts" "docs") }}
-    {{ if not $first }},{{ end }}
-    {
-      "content": {{ printf "%s %s %s" .Title .Description .Plain | jsonify }},
-      "type": {{ .Section | jsonify }},
-      "title": {{ .Title | jsonify }},
-      "url": {{ .RelPermalink | jsonify }},
-      "date": {{ .Date.Format "2006-01-02" | jsonify }}
-    }
     {{ $first = false }}
   {{ end }}
 ]
@@ -86,18 +34,6 @@
   let showingTable = false;
   
   document.addEventListener('DOMContentLoaded', function() {
-    // Cache elements once
-    toggleBtn = document.getElementById('toggle-view');
-    container = document.querySelector('.lda-container');
-    toggleText = document.querySelector('.toggle-text');
-    tooltip = document.getElementById('topic-tooltip');
-    
-    // Initialize mobile toggle functionality
-    if (toggleBtn && container && toggleText) {
-      toggleBtn.addEventListener('click', handleToggleView);
-    }
-    
-    // Initialize tooltip functions for LDA script
     initializeTooltipFunctions();
   });
   
@@ -114,57 +50,121 @@
   }
   
   function initializeTooltipFunctions() {
-    if (!tooltip) return;
-    
-    // Global tooltip functions for LDA script
     window.showTopicTooltip = function(event, topicData) {
-      if (!tooltip || !topicData) return;
+      const tooltip = document.getElementById('topic-tooltip');
+      if (!tooltip) return;
       
-      // Update tooltip content
-      const titleEl = tooltip.querySelector('.tooltip-title');
-      const keywordsEl = tooltip.querySelector('.tooltip-keywords');
-      const documentsEl = tooltip.querySelector('.tooltip-documents');
-      const confidenceEl = tooltip.querySelector('.tooltip-confidence');
-      
-      if (titleEl) titleEl.textContent = `Topic ${topicData.id}: ${topicData.label}`;
-      
-      if (keywordsEl && topicData.keywords) {
-        keywordsEl.innerHTML = topicData.keywords
-          .map(k => `<span class="keyword">${k}</span>`)
-          .join('');
-      }
-      
-      if (documentsEl) {
-        documentsEl.textContent = `${topicData.documentCount} documents • ${topicData.percentage}%`;
-      }
-      
-      if (confidenceEl) {
-        confidenceEl.textContent = `Confidence: ${topicData.confidence}%`;
-      }
-      
-      // Position tooltip
+      // Calculate position
       const rect = event.target.getBoundingClientRect();
-      const tooltipRect = tooltip.getBoundingClientRect();
+      const top = rect.bottom + window.scrollY + 10;
       
-      // Calculate position with viewport bounds checking
-      let left = rect.left;
-      let top = rect.top - tooltipRect.height - 10;
-      
-      // Adjust if tooltip would go off-screen
-      if (left + tooltipRect.width > window.innerWidth) {
-        left = window.innerWidth - tooltipRect.width - 10;
-      }
-      if (left < 10) left = 10;
-      
-      if (top < 10) {
-        top = rect.bottom + 10;
-      }
-      
-      tooltip.style.left = left + 'px';
       tooltip.style.top = top + 'px';
       tooltip.classList.add('visible');
     };
     
+    window.hideTopicTooltip = function() {
+      const tooltip = document.getElementById('topic-tooltip');
+      if (tooltip) {
+        tooltip.classList.remove('visible');
+      }
+    };
+    
+    // Hide tooltip when clicking elsewhere
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.topic-bar-container')) {
+        window.hideTopicTooltip();
+      }
+    });
+  }
+
+  // Initialize tooltip functions immediately
+  initializeTooltipFunctions();
+})();
+</script>
+
+<!-- Load external libraries with proper async loading and deduplication -->
+<script>
+(function() {
+  'use strict';
+  
+  // Global library loading state
+  window.PKBLibraryLoader = window.PKBLibraryLoader || {
+    tf: { loaded: false, loading: false, callbacks: [] },
+    d3: { loaded: false, loading: false, callbacks: [] }
+  };
+  
+  function loadLibrary(name, src, callback) {
+    const lib = window.PKBLibraryLoader[name];
+    
+    // If already loaded
+    if (lib.loaded || window[name]) {
+      lib.loaded = true;
+      if (callback) callback();
+      return;
+    }
+    
+    // Add to callback queue
+    if (callback) lib.callbacks.push(callback);
+    
+    // If already loading, don't load again
+    if (lib.loading) return;
+    
+    lib.loading = true;
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    
+    script.onload = function() {
+      lib.loaded = true;
+      lib.loading = false;
+      // Execute all callbacks
+      lib.callbacks.forEach(cb => cb());
+      lib.callbacks = [];
+    };
+    
+    script.onerror = function() {
+      console.warn(`Failed to load ${name} from ${src}`);
+      lib.loading = false;
+      // Still execute callbacks to prevent hanging
+      lib.callbacks.forEach(cb => cb());
+      lib.callbacks = [];
+    };
+    
+    document.head.appendChild(script);
+  }
+  
+  function initializeLDAAnalysis() {
+    // Only initialize if both libraries are available
+    if ((window.tf || window.PKBLibraryLoader.tf.loaded) && 
+        (window.d3 || window.PKBLibraryLoader.d3.loaded)) {
+      if (typeof window.initLDAAnalysis === 'function') {
+        window.initLDAAnalysis();
+      }
+    }
+  }
+  
+  // Load TensorFlow.js first, then D3.js
+  loadLibrary('tf', 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js', function() {
+    loadLibrary('d3', 'https://d3js.org/d3.v7.min.js', initializeLDAAnalysis);
+  });
+})();
+</script>
+
+<!-- Load LDA analysis script -->
+{{ with resources.Get "js/lda-analysis.js" }}
+  {{ $ldaJS := . | js.Build | minify | fingerprint }}
+  <script src="{{ $ldaJS.RelPermalink }}" integrity="{{ $ldaJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+{{ end }}
+    }
+  }
+})();
+</script>
+
+<!-- Load LDA analysis script -->
+{{ with resources.Get "js/lda-analysis.js" }}
+  {{ $ldaJS := . | js.Build | minify | fingerprint }}
+  <script src="{{ $ldaJS.RelPermalink }}" integrity="{{ $ldaJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}
     window.hideTopicTooltip = function() {
       if (tooltip) {
         tooltip.classList.remove('visible');

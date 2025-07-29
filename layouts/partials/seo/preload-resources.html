@@ -9,19 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-{{/* Preload critical JavaScript without integrity mismatches */}}
-{{ $mainJS := resources.Get "js/main.js" }}
-{{ if $mainJS }}
-  {{ $mainJSMinified := $mainJS | minify }}
-  <link rel="preload" href="{{ $mainJSMinified.RelPermalink }}" as="script">
-{{ end }}
-
-{{ $themeToggleJS := resources.Get "js/theme-toggle.js" }}
-{{ if $themeToggleJS }}
-  {{ $themeToggleJSMinified := $themeToggleJS | minify }}
-  <link rel="preload" href="{{ $themeToggleJSMinified.RelPermalink }}" as="script">
-{{ end }}
-
 {{/* Preload critical CSS - only if enabled and CSS exists */}}
 {{ if site.Params.seo.critical_css }}
   {{ $mainCSS := resources.Get "css/main.css" }}
@@ -80,17 +67,6 @@
 {{/* CDN prefetch only if needed */}}
 <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
 <link rel="dns-prefetch" href="//d3js.org">
-{{ if $mainJS }}
-  {{ $mainMin := $mainJS | js.Build | minify | fingerprint }}
-  <link rel="preload" href="{{ $mainMin.RelPermalink }}" as="script">
-{{ end }}
-
-{{/* Preload theme toggle for better UX */}}
-{{ $themeJS := resources.Get "js/theme-toggle.js" }}
-{{ if $themeJS }}
-  {{ $themeMin := $themeJS | minify | fingerprint }}
-  <link rel="preload" href="{{ $themeMin.RelPermalink }}" as="script">
-{{ end }}
 
 {{/* Conditional preloads based on page type */}}
 {{ if eq .Type "posts" }}

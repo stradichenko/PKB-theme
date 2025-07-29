@@ -247,15 +247,35 @@ function parseBibTeXEntry(entry) {
 
 async function fetchBibTeXFile(filePath) {
   try {
-    // Get base URL from the document
-    const baseURL = document.documentElement.getAttribute('data-base-url') || '';
-    // Ensure filePath starts with /
-    const normalizedPath = filePath.startsWith('/') ? filePath : `/${filePath}`;
-    // Combine base URL with file path
-    const fullPath = `${baseURL}${normalizedPath}`;
+    // Improved base URL detection
+    const baseURL = document.documentElement.getAttribute('data-base-url') || 
+                   document.querySelector('meta[name="base-url"]')?.content ||
+                   window.location.origin;
     
-    const response = await fetch(fullPath);
-    if (!response.ok) throw new Error(`Failed to fetch BibTeX file: ${response.statusText}`);
+    // Handle relative paths more robustly
+    let normalizedPath = filePath;
+    if (!filePath.startsWith('http') && !filePath.startsWith('/')) {
+      normalizedPath = `/${filePath}`;
+    }
+    
+    // Construct full URL, avoiding double slashes
+    const fullPath = filePath.startsWith('http') ? 
+                    filePath : 
+                    `${baseURL.replace(/\/$/, '')}${normalizedPath}`;
+    
+    console.log(`Fetching BibTeX from: ${fullPath}`);
+    
+    const response = await fetch(fullPath, {
+      cache: 'default',
+      headers: {
+        'Accept': 'text/plain,text/x-bibtex,*/*'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch BibTeX file: ${response.status} ${response.statusText}`);
+    }
+    
     return await response.text();
   } catch (error) {
     console.error('Error loading BibTeX file:', error);

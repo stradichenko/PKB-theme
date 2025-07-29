@@ -270,13 +270,30 @@ const domUtils = {
   // Batch DOM reads and writes
   batchDOMOperations(reads = [], writes = []) {
     return new Promise(resolve => {
-      requestIdleCallback(() => {
+      // Fallback for browsers without requestIdleCallback
+      const idleCallback = window.requestIdleCallback || 
+                          ((cb) => setTimeout(cb, 16));
+      
+      idleCallback(() => {
         // Batch all reads first
-        const readResults = reads.map(read => read());
+        const readResults = reads.map(read => {
+          try {
+            return read();
+          } catch (error) {
+            console.warn('DOM read operation failed:', error);
+            return null;
+          }
+        });
         
         // Then batch all writes
         requestAnimationFrame(() => {
-          writes.forEach(write => write());
+          writes.forEach(write => {
+            try {
+              write();
+            } catch (error) {
+              console.warn('DOM write operation failed:', error);
+            }
+          });
           resolve(readResults);
         });
       });
@@ -287,59 +304,39 @@ const domUtils = {
   isElementVisible(element, threshold = 0) {
     if (!element || !element.getBoundingClientRect) return false;
     
-    const rect = element.getBoundingClientRect();
-    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-    const windowWidth = window.innerWidth || document.documentElement.clientWidth;
-    
-    return (
-      rect.bottom >= threshold &&
-      rect.right >= threshold &&
-      rect.top <= windowHeight - threshold &&
-      rect.left <= windowWidth - threshold
-    );
+    try {
+      const rect = element.getBoundingClientRect();
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+      
+      return (
+        rect.bottom >= threshold &&
+        rect.right >= threshold &&
+        rect.top <= windowHeight - threshold &&
+        rect.left <= windowWidth - threshold
+      );
+    } catch (error) {
+      console.warn('Visibility check failed:', error);
+      return false;
+    }
   },
   
-  // Intersection Observer with idle callback
-  createIdleObserver(callback, options = {}) {
-    const idleOptions = {
-      threshold: options.threshold || 0.1,
-      rootMargin: options.rootMargin || '50px'
-    };
+  // Intersection Observer with idle callback and fallback
+  createIntersectionObserver(callback, options = {}) {
+    if (!window.IntersectionObserver) {
+      // Fallback for older browsers
+      console.warn('IntersectionObserver not supported, using fallback');
+      return {
+        observe: () => {},
+        unobserve: () => {},
+        disconnect: () => {}
+      };
+    }
     
-    return new IntersectionObserver((entries) => {
-      requestIdleCallback(() => {
-        callback(entries);
-      });
-    }, idleOptions);
-  },
-  
-  // Wait for element to exist
-  waitForElement(selector, timeout = 5000) {
-    return new Promise((resolve, reject) => {
-      const element = document.querySelector(selector);
-      if (element) {
-        resolve(element);
-        return;
-      }
-      
-      const observer = new MutationObserver(() => {
-        const element = document.querySelector(selector);
-        if (element) {
-          observer.disconnect();
-          clearTimeout(timeoutId);
-          resolve(element);
-        }
-      });
-      
-      const timeoutId = setTimeout(() => {
-        observer.disconnect();
-        reject(new Error(`Element ${selector} not found within ${timeout}ms`));
-      }, timeout);
-      
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
+    return new IntersectionObserver(callback, {
+      threshold: 0.1,
+      rootMargin: '50px',
+      ...options
     });
   }
 };
@@ -471,6 +468,9 @@ if (typeof performance !== 'undefined') {
 }
 
 // ✅ Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = window.PKBUtils;
+}
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = window.PKBUtils;
 }

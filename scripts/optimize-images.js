@@ -17,6 +17,9 @@ class ImageOptimizer {
       jpeg: 90,
       png: 90
     };
+    this.processed = 0;
+    this.errors = 0;
+    this.startTime = Date.now();
   }
 
   async optimize() {
@@ -26,26 +29,48 @@ class ImageOptimizer {
       await this.ensureDirectories();
       const images = await this.findImages();
       
-      for (const imagePath of images) {
-        await this.processImage(imagePath);
+      if (images.length === 0) {
+        console.log('📷 No images found to optimize');
+        return;
       }
       
-      console.log(`✅ Optimized ${images.length} images`);
+      console.log(`📷 Found ${images.length} images to process`);
+      
+      // Process images with concurrency control
+      const concurrency = 3; // Limit concurrent processing
+      for (let i = 0; i < images.length; i += concurrency) {
+        const batch = images.slice(i, i + concurrency);
+        await Promise.all(
+          batch.map(imagePath => this.processImageSafely(imagePath))
+        );
+        
+        // Progress update
+        const progress = Math.min(i + concurrency, images.length);
+        console.log(`📈 Progress: ${progress}/${images.length} images processed`);
+      }
+      
+      const duration = (Date.now() - this.startTime) / 1000;
+      console.log(`✅ Optimization complete!`);
+      console.log(`📊 Statistics:`);
+      console.log(`   - Total images: ${images.length}`);
+      console.log(`   - Successfully processed: ${this.processed}`);
+      console.log(`   - Errors: ${this.errors}`);
+      console.log(`   - Duration: ${duration.toFixed(2)}s`);
+      
     } catch (error) {
       console.error('❌ Image optimization failed:', error);
       process.exit(1);
     }
   }
 
-  async ensureDirectories() {
-    if (!fs.existsSync(this.outputDir)) {
-      fs.mkdirSync(this.outputDir, { recursive: true });
+  async processImageSafely(imagePath) {
+    try {
+      await this.processImage(imagePath);
+      this.processed++;
+    } catch (error) {
+      this.errors++;
+      console.error(`❌ Failed to process ${imagePath}:`, error.message);
     }
-  }
-
-  async findImages() {
-    const pattern = path.join(this.sourceDir, '**/*.{jpg,jpeg,png,webp}');
-    return glob.sync(pattern);
   }
 
   async processImage(imagePath) {
@@ -53,26 +78,33 @@ class ImageOptimizer {
     const relativePath = path.relative(this.sourceDir, imagePath);
     const outputBase = path.join(this.outputDir, path.dirname(relativePath), fileName);
     
+    // Ensure output directory exists
+    const outputDir = path.dirname(outputBase);
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    
     console.log(`📸 Processing: ${relativePath}`);
     
-    try {
-      const image = sharp(imagePath);
-      const metadata = await image.metadata();
-      
-      // Generate responsive variants
-      for (const width of this.sizes) {
-        if (width <= metadata.width) {
-          await this.generateVariant(image, outputBase, width);
-        }
-      }
-      
-      // Generate original size if not already covered
-      if (!this.sizes.includes(metadata.width)) {
-        await this.generateVariant(image, outputBase, metadata.width);
-      }
-      
-    } catch (error) {
-      console.error(`❌ Failed to process ${imagePath}:`, error);
+    const image = sharp(imagePath);
+    const metadata = await image.metadata();
+    
+    // Skip if image is too small
+    if (metadata.width < 100 || metadata.height < 100) {
+      console.log(`⚠️  Skipping small image: ${relativePath} (${metadata.width}x${metadata.height})`);
+      return;
+    }
+    
+    // Generate responsive variants
+    const sizesToGenerate = this.sizes.filter(width => width <= metadata.width);
+    
+    // Always include original size if not in sizes array
+    if (!sizesToGenerate.includes(metadata.width)) {
+      sizesToGenerate.push(metadata.width);
+    }
+    
+    for (const width of sizesToGenerate) {
+      await this.generateVariant(image, outputBase, width);
     }
   }
 
@@ -82,15 +114,30 @@ class ImageOptimizer {
       fit: 'inside'
     });
     
-    // Generate WebP
-    await resized
-      .webp({ quality: this.quality.webp })
-      .toFile(`${outputBase}-${width}w.webp`);
+    // Generate WebP with error handling
+    try {
+      await resized
+        .webp({ 
+          quality: this.quality.webp,
+          effort: 4 // Balance between compression and speed
+        })
+        .toFile(`${outputBase}-${width}w.webp`);
+    } catch (error) {
+      console.warn(`⚠️  WebP generation failed for ${outputBase}-${width}w: ${error.message}`);
+    }
     
-    // Generate JPEG fallback
-    await resized
-      .jpeg({ quality: this.quality.jpeg, progressive: true })
-      .toFile(`${outputBase}-${width}w.jpg`);
+    // Generate JPEG fallback with error handling
+    try {
+      await resized
+        .jpeg({ 
+          quality: this.quality.jpeg, 
+          progressive: true,
+          mozjpeg: true // Better compression
+        })
+        .toFile(`${outputBase}-${width}w.jpg`);
+    } catch (error) {
+      console.warn(`⚠️  JPEG generation failed for ${outputBase}-${width}w: ${error.message}`);
+    }
   }
 }
 
