@@ -1,15 +1,25 @@
 {{/* Preload critical fonts - only if enabled and fonts exist */}}
 {{ if and site.Params.seo.preload_fonts site.Params.fonts.preload }}
   {{ range site.Params.fonts.preload }}
-    {{ $fontPath := .url }}
-    {{ if or (fileExists (printf "static%s" $fontPath)) (resources.Get (strings.TrimPrefix "/" $fontPath)) }}
-      <link rel="preload" href="{{ .url }}" as="font" type="{{ .type | default "font/woff2" }}" crossorigin>
-    {{ end }}
+    <link rel="preload" href="{{ .url }}" as="font" type="{{ .type }}" crossorigin>
   {{ end }}
-{{ else }}
-  {{/* Preload Google Fonts if they're being used */}}
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Arial:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+{{ end }}
+
+{{/* Preload external fonts without integrity checks */}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+{{/* Preload critical JavaScript without integrity mismatches */}}
+{{ $mainJS := resources.Get "js/main.js" }}
+{{ if $mainJS }}
+  {{ $mainJSMinified := $mainJS | minify }}
+  <link rel="preload" href="{{ $mainJSMinified.RelPermalink }}" as="script">
+{{ end }}
+
+{{ $themeToggleJS := resources.Get "js/theme-toggle.js" }}
+{{ if $themeToggleJS }}
+  {{ $themeToggleJSMinified := $themeToggleJS | minify }}
+  <link rel="preload" href="{{ $themeToggleJSMinified.RelPermalink }}" as="script">
 {{ end }}
 
 {{/* Preload critical CSS - only if enabled and CSS exists */}}
@@ -70,16 +80,6 @@
 {{/* CDN prefetch only if needed */}}
 <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
 <link rel="dns-prefetch" href="//d3js.org">
-
-{{/* Preload critical JavaScript */}}
-{{ $criticalJS := resources.Get "js/critical.js" }}
-{{ if $criticalJS }}
-  {{ $criticalMin := $criticalJS | js.Build | minify | fingerprint }}
-  <link rel="preload" href="{{ $criticalMin.RelPermalink }}" as="script">
-{{ end }}
-
-{{/* Preload main JavaScript bundle */}}
-{{ $mainJS := resources.Get "js/main.js" }}
 {{ if $mainJS }}
   {{ $mainMin := $mainJS | js.Build | minify | fingerprint }}
   <link rel="preload" href="{{ $mainMin.RelPermalink }}" as="script">

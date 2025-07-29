@@ -44,8 +44,17 @@
         throw new Error('TensorFlow.js not loaded');
       }
 
-      await tf.setBackend('webgl');
-      console.log('TensorFlow.js backend set to WebGL');
+      // Try to set backend, but handle gracefully if it fails
+      try {
+        if (tf.setBackend && typeof tf.setBackend === 'function') {
+          await tf.setBackend('webgl');
+          console.log('TensorFlow.js backend set to WebGL');
+        } else {
+          console.log('TensorFlow.js setBackend not available, using default backend');
+        }
+      } catch (backendError) {
+        console.warn('Failed to set WebGL backend, using default:', backendError);
+      }
       
       // Extract content from embedded data
       const documents = DataManager.getLDADocuments();

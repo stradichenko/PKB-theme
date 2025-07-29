@@ -60,4 +60,12 @@
         <script src="{{ $searchJS.RelPermalink }}" integrity="{{ $searchJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
       {{ end }}
     {{ end }}
+
+    {{/* Load external scripts properly without document.write */}}
+    {{ if .Page.Params.math }}
+      <script async src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+      <script async src="https://d3js.org/d3.v7.min.js"></script>
+    {{ end }}
+
+    {{ partial "analytics/matomo.html" . }}
 </head>
