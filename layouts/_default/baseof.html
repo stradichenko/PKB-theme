@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" class="interaction" data-base-url="{{ .Site.BaseURL }}">
 <head>
+  <meta name="site-base-url" content="{{ .Site.BaseURL | relURL }}">
+
   <!-- 🌑 Critical theme setup (MUST stay in head) -->
   <script>
     (function() {

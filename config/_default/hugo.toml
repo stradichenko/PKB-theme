@@ -435,7 +435,7 @@ enableRobotsTXT = true
   page = ['HTML', 'JSON'] # needed for portfolio.json
   rss = ['RSS']
   section = ['HTML', 'RSS', 'JSON']
-  taxonomy = ['HTML', 'RSS']
+  taxonomy = ['HTML', 'RSS', 'JSON']
   term = ['HTML', 'RSS']
 
 
