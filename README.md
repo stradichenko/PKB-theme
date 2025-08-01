@@ -207,3 +207,9 @@ The footer message can be customized through your site's configuration file with
 
 This will override the theme's default footer message while maintaining upgradeability, as your configuration takes precedence over the theme's default configuration.
 
+---
+
+<div align="center">
+  <img src="https://repobeats.axiom.co/api/embed/00d9b6535bf8f99efb9d450cc1600784b0f60bbd.svg" alt="Repobeats analytics image" />
+</div>
+

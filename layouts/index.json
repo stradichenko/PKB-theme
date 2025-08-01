@@ -1,15 +1,15 @@
-{{- /* filepath: /home/gespitia/projects/PKB-theme/layouts/index.json */ -}}
-{{- $mainSections := .Site.Params.taxonomies.mainSections | default (slice "posts" "docs" "blog") -}}
+{{- $mainSections := .Site.Params.taxonomies.mainSections | default (slice "posts" "docs" "projects") -}}
 {{- $pages := where .Site.RegularPages "Type" "in" $mainSections -}}
 {{- $searchData := slice -}}
+
 {{- range $pages -}}
-  {{- if not .Params.private -}}
+  {{- if and (not .Params.private) (not .Draft) (not .Expired) -}}
     {{- $item := dict 
         "id" (.File.UniqueID | default .RelPermalink)
         "title" .Title
-        "content" (.Plain | htmlUnescape | plainify | truncate 1000)
+        "content" (.Plain | htmlUnescape | plainify | truncate 1500)
         "summary" (.Summary | htmlUnescape | plainify)
-        "url" .RelPermalink
+        "url" .Permalink
         "date" (.Date.Format "2006-01-02")
         "section" .Section
         "type" .Type
@@ -19,6 +19,7 @@
     {{- $searchData = $searchData | append $item -}}
   {{- end -}}
 {{- end -}}
+
 {{- if eq (len $searchData) 0 -}}
   {{- $debugItem := dict 
       "id" "debug-info"
@@ -34,4 +35,5 @@
   -}}
   {{- $searchData = $searchData | append $debugItem -}}
 {{- end -}}
+
 {{- $searchData | jsonify -}}

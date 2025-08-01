@@ -56,7 +56,7 @@ math = true
   # - Contribution calendar - activity tracking based on post creation/modification dates
   # - Content filtering throughout the theme (e.g., recent posts, related content)
   # Common values: ["posts", "docs", "blog", "articles", "projects"]
-  mainSections = ["posts", "portfolio", "docs", "blog", "content"]  # Add more sections as needed
+  mainSections = ["posts", "portfolio", "docs", "articles", "projects"]  # Add more sections as needed
   category = 'categories'
   tag = 'tags'
 
