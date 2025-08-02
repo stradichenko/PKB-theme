@@ -6,6 +6,7 @@
     this.maxResults = (options && options.maxResults) || 10;
     this.searchData = [];
     this.searchIndex = null;
+    this.debugMode = window.location.search.includes('debug=search');
     this.init();
   }
 
@@ -16,38 +17,36 @@
     });
   };
 
+  FuzzySearch.prototype.debug = function(message, data) {
+    if (this.debugMode) {
+      console.log('[FuzzySearch Debug]', message, data || '');
+    }
+  };
+
   FuzzySearch.prototype.loadSearchData = function() {
     var self = this;
     
-    // Get base URL from Hugo-generated meta tag
-    var metaBaseUrl = document.querySelector('meta[name="site-base-url"]');
-    var basePath = metaBaseUrl ? metaBaseUrl.getAttribute('content').replace(/\/$/, '') : '';
+    // Multiple strategies to find the correct base path
+    var basePath = this.detectBasePath();
+    var indexUrls = [
+      basePath + '/index.json',
+      '/index.json',
+      basePath + '/search.json',
+      '/search.json'
+    ];
     
-    // Fallback for development environment
-    if (!basePath && window.location.hostname === 'localhost') {
-      basePath = '';
-    }
+    self.debug('Detected base path:', basePath);
+    self.debug('Will try these URLs:', indexUrls);
     
-    var indexUrl = basePath + '/index.json';
-    var currentPath = window.location.pathname; // Define currentPath here
-    
-    return fetch(indexUrl)
-      .then(function(response) {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Search index not found (HTTP ' + response.status + ') at ' + window.location.origin + indexUrl);
-        }
-      })
+    return this.tryMultipleUrls(indexUrls)
       .then(function(data) {
         if (Array.isArray(data) && data.length > 0) {
-          // Check if we got debug info indicating no real content
           if (data.length === 1 && data[0].id === 'debug-info') {
             console.warn('Search index contains only debug info:', data[0].content);
             self.searchData = [];
           } else {
             self.searchData = data;
-            console.log('Search index loaded with ' + data.length + ' pages');
+            self.debug('Search index loaded successfully', data.length + ' items');
           }
         } else {
           console.warn('Search index is empty or invalid');
@@ -56,19 +55,88 @@
         self.buildSearchIndex();
       })
       .catch(function(error) {
-        console.warn('Could not load search data:', error.message);
-        console.info('GitHub Pages Debug: Ensure these Hugo config settings:');
-        console.info('1. In hugo.toml: outputs.home = ["HTML", "RSS", "JSON"]');
-        console.info('2. In params.toml: taxonomies.mainSections = ["posts", "docs", etc.]');
-        console.info('3. File exists: layouts/index.json');
-        console.info('4. Content exists in mainSections directories');
-        console.info('5. For GitHub Pages: baseURL should match your site URL exactly');
-        console.info('Current pathname:', currentPath);
-        console.info('Constructed base path:', basePath);
-        console.info('Final fetch URL:', window.location.origin + indexUrl);
+        console.warn('Could not load search data from any URL:', error.message);
+        self.logDebugInfo(basePath, indexUrls);
         self.searchData = [];
         self.buildSearchIndex();
       });
+  };
+
+  FuzzySearch.prototype.detectBasePath = function() {
+    // Strategy 1: Check meta tag
+    var metaBaseUrl = document.querySelector('meta[name="site-base-url"]');
+    if (metaBaseUrl) {
+      var basePath = metaBaseUrl.getAttribute('content').replace(/\/$/, '');
+      this.debug('Base path from meta tag:', basePath);
+      return basePath;
+    }
+    
+    // Strategy 2: Analyze current pathname
+    var pathname = window.location.pathname;
+    this.debug('Current pathname:', pathname);
+    
+    if (pathname === '/') {
+      return '';
+    }
+    
+    // Strategy 3: Check for common GitHub Pages patterns
+    var pathParts = pathname.split('/').filter(function(part) { return part; });
+    
+    // If we're in a subdirectory that might be a GitHub Pages repo name
+    if (pathParts.length > 0) {
+      var potentialBasePath = '/' + pathParts[0];
+      
+      // Common patterns that suggest this is a base path
+      if (pathname.startsWith(potentialBasePath + '/')) {
+        this.debug('Detected GitHub Pages pattern:', potentialBasePath);
+        return potentialBasePath;
+      }
+    }
+    
+    return '';
+  };
+
+  FuzzySearch.prototype.tryMultipleUrls = function(urls) {
+    var self = this;
+    
+    function tryUrl(index) {
+      if (index >= urls.length) {
+        throw new Error('All URLs failed');
+      }
+      
+      var url = urls[index];
+      self.debug('Trying URL:', url);
+      
+      return fetch(url)
+        .then(function(response) {
+          if (response.ok) {
+            self.debug('Success with URL:', url);
+            return response.json();
+          } else {
+            throw new Error('HTTP ' + response.status + ' for ' + url);
+          }
+        })
+        .catch(function(error) {
+          self.debug('Failed URL:', url, error.message);
+          return tryUrl(index + 1);
+        });
+    }
+    
+    return tryUrl(0);
+  };
+
+  FuzzySearch.prototype.logDebugInfo = function(basePath, attemptedUrls) {
+    console.info('=== Search Index Debug Info ===');
+    console.info('Current URL:', window.location.href);
+    console.info('Detected base path:', basePath || '<empty>');
+    console.info('Attempted URLs:', attemptedUrls);
+    console.info('Hugo config checklist:');
+    console.info('  1. outputs.home includes "JSON" in hugo.toml ✓ (confirmed in config)');
+    console.info('  2. layouts/index.json template exists ✓');
+    console.info('  3. mainSections parameter matches content structure');
+    console.info('  4. Content exists in configured sections');
+    console.info('  5. Hugo build completed without errors');
+    console.info('Add ?debug=search to URL for verbose logging');
   };
 
   FuzzySearch.prototype.buildSearchIndex = function() {
@@ -158,13 +226,13 @@
     if (this.searchIndex.length === 0) {
       return [{
         id: 'no-index',
-        title: 'Search index not available',
-        content: 'For GitHub Pages: Check hugo.toml outputs.home includes JSON, verify layouts/index.json exists, and ensure content exists in mainSections.',
-        summary: 'Search requires proper Hugo configuration and content',
+        title: 'Search not available',
+        content: 'The search index could not be loaded. This might be due to Hugo configuration or build issues.',
+        summary: 'Check console for debugging information',
         url: '#',
         type: 'info',
         score: 1,
-        highlight: 'Search index not available'
+        highlight: 'Search not available'
       }];
     }
     

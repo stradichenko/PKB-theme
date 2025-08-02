@@ -4,12 +4,18 @@
 
 {{- range $pages -}}
   {{- if and (not .Params.private) (not .Draft) (not .Expired) -}}
+    {{- $content := .Plain | htmlUnescape | plainify -}}
+    {{- $summary := .Summary | htmlUnescape | plainify -}}
+    {{- if not $summary -}}
+      {{- $summary = $content | truncate 200 -}}
+    {{- end -}}
+    
     {{- $item := dict 
         "id" (.File.UniqueID | default .RelPermalink)
         "title" .Title
-        "content" (.Plain | htmlUnescape | plainify | truncate 1500)
-        "summary" (.Summary | htmlUnescape | plainify)
-        "url" .Permalink
+        "content" ($content | truncate 1500)
+        "summary" $summary
+        "url" .RelPermalink
         "date" (.Date.Format "2006-01-02")
         "section" .Section
         "type" .Type
@@ -21,13 +27,21 @@
 {{- end -}}
 
 {{- if eq (len $searchData) 0 -}}
+  {{- $sections := slice -}}
+  {{- range (.Site.RegularPages | group "Section") -}}
+    {{- $sections = $sections | append .Key -}}
+  {{- end -}}
   {{- $debugItem := dict 
       "id" "debug-info"
       "title" "Debug: No content found"
-      "content" (printf "mainSections: %s, totalPages: %d, sections found: %s" ($mainSections | jsonify) (len .Site.RegularPages) (.Site.RegularPages | group "Type" | jsonify))
-      "summary" "Search index is empty - check mainSections configuration"
+      "content" (printf "mainSections: %s, totalPages: %d, regularPages: %d, site sections: %s" 
+                ($mainSections | jsonify) 
+                (len .Site.Pages) 
+                (len .Site.RegularPages)
+                ($sections | jsonify))
+      "summary" "Search index is empty - check mainSections configuration and content"
       "url" "#"
-      "date" now.Format "2006-01-02"
+      "date" (now.Format "2006-01-02")
       "section" "debug"
       "type" "debug"
       "tags" (slice)
