@@ -1,37 +1,17 @@
-{{- /* filepath: /home/gespitia/projects/PKB-theme/layouts/index.json */ -}}
 {{- $mainSections := .Site.Params.taxonomies.mainSections | default (slice "posts" "docs" "blog") -}}
 {{- $pages := where .Site.RegularPages "Type" "in" $mainSections -}}
 {{- $searchData := slice -}}
 {{- range $pages -}}
   {{- if not .Params.private -}}
-    {{- $item := dict 
-        "id" (.File.UniqueID | default .RelPermalink)
+    {{- $searchData = $searchData | append (dict
         "title" .Title
-        "content" (.Plain | htmlUnescape | plainify | truncate 1000)
-        "summary" (.Summary | htmlUnescape | plainify)
+        "content" (.Plain | truncate 1000)
         "url" .RelPermalink
         "date" (.Date.Format "2006-01-02")
         "section" .Section
-        "type" .Type
         "tags" (.Params.tags | default (slice))
         "categories" (.Params.categories | default (slice))
-    -}}
-    {{- $searchData = $searchData | append $item -}}
+    ) -}}
   {{- end -}}
-{{- end -}}
-{{- if eq (len $searchData) 0 -}}
-  {{- $debugItem := dict 
-      "id" "debug-info"
-      "title" "Debug: No content found"
-      "content" (printf "mainSections: %s, totalPages: %d, sections found: %s" ($mainSections | jsonify) (len .Site.RegularPages) (.Site.RegularPages | group "Type" | jsonify))
-      "summary" "Search index is empty - check mainSections configuration"
-      "url" "#"
-      "date" now.Format "2006-01-02"
-      "section" "debug"
-      "type" "debug"
-      "tags" (slice)
-      "categories" (slice)
-  -}}
-  {{- $searchData = $searchData | append $debugItem -}}
 {{- end -}}
 {{- $searchData | jsonify -}}

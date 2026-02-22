@@ -44,8 +44,8 @@
         throw new Error('TensorFlow.js not loaded');
       }
 
-      await tf.setBackend('webgl');
-      console.log('TensorFlow.js backend set to WebGL');
+      await tf.ready();
+      console.log('TensorFlow.js backend:', tf.getBackend());
       
       // Extract content from embedded data
       const documents = DataManager.getLDADocuments();
@@ -200,12 +200,6 @@
      */
     createTopicDistributionChart: function(processedTopicData) {
       if (!ldaContainer || !chartBars) return;
-      
-      // Check if D3 is available
-      if (typeof d3 === 'undefined') {
-        ldaContainer.innerHTML = '<p>Chart library not available</p>';
-        return;
-      }
 
       // Clear chart bars container
       chartBars.innerHTML = '';

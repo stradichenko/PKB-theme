@@ -59,3 +59,7 @@ tmp/
 
 # instructions for developers
 .github/instructions/
+
+# Nix / direnv
+.direnv/
+result

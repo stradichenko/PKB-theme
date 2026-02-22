@@ -56,7 +56,7 @@
 <script type="application/json" id="lda-documents-data">
 [
   {{ $first := true }}
-  {{ range where .Site.Pages "Section" "in" (slice "posts" "docs") }}
+  {{ range where .Site.RegularPages "Section" "in" (slice "posts" "docs") }}
     {{ if not $first }},{{ end }}
     {
       "content": {{ printf "%s %s %s" .Title .Description .Plain | jsonify }},
@@ -181,18 +181,8 @@
 })();
 </script>
 
-<!-- Load external libraries with error handling -->
-<script>
-// Check if libraries are already loaded to avoid duplicates
-if (typeof tf === 'undefined') {
-  document.write('<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"><\/script>');
-}
-if (typeof d3 === 'undefined') {
-  document.write('<script src="https://d3js.org/d3.v7.min.js"><\/script>');
-}
-</script>
-
-<!-- Load LDA analysis script -->
+<!-- Load TensorFlow.js then LDA analysis script -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
 {{ with resources.Get "js/lda-analysis.js" }}
   {{ $ldaJS := . | js.Build | minify | fingerprint }}
   <script src="{{ $ldaJS.RelPermalink }}" integrity="{{ $ldaJS.Data.Integrity }}" crossorigin="anonymous"></script>

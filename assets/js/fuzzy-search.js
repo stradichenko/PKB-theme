@@ -46,14 +46,8 @@
       })
       .then(function(data) {
         if (Array.isArray(data) && data.length > 0) {
-          // Check if we got debug info indicating no real content
-          if (data.length === 1 && data[0].id === 'debug-info') {
-            console.warn('Search index contains only debug info:', data[0].content);
-            self.searchData = [];
-          } else {
-            self.searchData = data;
-            console.log('Search index loaded with ' + data.length + ' pages');
-          }
+          self.searchData = data;
+          console.log('Search index loaded with ' + data.length + ' pages');
         } else {
           console.warn('Search index is empty or invalid');
           self.searchData = [];

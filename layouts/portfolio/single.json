@@ -85,73 +85,10 @@
       "pkb_orientation" $orientation
     ) -}}
 
-    {{- /* Dominant Colors & Classification */ -}}
+    {{- /* Dominant Colors — use Hugo built-in .Colors (already sorted by frequency) */ -}}
     {{- $colorSample := $image.Fit "32x32" -}}
-    {{- $colors := $colorSample.Colors -}}
-
-    {{- $hexColors := slice -}}
-    {{- range $colors }}
-      {{- $hex := .String -}}
-      {{- $hexColors = $hexColors | append $hex -}}
-    {{- end -}}
-
-    {{- $colorCounts := dict -}}
-    {{- $familyCounts := dict -}}
-
-    {{- range $hex := $hexColors }}
-      {{- $hex := lower (trim $hex " ") -}}
-      {{- if and (ge (len $hex) 7) (eq (slice $hex 0 1) "#") -}}
-        {{- $count := add (or (index $colorCounts $hex) 0) 1 -}}
-        {{- $colorCounts = merge $colorCounts (dict $hex $count) -}}
-        {{- $rStr := slice $hex 1 3 -}}
-        {{- $gStr := slice $hex 3 5 -}}
-        {{- $bStr := slice $hex 5 7 -}}
-        {{- $r := 0 -}}
-        {{- $g := 0 -}}
-        {{- $b := 0 -}}
-        {{- with (printf "0x%s" $rStr) }}{{- $r = int . -}}{{- end -}}
-        {{- with (printf "0x%s" $gStr) }}{{- $g = int . -}}{{- end -}}
-        {{- with (printf "0x%s" $bStr) }}{{- $b = int . -}}{{- end -}}
-        {{- $diffRG := sub $r $g -}}
-        {{- $absRG := cond (lt $diffRG 0) (mul $diffRG -1) $diffRG -}}
-        {{- $diffGB := sub $g $b -}}
-        {{- $absGB := cond (lt $diffGB 0) (mul $diffGB -1) $diffGB -}}
-        {{- $fam := cond (and (gt $r 240) (gt $g 240) (gt $b 240)) "white"
-              (cond (and (lt $r 30) (lt $g 30) (lt $b 30)) "black"
-              (cond (and (lt $absRG 10) (lt $absGB 10)) "gray"
-              (cond (and (gt $r $g) (gt $r $b)) "red"
-              (cond (and (gt $g $r) (gt $g $b)) "green"
-              (cond (and (gt $b $r) (gt $b $g)) "blue"
-              (cond (and (gt $r 200) (gt $g 180) (lt $b 100)) "yellow"
-              (cond (and (gt $r 100) (lt $g 80) (gt $b 100)) "purple"
-              (cond (and (gt $r 150) (gt $g 100) (lt $b 80)) "brown"
-              "other")))))))) -}}
-        {{- $fc := add (or (index $familyCounts $fam) 0) 1 -}}
-        {{- $familyCounts = merge $familyCounts (dict $fam $fc) -}}
-      {{- end -}}
-    {{- end -}}
-
-    {{- $sortedColors := slice -}}
-    {{- range $hex, $count := $colorCounts }}
-      {{- $sortedColors = $sortedColors | append (dict "hex" $hex "count" $count) -}}
-    {{- end -}}
-    {{- $sortedColors = sort $sortedColors "count" "desc" -}}
-
-    {{- $sortedFamilies := slice -}}
-    {{- range $fam, $count := $familyCounts }}
-      {{- $sortedFamilies = $sortedFamilies | append (dict "family" $fam "count" $count) -}}
-    {{- end -}}
-    {{- $sortedFamilies = sort $sortedFamilies "count" "desc" -}}
-
     {{- $imageData = merge $imageData (dict
-      "pkb_dominant_colors" (first 5 $hexColors)
-      "pkb_color_families" (apply $sortedFamilies "index" "." "family")
-      "pkb_debug_colors" $hexColors
-      "pkb_debug_colors_type" (printf "%T" $hexColors)
-    ) -}}
-
-    {{- $imageData = merge $imageData (dict
-      "pkb_processed_at" (now.Format "2006-01-02T15:04:05Z07:00")
+      "pkb_dominant_colors" (first 5 $colorSample.Colors)
     ) -}}
 
     {{- $portfolioImages = $portfolioImages | append $imageData -}}

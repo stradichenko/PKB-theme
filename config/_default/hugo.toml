@@ -408,12 +408,12 @@ enableGitInfo = true
     weight = 0
 
 [outputs]
-  # JSON output is required for search functionality
-  # The search index (/index.json) includes only pages from sections defined in params.taxonomies.mainSections
-  home = ['HTML', 'RSS', 'JSON']  # Ensure JSON is included for search
-  page = ['HTML', 'JSON'] # needed for portfolio.json
+  # JSON on home generates the search index (/index.json)
+  # Portfolio pages opt-in via front matter: outputs: ["html","json"]
+  home = ['HTML', 'RSS', 'JSON']
+  page = ['HTML']
   rss = ['RSS']
-  section = ['HTML', 'RSS', 'JSON']
+  section = ['HTML', 'RSS']
   taxonomy = ['HTML', 'RSS']
   term = ['HTML', 'RSS']
 
