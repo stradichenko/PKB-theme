@@ -12,6 +12,8 @@
   box-shadow: var(--shadow-light);
   padding: var(--spacing-md);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-width: 0;        /* Allow grid items to shrink below content intrinsic width */
+  overflow: hidden;     /* Clip any remaining overflow */
 }
 
 .recent-post-card:hover {  /* Changed from .post-card:hover */
@@ -88,15 +90,17 @@
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  max-height: 4.5em;   /* Hard cap: 3 lines * ~1.5 line-height */
+  word-break: break-word;
 }
 
-@media (max-width: var(--breakpoint-md)) {
+@media (max-width: 768px) {
   .recent-posts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: var(--breakpoint-sm)) {
+@media (max-width: 640px) {
   .recent-posts-grid {
     grid-template-columns: 1fr;
   }

@@ -1,6 +1,8 @@
 {{ define "main" }}
-  {{ partial "recent-posts-grid.html" . }}
-  <div class="about-profile-container">
-    {{ partial "filters.html" . }}
+  <div class="home-container">
+    {{ partial "recent-posts-grid.html" . }}
+    <div class="about-profile-container">
+      {{ partial "filters.html" . }}
+    </div>
   </div>
 {{ end }}

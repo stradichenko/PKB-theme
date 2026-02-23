@@ -23,7 +23,7 @@
         </div>
         {{ end }}
       </div>
-      <div class="post-summary">{{ .Summary }}</div>
+      <div class="post-summary">{{ .Summary | plainify | truncate 200 }}</div>
     </div>
   {{ end }}
 </div>
