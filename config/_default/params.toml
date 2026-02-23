@@ -81,6 +81,10 @@ interests = [
   "Scientific Communication"
 ]
 
+# Portfolio image indexing — set to false to skip heavy image processing
+# and reduce build times when not working on the portfolio page.
+portfolioIndexing = false
+
 # SEO Configuration
 description = "Personal Knowledge Base - Sharing insights on bioinformatics, research, and technology"
 keywords = ["bioinformatics", "research", "technology", "knowledge base", "blog"]

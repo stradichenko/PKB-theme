@@ -1,4 +1,18 @@
 {{- /* File: layouts/portfolio/single.json */ -}}
+{{- if eq (site.Params.portfolioIndexing | default true) false -}}
+{{- dict
+  "portfolio_metadata" (dict
+    "total_images" 0
+    "supported_formats" (slice)
+    "generated_at" (now.Format "2006-01-02T15:04:05Z07:00")
+    "hugo_version" hugo.Version
+    "pkb_schema_version" "1.0.0"
+    "category_list" (slice)
+    "indexing_disabled" true
+  )
+  "images" (slice)
+| jsonify -}}
+{{- else -}}
 {{- $supportedFormats := slice "jpg" "jpeg" "png" "webp" "gif" "tiff" "tif" -}}
 {{- $thumbnailSizes := slice "300x300" "600x400" "1200x800" -}}
 {{- $portfolioImages := slice -}}
@@ -114,3 +128,4 @@
   )
   "images" $portfolioImages
 | jsonify -}}
+{{- end -}}
