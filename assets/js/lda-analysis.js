@@ -44,6 +44,14 @@
         throw new Error('TensorFlow.js not loaded');
       }
 
+      if (typeof tf.ready !== 'function') {
+        throw new Error(
+          'TensorFlow.js failed to initialize (tf.ready is not available). ' +
+          'This is typically caused by a Content Security Policy blocking eval. ' +
+          'Ensure script-src includes \'unsafe-eval\' for TensorFlow.js.'
+        );
+      }
+
       await tf.ready();
       console.log('TensorFlow.js backend:', tf.getBackend());
       
