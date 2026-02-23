@@ -1,7 +1,7 @@
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
+const { globSync } = require('glob');
 
 /**
  * Image optimization pipeline for Hugo theme
@@ -45,7 +45,7 @@ class ImageOptimizer {
 
   async findImages() {
     const pattern = path.join(this.sourceDir, '**/*.{jpg,jpeg,png,webp}');
-    return glob.sync(pattern);
+    return globSync(pattern);
   }
 
   async processImage(imagePath) {

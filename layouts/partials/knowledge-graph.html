@@ -200,7 +200,7 @@
 {{ $graphScript := resources.Get "js/knowledge-graph.js" }}
 {{ if $graphScript }}
   {{ $graphScript = $graphScript | resources.ExecuteAsTemplate "js/knowledge-graph.js" . | resources.Minify | fingerprint }}
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
   <script src="{{ $graphScript.RelPermalink }}" integrity="{{ $graphScript.Data.Integrity }}"></script>
 {{ else }}
   {{ errorf "Required file 'knowledge-graph.js' not found in assets/js/ directory" }}

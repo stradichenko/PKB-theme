@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
+const { globSync } = require('glob');
 
 /**
  * Generate enhanced XML sitemap for Hugo site
@@ -28,7 +28,7 @@ class SitemapGenerator {
 
   async scanContent() {
     // Get all HTML files from public directory
-    const htmlFiles = glob.sync('**/*.html', { 
+    const htmlFiles = globSync('**/*.html', { 
       cwd: this.publicDir,
       ignore: ['404.html', '**/amp/**']
     });

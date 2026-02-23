@@ -20,13 +20,13 @@
     {{/* Math Support - Load early for better rendering */}}
     {{- if .Params.math -}}
     <!-- KaTeX CSS - Preload for better performance -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"></noscript>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css"></noscript>
     
     <!-- KaTeX JS - Load with high priority -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/mhchem.min.js" as="script">
     {{- end -}}
 
     <!-- Site Verification Meta Tags -->
@@ -60,13 +60,13 @@
     {{/* Math rendering scripts - Load after DOM is ready */}}
     {{- if .Params.math -}}
     <!-- KaTeX JS -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" integrity="sha384-TNnVz4NqBjFIUtubnHyyCWyGiIboUd7yCCtn7k4DwDnkWWqyOEtNKYEELv0jW+NU" crossorigin="anonymous"></script>
 
     <!-- KaTeX mhchem extension for chemical equations -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js" integrity="sha384-ifpG+NlgMq0kvOSGqGQxW1mJKpjjMDmZdpKGq3tbvD3WPhyshCEEYClriK/wRVU0" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/mhchem.min.js" integrity="sha384-fB8BH//9nBzROkMUsu/Dr35jWHIbnKesUo9rW0hfEgw8mZGnkAyBAjKX9F98OVuo" crossorigin="anonymous"></script>
 
     <!-- KaTeX auto-render extension -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" integrity="sha384-JKXHIJf8PKPyDFptuKZoUyMRQJAmQKj4B4xyOca62ebJhciMYGiDdq/9twUUWyZH" crossorigin="anonymous"></script>
 
     <!-- KaTeX Configuration -->
     <script>

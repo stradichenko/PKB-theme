@@ -14,4 +14,4 @@ demosite = 'https://stradichenko.github.io/PKB-theme/'
 tags = ['documentation', 'knowledge-base']
 features = ['responsive', 'search', 'blog', 'PKB']
 
-min_version = "0.126.2"
+min_version = "0.136.0"
