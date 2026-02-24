@@ -19,6 +19,7 @@ class TTSController {
     this.isNeuralVoiceAvailable = false;
     this.voicesLoaded = false;
     this.voiceLoadingAttempts = 0;
+    this.speechStartTimeout = null;
     this.browserOptimizations = this.getBrowserOptimizations();
     
     // Find TTS elements, prioritizing the one in page metadata
@@ -27,6 +28,7 @@ class TTSController {
     this.playPauseBtn = document.getElementById('tts-play-pause');
     this.stopBtn = document.getElementById('tts-stop');
     this.skipBtn = document.getElementById('tts-skip-forward');
+    this.skipBackBtn = document.getElementById('tts-skip-back');
     this.closeBtn = document.getElementById('tts-close');
     this.speedSlider = document.getElementById('tts-speed');
     this.speedValue = document.querySelector('.tts-speed-value');
@@ -57,6 +59,7 @@ class TTSController {
     this.playPauseBtn?.addEventListener('click', () => this.togglePlayPause());
     this.stopBtn?.addEventListener('click', () => this.stop());
     this.skipBtn?.addEventListener('click', () => this.skipForward());
+    this.skipBackBtn?.addEventListener('click', () => this.skipBackward());
     this.closeBtn?.addEventListener('click', () => this.closeTTS());
     this.speedSlider?.addEventListener('input', (e) => this.updateSpeed(e.target.value));
     
@@ -85,37 +88,18 @@ class TTSController {
   setupVoices() {
     console.log('setupVoices called, voicesLoaded:', this.voicesLoaded, 'attempts:', this.voiceLoadingAttempts);
     
-    // Only add listener if not already added
-    if (!this.voicesLoaded && this.voiceLoadingAttempts === 0) {
-      this.synth.addEventListener('voiceschanged', () => {
-        console.log('Voices changed event fired');
-        const voices = this.synth.getVoices();
-        console.log('Available voices:', voices.length, voices.map(v => v.name));
-        if (voices.length > 0) {
-          this.selectOptimalVoice(voices);
-          this.voicesLoaded = true;
-        }
-      });
-    }
-    
     this.voiceLoadingAttempts++;
     
-    // Also call immediately in case voices are already loaded
+    // Check voices directly — never use speak()+cancel() tricks as they can
+    // permanently break the synth on Brave/Chromium + Linux/speech-dispatcher
     const voices = this.synth.getVoices();
-    console.log('Initial voices check:', voices.length, voices.map(v => v.name));
+    console.log('Voices check:', voices.length, voices.map(v => v.name));
     if (voices.length > 0) {
       this.selectOptimalVoice(voices);
       this.voicesLoaded = true;
     } else if (this.voiceLoadingAttempts < 3) {
-      // Force trigger voices loading in Chrome with multiple strategies
-      console.log('No voices found initially, triggering voice load...');
-      
-      // Strategy 1: Empty utterance
-      const utterance = new SpeechSynthesisUtterance('');
-      this.synth.speak(utterance);
-      this.synth.cancel();
-      
-      // Strategy 2: Try after short delay
+      console.log('No voices yet, will retry via polling...');
+      // Non-destructive retry — just poll getVoices() after a delay
       setTimeout(() => {
         const delayedVoices = this.synth.getVoices();
         console.log('Delayed voices check:', delayedVoices.length);
@@ -123,23 +107,18 @@ class TTSController {
           this.selectOptimalVoice(delayedVoices);
           this.voicesLoaded = true;
         }
-      }, 100);
-      
-      // Strategy 3: Longer delay for slow loading
-      setTimeout(() => {
-        if (!this.voicesLoaded) {
-          const laterVoices = this.synth.getVoices();
-          console.log('Later voices check:', laterVoices.length);
-          if (laterVoices.length > 0) {
-            this.selectOptimalVoice(laterVoices);
-            this.voicesLoaded = true;
-          }
-        }
-      }, 500);
+      }, 200);
     }
   }
   
   selectOptimalVoice(voices) {
+    if (!voices || voices.length === 0) {
+      console.warn('No voices available for selection');
+      this.voice = null;
+      this.isNeuralVoiceAvailable = false;
+      return;
+    }
+    
     // Neural voice indicators (partial list)
     const neuralIndicators = [
       'neural', 'premium', 'enhanced', 'wavenet', 
@@ -303,24 +282,40 @@ class TTSController {
   }
   
   splitIntoSentences(text) {
-    // Improved sentence splitting - handles more edge cases and pauses
-    const sentences = text.match(/[^\.!?]*[\.!?]+/g) || [];
+    // First split on pause markers so headings become their own sentences
+    const chunks = text.split(/\s*\[(HEADING_PAUSE|LINE_PAUSE)\]\s*/).filter(Boolean);
     
-    // If no sentences found with punctuation, split by line breaks or return full text
-    if (sentences.length === 0) {
-      const lines = text.split(/\n+/).filter(line => line.trim().length > 0);
-      return lines.length > 0 ? lines : [text];
+    const allSentences = [];
+    for (const chunk of chunks) {
+      // Skip the marker token names themselves
+      if (chunk === 'HEADING_PAUSE' || chunk === 'LINE_PAUSE') continue;
+      
+      const trimmed = chunk.trim();
+      if (!trimmed) continue;
+      
+      // Try to split this chunk further on sentence-ending punctuation
+      const subSentences = trimmed.match(/[^\.!?]*[\.!?]+/g);
+      
+      if (subSentences && subSentences.length > 0) {
+        // Check if there's leftover text before the first punctuation match
+        const matched = subSentences.join('');
+        const leftover = trimmed.slice(0, trimmed.indexOf(matched.charAt(0)));
+        if (leftover.trim().length > 3) {
+          allSentences.push(leftover.trim());
+        }
+        for (const s of subSentences) {
+          if (s.trim().length > 3) allSentences.push(s.trim());
+        }
+      } else {
+        // No punctuation — treat the whole chunk as one sentence (e.g. a heading)
+        if (trimmed.length > 1) allSentences.push(trimmed);
+      }
     }
     
-    // Clean up sentences and filter out very short ones
-    const cleanSentences = sentences
-      .map(sentence => sentence.trim())
-      .filter(sentence => sentence.length > 3);
+    console.log('Split into sentences:', allSentences.length);
+    console.log('First 3 sentences:', allSentences.slice(0, 3));
     
-    console.log('Split into sentences:', cleanSentences.length);
-    console.log('First 3 sentences:', cleanSentences.slice(0, 3));
-    
-    return cleanSentences.length > 0 ? cleanSentences : [text];
+    return allSentences.length > 0 ? allSentences : [text];
   }
   
   // Add pause markers after headings and line breaks
@@ -389,24 +384,11 @@ class TTSController {
     this.forceVoiceLoading().then(() => {
       if (this.voice) {
         console.log('Voice loaded successfully, starting playback');
-        this.playAfterVoiceSetup();
       } else {
-        console.warn('No voice available after forced loading');
-        this.updateProgressText('Loading voices...');
-        
-        // Last resort: try again with longer delay
-        setTimeout(() => {
-          const voices = this.synth.getVoices();
-          console.log('Final voice check:', voices.length);
-          if (voices.length > 0) {
-            this.voice = voices[0];
-            console.log(`Using emergency voice: ${this.voice.name}`);
-            this.playAfterVoiceSetup();
-          } else {
-            this.updateProgressText('Voice not available in this browser');
-          }
-        }, 1000);
+        console.log('No named voice found, will use browser default');
       }
+      // Always proceed - startSpeaking() handles voiceless speech via browser default
+      this.playAfterVoiceSetup();
     });
   }
   
@@ -482,20 +464,8 @@ class TTSController {
     
     // Force voice loading and start speaking
     this.forceVoiceLoading().then(() => {
-      if (this.voice) {
-        this.playAfterVoiceSetup();
-      } else {
-        // Fallback handling
-        setTimeout(() => {
-          const voices = this.synth.getVoices();
-          if (voices.length > 0) {
-            this.voice = voices[0];
-            this.playAfterVoiceSetup();
-          } else {
-            this.updateProgressText('Voice not available in this browser');
-          }
-        }, 1000);
-      }
+      // Always proceed - startSpeaking() handles voiceless speech via browser default
+      this.playAfterVoiceSetup();
     });
   }
   
@@ -508,7 +478,8 @@ class TTSController {
       return;
     }
     
-    // Multiple strategies to force voice loading
+    // Non-destructive voice loading — NEVER use speak()+cancel() tricks as they
+    // can permanently break the synth on Brave/Chromium + Linux/speech-dispatcher
     return new Promise((resolve) => {
       let resolved = false;
       const resolveOnce = () => {
@@ -528,20 +499,7 @@ class TTSController {
         return;
       }
       
-      // Strategy 2: Trigger loading with user interaction
-      console.log('Triggering voice loading with user interaction');
-      const triggerUtterance = new SpeechSynthesisUtterance(' ');
-      triggerUtterance.volume = 0;
-      
-      triggerUtterance.onstart = () => {
-        console.log('Trigger utterance started');
-        this.synth.cancel();
-      };
-      
-      this.synth.speak(triggerUtterance);
-      this.synth.cancel();
-      
-      // Strategy 3: Wait for voices changed event
+      // Strategy 2: Wait for voiceschanged event (fires when browser loads voices async)
       const voicesChangedHandler = () => {
         console.log('Voices changed during force loading');
         const voices = this.synth.getVoices();
@@ -552,37 +510,34 @@ class TTSController {
           resolveOnce();
         }
       };
-      
       this.synth.addEventListener('voiceschanged', voicesChangedHandler);
       
-      // Strategy 4: Periodic checking
+      // Strategy 3: Periodic polling (some browsers don't fire voiceschanged reliably)
       let attempts = 0;
       const checkInterval = setInterval(() => {
         attempts++;
         const voices = this.synth.getVoices();
-        console.log(`Voice check attempt ${attempts}:`, voices.length);
-        
         if (voices.length > 0) {
+          console.log(`Voices found on poll attempt ${attempts}:`, voices.length);
           this.selectOptimalVoice(voices);
           this.voicesLoaded = true;
           clearInterval(checkInterval);
           this.synth.removeEventListener('voiceschanged', voicesChangedHandler);
           resolveOnce();
-        } else if (attempts >= 10) {
-          console.warn('Max voice loading attempts reached');
+        } else if (attempts >= 5) {
+          console.warn('No voices found after polling — proceeding without explicit voice');
           clearInterval(checkInterval);
           this.synth.removeEventListener('voiceschanged', voicesChangedHandler);
           resolveOnce();
         }
       }, 100);
       
-      // Timeout after 3 seconds
+      // Hard timeout — don't block the user
       setTimeout(() => {
-        console.warn('Voice loading timeout');
         clearInterval(checkInterval);
         this.synth.removeEventListener('voiceschanged', voicesChangedHandler);
         resolveOnce();
-      }, 3000);
+      }, 600);
     });
   }
   
@@ -593,10 +548,11 @@ class TTSController {
       this.isPaused = false;
       this.pausedSentenceIndex = null;
     }
+    // Set UI before speaking - onstart will confirm with 'Speaking...'
+    this.updatePlayPauseButton(true);
+    this.updateProgressText('Starting...');
     // Always start speaking from currentSentenceIndex (whether resuming or starting fresh)
     this.startSpeaking();
-    this.updatePlayPauseButton(true);
-    this.updateProgressText('Speaking...');
   }
   
   pause() {
@@ -614,6 +570,10 @@ class TTSController {
     if (this.continuationTimeout) {
       clearTimeout(this.continuationTimeout);
       this.continuationTimeout = null;
+    }
+    if (this.speechStartTimeout) {
+      clearTimeout(this.speechStartTimeout);
+      this.speechStartTimeout = null;
     }
   }
   
@@ -633,8 +593,22 @@ class TTSController {
       clearTimeout(this.continuationTimeout);
       this.continuationTimeout = null;
     }
+    if (this.speechStartTimeout) {
+      clearTimeout(this.speechStartTimeout);
+      this.speechStartTimeout = null;
+    }
   }
   
+  skipBackward() {
+    if (this.currentSentenceIndex > 0) {
+      this.currentSentenceIndex--;
+      if (this.isPlaying) {
+        this.synth.cancel();
+        this.startSpeaking();
+      }
+    }
+  }
+
   skipForward() {
     if (this.currentSentenceIndex < this.sentences.length - 1) {
       this.currentSentenceIndex++;
@@ -739,7 +713,12 @@ class TTSController {
     
     // Event handlers with Chrome-specific fixes
     this.utterance.onstart = () => {
+      if (this.speechStartTimeout) {
+        clearTimeout(this.speechStartTimeout);
+        this.speechStartTimeout = null;
+      }
       this.isPlaying = true;
+      this.updateProgressText('Speaking...');
       this.highlightCurrentSentence();
     };
     
@@ -789,27 +768,99 @@ class TTSController {
       }
     };
     
-    // Chrome-specific: Ensure synthesis is not busy before speaking
-    if (this.synth.speaking) {
-      this.synth.cancel();
-      setTimeout(() => {
-        // Final validation before speaking
-        if (!this.utterance.voice) {
-          console.error('No voice available for utterance, attempting fallback...');
-          this.fallbackToSystemVoice(cleanSentence);
-        } else {
-          this.synth.speak(this.utterance);
-        }
-      }, 50);
-    } else {
-      // Final validation before speaking
-      if (!this.utterance.voice) {
-        console.error('No voice available for utterance, attempting fallback...');
-        this.fallbackToSystemVoice(cleanSentence);
-      } else {
-        this.synth.speak(this.utterance);
-      }
+    // If no voice was explicitly set, the browser will use its default
+    if (!this.utterance.voice) {
+      console.log('No explicit voice set, browser will use default');
     }
+
+    // Clear any previous speech start timeout
+    if (this.speechStartTimeout) {
+      clearTimeout(this.speechStartTimeout);
+      this.speechStartTimeout = null;
+    }
+
+    // Save event handlers for retry utterances
+    const savedSentence = cleanSentence;
+    const savedOnstart = this.utterance.onstart;
+    const savedOnend = this.utterance.onend;
+    const savedOnerror = this.utterance.onerror;
+    let retryAttempt = 0;
+
+    // Helper: build a clean utterance and speak it after cancel()+delay
+    const attemptSpeak = () => {
+      // Always cancel first to ensure a clean synth state — this is critical
+      // on Linux/Chromium where stale internal state causes silent failures
+      this.synth.cancel();
+
+      setTimeout(() => {
+        if (retryAttempt > 0) {
+          // Build fresh utterance with safe defaults for retries
+          const retryUtt = new SpeechSynthesisUtterance(savedSentence);
+          retryUtt.rate = 1.0;
+          retryUtt.pitch = 1.0;
+          retryUtt.volume = 1.0;
+          // No explicit voice — let the browser pick
+          retryUtt.onstart = savedOnstart;
+          retryUtt.onend = savedOnend;
+          retryUtt.onerror = savedOnerror;
+          this.utterance = retryUtt;
+          console.log(`Retry ${retryAttempt}: speaking with default settings, no explicit voice`);
+        }
+
+        this.synth.speak(this.utterance);
+
+        // Arm timeout to detect if onstart never fires
+        const timeout = retryAttempt === 0 ? 800 : 1200;
+        this.speechStartTimeout = setTimeout(() => {
+          if (this.isPlaying) return; // onstart fired — all good
+
+          retryAttempt++;
+          console.warn(`Speech onstart not received (attempt ${retryAttempt}/3)`);
+
+          if (retryAttempt < 3) {
+            attemptSpeak(); // retry with clean state
+          } else {
+            // All retries exhausted — show platform-aware error
+            const voices = this.synth.getVoices();
+            const ua = navigator.userAgent;
+            console.error('Speech synthesis failed after all retries');
+            console.error('Diagnostics:', {
+              voices: voices.length,
+              voiceNames: voices.map(v => v.name),
+              speaking: this.synth.speaking,
+              pending: this.synth.pending,
+              paused: this.synth.paused,
+              ua: ua.substring(0, 100)
+            });
+            this.synth.cancel();
+            this.isPlaying = false;
+            this.updatePlayPauseButton(false);
+            this.clearHighlights();
+
+            // Platform-specific guidance
+            const isLinux = ua.includes('Linux');
+            const isChromium = ua.includes('Chrome');
+            const isFirefox = ua.includes('Firefox');
+            if (voices.length === 0 && isLinux && isChromium) {
+              // Brave/Chrome on Linux needs speech-dispatcher accessible to the browser.
+              // NixOS sandboxing often blocks this. Launch with:
+              //   brave --enable-speech-dispatcher
+              //   google-chrome --enable-speech-dispatcher
+              this.updateProgressText('No voices — launch browser with --enable-speech-dispatcher flag');
+            } else if (voices.length === 0 && isFirefox) {
+              this.updateProgressText('No voices — enable media.webspeech.synth.enabled in about:config');
+            } else if (voices.length === 0) {
+              this.updateProgressText('No speech voices found — check browser TTS settings');
+            } else {
+              this.updateProgressText('Speech failed — try reloading the page');
+            }
+          }
+        }, timeout);
+      }, 80); // 80ms delay after cancel() for synth backend to reset
+    };
+
+    // First attempt
+    attemptSpeak();
   }
   
   updateSpeed(value) {
@@ -823,16 +874,11 @@ class TTSController {
   }
   
   updatePlayPauseButton(isPlaying) {
-    const playIcon = this.playPauseBtn.querySelector('.tts-play-icon');
-    const pauseIcon = this.playPauseBtn.querySelector('.tts-pause-icon');
-    
     if (isPlaying) {
-      playIcon.style.display = 'none';
-      pauseIcon.style.display = 'block';
+      this.playPauseBtn.classList.add('playing');
       this.playPauseBtn.title = 'Pause';
     } else {
-      playIcon.style.display = 'block';
-      pauseIcon.style.display = 'none';
+      this.playPauseBtn.classList.remove('playing');
       this.playPauseBtn.title = 'Play';
     }
   }
@@ -855,24 +901,44 @@ class TTSController {
     if (!this.sentences[this.currentSentenceIndex]) return;
     
     const sentence = this.sentences[this.currentSentenceIndex].trim();
+    const matchStr = sentence.substring(0, 50);
     
-    // Try to highlight in title first, then headings, then content
+    // Try to highlight in title first
     let highlighted = false;
     
-    if (titleElement) {
-      highlighted = this.highlightTextInElement(titleElement, sentence);
+    if (titleElement && titleElement.textContent.includes(matchStr)) {
+      titleElement.classList.add('tts-current-sentence');
+      titleElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      highlighted = true;
     }
     
-    // If not found in title, try headings in content
+    // If not found in title, try headings in content (direct element match)
     if (!highlighted && contentElement) {
       const headings = contentElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
       for (const heading of headings) {
-        highlighted = this.highlightTextInElement(heading, sentence);
-        if (highlighted) break;
+        if (heading.textContent.trim().includes(matchStr)) {
+          heading.classList.add('tts-current-sentence');
+          heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          highlighted = true;
+          break;
+        }
       }
     }
     
-    // If not found in headings, try all content
+    // If not found in headings, try paragraph-level elements
+    if (!highlighted && contentElement) {
+      const blocks = contentElement.querySelectorAll('p, li, blockquote, dd, dt');
+      for (const block of blocks) {
+        if (block.textContent.includes(matchStr)) {
+          block.classList.add('tts-current-sentence');
+          block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          highlighted = true;
+          break;
+        }
+      }
+    }
+    
+    // Fallback: walk text nodes
     if (!highlighted && contentElement) {
       this.highlightTextInElement(contentElement, sentence);
     }
@@ -996,155 +1062,66 @@ class TTSController {
     };
   }
   
-  // Fallback to system voice when primary voice fails
+  // Fallback to system voice when primary voice fails (called from onerror)
   fallbackToSystemVoice(text) {
     console.log('Attempting fallback to system voice...');
     const voices = this.synth.getVoices();
-    console.log('Voices available for fallback:', voices.length, voices.map(v => `${v.name} (${v.lang})`));
+    console.log('Voices available for fallback:', voices.length);
     
-    // If still no voices, this might be a Chrome-specific issue
-    if (voices.length === 0) {
-      console.log('No voices detected - checking if this is Chrome with voice access issues');
-      if (navigator.userAgent.includes('Chrome')) {
-        console.log('Chrome detected with no voices - attempting alternative approach');
-        this.handleChromeVoiceIssue(text);
-        return;
+    // Find any usable voice
+    const systemVoice = voices.find(v => v.default) ||
+      voices.find(v => v.lang.startsWith('en') && v.localService !== false) ||
+      voices.find(v => v.lang.startsWith('en')) ||
+      voices[0];
+    
+    if (!systemVoice) {
+      console.error('No fallback voice available, skipping sentence');
+      this.currentSentenceIndex++;
+      if (this.currentSentenceIndex < this.sentences.length) {
+        setTimeout(() => this.isPlaying && this.startSpeaking(), 100);
+      } else {
+        this.stop();
+        this.updateProgressText('Completed with errors');
       }
+      return;
     }
     
-    // Try different fallback strategies with more detailed logging
-    let systemVoice = voices.find(v => v.default);
-    console.log('Default voice:', systemVoice?.name);
+    console.log(`Using fallback voice: ${systemVoice.name}`);
+    const fallbackUtterance = new SpeechSynthesisUtterance(text);
+    fallbackUtterance.voice = systemVoice;
+    fallbackUtterance.rate = 1.0;
+    fallbackUtterance.pitch = 1.0;
+    fallbackUtterance.volume = 1.0;
     
-    if (!systemVoice) {
-      systemVoice = voices.find(v => v.lang.startsWith('en') && v.localService !== false);
-      console.log('English local voice:', systemVoice?.name);
-    }
-    
-    if (!systemVoice) {
-      systemVoice = voices.find(v => v.lang.startsWith('en'));
-      console.log('Any English voice:', systemVoice?.name);
-    }
-    
-    if (!systemVoice) {
-      systemVoice = voices[0];
-      console.log('First available voice:', systemVoice?.name);
-    }
-    
-    if (systemVoice) {
-      console.log(`Using fallback voice: ${systemVoice.name} (${systemVoice.lang})`);
-      
-      // Create new utterance with safer settings
-      const fallbackUtterance = new SpeechSynthesisUtterance(text);
-      fallbackUtterance.voice = systemVoice;
-      fallbackUtterance.rate = Math.max(0.6, Math.min(1.5, this.currentRate * 0.8)); // Faster
-      fallbackUtterance.pitch = 0.75; // Lower pitch for warmth
-      fallbackUtterance.volume = 1.0;
-      
-      // Re-attach event handlers for fallback utterance
-      fallbackUtterance.onstart = () => {
-        this.isPlaying = true;
-        this.highlightCurrentSentence();
-      };
-      
-      fallbackUtterance.onend = () => {
-        this.currentSentenceIndex++;
-        this.updateProgress((this.currentSentenceIndex / this.sentences.length) * 100);
-        
-        if (this.currentSentenceIndex < this.sentences.length) {
-          setTimeout(() => {
-            if (this.isPlaying) {
-              this.startSpeaking();
-            }
-          }, 100);
-        } else {
-          this.stop();
-          this.updateProgressText('Finished');
-        }
-      };
-      
-      fallbackUtterance.onerror = (event) => {
-        console.error('Fallback voice also failed:', event.error);
-        // Skip this sentence and continue
-        this.currentSentenceIndex++;
-        if (this.currentSentenceIndex < this.sentences.length) {
-          setTimeout(() => {
-            if (this.isPlaying) {
-              this.startSpeaking();
-            }
-          }, 100);
-        } else {
-          this.stop();
-          this.updateProgressText('Completed with errors');
-        }
-      };
-      
-      // Ensure synthesis is ready before speaking
-      if (this.synth.speaking) {
-        this.synth.cancel();
-      }
-      
-      setTimeout(() => {
-        this.synth.speak(fallbackUtterance);
-      }, 100);
-    } else {
-      console.error('No suitable fallback voice found - no voices available at all');
-      this.handleChromeVoiceIssue(text);
-    }
-  }
-  
-  // Handle Chrome-specific voice issues
-  handleChromeVoiceIssue(text) {
-    console.log('Handling Chrome voice access issue');
-    
-    // Try speaking without specifying a voice (let browser choose)
-    const basicUtterance = new SpeechSynthesisUtterance(text);
-    // Don't set voice - let Chrome use default
-    basicUtterance.rate = 0.85; // Higher rate for better pace
-    basicUtterance.pitch = 0.7; // Lower pitch for less robotic sound
-    basicUtterance.volume = 1.0;
-    
-    basicUtterance.onstart = () => {
-      console.log('Basic utterance started successfully');
+    fallbackUtterance.onstart = () => {
       this.isPlaying = true;
+      this.updateProgressText('Speaking...');
       this.highlightCurrentSentence();
     };
-    
-    basicUtterance.onend = () => {
-      console.log('Basic utterance ended');
+    fallbackUtterance.onend = () => {
       this.currentSentenceIndex++;
       this.updateProgress((this.currentSentenceIndex / this.sentences.length) * 100);
-      
       if (this.currentSentenceIndex < this.sentences.length) {
-        setTimeout(() => {
-          if (this.isPlaying) {
-            this.startSpeaking();
-          }
-        }, 100);
+        setTimeout(() => this.isPlaying && this.startSpeaking(), 150);
       } else {
         this.stop();
         this.updateProgressText('Finished');
       }
     };
-    
-    basicUtterance.onerror = (event) => {
-      console.error('Basic utterance also failed:', event.error);
-      // Skip this sentence and continue
+    fallbackUtterance.onerror = (event) => {
+      console.error('Fallback voice also failed:', event.error);
       this.currentSentenceIndex++;
       if (this.currentSentenceIndex < this.sentences.length) {
-        setTimeout(() => {
-          if (this.isPlaying) {
-            this.startSpeaking();
-          }
-        }, 100);
+        setTimeout(() => this.isPlaying && this.startSpeaking(), 100);
       } else {
         this.stop();
-        this.updateProgressText('Browser TTS not available');
+        this.updateProgressText('Completed with errors');
       }
     };
     
-    console.log('Attempting to speak with basic utterance (no voice specified)');
-    this.synth.speak(basicUtterance);
+    // Always cancel-then-speak for clean state
+    this.synth.cancel();
+    setTimeout(() => this.synth.speak(fallbackUtterance), 80);
   }
 }
 

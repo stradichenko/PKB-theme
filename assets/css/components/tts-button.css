@@ -1,50 +1,47 @@
-/* -------------- TTS Button Component -------------- */
+/* ===================================================================
+   TTS (Text-to-Speech) — Button & Player Bar
+   Follows the theme's design-token system (core.css, layout.css, typography.css)
+   =================================================================== */
+
+/* -------------- TTS Trigger Button (in page metadata) -------------- */
 .page-tts {
   display: inline-flex;
   align-items: center;
-  margin-right: 0.75rem; /* 12px */
-  margin-bottom: 0.25rem; /* 4px */
+  margin-right: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
 .tts-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem; /* 8px */
-  padding: 0.375rem 0.75rem; /* 6px 12px */
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
   background-color: var(--color-surface);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
-  border-radius: 0.375rem; /* 6px */
-  font-size: 0.875rem; /* 14px */
-  font-weight: 500;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  text-decoration: none;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .tts-button:hover {
   background-color: var(--color-primary-variant);
-  color: var(--color-text-primary);
+  color: var(--text-color-inverse);
   border-color: var(--color-primary-variant);
 }
 
-.tts-button:focus {
+.tts-button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .tts-button.active {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
-}
-
-.tts-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background-color: var(--color-surface);
-  color: var(--color-text-secondary);
+  background-color: var(--color-primary-variant);
+  color: var(--text-color-inverse);
+  border-color: var(--color-primary-variant);
 }
 
 .tts-button svg {
@@ -54,326 +51,323 @@
   flex-shrink: 0;
 }
 
-/* -------------- TTS Control Bar -------------- */
+/* -------------- Player Bar (fixed bottom) -------------- */
 .tts-control-bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: 1rem; /* 16px */
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(100%);
-  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 1000;
+  bottom: var(--spacing-md);
+  left: 50%;
+  transform: translateX(-50%) translateY(calc(100% + var(--spacing-lg)));
+  width: min(560px, calc(100% - var(--spacing-lg) * 2));
+  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+              0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: var(--z-index-fixed);
   opacity: 0;
   visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+              opacity 0.3s ease,
+              visibility 0.3s ease;
+  overflow: hidden;          /* clip progress bar at border-radius */
 }
 
 .tts-control-bar.active {
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
   opacity: 1;
   visibility: visible;
 }
 
+/* ---- Top progress bar ---- */
+.tts-control-bar > .tts-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: color-mix(in srgb, var(--color-border) 40%, transparent);
+}
+
+.tts-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--color-primary);
+  border-radius: 0 2px 2px 0;
+  transition: width 0.35s ease;
+}
+
+/* ---- Controls row ---- */
 .tts-controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  gap: 1.5rem; /* 24px */
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-top: calc(var(--spacing-sm) + 3px); /* offset for progress bar */
 }
 
-/* -------------- Speed Control -------------- */
+/* ---- Speed control ---- */
 .tts-speed-control {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* 12px */
-  min-width: 200px;
-}
-
-.tts-label {
-  font-size: 0.875rem; /* 14px */
-  font-weight: 500;
-  color: var(--color-text-primary);
-  white-space: nowrap;
+  gap: var(--spacing-xs);
+  min-width: 100px;
 }
 
 .tts-slider {
   flex: 1;
-  height: 4px;
+  height: 3px;
   background: var(--color-border);
   border-radius: 2px;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
+  cursor: pointer;
 }
 
 .tts-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background: var(--color-primary);
   border-radius: 50%;
   cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.tts-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
 }
 
 .tts-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background: var(--color-primary);
   border-radius: 50%;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .tts-speed-value {
-  font-size: 0.875rem; /* 14px */
-  font-weight: 500;
-  color: var(--color-text-primary);
-  min-width: 30px;
-  text-align: right;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+  min-width: 28px;
+  text-align: center;
+  user-select: none;
 }
 
-/* -------------- Action Buttons -------------- */
+/* ---- Playback buttons ---- */
 .tts-action-buttons {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* 12px */
+  gap: var(--spacing-xs);
 }
 
 .tts-control-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: var(--color-surface);
+  background: none;
+  border: none;
   color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.375rem; /* 6px */
   cursor: pointer;
-  transition: all 0.2s ease;
+  border-radius: 50%;
+  transition: background-color 0.15s, color 0.15s, transform 0.1s;
 }
 
-.tts-control-btn:hover {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
+.tts-control-btn:active {
+  transform: scale(0.92);
 }
 
-.tts-control-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Secondary buttons (stop, skip) */
+.tts-btn-secondary {
+  width: 34px;
+  height: 34px;
+}
+
+.tts-btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--color-text-primary) 10%, transparent);
+}
+
+/* Primary button (play/pause — hero) */
+.tts-btn-primary {
+  width: 44px;
+  height: 44px;
+  background-color: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  color: var(--color-primary);
+  border: 1.5px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.tts-btn-primary:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface));
+}
+
+.tts-btn-primary svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Play/Pause icon toggle — controlled by .playing class on the button */
+.tts-btn-primary .tts-pause-icon {
+  display: none;
+}
+
+.tts-btn-primary.playing .tts-play-icon {
+  display: none;
+}
+
+.tts-btn-primary.playing .tts-pause-icon {
+  display: block;
+}
+
+.tts-btn-secondary svg {
+  width: 18px;
+  height: 18px;
 }
 
 .tts-control-btn svg {
-  width: 16px;
-  height: 16px;
   fill: currentColor;
+  flex-shrink: 0;
 }
 
-/* -------------- Progress Indicator -------------- */
-.tts-progress {
+/* ---- Status + Close group ---- */
+.tts-status-group {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* 12px */
-  flex: 1;
-  max-width: 300px;
-}
-
-.tts-progress-bar {
-  flex: 1;
-  height: 4px;
-  background-color: var(--color-border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.tts-progress-fill {
-  height: 100%;
-  background-color: var(--color-primary);
-  border-radius: 2px;
-  width: 0%;
-  transition: width 0.3s ease;
+  gap: var(--spacing-sm);
+  min-width: 0;   /* allow truncation */
 }
 
 .tts-progress-text {
-  font-size: 0.875rem; /* 14px */
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  min-width: 60px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 72px;
+  text-align: right;
+  user-select: none;
 }
 
-/* -------------- Close Button -------------- */
 .tts-close-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  background-color: transparent;
-  color: var(--color-text-secondary);
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  background: none;
   border: none;
-  border-radius: 0.375rem; /* 6px */
+  color: var(--color-text-secondary);
+  border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .tts-close-btn:hover {
-  background-color: #dc3545; /* Red color for close */
+  background-color: var(--color-error);
   color: var(--color-white);
 }
 
 .tts-close-btn svg {
-  width: 16px;
-  height: 16px;
   fill: currentColor;
 }
 
-/* -------------- TTS Overlay -------------- */
-.tts-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.tts-overlay.active {
-  display: flex;
-}
-
-.tts-overlay-content {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem; /* 8px */
-  padding: 1.5rem; /* 24px */
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.tts-overlay-content p {
-  margin: 0;
-  color: var(--color-text-primary);
-  font-size: 1rem; /* 16px */
-  line-height: 1.5;
-}
-
-/* -------------- Text Highlighting -------------- */
-.tts-highlight {
-  background-color: var(--light-primary-variant);
-  color: var(--color-text-primary);
-  padding: 1px 2px;
-  border-radius: 8px;
-  border: none;
-  transition: all 0.4s ease-in-out;
-}
-
+/* -------------- Sentence Highlighting -------------- */
 .tts-current-sentence {
-  background-color: var(--light-primary-variant);
+  background-color: color-mix(in srgb, var(--color-primary) 16%, transparent);
   color: var(--color-text-primary);
-  padding: 1px 2px;
-  border-radius: 8px;
-  border: none;
-  transition: all 0.4s ease-in-out;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.3s ease;
 }
 
-/* -------------- Integration with Metadata -------------- */
-.page-metadata .page-tts {
-  font-size: 0.875rem; /* 14px */
-  color: var(--color-text-secondary);
+.tts-highlight {
+  background-color: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-text-primary);
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.3s ease;
 }
 
-.page-metadata .tts-button {
-  padding: 0.25rem 0.5rem; /* 4px 8px */
-  font-size: 0.875rem; /* 14px */
+/* Headings that are being read aloud */
+h1.tts-current-sentence,
+h2.tts-current-sentence,
+h3.tts-current-sentence,
+h4.tts-current-sentence,
+h5.tts-current-sentence,
+h6.tts-current-sentence {
+  display: block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  margin-left: calc(-1 * var(--spacing-sm));
+  margin-right: calc(-1 * var(--spacing-sm));
+  border-radius: var(--border-radius);
 }
 
 /* -------------- Responsive -------------- */
-@media (max-width: 768px) {
-  .tts-controls {
-    flex-direction: column;
-    gap: 1rem; /* 16px */
-    align-items: stretch;
-  }
-  
-  .tts-speed-control {
-    min-width: auto;
-    justify-content: space-between;
-  }
-  
-  .tts-progress {
-    max-width: none;
-    order: -1;
-  }
-  
-  .tts-action-buttons {
-    justify-content: center;
-  }
-}
-
 @media (max-width: 640px) {
   .tts-control-bar {
-    padding: 0.75rem; /* 12px */
+    bottom: var(--spacing-sm);
+    width: calc(100% - var(--spacing-md) * 2);
+    border-radius: var(--border-radius-lg);
   }
-  
-  .page-tts {
-    margin-right: 0.5rem; /* 8px */
-  }
-  
+
   .tts-controls {
-    gap: 0.75rem; /* 12px */
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    padding-top: calc(var(--spacing-xs) + 3px);
+  }
+
+  .tts-speed-control {
+    min-width: 80px;
+  }
+
+  .tts-progress-text {
+    width: 56px;
+    font-size: 0.65rem;
+  }
+
+  .tts-btn-primary {
+    width: 38px;
+    height: 38px;
+  }
+
+  .tts-btn-primary svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .tts-btn-secondary {
+    width: 30px;
+    height: 30px;
+  }
+
+  .tts-btn-secondary svg {
+    width: 15px;
+    height: 15px;
   }
 }
 
 /* -------------- Dark Theme -------------- */
-[data-theme="dark"] .tts-button {
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
-}
-
-[data-theme="dark"] .tts-button:hover {
-  background-color: var(--color-primary-variant);
-  color: var(--color-text-primary);
-  border-color: var(--color-primary-variant);
-}
-
 [data-theme="dark"] .tts-control-bar {
-  background-color: var(--color-surface);
-  border-top-color: var(--color-border);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35),
+              0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-[data-theme="dark"] .tts-highlight {
-  background-color: var(--light-primary-variant);
-  color: var(--color-text-primary);
-}
-
-[data-theme="dark"] .tts-current-sentence {
-  background-color: var(--light-primary-variant);
-  color: var(--color-text-primary);
-}
-
-/* -------------- Print Styles - Hide TTS Button -------------- */
+/* -------------- Print — hide everything -------------- */
 @media print {
   .tts-button,
   .page-tts,
-  .tts-control-bar,
-  .tts-overlay,
-  .header-button.tts-button {
+  .tts-control-bar {
     display: none !important;
-    visibility: hidden !important;
   }
   
   .tts-highlight,
@@ -381,7 +375,5 @@
     background: none !important;
     color: inherit !important;
     padding: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
   }
 }
