@@ -1,3 +1,8 @@
+# HD Voice (Piper VITS neural TTS) — show an "HD" toggle in the TTS player bar.
+# When enabled, users can opt in to a neural voice that runs entirely in the browser
+# via ONNX Runtime (WASM). The ~63 MB model is downloaded once and cached in OPFS.
+enableHDVoice = true
+
 [contact]
   phone = '+1 206-555-1212'
   profileName = "Your Name"

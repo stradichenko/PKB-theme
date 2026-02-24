@@ -220,6 +220,11 @@
 {{ else }}
   {{ warnf "PDF generator script not found: js/pdf-generator.js" }}
 {{ end }}
+{{ if site.Params.enableHDVoice }}
+  {{ with resources.Get "js/piper-tts.js" }}
+    {{ $scripts = $scripts | append . }}
+  {{ end }}
+{{ end }}
 {{ if $ttsJS }}
   {{ $scripts = $scripts | append $ttsJS }}
 {{ else }}

@@ -1,13 +1,14 @@
 /* ===================================================================
-   TTS (Text-to-Speech) — Button & Player Bar
-   Follows the theme's design-token system (core.css, layout.css, typography.css)
+   TTS Player — Minimal, elegant bottom bar
+   Design: frosted glass · balanced 3-column layout · subtle motion
+   Token system: core.css, layout.css, typography.css
    =================================================================== */
 
-/* -------------- TTS Trigger Button (in page metadata) -------------- */
+/* ─── Inline trigger button (in page metadata) ─── */
 .page-tts {
   display: inline-flex;
   align-items: center;
-  margin-right: var(--spacing-sm);
+  margin-right: var(--spacing-md);
   margin-bottom: var(--spacing-xs);
 }
 
@@ -17,31 +18,15 @@
   gap: var(--spacing-xs);
   padding: var(--spacing-xs) var(--spacing-sm);
   background-color: var(--color-surface);
-  color: var(--color-text-primary);
+  color: var(--text-color-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
+  text-decoration: none;
   white-space: nowrap;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.tts-button:hover {
-  background-color: var(--color-primary-variant);
-  color: var(--text-color-inverse);
-  border-color: var(--color-primary-variant);
-}
-
-.tts-button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-.tts-button.active {
-  background-color: var(--color-primary-variant);
-  color: var(--text-color-inverse);
-  border-color: var(--color-primary-variant);
+  transition: background-color 0.2s, transform 0.2s;
 }
 
 .tts-button svg {
@@ -51,43 +36,92 @@
   flex-shrink: 0;
 }
 
-/* -------------- Player Bar (fixed bottom) -------------- */
-.tts-control-bar {
-  position: fixed;
-  bottom: var(--spacing-md);
-  left: 50%;
-  transform: translateX(-50%) translateY(calc(100% + var(--spacing-lg)));
-  width: min(560px, calc(100% - var(--spacing-lg) * 2));
-  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
-  border-radius: var(--border-radius-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-              0 2px 8px rgba(0, 0, 0, 0.08);
-  z-index: var(--z-index-fixed);
-  opacity: 0;
-  visibility: hidden;
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1),
-              opacity 0.3s ease,
-              visibility 0.3s ease;
-  overflow: hidden;          /* clip progress bar at border-radius */
+.tts-button:hover {
+  background-color: var(--color-primary-variant);
+  color: var(--text-color-inverse);
+  border-color: var(--color-primary-variant);
 }
 
-.tts-control-bar.active {
+.tts-button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.tts-button:active {
+  background-color: var(--color-primary-variant);
+  color: var(--text-color-inverse);
+}
+
+.tts-button.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--text-color-inverse);
+}
+
+/* -------------- Dark Theme -------------- */
+[data-theme="dark"] .tts-button {
+  background-color: var(--color-surface);
+  color: var(--text-color-primary);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .tts-button:hover {
+  background-color: var(--color-primary-variant);
+  color: var(--color-text-primary);
+  border-color: var(--color-primary-variant);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   PLAYER BAR — fixed bottom, frosted glass
+   ═══════════════════════════════════════════════════════════════════ */
+.tts-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(calc(100% + 32px));
+  width: min(600px, calc(100% - 32px));
+  z-index: var(--z-index-fixed);
+
+  /* Frosted glass */
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid color-mix(in srgb, var(--color-border) 35%, transparent);
+  border-radius: var(--border-radius);
+  box-shadow:
+    0 12px 40px -8px rgba(0, 0, 0, 0.12),
+    0 4px 12px -2px rgba(0, 0, 0, 0.06),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.1);
+
+  /* Enter/exit animation */
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+
+  overflow: visible;
+}
+
+.tts-bar.active {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
   visibility: visible;
 }
 
-/* ---- Top progress bar ---- */
-.tts-control-bar > .tts-progress-bar {
+
+/* ─── Top progress rail ─── */
+.tts-bar__progress {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: color-mix(in srgb, var(--color-border) 40%, transparent);
+  height: 2.5px;
+  background: color-mix(in srgb, var(--color-border) 25%, transparent);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  overflow: hidden;
 }
 
 .tts-progress-fill {
@@ -95,81 +129,64 @@
   width: 0%;
   background: var(--color-primary);
   border-radius: 0 2px 2px 0;
-  transition: width 0.35s ease;
+  transition: width 0.4s ease;
 }
 
-/* ---- Controls row ---- */
-.tts-controls {
+
+/* ─── Inner layout: three columns ─── */
+.tts-bar__inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  padding-top: calc(10px + 2.5px);   /* offset for progress rail */
+}
+
+
+/* ─── Left column: voice picker + status ─── */
+.tts-bar__left {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-md);
-  padding-top: calc(var(--spacing-sm) + 3px); /* offset for progress bar */
+  gap: 10px;
+  min-width: 0;    /* allow truncation */
 }
 
-/* ---- Speed control ---- */
-.tts-speed-control {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  min-width: 100px;
-}
-
-.tts-slider {
-  flex: 1;
-  height: 3px;
-  background: var(--color-border);
-  border-radius: 2px;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.tts-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  background: var(--color-primary);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease;
-}
-
-.tts-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.25);
-}
-
-.tts-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  background: var(--color-primary);
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-
-.tts-speed-value {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  font-variant-numeric: tabular-nums;
+.tts-progress-text {
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  min-width: 28px;
-  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
   user-select: none;
+  letter-spacing: 0.01em;
 }
 
-/* ---- Playback buttons ---- */
-.tts-action-buttons {
+
+/* ─── Center column: transport ─── */
+.tts-bar__center {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 6px;
+  justify-self: center;
 }
 
-.tts-control-btn {
+
+/* ─── Right column: speed + stop + close ─── */
+.tts-bar__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   TRANSPORT BUTTONS — shared base
+   ═══════════════════════════════════════════════════════════════════ */
+.tts-ctrl {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,84 +195,133 @@
   color: var(--color-text-primary);
   cursor: pointer;
   border-radius: 50%;
-  transition: background-color 0.15s, color 0.15s, transform 0.1s;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
 }
 
-.tts-control-btn:active {
-  transform: scale(0.92);
+.tts-ctrl:active {
+  transform: scale(0.9);
 }
 
-/* Secondary buttons (stop, skip) */
-.tts-btn-secondary {
-  width: 34px;
-  height: 34px;
-}
-
-.tts-btn-secondary:hover {
-  background-color: color-mix(in srgb, var(--color-text-primary) 10%, transparent);
-}
-
-/* Primary button (play/pause — hero) */
-.tts-btn-primary {
-  width: 44px;
-  height: 44px;
-  background-color: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
-  color: var(--color-primary);
-  border: 1.5px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.tts-btn-primary:hover {
-  background-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface));
-}
-
-.tts-btn-primary svg {
-  width: 22px;
-  height: 22px;
-}
-
-/* Play/Pause icon toggle — controlled by .playing class on the button */
-.tts-btn-primary .tts-pause-icon {
-  display: none;
-}
-
-.tts-btn-primary.playing .tts-play-icon {
-  display: none;
-}
-
-.tts-btn-primary.playing .tts-pause-icon {
-  display: block;
-}
-
-.tts-btn-secondary svg {
-  width: 18px;
-  height: 18px;
-}
-
-.tts-control-btn svg {
+.tts-ctrl svg {
   fill: currentColor;
   flex-shrink: 0;
 }
 
-/* ---- Status + Close group ---- */
-.tts-status-group {
+/* Small buttons (skip, stop) */
+.tts-ctrl--sm {
+  width: 34px;
+  height: 34px;
+  opacity: 0.7;
+}
+
+.tts-ctrl--sm:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+}
+
+/* Hero button (play / pause) */
+.tts-ctrl--hero {
+  width: 44px;
+  height: 44px;
+  background: var(--color-primary);
+  color: var(--color-white, #fff);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.3s ease,
+    transform 0.1s ease;
+}
+
+.tts-ctrl--hero:hover {
+  background: var(--color-primary-variant);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+/* Play / pause icon toggle */
+.tts-ctrl--hero .tts-pause-icon { display: none; }
+.tts-ctrl--hero.playing .tts-play-icon { display: none; }
+.tts-ctrl--hero.playing .tts-pause-icon { display: block; }
+
+/* Playing state — subtle breathing glow */
+.tts-ctrl--hero.playing {
+  animation: tts-breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes tts-breathe {
+  0%, 100% {
+    box-shadow:
+      0 2px 8px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 2px 20px color-mix(in srgb, var(--color-primary) 45%, transparent),
+      0 0 0 4px color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPEED CONTROL
+   ═══════════════════════════════════════════════════════════════════ */
+.tts-speed {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  min-width: 0;   /* allow truncation */
+  gap: 5px;
 }
 
-.tts-progress-text {
-  font-size: var(--font-size-xs);
+.tts-speed__slider {
+  width: 60px;
+  height: 3px;
+  background: color-mix(in srgb, var(--color-border) 60%, transparent);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.tts-speed__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.tts-speed__slider::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+.tts-speed__slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.tts-speed-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--color-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 72px;
-  text-align: right;
+  min-width: 22px;
+  text-align: center;
   user-select: none;
+  opacity: 0.8;
 }
 
-.tts-close-btn {
+
+/* ─── Close button ─── */
+.tts-bar__close {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -267,30 +333,300 @@
   color: var(--color-text-secondary);
   border-radius: 50%;
   cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
+  opacity: 0.5;
+  transition: all 0.15s ease;
 }
 
-.tts-close-btn:hover {
-  background-color: var(--color-error);
-  color: var(--color-white);
+.tts-bar__close:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  color: var(--color-error);
 }
 
-.tts-close-btn svg {
+.tts-bar__close svg {
   fill: currentColor;
 }
 
-/* -------------- Sentence Highlighting -------------- */
-.tts-current-sentence {
-  background-color: color-mix(in srgb, var(--color-primary) 16%, transparent);
-  color: var(--color-text-primary);
-  padding: 2px 4px;
-  margin: -2px -4px;
-  border-radius: var(--border-radius-sm);
-  transition: background-color 0.3s ease;
+
+/* ═══════════════════════════════════════════════════════════════════
+   VOICE PICKER — pill button + flyout dropdown
+   ═══════════════════════════════════════════════════════════════════ */
+.tts-voice-picker {
+  position: relative;
+  flex-shrink: 0;
 }
 
+/* Trigger pill */
+.tts-voice-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  height: 24px;
+  background: color-mix(in srgb, var(--color-text-secondary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+  border-radius: var(--border-radius);
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tts-voice-picker-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.tts-voice-picker-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* HD active state */
+.tts-voice-picker-btn.hd-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white, #fff);
+}
+
+.tts-voice-picker-btn.hd-active:hover {
+  background: var(--color-primary-variant);
+  border-color: var(--color-primary-variant);
+}
+
+.tts-vp-chevron {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.tts-voice-picker.open .tts-vp-chevron {
+  transform: rotate(180deg);
+}
+
+
+/* ─── Dropdown panel ─── */
+.tts-vp-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  transform: translateY(4px);
+  transform-origin: bottom left;
+  min-width: 220px;
+  max-width: 270px;
+  max-height: 340px;
+  overflow-y: auto;
+
+  background: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  border-radius: var(--border-radius);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
+  padding: 4px;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s ease;
+  z-index: 10;
+}
+
+.tts-voice-picker.open .tts-vp-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Subtle scrollbar in dropdown */
+.tts-vp-dropdown::-webkit-scrollbar { width: 4px; }
+.tts-vp-dropdown::-webkit-scrollbar-track { background: transparent; }
+.tts-vp-dropdown::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-text-secondary) 20%, transparent);
+  border-radius: 2px;
+}
+
+
+/* ─── Option rows ─── */
+.tts-vp-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+  text-align: left;
+}
+
+.tts-vp-option:hover {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.tts-vp-option.active {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+.tts-vp-option-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+}
+
+.tts-vp-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.tts-vp-option-name {
+  font-weight: 600;
+  font-size: 0.72rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tts-vp-option-detail {
+  font-size: 0.58rem;
+  color: var(--color-text-secondary);
+  line-height: 1.2;
+  opacity: 0.8;
+}
+
+.tts-vp-check {
+  font-size: 0.7rem;
+  color: var(--color-primary);
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+
+.tts-vp-option.active .tts-vp-check {
+  opacity: 1;
+}
+
+
+/* ─── Section divider ─── */
+.tts-vp-divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px 4px;
+  margin-top: 2px;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 30%, transparent);
+  opacity: 0.8;
+}
+
+.tts-vp-badge {
+  font-size: 0.52rem;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-text-secondary) 10%, transparent);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.tts-vp-badge.ready {
+  background: color-mix(in srgb, var(--color-success, #22c55e) 14%, transparent);
+  color: var(--color-success, #22c55e);
+}
+
+.tts-vp-badge.error {
+  background: color-mix(in srgb, var(--color-error) 14%, transparent);
+  color: var(--color-error);
+}
+
+
+/* ─── HD status / progress ─── */
+.tts-vp-hd-status {
+  padding: 4px 10px 6px;
+}
+
+.tts-vp-hd-progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tts-vp-hd-status-text {
+  font-size: 0.56rem;
+  color: var(--color-text-secondary);
+  opacity: 0.8;
+}
+
+.tts-vp-hd-progress-bar {
+  height: 2.5px;
+  width: 100%;
+  background: color-mix(in srgb, var(--color-border) 40%, transparent);
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+
+.tts-vp-hd-progress-bar.visible {
+  display: block;
+}
+
+.tts-vp-hd-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--color-primary);
+  border-radius: 2px;
+  transition: width 0.35s ease;
+}
+
+/* HD voice list */
+.tts-vp-hd-voices {
+  display: flex;
+  flex-direction: column;
+}
+
+.tts-vp-hd-voices:empty {
+  display: none;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   SENTENCE HIGHLIGHTING
+   ═══════════════════════════════════════════════════════════════════ */
+.tts-current-sentence,
 .tts-highlight {
-  background-color: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  background-color: color-mix(in srgb, var(--color-primary) 14%, transparent);
   color: var(--color-text-primary);
   padding: 2px 4px;
   margin: -2px -4px;
@@ -298,7 +634,6 @@
   transition: background-color 0.3s ease;
 }
 
-/* Headings that are being read aloud */
 h1.tts-current-sentence,
 h2.tts-current-sentence,
 h3.tts-current-sentence,
@@ -312,64 +647,95 @@ h6.tts-current-sentence {
   border-radius: var(--border-radius);
 }
 
-/* -------------- Responsive -------------- */
-@media (max-width: 640px) {
-  .tts-control-bar {
-    bottom: var(--spacing-sm);
-    width: calc(100% - var(--spacing-md) * 2);
-    border-radius: var(--border-radius-lg);
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 540px) {
+  .tts-bar {
+    bottom: 10px;
+    width: calc(100% - 20px);
+    border-radius: var(--border-radius);
   }
 
-  .tts-controls {
-    gap: var(--spacing-sm);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    padding-top: calc(var(--spacing-xs) + 3px);
+  .tts-bar__inner {
+    gap: 6px;
+    padding: 8px 12px;
+    padding-top: calc(8px + 2.5px);
   }
 
-  .tts-speed-control {
-    min-width: 80px;
+  .tts-bar__left {
+    gap: 6px;
+  }
+
+  .tts-voice-picker-btn {
+    height: 20px;
+    padding: 2px 8px;
+    font-size: 0.6rem;
   }
 
   .tts-progress-text {
-    width: 56px;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
+    max-width: 70px;
   }
 
-  .tts-btn-primary {
+  .tts-ctrl--hero {
     width: 38px;
     height: 38px;
   }
 
-  .tts-btn-primary svg {
+  .tts-ctrl--hero svg {
     width: 18px;
     height: 18px;
   }
 
-  .tts-btn-secondary {
+  .tts-ctrl--sm {
     width: 30px;
     height: 30px;
   }
 
-  .tts-btn-secondary svg {
-    width: 15px;
-    height: 15px;
+  .tts-speed__slider {
+    width: 44px;
+  }
+
+  .tts-speed-value {
+    font-size: 0.65rem;
+  }
+
+  .tts-vp-dropdown {
+    min-width: 200px;
   }
 }
 
-/* -------------- Dark Theme -------------- */
-[data-theme="dark"] .tts-control-bar {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35),
-              0 2px 8px rgba(0, 0, 0, 0.2);
+
+/* ═══════════════════════════════════════════════════════════════════
+   DARK THEME
+   ═══════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .tts-bar {
+  box-shadow:
+    0 12px 40px -8px rgba(0, 0, 0, 0.35),
+    0 4px 12px -2px rgba(0, 0, 0, 0.2),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.06);
 }
 
-/* -------------- Print — hide everything -------------- */
+[data-theme="dark"] .tts-vp-dropdown {
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.04);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT — hide everything
+   ═══════════════════════════════════════════════════════════════════ */
 @media print {
   .tts-button,
   .page-tts,
-  .tts-control-bar {
+  .tts-bar {
     display: none !important;
   }
-  
+
   .tts-highlight,
   .tts-current-sentence {
     background: none !important;

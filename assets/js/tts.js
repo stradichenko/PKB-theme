@@ -36,6 +36,25 @@ class TTSController {
     this.progressText = document.querySelector('.tts-progress-text');
     this.overlay = document.getElementById('tts-overlay');
     
+    // Voice picker (HD Piper VITS neural TTS)
+    this.voicePicker       = document.getElementById('tts-voice-picker');
+    this.voicePickerBtn    = document.getElementById('tts-voice-picker-btn');
+    this.voicePickerLabel  = document.getElementById('tts-vp-label');
+    this.vpDropdown        = document.getElementById('tts-vp-dropdown');
+    this.vpHdBadge         = document.getElementById('tts-vp-hd-badge');
+    this.vpHdStatus        = document.getElementById('tts-vp-hd-status');
+    this.vpHdStatusText    = document.getElementById('tts-vp-hd-status-text');
+    this.vpHdProgressBar   = document.getElementById('tts-vp-hd-progress-bar');
+    this.vpHdProgressFill  = document.getElementById('tts-vp-hd-progress-fill');
+    this.vpHdVoicesList    = document.getElementById('tts-vp-hd-voices');
+    this.useHDVoice        = false;
+    this.piperLoading     = false;
+    this.hdVoiceId         = null;    // selected piper voice id
+
+    // Prefetch pipeline for piper — Map<chunkIndex, Promise<{url,audio}>>
+    this._prefetchCache    = new Map();
+    this._chunkSize        = 4;       // sentences per audio chunk
+    
     this.init();
   }
   
@@ -62,6 +81,35 @@ class TTSController {
     this.skipBackBtn?.addEventListener('click', () => this.skipBackward());
     this.closeBtn?.addEventListener('click', () => this.closeTTS());
     this.speedSlider?.addEventListener('input', (e) => this.updateSpeed(e.target.value));
+    
+    // Voice picker toggle
+    this.voicePickerBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this._toggleVoicePicker();
+    });
+    
+    // Close picker when clicking outside
+    document.addEventListener('click', (e) => {
+      if (this.voicePicker && !this.voicePicker.contains(e.target)) {
+        this._closeVoicePicker();
+      }
+    });
+    
+    // System voice option in picker
+    const systemOption = this.vpDropdown?.querySelector('[data-engine="system"]');
+    systemOption?.addEventListener('click', () => this._selectSystemVoice());
+    
+    // Populate HD voice buttons (disabled until model loads)
+    this._populateHDVoices();
+    
+    // Restore previous preference from localStorage
+    const savedEngine = localStorage.getItem('tts-engine');
+    const savedVoice  = localStorage.getItem('tts-hd-voice-id');
+    if (savedEngine === 'hd' && this.voicePicker) {
+      this.useHDVoice = true;
+      this.hdVoiceId  = savedVoice || 'en_US-hfc_female-medium';
+      this._updatePickerUI();
+    }
     
     // Handle text selection for starting from cursor position
     // document.addEventListener('click', (e) => this.handleTextClick(e));
@@ -208,6 +256,236 @@ class TTSController {
     this.clearHighlights();
   }
   
+  /* ---- Voice Engine Picker ---- */
+  
+  _toggleVoicePicker() {
+    const isOpen = this.voicePicker.classList.toggle('open');
+    this.voicePickerBtn.setAttribute('aria-expanded', String(isOpen));
+  }
+  
+  _closeVoicePicker() {
+    this.voicePicker?.classList.remove('open');
+    this.voicePickerBtn?.setAttribute('aria-expanded', 'false');
+  }
+  
+  /** Build the HD voice buttons from the piper backend voice list */
+  _populateHDVoices() {
+    if (!this.vpHdVoicesList || !window.piperBackend) return;
+    
+    const voices = window.piperBackend.getVoices();
+    this.vpHdVoicesList.innerHTML = '';
+    
+    for (const v of voices) {
+      const btn = document.createElement('button');
+      btn.className = 'tts-vp-option tts-vp-hd-voice';
+      btn.setAttribute('role', 'option');
+      btn.setAttribute('aria-selected', 'false');
+      btn.dataset.voiceId = v.id;
+      btn.innerHTML = `
+        <span class="tts-vp-option-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M9.536 1.464A5.985 5.985 0 0 0 4.5 8a5.985 5.985 0 0 0 5.036 6.536l-.036.036-.5.5A6.985 6.985 0 0 1 3.5 8 6.985 6.985 0 0 1 9 1.464l.036.036.5-.036z"/>
+            <path d="M8 4.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7z"/>
+          </svg>
+        </span>
+        <span class="tts-vp-option-info">
+          <span class="tts-vp-option-name">${v.name}</span>
+          <span class="tts-vp-option-detail">${v.accent} · ${v.gender === 'F' ? 'Female' : 'Male'}</span>
+        </span>
+        <span class="tts-vp-check">✓</span>`;
+      
+      btn.addEventListener('click', () => this._selectHDVoice(v.id));
+      this.vpHdVoicesList.appendChild(btn);
+    }
+  }
+  
+  /** Select the system voice engine */
+  _selectSystemVoice() {
+    if (this.isPlaying) this.stop();
+    
+    this.useHDVoice = false;
+    this.hdVoiceId  = null;
+    localStorage.setItem('tts-engine', 'system');
+    localStorage.removeItem('tts-hd-voice-id');
+    
+    this._updatePickerUI();
+    this._closeVoicePicker();
+    this.updateProgressText('System voice');
+  }
+  
+  /** Select an HD voice — triggers download on first click */
+  async _selectHDVoice(voiceId) {
+    // If model is already loaded, just switch voice
+    if (window.piperBackend?.isReady()) {
+      const wasPlaying = this.isPlaying;
+      const savedIndex = this.currentSentenceIndex;
+      if (wasPlaying) {
+        this.synth.cancel();                  // kill system voice
+        window.piperBackend.stop();          // kill previous HD audio
+      }
+      this.useHDVoice = true;
+      this.hdVoiceId  = voiceId;
+      window.piperBackend.setVoice(voiceId);
+      localStorage.setItem('tts-engine', 'hd');
+      localStorage.setItem('tts-hd-voice-id', voiceId);
+      this._updatePickerUI();
+      this._closeVoicePicker();
+      const v = window.piperBackend.getVoices().find(x => x.id === voiceId);
+      this.updateProgressText(`HD · ${v?.name || 'Ready'}`);
+      // Resume playback from where we left off
+      if (wasPlaying && this.sentences?.length) {
+        this.currentSentenceIndex = savedIndex;
+        this.isPlaying = true;
+        this.isPaused  = false;
+        this.updatePlayPauseButton(true);
+        this.startSpeaking();
+      }
+      return;
+    }
+    
+    // First-time download
+    if (this.piperLoading || !window.piperBackend) return;
+    this.piperLoading = true;
+    
+    // Update UI for download state
+    this.vpHdStatusText.textContent = 'Downloading model…';
+    this.vpHdProgressBar.classList.add('visible');
+    this.vpHdProgressFill.style.width = '0%';
+    this.vpHdBadge.textContent = '0%';
+    this.vpHdBadge.classList.remove('ready', 'error');
+    this.updateProgressText('Downloading HD…');
+    
+    try {
+      await window.piperBackend.init((p) => {
+        if (p.status === 'progress' && p.progress != null) {
+          const pct = Math.round(p.progress);
+          this.vpHdProgressFill.style.width = `${pct}%`;
+          this.vpHdBadge.textContent = `${pct}%`;
+          this.updateProgressText(`Downloading… ${pct}%`);
+          this.updateProgress(pct);
+        }
+      });
+      
+      // Success — stop any system voice, switch engine, and resume playback
+      const wasPlaying = this.isPlaying;
+      if (wasPlaying) this.synth.cancel();   // stop system voice immediately
+
+      this.useHDVoice = true;
+      this.hdVoiceId  = voiceId;
+      window.piperBackend.setVoice(voiceId);
+      localStorage.setItem('tts-engine', 'hd');
+      localStorage.setItem('tts-hd-voice-id', voiceId);
+      
+      this.vpHdStatusText.textContent = 'Model loaded — pick a voice';
+      this.vpHdBadge.textContent = 'Ready';
+      this.vpHdBadge.classList.add('ready');
+      this.vpHdProgressBar.classList.remove('visible');
+      
+      const v = window.piperBackend.getVoices().find(x => x.id === voiceId);
+      this.updateProgressText(`HD · ${v?.name || 'Ready'}`);
+      this._updatePickerUI();
+      this._closeVoicePicker();
+
+      // Auto-start HD playback from the current sentence
+      if (wasPlaying || this.sentences?.length) {
+        this.isPlaying = true;
+        this.updatePlayPauseButton(true);
+        this.startSpeaking();
+      }
+    } catch (err) {
+      console.error('HD voice download failed:', err);
+      const detail = err._piperDetail || err.message || 'Unknown error';
+      this.vpHdStatusText.textContent = `Failed: ${detail.slice(0, 60)}`;
+      this.vpHdBadge.textContent = 'Error';
+      this.vpHdBadge.classList.add('error');
+      this.vpHdProgressBar.classList.remove('visible');
+      this.updateProgressText('HD download failed');
+      setTimeout(() => this.updateProgressText('System voice'), 4000);
+    } finally {
+      this.piperLoading = false;
+      this.updateProgress(0);
+    }
+  }
+  
+  /** Update all picker UI to reflect current engine/voice selection */
+  _updatePickerUI() {
+    if (!this.voicePicker) return;
+    
+    const isHD    = this.useHDVoice;
+    const backend = window.piperBackend;
+    
+    // Button label
+    if (isHD && this.hdVoiceId && backend) {
+      const v = backend.getVoices().find(x => x.id === this.hdVoiceId);
+      this.voicePickerLabel.textContent = v ? `HD · ${v.name}` : 'HD';
+      this.voicePickerBtn.classList.add('hd-active');
+    } else {
+      this.voicePickerLabel.textContent = 'System';
+      this.voicePickerBtn.classList.remove('hd-active');
+    }
+    
+    // System option
+    const sysOpt = this.vpDropdown.querySelector('[data-engine="system"]');
+    if (sysOpt) {
+      sysOpt.classList.toggle('active', !isHD);
+      sysOpt.setAttribute('aria-selected', String(!isHD));
+    }
+    
+    // HD voice options
+    const hdBtns = this.vpHdVoicesList.querySelectorAll('.tts-vp-hd-voice');
+    hdBtns.forEach(btn => {
+      const active = isHD && btn.dataset.voiceId === this.hdVoiceId;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', String(active));
+    });
+    
+    // Badge
+    if (backend?.isReady()) {
+      this.vpHdBadge.textContent = 'Ready';
+      this.vpHdBadge.classList.add('ready');
+      this.vpHdBadge.classList.remove('error');
+      this.vpHdStatusText.textContent = 'Model loaded — pick a voice';
+      this.vpHdStatus.style.display = '';
+    }
+  }
+  
+  /**
+   * Non-blocking lazy init for piper when HD was previously enabled.
+   * Starts system voice immediately; once the model loads from cache
+   * subsequent sentences switch to HD automatically.
+   */
+  _lazyInitPiper() {
+    if (!window.piperBackend || window.piperBackend.isReady() || this.piperLoading) return;
+    this.piperLoading = true;
+    
+    this.vpHdStatusText && (this.vpHdStatusText.textContent = 'Loading cached model…');
+    
+    window.piperBackend.init((p) => {
+      if (p.status === 'progress' && p.progress != null) {
+        const pct = Math.round(p.progress);
+        this.vpHdBadge && (this.vpHdBadge.textContent = `${pct}%`);
+      }
+    }).then(() => {
+      console.log('[piper] Lazy-init complete (cached model)');
+      this.piperLoading = false;
+      if (this.hdVoiceId) window.piperBackend.setVoice(this.hdVoiceId);
+      this._updatePickerUI();
+
+      // Immediately prefetch the current chunk so the first _speakWithPiper gets a cache HIT
+      if (this.useHDVoice && this.sentences.length > 0) {
+        console.log(`[tts-pipe] 🎬 Post-init: prefetching chunk at idx=${this.currentSentenceIndex}`);
+        this._prefetchNextChunk(this.currentSentenceIndex);
+      }
+    }).catch(() => {
+      console.log('[piper] Lazy-init failed — staying on system voice');
+      this.piperLoading = false;
+      this.useHDVoice = false;
+      this.hdVoiceId  = null;
+      localStorage.setItem('tts-engine', 'system');
+      this._updatePickerUI();
+    });
+  }
+  
   prepareText() {
     // Get post title from metadata and content
     const metadataTitleElement = document.querySelector('.page-metadata .post-title, .page-metadata h1');
@@ -248,7 +526,7 @@ class TTSController {
     // Remove unwanted elements from the clone
     const unwantedElements = clone.querySelectorAll(`
       script, style, 
-      .tts-control-bar, .tts-overlay,
+      .tts-bar, .tts-control-bar, .tts-overlay,
       .page-metadata, .post-header,
       .site-title, .logo,
       .sidenote, .marginnote,
@@ -380,6 +658,12 @@ class TTSController {
     console.log('No text selected, using resume/restart logic');
     console.log('Current state - isPaused:', this.isPaused, 'pausedSentenceIndex:', this.pausedSentenceIndex);
     
+    // HD voice with piper ready — skip system voice loading
+    if (this.useHDVoice && window.piperBackend?.isReady()) {
+      this.playAfterVoiceSetup();
+      return;
+    }
+    
     // Force voice loading on user interaction (critical for Chrome)
     this.forceVoiceLoading().then(() => {
       if (this.voice) {
@@ -462,6 +746,12 @@ class TTSController {
     // Clear the selection after use
     window.getSelection().removeAllRanges();
     
+    // HD voice with piper ready — skip system voice loading
+    if (this.useHDVoice && window.piperBackend?.isReady()) {
+      this.playAfterVoiceSetup();
+      return;
+    }
+    
     // Force voice loading and start speaking
     this.forceVoiceLoading().then(() => {
       // Always proceed - startSpeaking() handles voiceless speech via browser default
@@ -542,8 +832,23 @@ class TTSController {
   }
   
   playAfterVoiceSetup() {
+    // Lazy-load piper if HD was previously enabled (non-blocking)
+    if (this.useHDVoice && window.piperBackend && !window.piperBackend.isReady()) {
+      this._lazyInitPiper();
+    }
+    
     if (this.isPaused && this.pausedSentenceIndex !== null) {
-      // Resume from paused state - restart from the paused sentence
+      // HD voice: try to resume mid-sentence audio
+      if (this.useHDVoice && window.piperBackend?.currentAudio?.paused) {
+        window.piperBackend.resume();
+        this.isPlaying = true;
+        this.isPaused = false;
+        this.pausedSentenceIndex = null;
+        this.updatePlayPauseButton(true);
+        this.updateProgressText('Speaking (HD)...');
+        return;
+      }
+      // System voice: restart from the paused sentence
       this.currentSentenceIndex = this.pausedSentenceIndex;
       this.isPaused = false;
       this.pausedSentenceIndex = null;
@@ -551,7 +856,15 @@ class TTSController {
     // Set UI before speaking - onstart will confirm with 'Speaking...'
     this.updatePlayPauseButton(true);
     this.updateProgressText('Starting...');
+
+    // Eagerly prefetch first chunk for HD voice
+    if (this.useHDVoice && window.piperBackend?.isReady()) {
+      console.log(`[tts-pipe] 🎬 Eager prefetch for first chunk at idx=${this.currentSentenceIndex}`);
+      this._prefetchNextChunk(this.currentSentenceIndex);
+    }
+
     // Always start speaking from currentSentenceIndex (whether resuming or starting fresh)
+    console.log(`[tts-pipe] 🎬 playAfterVoiceSetup → startSpeaking()`);
     this.startSpeaking();
   }
   
@@ -559,8 +872,12 @@ class TTSController {
     // Store the current sentence index for proper resume
     this.pausedSentenceIndex = this.currentSentenceIndex;
     
-    // Immediate cancellation for better responsiveness
-    this.synth.cancel();
+    // Cancel through the active backend
+    if (this.useHDVoice && window.piperBackend) {
+      window.piperBackend.pause();
+    } else {
+      this.synth.cancel();
+    }
     this.isPlaying = false;
     this.isPaused = true;
     this.updatePlayPauseButton(false);
@@ -579,6 +896,8 @@ class TTSController {
   
   stop() {
     this.synth.cancel();
+    window.piperBackend?.stop();
+    window.piperBackend?.flushPrefetch(this._prefetchCache);
     this.isPlaying = false;
     this.isPaused = false;
     this.currentSentenceIndex = 0;
@@ -602,8 +921,10 @@ class TTSController {
   skipBackward() {
     if (this.currentSentenceIndex > 0) {
       this.currentSentenceIndex--;
+      window.piperBackend?.flushPrefetch(this._prefetchCache);
       if (this.isPlaying) {
         this.synth.cancel();
+        window.piperBackend?.stop();
         this.startSpeaking();
       }
     }
@@ -612,13 +933,94 @@ class TTSController {
   skipForward() {
     if (this.currentSentenceIndex < this.sentences.length - 1) {
       this.currentSentenceIndex++;
+      window.piperBackend?.flushPrefetch(this._prefetchCache);
       if (this.isPlaying) {
         this.synth.cancel();
+        window.piperBackend?.stop();
         this.startSpeaking();
       }
     }
   }
   
+  /**
+   * Clean a raw sentence: strip pause markers, return { text, pauseDuration }.
+   * Returns null if the sentence is empty after cleaning.
+   */
+  _cleanSentence(raw) {
+    if (!raw) return null;
+    let text = raw.trim();
+    if (!text) return null;
+
+    let pauseDuration = 0;
+    if (text.includes('[HEADING_PAUSE]')) {
+      text = text.replace(/\[HEADING_PAUSE\]/g, '');
+      pauseDuration = 1200;
+    } else if (text.includes('[LINE_PAUSE]')) {
+      text = text.replace(/\[LINE_PAUSE\]/g, '');
+      pauseDuration = 1100;
+    }
+    text = text.trim();
+    return text ? { text, pauseDuration } : null;
+  }
+
+  /**
+   * Build a chunk of sentences starting at sentenceIndex.
+   * Returns { combinedText, sentenceCount, sentenceTexts[], endIndex }
+   * or null if no speakable sentences remain.
+   */
+  _buildChunk(fromIndex) {
+    const texts = [];
+    let i = fromIndex;
+    while (texts.length < this._chunkSize && i < this.sentences.length) {
+      const cleaned = this._cleanSentence(this.sentences[i]);
+      if (cleaned) {
+        texts.push({ index: i, text: cleaned.text, pause: cleaned.pauseDuration });
+      }
+      i++;
+    }
+    if (texts.length === 0) return null;
+    const chunk = {
+      combinedText: texts.map(t => t.text).join(' '),
+      parts:        texts,              // individual sentence info
+      startIndex:   texts[0].index,
+      endIndex:     i,                  // exclusive — next unprocessed sentence
+    };
+    console.log(`[tts-pipe] 📦 _buildChunk(${fromIndex}): ${texts.length} sentences [${chunk.startIndex}→${chunk.endIndex}), ${chunk.combinedText.length} chars`);
+    return chunk;
+  }
+
+  /**
+   * Pre-generate the next chunk's audio while the current one plays.
+   */
+  _prefetchNextChunk(nextSentenceIndex) {
+    const backend = window.piperBackend;
+    if (!backend?.isReady() || !this.useHDVoice) return;
+    if (this._prefetchCache.has(nextSentenceIndex)) {
+      console.log(`[tts-pipe] ⏭️ _prefetchNextChunk(${nextSentenceIndex}): already queued`);
+      return;
+    }
+
+    const chunk = this._buildChunk(nextSentenceIndex);
+    if (!chunk) {
+      console.log(`[tts-pipe] ⏭️ _prefetchNextChunk(${nextSentenceIndex}): no more sentences`);
+      return;
+    }
+
+    const t0 = performance.now();
+    console.log(`[tts-pipe] 🚀 _prefetchNextChunk(${nextSentenceIndex}): starting generate for ${chunk.combinedText.length} chars`);
+    const promise = backend.generate(chunk.combinedText)
+      .then(result => {
+        console.log(`[tts-pipe] ✅ prefetch(${nextSentenceIndex}) READY in ${(performance.now() - t0).toFixed(0)} ms`);
+        return { ...result, chunk };
+      })
+      .catch(err => {
+        console.warn(`[tts-pipe] ❌ prefetch(${nextSentenceIndex}) FAILED in ${(performance.now() - t0).toFixed(0)} ms:`, err.message);
+        this._prefetchCache.delete(nextSentenceIndex);
+        return null;
+      });
+    this._prefetchCache.set(nextSentenceIndex, promise);
+  }
+
   startSpeaking() {
     if (this.currentSentenceIndex >= this.sentences.length) {
       this.stop();
@@ -627,40 +1029,21 @@ class TTSController {
     }
     
     const sentence = this.sentences[this.currentSentenceIndex];
-    let cleanSentence = sentence.trim();
+    const cleaned = this._cleanSentence(sentence);
     
     // Skip empty sentences
-    if (!cleanSentence) {
+    if (!cleaned) {
       this.currentSentenceIndex++;
       this.startSpeaking();
       return;
     }
+
+    let cleanSentence = cleaned.text;
+    let pauseDuration = cleaned.pauseDuration;
     
-    // Check for pause markers and handle them
-    let pauseDuration = 0;
-    if (cleanSentence.includes('[HEADING_PAUSE]')) {
-      cleanSentence = cleanSentence.replace(/\[HEADING_PAUSE\]/g, '');
-      pauseDuration = 1200; // 1200ms pause after headings (increased from 800ms)
-    } else if (cleanSentence.includes('[LINE_PAUSE]')) {
-      cleanSentence = cleanSentence.replace(/\[LINE_PAUSE\]/g, '');
-      pauseDuration = 1100; // 1100ms pause after paragraphs/line breaks (increased from 900ms)
-    }
-    
-    cleanSentence = cleanSentence.trim();
-    
-    // If sentence is empty after removing pause markers, skip it
-    if (!cleanSentence) {
-      this.currentSentenceIndex++;
-      if (pauseDuration > 0) {
-        // Add pause before next sentence
-        setTimeout(() => {
-          if (this.isPlaying) {
-            this.startSpeaking();
-          }
-        }, pauseDuration);
-      } else {
-        this.startSpeaking();
-      }
+    // Route to piper backend if HD voice is active and ready
+    if (this.useHDVoice && window.piperBackend?.isReady()) {
+      this._speakWithPiper(cleanSentence, pauseDuration);
       return;
     }
     
@@ -863,6 +1246,164 @@ class TTSController {
     attemptSpeak();
   }
   
+  /**
+   * Speak using piper neural TTS in chunked mode.
+   * Groups multiple sentences into one audio clip for seamless playback,
+   * and pre-generates the next chunk in the background.
+   */
+  async _speakWithPiper(text, pauseDuration) {
+    const backend = window.piperBackend;
+    const idx     = this.currentSentenceIndex;
+    const pipeT0  = performance.now();
+    const device  = backend.getDevice?.() || 'wasm';
+    const worker  = backend.usesWorker?.() ? 'worker' : 'main';
+
+    console.log(`[tts-pipe] ──────── _speakWithPiper idx=${idx} (${device}, ${worker}) ────────`);
+
+    // Build a chunk starting at the current sentence
+    const chunk = this._buildChunk(idx);
+    if (!chunk) {
+      console.log(`[tts-pipe] No speakable sentences left, stopping`);
+      this.stop();
+      this.updateProgressText('Finished');
+      return;
+    }
+
+    try {
+      // ── Step 1: resolve this chunk (prefetched or generate now) ──
+      let prefetched = null;
+      const cacheHit = this._prefetchCache.has(idx);
+      console.log(`[tts-pipe] Cache ${cacheHit ? 'HIT ✅' : 'MISS ❌'} for idx=${idx}`);
+
+      if (cacheHit) {
+        const awaitT0 = performance.now();
+        const cached = await this._prefetchCache.get(idx);
+        this._prefetchCache.delete(idx);
+        console.log(`[tts-pipe] Await cache resolved in ${(performance.now() - awaitT0).toFixed(0)} ms`);
+        if (cached) prefetched = cached;
+      }
+
+      // ── Step 2: kick off NEXT chunk prefetch ──
+      // With Worker: generate runs off-thread, won't block audio playback.
+      // Without Worker: generate blocks, so we defer to onStart.
+      if (backend.usesWorker?.()) {
+        this._prefetchNextChunk(chunk.endIndex);
+      }
+
+      const setupMs = performance.now() - pipeT0;
+      console.log(`[tts-pipe] Setup took ${setupMs.toFixed(0)} ms — prefetched=${!!prefetched}`);
+
+      // If no prefetch and cache miss, show generating status
+      if (!prefetched) {
+        this.updateProgressText('Generating HD audio…');
+      }
+
+      // Estimate per-sentence time boundaries for highlighting
+      const totalChars  = chunk.parts.reduce((s, p) => s + p.text.length, 0);
+      let charOffset    = 0;
+      const boundaries  = chunk.parts.map(p => {
+        const start = charOffset / totalChars;
+        charOffset += p.text.length;
+        return { sentenceIndex: p.index, start, end: charOffset / totalChars };
+      });
+
+      let highlightTimer = null;
+      const chunkPlayT0  = performance.now();
+
+      await backend.speak(chunk.combinedText, {
+        prefetched,
+        rate: this.currentRate,
+        onStart: () => {
+          if (this.speechStartTimeout) {
+            clearTimeout(this.speechStartTimeout);
+            this.speechStartTimeout = null;
+          }
+          this.isPlaying = true;
+          const audioDur = backend.currentAudio?.duration || '?';
+          console.log(`[tts-pipe] ▶️ Chunk playing — audio duration: ${typeof audioDur === 'number' ? audioDur.toFixed(1) + 's' : audioDur}, delay from entry: ${(performance.now() - pipeT0).toFixed(0)} ms`);
+          this.updateProgressText(`Speaking (HD)…`);
+          this.currentSentenceIndex = chunk.parts[0].index;
+          this.highlightCurrentSentence();
+
+          // For main-thread (non-worker) fallback: start prefetch in onStart
+          // so WASM only blocks after audio starts streaming
+          if (!backend.usesWorker?.()) {
+            console.log(`[tts-pipe] 🚀 [main-thread] kicking off next-chunk prefetch from onStart`);
+            this._prefetchNextChunk(chunk.endIndex);
+          } else {
+            console.log(`[tts-pipe] 🚀 [worker] prefetch already running off-thread`);
+          }
+
+          // Update highlighting as audio progresses
+          const audio = backend.currentAudio;
+          if (audio) {
+            highlightTimer = setInterval(() => {
+              if (!audio.duration || audio.paused) return;
+              const frac = audio.currentTime / audio.duration;
+              for (let b = boundaries.length - 1; b >= 0; b--) {
+                if (frac >= boundaries[b].start) {
+                  if (this.currentSentenceIndex !== boundaries[b].sentenceIndex) {
+                    this.currentSentenceIndex = boundaries[b].sentenceIndex;
+                    this.highlightCurrentSentence();
+                    this.updateProgress(
+                      (this.currentSentenceIndex / this.sentences.length) * 100
+                    );
+                  }
+                  break;
+                }
+              }
+            }, 200);
+          }
+        },
+        onEnd: () => {
+          if (highlightTimer) clearInterval(highlightTimer);
+          const playMs = performance.now() - chunkPlayT0;
+          console.log(`[tts-pipe] ⏹️ Chunk [${chunk.startIndex}→${chunk.endIndex}) ended — played ${playMs.toFixed(0)} ms`);
+
+          // Advance past all sentences in this chunk
+          this.currentSentenceIndex = chunk.endIndex;
+          this.updateProgress(
+            (this.currentSentenceIndex / this.sentences.length) * 100
+          );
+
+          if (this.currentSentenceIndex < this.sentences.length) {
+            const nextReady = this._prefetchCache.has(this.currentSentenceIndex);
+            console.log(`[tts-pipe] Next chunk prefetch ${nextReady ? 'READY ✅' : 'NOT ready ⏳'} — continuing…`);
+            if (!nextReady) {
+              this.updateProgressText('Generating next…');
+            }
+            const delay = 50;
+            this.continuationTimeout = setTimeout(() => {
+              if (this.isPlaying) this.startSpeaking();
+            }, delay);
+          } else {
+            this.stop();
+            this.updateProgressText('Finished');
+          }
+        },
+        onError: () => {
+          if (highlightTimer) clearInterval(highlightTimer);
+          console.warn('[tts-pipe] ❌ Chunk failed, falling back to system voice');
+          this.useHDVoice = false;
+          this.hdVoiceId  = null;
+          localStorage.setItem('tts-engine', 'system');
+          this._updatePickerUI();
+          this.updateProgressText('HD error — system voice');
+          this.startSpeaking();
+        },
+      });
+    } catch (err) {
+      console.error('[piper] _speakWithPiper error:', err);
+      this.currentSentenceIndex++;
+      if (this.currentSentenceIndex < this.sentences.length && this.isPlaying) {
+        this.startSpeaking();
+      } else {
+        this.stop();
+        this.updateProgressText('Completed with errors');
+      }
+    }
+  }
+  
   updateSpeed(value) {
     this.currentRate = parseFloat(value);
     this.speedValue.textContent = `${value}x`;
@@ -871,15 +1412,22 @@ class TTSController {
     if (this.utterance) {
       this.utterance.rate = this.currentRate;
     }
+    
+    // Update piper playback rate if active
+    window.piperBackend?.setRate(this.currentRate);
   }
   
   updatePlayPauseButton(isPlaying) {
     if (isPlaying) {
       this.playPauseBtn.classList.add('playing');
+      this.playPauseBtn.setAttribute('data-state', 'playing');
       this.playPauseBtn.title = 'Pause';
+      this.playPauseBtn.setAttribute('aria-label', 'Pause');
     } else {
       this.playPauseBtn.classList.remove('playing');
+      this.playPauseBtn.setAttribute('data-state', 'paused');
       this.playPauseBtn.title = 'Play';
+      this.playPauseBtn.setAttribute('aria-label', 'Play');
     }
   }
   
@@ -1147,4 +1695,5 @@ window.addEventListener('beforeunload', () => {
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
   }
+  window.piperBackend?.stop();
 });

@@ -1,79 +1,118 @@
-<!-- TTS Button with control bar for speech speed and text highlighting -->
-<button id="tts-button" 
-        class="tts-button header-button" 
-        title="Text-to-Speech" 
+<!-- TTS — inline trigger button -->
+<button id="tts-button"
+        class="tts-button header-button"
+        title="Listen to this page"
         aria-label="Read page content aloud">
-  <svg xmlns="http://www.w3.org/2000/svg" 
-       width="20" 
-       height="20" 
-       fill="currentColor" 
-       viewBox="0 0 16 16" 
-       aria-hidden="true" 
-       focusable="false">
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/>
+    <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89l.706.706z"/>
     <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zM6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96V5.04z"/>
-    <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/>
-    <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"/>
-    <path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707z"/>
   </svg>
 </button>
 
-<!-- TTS Control Bar — fixed bottom player -->
-<div id="tts-control-bar" class="tts-control-bar">
-  <!-- Full-width progress bar at top of control bar -->
-  <div class="tts-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+<!-- ═══════════════════════════════════════════════════════════════
+     TTS Player Bar — fixed bottom, Spotify-like
+     Layout: [voice+status] · [transport] · [speed+close]
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="tts-control-bar" class="tts-bar">
+  <!-- Top progress rail -->
+  <div class="tts-bar__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
     <div class="tts-progress-fill"></div>
   </div>
 
-  <div class="tts-controls">
-    <!-- Left: speed control pill -->
-    <div class="tts-speed-control">
-      <input type="range" 
-             id="tts-speed" 
-             class="tts-slider" 
-             min="0.5" 
-             max="2" 
-             step="0.1" 
-             value="1"
-             aria-label="Playback speed">
-      <span class="tts-speed-value">1×</span>
+  <div class="tts-bar__inner">
+    <!-- ─── Left: voice selector + status ─── -->
+    <div class="tts-bar__left">
+      {{ if site.Params.enableHDVoice }}
+      <div class="tts-voice-picker" id="tts-voice-picker">
+        <button class="tts-voice-picker-btn" id="tts-voice-picker-btn"
+                title="Choose voice engine"
+                aria-haspopup="listbox" aria-expanded="false">
+          <span class="tts-vp-label" id="tts-vp-label">System</span>
+          <svg class="tts-vp-chevron" width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </button>
+
+        <!-- Voice picker dropdown -->
+        <div class="tts-vp-dropdown" id="tts-vp-dropdown" role="listbox" aria-label="Voice engine">
+          <button class="tts-vp-option active" data-engine="system" role="option" aria-selected="true">
+            <span class="tts-vp-option-icon">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/>
+                <path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707z"/>
+              </svg>
+            </span>
+            <span class="tts-vp-option-info">
+              <span class="tts-vp-option-name">System Voice</span>
+              <span class="tts-vp-option-detail">Browser built-in</span>
+            </span>
+            <span class="tts-vp-check">✓</span>
+          </button>
+
+          <div class="tts-vp-divider">
+            <span>Neural HD</span>
+            <span class="tts-vp-badge" id="tts-vp-hd-badge">~63 MB</span>
+          </div>
+
+          <div class="tts-vp-hd-status" id="tts-vp-hd-status">
+            <div class="tts-vp-hd-progress-row">
+              <span class="tts-vp-hd-status-text" id="tts-vp-hd-status-text">One-time download · cached locally</span>
+              <div class="tts-vp-hd-progress-bar" id="tts-vp-hd-progress-bar">
+                <div class="tts-vp-hd-progress-fill" id="tts-vp-hd-progress-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tts-vp-hd-voices" id="tts-vp-hd-voices"></div>
+        </div>
+      </div>
+      {{ end }}
+      <span class="tts-progress-text" aria-live="polite">Ready</span>
     </div>
 
-    <!-- Center: playback controls -->
-    <div class="tts-action-buttons">
-      <button id="tts-stop" class="tts-control-btn tts-btn-secondary" title="Stop" aria-label="Stop">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-          <rect x="4.5" y="4.5" width="7" height="7" rx="1"/>
-        </svg>
-      </button>
-
-      <button id="tts-skip-back" class="tts-control-btn tts-btn-secondary" title="Previous sentence" aria-label="Previous sentence">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+    <!-- ─── Center: transport controls ─── -->
+    <div class="tts-bar__center">
+      <button id="tts-skip-back" class="tts-ctrl tts-ctrl--sm" title="Previous" aria-label="Previous sentence">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M4.5 3.5A.5.5 0 0 1 5 4v3.248l6.267-3.636c.52-.302 1.233.043 1.233.696v7.384c0 .653-.713.998-1.233.696L5 8.752V12a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
         </svg>
       </button>
 
-      <button id="tts-play-pause" class="tts-control-btn tts-btn-primary" title="Play" aria-label="Play or Pause">
-        <svg class="tts-play-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+      <button id="tts-play-pause" class="tts-ctrl tts-ctrl--hero" title="Play" aria-label="Play or Pause">
+        <svg class="tts-play-icon" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z"/>
         </svg>
-        <svg class="tts-pause-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
-          <rect x="4.5" y="4" width="2.5" height="8" rx="0.5"/>
-          <rect x="9" y="4" width="2.5" height="8" rx="0.5"/>
+        <svg class="tts-pause-icon" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <rect x="4.5" y="4" width="2.5" height="8" rx=".5"/>
+          <rect x="9"   y="4" width="2.5" height="8" rx=".5"/>
         </svg>
       </button>
 
-      <button id="tts-skip-forward" class="tts-control-btn tts-btn-secondary" title="Next sentence" aria-label="Next sentence">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+      <button id="tts-skip-forward" class="tts-ctrl tts-ctrl--sm" title="Next" aria-label="Next sentence">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M11.5 3.5a.5.5 0 0 0-.5.5v3.248L4.733 3.612C4.213 3.31 3.5 3.655 3.5 4.308v7.384c0 .653.713.998 1.233.696L11 8.752V12a.5.5 0 0 0 1 0V4a.5.5 0 0 0-.5-.5z"/>
         </svg>
       </button>
     </div>
 
-    <!-- Right: status + close -->
-    <div class="tts-status-group">
-      <span class="tts-progress-text">Ready</span>
-      <button id="tts-close" class="tts-close-btn" title="Close TTS" aria-label="Close Text-to-Speech">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+    <!-- ─── Right: speed + stop + close ─── -->
+    <div class="tts-bar__right">
+      <div class="tts-speed">
+        <input type="range" id="tts-speed" class="tts-speed__slider"
+               min="0.5" max="2" step="0.1" value="1"
+               aria-label="Playback speed">
+        <span class="tts-speed-value">1×</span>
+      </div>
+
+      <button id="tts-stop" class="tts-ctrl tts-ctrl--sm" title="Stop" aria-label="Stop">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+          <rect x="4" y="4" width="8" height="8" rx="1.5"/>
+        </svg>
+      </button>
+
+      <button id="tts-close" class="tts-bar__close" title="Close" aria-label="Close Text-to-Speech">
+        <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
           <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854z"/>
         </svg>
       </button>
