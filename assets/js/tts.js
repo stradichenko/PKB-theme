@@ -116,6 +116,16 @@ class TTSController {
       this.hdVoiceId  = savedVoice || 'en_US-hfc_male-medium';
     }
     this._updatePickerUI();
+
+    // Eagerly start loading the Piper model on page load when HD is the
+    // preference.  The model is cached in OPFS after the first download,
+    // so subsequent loads are near-instant (~200-500 ms).  By starting
+    // here instead of waiting for the play button, the model is usually
+    // ready before the user clicks play — no eSpeak fallback needed.
+    if (this.useHDVoice && window.piperBackend) {
+      // Small delay so it doesn't compete with page rendering
+      setTimeout(() => this._lazyInitPiper(), 500);
+    }
     
     // Handle text selection for starting from cursor position
     // document.addEventListener('click', (e) => this.handleTextClick(e));
@@ -890,6 +900,28 @@ class TTSController {
     // Set UI before speaking - onstart will confirm with 'Speaking...'
     this.updatePlayPauseButton(true);
     this.updateProgressText('Starting...');
+
+    // If HD is the preference and Piper is still loading from the eager
+    // page-load init, wait up to 3 s for it to finish before falling
+    // through to eSpeak.  The cached model usually loads in < 500 ms.
+    if (this.useHDVoice && window.piperBackend && !window.piperBackend.isReady() && this.piperLoading) {
+      this.updateProgressText('Loading HD voice…');
+      const waitStart = performance.now();
+      const waitInterval = setInterval(() => {
+        if (window.piperBackend.isReady()) {
+          clearInterval(waitInterval);
+          console.log(`[tts-pipe] 🎬 Piper ready after ${(performance.now() - waitStart).toFixed(0)} ms wait`);
+          if (this.hdVoiceId) window.piperBackend.setVoice(this.hdVoiceId);
+          this._prefetchNextChunk(this.currentSentenceIndex);
+          this.startSpeaking();
+        } else if (performance.now() - waitStart > 3000) {
+          clearInterval(waitInterval);
+          console.log('[tts-pipe] ⏰ Piper not ready after 3 s — starting with system voice');
+          this.startSpeaking();
+        }
+      }, 100);
+      return;
+    }
 
     // Eagerly prefetch first chunk for HD voice
     if (this.useHDVoice && window.piperBackend?.isReady()) {
