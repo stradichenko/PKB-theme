@@ -20,28 +20,4 @@
   </span>
 </button>
 
-<!-- Fallback print styles if CSS file fails to load -->
-<style>
-@media print {
-  /* Critical print hiding rules as fallback */
-  .pdf-button, .page-pdf, #pdf-generate-btn, button[id*="pdf"], 
-  header, footer, nav, aside, .header-container, .nav-wrapper,
-  .toc-sidebar, .sidebar, button, svg {
-    display: none !important;
-  }
-  
-  html, body {
-    background: white !important;
-    color: black !important;
-    font-family: Arial, sans-serif !important;
-    font-size: 12px !important;
-  }
-  
-  .main-content, article, .post-content {
-    display: block !important;
-    width: 100% !important;
-    background: white !important;
-    color: black !important;
-  }
-}
-</style>
+<!-- Print styles handled by pdf-print.css — no inline fallback needed -->

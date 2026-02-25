@@ -254,6 +254,23 @@
   {{ warnf "No scripts to bundle on single page" }}
 {{ end }}
 
+<!-- PDF print CSS custom properties from site params -->
+{{ with site.Params.pdf }}
+<style media="print">
+  :root {
+    --pdf-font-family: {{ with .fontFamily }}{{ . | safeCSS }}{{ else }}"Palatino Linotype", "Book Antiqua", Palatino, "EB Garamond", Georgia, "Times New Roman", serif{{ end }};
+    --pdf-code-font-family: {{ with .codeFontFamily }}{{ . | safeCSS }}{{ else }}"Courier New", Courier, "Liberation Mono", monospace{{ end }};
+    --pdf-font-size: {{ with .fontSize }}{{ . | safeCSS }}{{ else }}11pt{{ end }};
+    --pdf-title-font-size: {{ with .titleFontSize }}{{ . | safeCSS }}{{ else }}17pt{{ end }};
+    --pdf-heading-font-size: {{ with .headingFontSize }}{{ . | safeCSS }}{{ else }}14pt{{ end }};
+    --pdf-subheading-font-size: {{ with .subheadingFontSize }}{{ . | safeCSS }}{{ else }}12pt{{ end }};
+    --pdf-notes-font-size: {{ with .notesFontSize }}{{ . | safeCSS }}{{ else }}9pt{{ end }};
+    --pdf-bibliography-font-size: {{ with .bibliographyFontSize }}{{ . | safeCSS }}{{ else }}9.5pt{{ end }};
+    --pdf-page-number-font-size: {{ with .pageNumberFontSize }}{{ . | safeCSS }}{{ else }}10pt{{ end }};
+  }
+</style>
+{{ end }}
+
 <!-- Styles -->
 {{ if gt (len $styles) 0 }}
   {{ $combinedStyles := $styles | resources.Concat "css/single-page.css" | resources.Minify | fingerprint }}

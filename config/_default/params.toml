@@ -3,6 +3,55 @@
 # via ONNX Runtime (WASM). The ~63 MB model is downloaded once and cached in OPFS.
 enableHDVoice = true
 
+# ─────────────────────────────────────────────────────────────────────────────
+# PDF / Print Settings
+# ─────────────────────────────────────────────────────────────────────────────
+# Customize the look of browser-generated PDFs (Ctrl+P or the PDF button).
+# All values are injected as CSS and must be valid CSS syntax.
+[pdf]
+  # Main body font-family stack.
+  # The first available font on the reader's system is used.
+  # Recommended serif stacks (LaTeX-like academic look):
+  #   "Palatino Linotype", "Book Antiqua", Palatino, "EB Garamond", Georgia, "Times New Roman", serif
+  #   "Computer Modern Serif", "Latin Modern Roman", "EB Garamond", Georgia, serif
+  #   "Garamond", "EB Garamond", "Cormorant Garamond", Georgia, serif
+  #   "Georgia", "Times New Roman", Times, serif
+  #   "Libre Baskerville", Baskerville, "Times New Roman", serif
+  # Sans-serif alternatives:
+  #   "Helvetica Neue", Helvetica, Arial, sans-serif
+  #   "Inter", "Segoe UI", Roboto, sans-serif
+  # Monospace (technical reports):
+  #   "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace
+  fontFamily = '"Palatino Linotype", "Book Antiqua", Palatino, "EB Garamond", Georgia, "Times New Roman", serif'
+
+  # Code / pre-formatted font-family stack.
+  # Used inside <pre> and inline <code> blocks.
+  #   "Courier New", Courier, "Liberation Mono", monospace   (classic)
+  #   "JetBrains Mono", "Fira Code", "Source Code Pro", monospace
+  #   "Cascadia Code", Consolas, "Liberation Mono", monospace
+  codeFontFamily = '"Courier New", Courier, "Liberation Mono", monospace'
+
+  # Body text font-size (CSS unit).  Common academic sizes: 10pt, 11pt, 12pt.
+  fontSize = "11pt"
+
+  # Post title font-size.  Typical range: 16pt – 22pt.
+  titleFontSize = "17pt"
+
+  # Section heading (h2) font-size.  Typical range: 12pt – 16pt.
+  headingFontSize = "14pt"
+
+  # Sub-section heading (h3) font-size.  Typical range: 11pt – 14pt.
+  subheadingFontSize = "12pt"
+
+  # Endnotes / footnotes font-size.  Typical range: 8pt – 10pt.
+  notesFontSize = "9pt"
+
+  # Bibliography entries font-size.  Typical range: 8pt – 10pt.
+  bibliographyFontSize = "9.5pt"
+
+  # Page-number font-size in the footer.  Typical: 9pt – 11pt.
+  pageNumberFontSize = "10pt"
+
 [contact]
   phone = '+1 206-555-1212'
   profileName = "Your Name"

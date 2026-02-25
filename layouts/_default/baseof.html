@@ -31,8 +31,8 @@
     })();
   </script>
   
-  <!-- Critical CSS for immediate theme application -->
-  <style>
+  <!-- Critical CSS for immediate theme application (screen only, not print) -->
+  <style media="screen">
     /* Force the background color with maximum specificity using CSS variables */
     html[data-theme="dark"],
     html[data-theme="dark"] body,
@@ -87,20 +87,15 @@
     {{ partial "footer.html" . }}
   </footer>
   
-  <!-- PDF generator script loading for single pages only -->
-  {{ if not .IsSection }}
-    {{ $pdfGenerator := resources.Get "js/pdf-generator.js" }}
-    {{ if $pdfGenerator }}
-      {{ $pdfGeneratorMin := $pdfGenerator | minify | fingerprint }}
-      <script src="{{ $pdfGeneratorMin.RelPermalink }}" defer></script>
-    {{ end }}
-  {{ end }}
+  <!-- PDF generator loaded via single-page bundle in single.html -->
 
   <!-- Mermaid diagram support -->
   {{ if .Store.Get "hasMermaid" }}
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
+    /* Expose for pdf-generator.js to force-render before print */
+    window.__mermaid = mermaid;
   </script>
   {{ end }}
   
