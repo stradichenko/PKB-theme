@@ -54,6 +54,7 @@ class TTSController {
     // Prefetch pipeline for piper — Map<chunkIndex, Promise<{url,audio}>>
     this._prefetchCache    = new Map();
     this._chunkSize        = 4;       // sentences per audio chunk
+    this._piperBusy        = false;   // re-entry guard for async _speakWithPiper
     
     this.init();
   }
@@ -102,14 +103,19 @@ class TTSController {
     // Populate HD voice buttons (disabled until model loads)
     this._populateHDVoices();
     
-    // Restore previous preference from localStorage
+    // Restore previous preference from localStorage (default: HD · HFC Male)
     const savedEngine = localStorage.getItem('tts-engine');
     const savedVoice  = localStorage.getItem('tts-hd-voice-id');
-    if (savedEngine === 'hd' && this.voicePicker) {
+    if (savedEngine === 'system') {
+      // User explicitly chose system voice — respect that
+      this.useHDVoice = false;
+      this.hdVoiceId  = null;
+    } else {
+      // Default to HD, or restore saved HD preference
       this.useHDVoice = true;
-      this.hdVoiceId  = savedVoice || 'en_US-hfc_female-medium';
-      this._updatePickerUI();
+      this.hdVoiceId  = savedVoice || 'en_US-hfc_male-medium';
     }
+    this._updatePickerUI();
     
     // Handle text selection for starting from cursor position
     // document.addEventListener('click', (e) => this.handleTextClick(e));
@@ -560,52 +566,80 @@ class TTSController {
   }
   
   splitIntoSentences(text) {
-    // First split on pause markers so headings become their own sentences
-    const chunks = text.split(/\s*\[(HEADING_PAUSE|LINE_PAUSE)\]\s*/).filter(Boolean);
-    
-    const allSentences = [];
-    for (const chunk of chunks) {
-      // Skip the marker token names themselves
-      if (chunk === 'HEADING_PAUSE' || chunk === 'LINE_PAUSE') continue;
-      
-      const trimmed = chunk.trim();
-      if (!trimmed) continue;
-      
-      // Try to split this chunk further on sentence-ending punctuation
-      const subSentences = trimmed.match(/[^\.!?]*[\.!?]+/g);
-      
-      if (subSentences && subSentences.length > 0) {
-        // Check if there's leftover text before the first punctuation match
-        const matched = subSentences.join('');
-        const leftover = trimmed.slice(0, trimmed.indexOf(matched.charAt(0)));
-        if (leftover.trim().length > 3) {
-          allSentences.push(leftover.trim());
+    // Split on pause markers, capturing the marker tokens so we can
+    // re-attach them to the LAST sentence of each preceding text chunk.
+    // This ensures _cleanSentence sees the marker and assigns the right pause.
+    const parts = text.split(/(\[(?:HEADING_PAUSE|LINE_PAUSE)\])/).filter(Boolean);
+
+    // Build pairs: { text, followingMarker } for each text chunk
+    const textChunks = [];
+    for (let p = 0; p < parts.length; p++) {
+      const part = parts[p].trim();
+      if (!part) continue;
+      if (part === '[HEADING_PAUSE]' || part === '[LINE_PAUSE]') {
+        // Attach this marker to the last text chunk
+        if (textChunks.length > 0) {
+          textChunks[textChunks.length - 1].marker = part;
         }
+      } else {
+        textChunks.push({ text: part, marker: null });
+      }
+    }
+
+    const allSentences = [];
+    for (const chunk of textChunks) {
+      const trimmed = chunk.text.trim();
+      if (!trimmed) continue;
+
+      // Split on ALL pause-worthy punctuation so each segment carries
+      // its trailing pause character:
+      //   Long  pause (1 s):  .  ?  ;  \u2026 (ellipsis / triple-dot)
+      //   Short pause (0.7 s):  ,  :  !  -  \u2013  \u2014
+      const subSentences = trimmed.match(/[^.!?;:,\-\u2013\u2014\u2026]*[.!?;:,\-\u2013\u2014\u2026]+/g);
+
+      if (subSentences && subSentences.length > 0) {
         for (const s of subSentences) {
           if (s.trim().length > 3) allSentences.push(s.trim());
+        }
+        // Capture any trailing text that has no punctuation
+        const matchedLen = subSentences.reduce((n, s) => n + s.length, 0);
+        const remainder = trimmed.slice(matchedLen).trim();
+        if (remainder.length > 3) {
+          allSentences.push(remainder);
         }
       } else {
         // No punctuation — treat the whole chunk as one sentence (e.g. a heading)
         if (trimmed.length > 1) allSentences.push(trimmed);
       }
+
+      // Re-attach the structural marker to the LAST sentence of this chunk
+      // so _cleanSentence can detect it and assign the correct pause.
+      if (chunk.marker && allSentences.length > 0) {
+        allSentences[allSentences.length - 1] += ' ' + chunk.marker;
+      }
     }
-    
+
     console.log('Split into sentences:', allSentences.length);
-    console.log('First 3 sentences:', allSentences.slice(0, 3));
-    
+    console.log('First 5 sentences:', allSentences.slice(0, 5));
+
     return allSentences.length > 0 ? allSentences : [text];
   }
   
-  // Add pause markers after headings and line breaks
+  // Add pause markers around headings and after block elements
   addPausesToStructuralElements(element) {
-    // Add pause markers after headings
+    // Add pause markers BEFORE and AFTER headings for: pause → heading → pause
     const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
     headings.forEach(heading => {
-      const pauseMarker = document.createTextNode(' [HEADING_PAUSE] ');
+      // Marker before heading (ensures pause even if preceding text has none)
+      const preMarker = document.createTextNode(' [HEADING_PAUSE] ');
+      heading.parentNode.insertBefore(preMarker, heading);
+
+      // Marker after heading
+      const postMarker = document.createTextNode(' [HEADING_PAUSE] ');
       if (heading.nextSibling) {
-        heading.parentNode.insertBefore(pauseMarker, heading.nextSibling);
+        heading.parentNode.insertBefore(postMarker, heading.nextSibling);
       } else {
-        heading.parentNode.appendChild(pauseMarker);
+        heading.parentNode.appendChild(postMarker);
       }
     });
     
@@ -871,6 +905,7 @@ class TTSController {
   pause() {
     // Store the current sentence index for proper resume
     this.pausedSentenceIndex = this.currentSentenceIndex;
+    this._piperBusy = false;
     
     // Cancel through the active backend
     if (this.useHDVoice && window.piperBackend) {
@@ -895,6 +930,7 @@ class TTSController {
   }
   
   stop() {
+    this._piperBusy = false;
     this.synth.cancel();
     window.piperBackend?.stop();
     window.piperBackend?.flushPrefetch(this._prefetchCache);
@@ -945,6 +981,13 @@ class TTSController {
   /**
    * Clean a raw sentence: strip pause markers, return { text, pauseDuration }.
    * Returns null if the sentence is empty after cleaning.
+   *
+   * Pause hierarchy (highest wins):
+   *   [HEADING_PAUSE] marker  → 1 200 ms
+   *   [LINE_PAUSE]    marker  → 1 100 ms
+   *   …  or  ...              → 1 000 ms   (ellipsis / triple-dot)
+   *   .   ?   ;               → 1 000 ms   (full stop, question, semicolon)
+   *   ,   :   !   - – —       →   700 ms   (comma, colon, bang, dashes)
    */
   _cleanSentence(raw) {
     if (!raw) return null;
@@ -952,6 +995,8 @@ class TTSController {
     if (!text) return null;
 
     let pauseDuration = 0;
+
+    // Structural markers take highest priority
     if (text.includes('[HEADING_PAUSE]')) {
       text = text.replace(/\[HEADING_PAUSE\]/g, '');
       pauseDuration = 1200;
@@ -959,14 +1004,41 @@ class TTSController {
       text = text.replace(/\[LINE_PAUSE\]/g, '');
       pauseDuration = 1100;
     }
+
     text = text.trim();
-    return text ? { text, pauseDuration } : null;
+    if (!text) return null;
+
+    // Derive pause from trailing punctuation when no structural marker
+    if (pauseDuration === 0) {
+      if (/\.{2,}$|\u2026$/.test(text)) {
+        // Ellipsis (... or …)
+        pauseDuration = 1000;
+      } else {
+        const last = text.slice(-1);
+        if (last === '.' || last === '?' || last === ';') {
+          pauseDuration = 1000;
+        } else if (
+          last === ',' || last === ':' || last === '!' ||
+          last === '-' || last === '\u2014' || last === '\u2013'
+        ) {
+          pauseDuration = 700;
+        }
+      }
+    }
+
+    return { text, pauseDuration };
   }
 
   /**
    * Build a chunk of sentences starting at sentenceIndex.
    * Returns { combinedText, sentenceCount, sentenceTexts[], endIndex }
    * or null if no speakable sentences remain.
+   *
+   * When building the combined text for Piper, we inject silence-inducing
+   * punctuation between segments so the VITS model renders audible pauses:
+   *   700 ms pause  →  ". "   (short breath)
+   *   1000 ms pause →  "... " (medium pause — ellipsis)
+   *   1100+ ms pause → "...... " (long structural pause)
    */
   _buildChunk(fromIndex) {
     const texts = [];
@@ -975,12 +1047,31 @@ class TTSController {
       const cleaned = this._cleanSentence(this.sentences[i]);
       if (cleaned) {
         texts.push({ index: i, text: cleaned.text, pause: cleaned.pauseDuration });
+
+        // Force a chunk boundary after structural pauses (headings,
+        // paragraphs, line breaks) so the inter-chunk delay fires.
+        // This gives us: ... text → [pause] → heading → [pause] → text ...
+        if (cleaned.pauseDuration >= 1000) { i++; break; }
       }
       i++;
     }
     if (texts.length === 0) return null;
+
+    // Join with silence padding so Piper VITS renders pauses within chunk
+    let combinedText = texts[0].text;
+    for (let t = 1; t < texts.length; t++) {
+      const prevPause = texts[t - 1].pause;
+      let separator;
+      if (prevPause >= 700) {
+        separator = '... ';     // audible pause cue for Piper
+      } else {
+        separator = ' ';        // normal flow
+      }
+      combinedText += separator + texts[t].text;
+    }
+
     const chunk = {
-      combinedText: texts.map(t => t.text).join(' '),
+      combinedText,
       parts:        texts,              // individual sentence info
       startIndex:   texts[0].index,
       endIndex:     i,                  // exclusive — next unprocessed sentence
@@ -1026,6 +1117,15 @@ class TTSController {
       this.stop();
       this.updateProgressText('Finished');
       return;
+    }
+
+    // ── Guard: stop BOTH engines before starting anything new ──
+    // This prevents the race where Piper and eSpeak play simultaneously.
+    this.synth.cancel();
+    window.piperBackend?.stop();
+    if (this.continuationTimeout) {
+      clearTimeout(this.continuationTimeout);
+      this.continuationTimeout = null;
     }
     
     const sentence = this.sentences[this.currentSentenceIndex];
@@ -1252,6 +1352,14 @@ class TTSController {
    * and pre-generates the next chunk in the background.
    */
   async _speakWithPiper(text, pauseDuration) {
+    // Re-entry guard: if we're already inside an async Piper flow, bail out.
+    // The active flow's onEnd will call startSpeaking() when it finishes.
+    if (this._piperBusy) {
+      console.log('[tts-pipe] ⚠️ _speakWithPiper re-entry blocked — already busy');
+      return;
+    }
+    this._piperBusy = true;
+
     const backend = window.piperBackend;
     const idx     = this.currentSentenceIndex;
     const pipeT0  = performance.now();
@@ -1264,6 +1372,7 @@ class TTSController {
     const chunk = this._buildChunk(idx);
     if (!chunk) {
       console.log(`[tts-pipe] No speakable sentences left, stopping`);
+      this._piperBusy = false;
       this.stop();
       this.updateProgressText('Finished');
       return;
@@ -1356,6 +1465,7 @@ class TTSController {
           }
         },
         onEnd: () => {
+          this._piperBusy = false;
           if (highlightTimer) clearInterval(highlightTimer);
           const playMs = performance.now() - chunkPlayT0;
           console.log(`[tts-pipe] ⏹️ Chunk [${chunk.startIndex}→${chunk.endIndex}) ended — played ${playMs.toFixed(0)} ms`);
@@ -1372,7 +1482,9 @@ class TTSController {
             if (!nextReady) {
               this.updateProgressText('Generating next…');
             }
-            const delay = 50;
+            // Use the trailing-punctuation pause from the chunk's last part
+            const lastPart = chunk.parts[chunk.parts.length - 1];
+            const delay = lastPart && lastPart.pause > 0 ? lastPart.pause : 100;
             this.continuationTimeout = setTimeout(() => {
               if (this.isPlaying) this.startSpeaking();
             }, delay);
@@ -1382,6 +1494,7 @@ class TTSController {
           }
         },
         onError: () => {
+          this._piperBusy = false;
           if (highlightTimer) clearInterval(highlightTimer);
           console.warn('[tts-pipe] ❌ Chunk failed, falling back to system voice');
           this.useHDVoice = false;
@@ -1393,6 +1506,7 @@ class TTSController {
         },
       });
     } catch (err) {
+      this._piperBusy = false;
       console.error('[piper] _speakWithPiper error:', err);
       this.currentSentenceIndex++;
       if (this.currentSentenceIndex < this.sentences.length && this.isPlaying) {
