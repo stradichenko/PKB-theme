@@ -1,5 +1,5 @@
 <h1 align="center">
-  PKB-theme |<a href="https://stradichenko.github.io/PKB-theme/">Demo</a>
+  PKB-theme | <a href="https://stradichenko.github.io/PKB-theme/">Demo</a>
 </h1>
 
 <h3 align="center">
@@ -19,7 +19,6 @@
     <a href="https://liberapay.com/gespitia/donate">
       <img src="https://img.shields.io/badge/Liberapay-F6C915?style=for-the-badge&logo=liberapay&logoColor=black" alt="Donate using Liberapay">
     </a>
-    <script src="https://liberapay.com/gespitia/widgets/button.js"></script>
   <a href="https://github.com/sponsors/stradichenko">
     <img src="https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA">
   </a>
