@@ -9,11 +9,22 @@
   <div class="about-profile-container">
     <div class="about-left-column">
       <div class="profile-image">
-        <img src="{{ with .Site.Params.contact.profilepicture }}{{ . | absURL }}{{ else }}{{ "images/profile.png" | absURL }}{{ end }}" 
-             alt="Profile Picture" 
-             width="240" 
-             height="240"
-             loading="lazy">
+        {{ $profileSrc := site.Params.contact.profilepicture | default "images/profile.png" }}
+        {{ $profileImg := resources.Get $profileSrc }}
+        {{ if $profileImg }}
+          {{ $profile := $profileImg.Resize "200x webp" }}
+          <img src="{{ $profile.RelPermalink }}"
+               alt="Profile Picture"
+               width="{{ $profile.Width }}"
+               height="{{ $profile.Height }}"
+               loading="lazy">
+        {{ else }}
+          <img src="{{ $profileSrc | absURL }}"
+               alt="Profile Picture"
+               width="240"
+               height="240"
+               loading="lazy">
+        {{ end }}
       </div>
       <h2 class="profile-name">{{ .Site.Params.contact.profilename | default "Your Name" }}</h2>
       <p class="profile-description">{{ .Site.Params.about.profiledescription | default "A short description about yourself." }}</p>

@@ -37,8 +37,3 @@ title        = "PKB-theme Demo"
     [[module.imports.mounts]]
       source = "archetypes"
       target = "archetypes"
-
-    # Mount portfolio images to the correct assets path
-    [[module.mounts]]
-      source = "static/images/portfolio"
-      target = "assets/images/portfolio"

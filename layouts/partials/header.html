@@ -1,8 +1,9 @@
 <!-- layouts/partials/header.html -->
 <div class="header-container">
   <div class="header-left">
-    <a href="{{ .Site.Home.RelPermalink }}" class="logo-link" aria-label="Home">
-      <img src="{{ "img/logo.svg" | relURL }}" alt="Site Logo" class="site-logo" width="40" height="40">
+    <a href="{{ site.Home.RelPermalink }}" class="logo-link" aria-label="Home">
+      {{ $logo := resources.Get "img/logo.svg" | minify | fingerprint }}
+      <img src="{{ $logo.RelPermalink }}" alt="Site Logo" class="site-logo" width="40" height="40">
     </a>
     
     <button id="burger-menu" class="burger-button" aria-label="Toggle menu" aria-expanded="false">

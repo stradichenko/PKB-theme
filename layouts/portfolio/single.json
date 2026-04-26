@@ -4,7 +4,7 @@
   "portfolio_metadata" (dict
     "total_images" 0
     "supported_formats" (slice)
-    "generated_at" (now.Format "2006-01-02T15:04:05Z07:00")
+    "generated_at" (time.Format "2006-01-02T15:04:05Z07:00" now)
     "hugo_version" hugo.Version
     "pkb_schema_version" "1.0.0"
     "category_list" (slice)
@@ -121,7 +121,7 @@
   "portfolio_metadata" (dict
     "total_images" (len $portfolioImages)
     "supported_formats" $supportedFormats
-    "generated_at" (now.Format "2006-01-02T15:04:05Z07:00")
+    "generated_at" (time.Format "2006-01-02T15:04:05Z07:00" now)
     "hugo_version" hugo.Version
     "pkb_schema_version" "1.0.0"
     "category_list" $categoryList
