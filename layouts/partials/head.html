@@ -45,7 +45,11 @@
 
     <!-- JavaScript loading - Deferred for performance -->
     {{ with resources.Get "js/main.js" }}
-        {{ $mainJS := . | js.Build | minify | fingerprint }}
+        {{ $opts := dict "minify" true }}
+        {{ if ne hugo.Environment "development" }}
+            {{ $opts = dict "minify" true "drop" (slice "console" "debugger") }}
+        {{ end }}
+        {{ $mainJS := . | js.Build $opts | fingerprint }}
         <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
     {{ end }}
     

@@ -16,7 +16,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // Replace the table with the wrapper
     table.parentNode.insertBefore(wrapper, table);
     wrapper.appendChild(table);
-    
-    console.log('Table wrapped for responsive display');
   });
 });

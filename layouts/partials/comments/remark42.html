@@ -18,9 +18,6 @@
     theme: '{{ .Site.Params.comments.remark42.theme | default "light" }}',
     locale: '{{ .Site.Params.comments.remark42.locale | default "en" }}'
   };
-
-  // Add console logs to debug
-  console.log("Remark42 config:", remark_config);
 </script>
 <script>
   (function(c) {
@@ -28,9 +25,6 @@
       var d = document, s = d.createElement('script');
       s.src = remark_config.host + '/web/' + c[i] + '.js';
       s.defer = true;
-      // Log when script is loaded or fails
-      s.onload = function() { console.log("Remark42 script loaded successfully"); };
-      s.onerror = function() { console.log("Failed to load Remark42 script", this.src); };
       (d.head || d.body).appendChild(s);
     }
   })(['embed']);
