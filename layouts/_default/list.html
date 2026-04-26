@@ -3,37 +3,36 @@
     <header class="page-header">
       <h1 class="page-title">{{ .Title }}</h1>
     </header>
-    
+
     <div class="knowledge-graph-wrapper">
       {{ partial "knowledge-graph.html" . }}
     </div>
-    
+
     <div class="page-content">
       {{ .Content }}
     </div>
 
     <div class="pages-list">
       {{ range .Pages }}
-        {{ $page := . }}
         <article class="page-item">
           <h2 class="page-item-title">
             <a href="{{ .RelPermalink }}" class="page-link">{{ .LinkTitle }}</a>
           </h2>
-          
+
           <div class="page-metadata">
-            {{ if .Date }}
+            {{ with .Date }}
             <span class="page-date">
-              <i class="icon-calendar"></i> {{ .Date.Format "January 2, 2006" }}
+              {{ partial "icons.html" (dict "name" "calendar" "class" "meta-icon") }}
+              <time datetime="{{ . | time.Format "2006-01-02" }}">{{ . | time.Format "January 2, 2006" }}</time>
             </span>
             {{ end }}
-            
+
             {{ if .Params.categories }}
             <span class="page-categories">
-              <i class="icon-folder"></i>
+              {{ partial "icons.html" (dict "name" "folder" "class" "meta-icon") }}
               {{ $maxCategories := 2 }}
-              {{ $categoryCount := len .Params.categories }}
               {{ $allCategories := .Params.categories }}
-              
+
               {{ range $index, $category := .Params.categories }}
                 {{ if lt $index $maxCategories }}
                   {{- if gt $index 0 }}, {{ end -}}
@@ -46,14 +45,13 @@
               {{- end -}}
             </span>
             {{ end }}
-            
+
             {{ if .Params.tags }}
             <span class="page-tags">
-              <i class="icon-tag"></i>
+              {{ partial "icons.html" (dict "name" "tag" "class" "meta-icon") }}
               {{ $maxTags := 3 }}
-              {{ $tagCount := len .Params.tags }}
               {{ $allTags := .Params.tags }}
-              
+
               {{ range $index, $tag := .Params.tags }}
                 {{ if lt $index $maxTags }}
                   {{- if gt $index 0 }}, {{ end -}}
@@ -67,13 +65,13 @@
             </span>
             {{ end }}
           </div>
-          
+
           {{ with .Description }}
           <div class="page-description">
             {{ . }}
           </div>
           {{ end }}
-          
+
           {{ with .Summary }}
           <div class="page-summary">
             {{ . }}
