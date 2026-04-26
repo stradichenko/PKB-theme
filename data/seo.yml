@@ -8,26 +8,26 @@ schema:
   organization:
     name: "PKB Theme"
     logo: "/images/logo.png"
-    url: "https://yoursite.com"
+    url: "https://example.com"  # OVERRIDE in your site's data/seo.yml
     contactPoint:
-      telephone: "+1-000-000-0000"
+      telephone: "+1-000-000-0000"  # OVERRIDE in your site's data/seo.yml
       contactType: "customer service"
       areaServed: "Global"
       availableLanguage: ["English"]
     foundingDate: "2024"
     description: "A Hugo theme for personal knowledge base and academic blogging"
-    
+
   # Additional schema types for rich snippets
   website:
     potentialAction:
       - "@type": "SearchAction"
-        target: "https://yoursite.com/search?q={search_term_string}"
+        target: "https://example.com/search?q={search_term_string}"  # OVERRIDE in your site's data/seo.yml
         "query-input": "required name=search_term_string"
 
 social:
-  twitter: "@yourhandle"
-  facebook: "yourpage"
-  linkedin: "yourprofile"
+  twitter: "@yourhandle"  # OVERRIDE in your site's data/seo.yml
+  facebook: "yourpage"    # OVERRIDE in your site's data/seo.yml
+  linkedin: "yourprofile" # OVERRIDE in your site's data/seo.yml
   
 performance:
   critical_css: true

@@ -53,11 +53,15 @@ enableHDVoice = true
   pageNumberFontSize = "10pt"
 
 [contact]
+  # Replace with your contact phone — example only
   phone = '+1 206-555-1212'
+  # Replace with your name — example only
   profileName = "Your Name"
+  # Replace with your profile picture path — example only
   profilePicture = "images/profile.png"
-  
+
 [social]
+  # Replace each URL with your handle/profile — examples only
   linkedin = "https://linkedin.com/in/your-profile"
   twitter = "https://twitter.com/your-profile"
   instagram = "https://instagram.com/your-profile"
@@ -154,6 +158,7 @@ tagline = "Personal Knowledge Base"
   default_image = "/images/default-og.jpg"
   
   # Twitter specific (no duplication with [social])
+  # Replace with your Twitter/X handle — example only
   twitter_creator = "@yourhandle"
   
   # Site Verification

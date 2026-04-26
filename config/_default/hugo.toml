@@ -1,8 +1,9 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
-title = 'HUGO_site'
+title = 'PKB Theme'
 
 enableGitInfo = true
+enableRobotsTXT = true
 #relativeURLs = true
 #canonifyURLs = true
 
@@ -87,132 +88,15 @@ enableGitInfo = true
       [markup.goldmark.renderHooks.link]
         enableDefault = true
     [markup.goldmark.renderer]
-      unsafe = true  # This allows raw HTML in markdown files
+      # unsafe = true is required because the theme embeds inline SVGs and
+      # other raw HTML directly in markdown content (e.g., diagrams, icons).
+      unsafe = true
     [markup.goldmark.parser]
       [markup.goldmark.parser.attribute]
         block = true
         title = true
 
-[mediaTypes]
-  [mediaTypes.'application/json']
-    delimiter = '.'
-    suffixes = ['json']
-  [mediaTypes.'application/manifest+json']
-    delimiter = '.'
-    suffixes = ['webmanifest']
-  [mediaTypes.'application/octet-stream']
-    delimiter = '.'
-  [mediaTypes.'application/pdf']
-    delimiter = '.'
-    suffixes = ['pdf']
-  [mediaTypes.'application/rss+xml']
-    delimiter = '.'
-    suffixes = ['xml', 'rss']
-  [mediaTypes.'application/toml']
-    delimiter = '.'
-    suffixes = ['toml']
-  [mediaTypes.'application/wasm']
-    delimiter = '.'
-    suffixes = ['wasm']
-  [mediaTypes.'application/xml']
-    delimiter = '.'
-    suffixes = ['xml']
-  [mediaTypes.'application/yaml']
-    delimiter = '.'
-    suffixes = ['yaml', 'yml']
-  [mediaTypes.'font/otf']
-    delimiter = '.'
-    suffixes = ['otf']
-  [mediaTypes.'font/ttf']
-    delimiter = '.'
-    suffixes = ['ttf']
-  [mediaTypes.'image/bmp']
-    delimiter = '.'
-    suffixes = ['bmp']
-  [mediaTypes.'image/gif']
-    delimiter = '.'
-    suffixes = ['gif']
-  [mediaTypes.'image/jpeg']
-    delimiter = '.'
-    suffixes = ['jpg', 'jpeg', 'jpe', 'jif', 'jfif']
-  [mediaTypes.'image/png']
-    delimiter = '.'
-    suffixes = ['png']
-  [mediaTypes.'image/svg+xml']
-    delimiter = '.'
-    suffixes = ['svg']
-  [mediaTypes.'image/tiff']
-    delimiter = '.'
-    suffixes = ['tif', 'tiff']
-  [mediaTypes.'image/webp']
-    delimiter = '.'
-    suffixes = ['webp']
-  [mediaTypes.'text/asciidoc']
-    delimiter = '.'
-    suffixes = ['adoc', 'asciidoc', 'ad']
-  [mediaTypes.'text/calendar']
-    delimiter = '.'
-    suffixes = ['ics']
-  [mediaTypes.'text/css']
-    delimiter = '.'
-    suffixes = ['css']
-  [mediaTypes.'text/csv']
-    delimiter = '.'
-    suffixes = ['csv']
-  [mediaTypes.'text/html']
-    delimiter = '.'
-    suffixes = ['html', 'htm']
-  [mediaTypes.'text/javascript']
-    delimiter = '.'
-    suffixes = ['js', 'jsm', 'mjs']
-  [mediaTypes.'text/jsx']
-    delimiter = '.'
-    suffixes = ['jsx']
-  [mediaTypes.'text/markdown']
-    delimiter = '.'
-    suffixes = ['md', 'mdown', 'markdown']
-  [mediaTypes.'text/org']
-    delimiter = '.'
-    suffixes = ['org']
-  [mediaTypes.'text/pandoc']
-    delimiter = '.'
-    suffixes = ['pandoc', 'pdc']
-  [mediaTypes.'text/plain']
-    delimiter = '.'
-    suffixes = ['txt']
-  [mediaTypes.'text/rst']
-    delimiter = '.'
-    suffixes = ['rst']
-  [mediaTypes.'text/tsx']
-    delimiter = '.'
-    suffixes = ['tsx']
-  [mediaTypes.'text/typescript']
-    delimiter = '.'
-    suffixes = ['ts']
-  [mediaTypes.'text/x-sass']
-    delimiter = '.'
-    suffixes = ['sass']
-  [mediaTypes.'text/x-scss']
-    delimiter = '.'
-    suffixes = ['scss']
-  [mediaTypes.'video/3gpp']
-    delimiter = '.'
-    suffixes = ['3gpp', '3gp']
-  [mediaTypes.'video/mp4']
-    delimiter = '.'
-    suffixes = ['mp4']
-  [mediaTypes.'video/mpeg']
-    delimiter = '.'
-    suffixes = ['mpg', 'mpeg']
-  [mediaTypes.'video/ogg']
-    delimiter = '.'
-    suffixes = ['ogv']
-  [mediaTypes.'video/webm']
-    delimiter = '.'
-    suffixes = ['webm']
-  [mediaTypes.'video/x-msvideo']
-    delimiter = '.'
-    suffixes = ['avi']
+# Hugo's built-in mediaTypes are sufficient; no overrides needed here.
 
 [minify]
   disableCSS = false

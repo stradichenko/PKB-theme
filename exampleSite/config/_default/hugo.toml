@@ -1,7 +1,9 @@
 baseURL      = "https://stradichenko.github.io/PKB-theme/"
-#languageCode = "en-us"
+languageCode = "en-us"
 title        = "PKB-theme Demo"
 
+# publish the site into ../docs for GitHub Pages
+#publishDir = "docs"
 
 [markup]
   [markup.goldmark]
@@ -11,7 +13,9 @@ title        = "PKB-theme Demo"
       [markup.goldmark.renderHooks.link]
         enableDefault = true
     [markup.goldmark.renderer]
-      unsafe = true  # This allows raw HTML in markdown files
+      # unsafe = true is required because the theme embeds inline SVGs and
+      # other raw HTML directly in markdown content.
+      unsafe = true
 
 [module]
   [[module.imports]]
@@ -20,7 +24,7 @@ title        = "PKB-theme Demo"
 
     [[module.imports.mounts]]
       source = "static" # inside the theme repo
-      target = "static" # inject it into my site's    
+      target = "static" # inject it into my site's
 
     [[module.imports.mounts]]
       source = "assets"

@@ -5,17 +5,20 @@ date: {{ .Date }}
 lastmod: {{ .Date }}
 draft: true
 description: "" # Brief summary of the post.
-comments: false  # Enable Remark42 comments by default
+comments: true   # Enable Remark42 comments by default for posts
 series: []
 # for more control:
 #   name:
 #   part:
 #   total:
-tags: []
-categories: []
+tags: ["uncategorized"]
+categories: ["general"]
+keywords: []
 slug: "{{ .Name | urlize }}"
 toc: true
 sidenotes: true
+showReadingTime: true
+showShareButtons: true
 image: "images/{{ .Type }}/{{ .Name | urlize }}/{{ .Name | urlize }}.jpg" # make sure that the name corresponds to jpg, jpeg, png, etc.
 alt: "" # Alt text for the header image (accessibility)
 ---
