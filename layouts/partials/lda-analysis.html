@@ -1,11 +1,11 @@
 <div class="about-profile-container">
   <div class="lda-box">
-    <h2 class="lda-title">Topic Analysis (LDA)</h2>
-    
+    <h2 class="lda-title">{{ i18n "lda_title" | default "Topic Analysis (LDA)" }}</h2>
+
     <div class="lda-container">
       <div class="lda-graph-wrapper">
         <div class="lda-graph">
-          <h3>Topic Distribution</h3>
+          <h3>{{ i18n "lda_topic_distribution" | default "Topic Distribution" }}</h3>
           <div id="lda-chart" class="chart-responsive">
             <!-- Remove hardcoded sample bars - they're immediately replaced by JavaScript -->
             <div id="lda-chart-bars" class="lda-chart-bars">
@@ -14,13 +14,13 @@
           </div>
         </div>
       </div>
-      
+
       <div class="lda-table-wrapper">
         <div class="lda-table">
-          <h3>Topic Details</h3>
+          <h3>{{ i18n "lda_topic_details" | default "Topic Details" }}</h3>
           <div id="topic-list" class="topic-list responsive-table">
             <div class="lda-loading">
-              <p>Analyzing content using GPU-accelerated LDA...</p>
+              <p>{{ i18n "lda_loading" | default "Analyzing content using GPU-accelerated LDA..." }}</p>
             </div>
           </div>
           <!-- Tooltip container moved outside of table wrapper for better positioning -->
@@ -40,8 +40,10 @@
     
     <!-- Mobile-specific controls -->
     <div class="lda-mobile-controls">
-      <button id="toggle-view" class="btn-toggle-view">
-        <span class="toggle-text">Switch to Table View</span>
+      <button id="toggle-view" class="btn-toggle-view"
+              data-i18n-table="{{ i18n "lda_switch_to_table" | default "Switch to Table View" }}"
+              data-i18n-chart="{{ i18n "lda_switch_to_chart" | default "Switch to Chart View" }}">
+        <span class="toggle-text">{{ i18n "lda_switch_to_table" | default "Switch to Table View" }}</span>
       </button>
     </div>
     
@@ -54,20 +56,18 @@
 
 <!-- Embed document data for LDA analysis -->
 <script type="application/json" id="lda-documents-data">
-[
-  {{ $first := true }}
-  {{ range where .Site.RegularPages "Section" "in" (slice "posts" "docs") }}
-    {{ if not $first }},{{ end }}
-    {
-      "content": {{ printf "%s %s %s" .Title .Description .Plain | jsonify }},
-      "type": {{ .Section | jsonify }},
-      "title": {{ .Title | jsonify }},
-      "url": {{ .RelPermalink | jsonify }},
-      "date": {{ .Date.Format "2006-01-02" | jsonify }}
-    }
-    {{ $first = false }}
-  {{ end }}
-]
+{{- $docs := slice -}}
+{{- range where site.RegularPages "Section" "in" (slice "posts" "docs") -}}
+  {{- $doc := dict
+      "content" (printf "%s %s %s" .Title .Description .Plain)
+      "type" .Section
+      "title" .Title
+      "url" .RelPermalink
+      "date" (time.Format "2006-01-02" .Date)
+  -}}
+  {{- $docs = $docs | append $doc -}}
+{{- end -}}
+{{ $docs | jsonify }}
 </script>
 
 <!-- Load LDA CSS -->
@@ -76,114 +76,26 @@
   <link rel="stylesheet" href="{{ $ldaCSS.RelPermalink }}" integrity="{{ $ldaCSS.Data.Integrity }}" crossorigin="anonymous">
 {{ end }}
 
-<!-- Optimized mobile interaction and tooltip script -->
-<script>
-(function() {
-  'use strict';
-  
-  // Cache DOM elements and state
-  let toggleBtn, container, toggleText, tooltip;
-  let showingTable = false;
-  
-  document.addEventListener('DOMContentLoaded', function() {
-    // Cache elements once
-    toggleBtn = document.getElementById('toggle-view');
-    container = document.querySelector('.lda-container');
-    toggleText = document.querySelector('.toggle-text');
-    tooltip = document.getElementById('topic-tooltip');
-    
-    // Initialize mobile toggle functionality
-    if (toggleBtn && container && toggleText) {
-      toggleBtn.addEventListener('click', handleToggleView);
-    }
-    
-    // Initialize tooltip functions for LDA script
-    initializeTooltipFunctions();
-  });
-  
-  function handleToggleView() {
-    showingTable = !showingTable;
-    
-    if (showingTable) {
-      container.classList.add('show-table');
-      toggleText.textContent = 'Switch to Chart View';
-    } else {
-      container.classList.remove('show-table');
-      toggleText.textContent = 'Switch to Table View';
-    }
-  }
-  
-  function initializeTooltipFunctions() {
-    if (!tooltip) return;
-    
-    // Global tooltip functions for LDA script
-    window.showTopicTooltip = function(event, topicData) {
-      if (!tooltip || !topicData) return;
-      
-      // Update tooltip content
-      const titleEl = tooltip.querySelector('.tooltip-title');
-      const keywordsEl = tooltip.querySelector('.tooltip-keywords');
-      const documentsEl = tooltip.querySelector('.tooltip-documents');
-      const confidenceEl = tooltip.querySelector('.tooltip-confidence');
-      
-      if (titleEl) titleEl.textContent = `Topic ${topicData.id}: ${topicData.label}`;
-      
-      if (keywordsEl && topicData.keywords) {
-        keywordsEl.innerHTML = topicData.keywords
-          .map(k => `<span class="keyword">${k}</span>`)
-          .join('');
-      }
-      
-      if (documentsEl) {
-        documentsEl.textContent = `${topicData.documentCount} documents • ${topicData.percentage}%`;
-      }
-      
-      if (confidenceEl) {
-        confidenceEl.textContent = `Confidence: ${topicData.confidence}%`;
-      }
-      
-      // Position tooltip
-      const rect = event.target.getBoundingClientRect();
-      const tooltipRect = tooltip.getBoundingClientRect();
-      
-      // Calculate position with viewport bounds checking
-      let left = rect.left;
-      let top = rect.top - tooltipRect.height - 10;
-      
-      // Adjust if tooltip would go off-screen
-      if (left + tooltipRect.width > window.innerWidth) {
-        left = window.innerWidth - tooltipRect.width - 10;
-      }
-      if (left < 10) left = 10;
-      
-      if (top < 10) {
-        top = rect.bottom + 10;
-      }
-      
-      tooltip.style.left = left + 'px';
-      tooltip.style.top = top + 'px';
-      tooltip.classList.add('visible');
-    };
-    
-    window.hideTopicTooltip = function() {
-      if (tooltip) {
-        tooltip.classList.remove('visible');
-      }
-    };
-    
-    // Hide tooltip when clicking elsewhere
-    document.addEventListener('click', function(event) {
-      if (tooltip && !event.target.closest('.topic-bar-container')) {
-        window.hideTopicTooltip();
-      }
-    });
-  }
-})();
-</script>
+{{/* TensorFlow.js with SRI via resources.GetRemote */}}
+{{ $tfURL := "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js" }}
+{{ $tfIntegrity := "" }}
+{{ $tfResource := resources.GetRemote $tfURL }}
+{{ if $tfResource }}
+  {{ if $tfResource.Err }}
+    {{ warnf "lda-analysis: failed to fetch tfjs for SRI: %s" $tfResource.Err }}
+  {{ else }}
+    {{ $tfIntegrity = $tfResource.Data.Integrity }}
+  {{ end }}
+{{ end }}
+{{ if $tfIntegrity }}
+  <script defer src="{{ $tfURL }}" integrity="{{ $tfIntegrity }}" crossorigin="anonymous"></script>
+{{ else }}
+  <script defer src="{{ $tfURL }}" crossorigin="anonymous"></script>
+{{ end }}
 
-<!-- Load TensorFlow.js then LDA analysis script -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
 {{ with resources.Get "js/lda-analysis.js" }}
-  {{ $ldaJS := . | js.Build | minify | fingerprint }}
-  <script src="{{ $ldaJS.RelPermalink }}" integrity="{{ $ldaJS.Data.Integrity }}" crossorigin="anonymous"></script>
+  {{ $ldaJS := . | js.Build (dict "minify" true) | fingerprint }}
+  <script defer src="{{ $ldaJS.RelPermalink }}" integrity="{{ $ldaJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ else }}
+  {{ errorf "Required file 'lda-analysis.js' not found in assets/js/ directory" }}
 {{ end }}

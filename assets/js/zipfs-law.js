@@ -688,3 +688,27 @@ function hideTooltip() {
     tooltip.style.display = 'none';
   }
 }
+
+// Bootstrap: read the corpus JSON injected by the partial and initialize.
+(function bootstrapZipfsLaw() {
+  function start() {
+    const dataNode = document.getElementById('zipf-data-words');
+    if (!dataNode) return; // Partial not on this page
+    let words = [];
+    try {
+      const parsed = JSON.parse(dataNode.textContent || '[]');
+      words = Array.isArray(parsed) ? parsed.filter(w => typeof w === 'string') : [];
+    } catch (err) {
+      console.error('Zipf: failed to parse corpus data:', err);
+      return;
+    }
+    if (typeof initializeZipfsLaw === 'function') {
+      initializeZipfsLaw(words);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();

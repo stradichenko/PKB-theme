@@ -4,7 +4,7 @@
   
   <div class="controls-dropdown">
     <button id="toggle-controls" class="toggle-controls-btn" aria-expanded="false" aria-controls="graph-controls-panel">
-      <span>Physics Controls</span>
+      <span>{{ i18n "knowledge_graph_physics_controls" | default "Physics Controls" }}</span>
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="toggle-icon">
         <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
       </svg>
@@ -12,44 +12,44 @@
     
     <div id="graph-controls-panel" class="graph-controls collapsed">
       <div class="control-group">
-        <label for="charge-strength">Repulsion:</label>
+        <label for="charge-strength">{{ i18n "knowledge_graph_repulsion" | default "Repulsion:" }}</label>
         <span class="value-display">100</span>
         <input type="range" id="charge-strength" min="10" max="300" value="100" class="slider">
       </div>
       <div class="control-group">
-        <label for="link-distance">Link Distance:</label>
+        <label for="link-distance">{{ i18n "knowledge_graph_link_distance" | default "Link Distance:" }}</label>
         <span class="value-display">30</span>
         <input type="range" id="link-distance" min="10" max="200" value="30" class="slider">
       </div>
       <div class="control-group">
-        <label for="collision-radius">Node Spacing:</label>
+        <label for="collision-radius">{{ i18n "knowledge_graph_node_spacing" | default "Node Spacing:" }}</label>
         <span class="value-display">1.2×</span>
         <input type="range" id="collision-radius" min="1" max="3" value="1.2" step="0.1" class="slider">
       </div>
       <div class="control-group">
-        <label for="center-gravity">Center Gravity:</label>
+        <label for="center-gravity">{{ i18n "knowledge_graph_center_gravity" | default "Center Gravity:" }}</label>
         <span class="value-display">0.1</span>
         <input type="range" id="center-gravity" min="0" max="1" value="0.1" step="0.05" class="slider">
       </div>
-      <button id="reset-physics" class="reset-button">Reset to Default</button>
+      <button id="reset-physics" class="reset-button">{{ i18n "knowledge_graph_reset_default" | default "Reset to Default" }}</button>
     </div>
   </div>
   
   <div class="graph-actions">
     <div class="graph-filter-dropdown">
-      <button id="filter-graph-button" class="graph-filter-button" aria-label="Filter graph" aria-expanded="false" aria-controls="filter-options">
+      <button id="filter-graph-button" class="graph-filter-button" aria-label="{{ i18n "knowledge_graph_filter_aria" | default "Filter graph" }}" aria-expanded="false" aria-controls="filter-options">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
         </svg>
       </button>
       <div id="filter-options" class="filter-options-dropdown">
         <div class="filter-section">
-          <label for="filter-type">Filter by:</label>
+          <label for="filter-type">{{ i18n "knowledge_graph_filter_by" | default "Filter by:" }}</label>
           <select id="filter-type" class="filter-select">
-            <option value="none">All Nodes</option>
-            <option value="category">Category</option>
-            <option value="tag">Tag</option>
-            <option value="search">Node Name</option>
+            <option value="none">{{ i18n "knowledge_graph_all_nodes" | default "All Nodes" }}</option>
+            <option value="category">{{ i18n "knowledge_graph_filter_category" | default "Category" }}</option>
+            <option value="tag">{{ i18n "knowledge_graph_filter_tag" | default "Tag" }}</option>
+            <option value="search">{{ i18n "knowledge_graph_filter_search" | default "Node Name" }}</option>
           </select>
         </div>
         <div id="category-filters" class="filter-options hidden">
@@ -59,27 +59,27 @@
           <!-- Tags will be dynamically populated -->
         </div>
         <div id="search-filter" class="filter-options hidden">
-          <input type="text" id="node-search" placeholder="Search nodes..." class="search-input">
+          <input type="text" id="node-search" placeholder="{{ i18n "knowledge_graph_search_placeholder" | default "Search nodes..." }}" class="search-input">
         </div>
-        <button id="clear-filters" class="filter-button">Clear Filters</button>
+        <button id="clear-filters" class="filter-button">{{ i18n "knowledge_graph_clear_filters" | default "Clear Filters" }}</button>
       </div>
     </div>
-    
+
     <div class="graph-save-dropdown">
-      <button id="save-graph-button" class="graph-save-button" aria-label="Save graph as image" aria-expanded="false" aria-controls="save-options">
+      <button id="save-graph-button" class="graph-save-button" aria-label="{{ i18n "knowledge_graph_save_aria" | default "Save graph as image" }}" aria-expanded="false" aria-controls="save-options">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
           <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
         </svg>
       </button>
       <div id="save-options" class="save-options-dropdown">
-        <button class="save-option" data-format="png">Save as PNG</button>
-        <button class="save-option" data-format="svg">Save as SVG</button>
-        <button class="save-option" data-format="jpeg">Save as JPEG</button>
+        <button class="save-option" data-format="png">{{ i18n "knowledge_graph_save_png" | default "Save as PNG" }}</button>
+        <button class="save-option" data-format="svg">{{ i18n "knowledge_graph_save_svg" | default "Save as SVG" }}</button>
+        <button class="save-option" data-format="jpeg">{{ i18n "knowledge_graph_save_jpeg" | default "Save as JPEG" }}</button>
       </div>
     </div>
-    
-    <button id="fullscreen-button" class="graph-fullscreen-button" aria-label="View graph in fullscreen">
+
+    <button id="fullscreen-button" class="graph-fullscreen-button" aria-label="{{ i18n "knowledge_graph_fullscreen_aria" | default "View graph in fullscreen" }}">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
         <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
       </svg>
@@ -93,19 +93,19 @@
     
     <div class="fullscreen-actions">
       <div class="graph-filter-dropdown">
-        <button id="fullscreen-filter-button" class="graph-filter-button" aria-label="Filter graph" aria-expanded="false" aria-controls="fullscreen-filter-options">
+        <button id="fullscreen-filter-button" class="graph-filter-button" aria-label="{{ i18n "knowledge_graph_filter_aria" | default "Filter graph" }}" aria-expanded="false" aria-controls="fullscreen-filter-options">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
           </svg>
         </button>
         <div id="fullscreen-filter-options" class="filter-options-dropdown">
           <div class="filter-section">
-            <label for="fullscreen-filter-type">Filter by:</label>
+            <label for="fullscreen-filter-type">{{ i18n "knowledge_graph_filter_by" | default "Filter by:" }}</label>
             <select id="fullscreen-filter-type" class="filter-select">
-              <option value="none">All Nodes</option>
-              <option value="category">Category</option>
-              <option value="tag">Tag</option>
-              <option value="search">Node Name</option>
+              <option value="none">{{ i18n "knowledge_graph_all_nodes" | default "All Nodes" }}</option>
+              <option value="category">{{ i18n "knowledge_graph_filter_category" | default "Category" }}</option>
+              <option value="tag">{{ i18n "knowledge_graph_filter_tag" | default "Tag" }}</option>
+              <option value="search">{{ i18n "knowledge_graph_filter_search" | default "Node Name" }}</option>
             </select>
           </div>
           <div id="fullscreen-category-filters" class="filter-options hidden">
@@ -115,27 +115,27 @@
             <!-- Tags will be dynamically populated -->
           </div>
           <div id="fullscreen-search-filter" class="filter-options hidden">
-            <input type="text" id="fullscreen-node-search" placeholder="Search nodes..." class="search-input">
+            <input type="text" id="fullscreen-node-search" placeholder="{{ i18n "knowledge_graph_search_placeholder" | default "Search nodes..." }}" class="search-input">
           </div>
-          <button id="fullscreen-clear-filters" class="filter-button">Clear Filters</button>
+          <button id="fullscreen-clear-filters" class="filter-button">{{ i18n "knowledge_graph_clear_filters" | default "Clear Filters" }}</button>
         </div>
       </div>
-      
+
       <div class="graph-save-dropdown">
-        <button id="fullscreen-save-button" class="graph-save-button" aria-label="Save graph as image" aria-expanded="false" aria-controls="fullscreen-save-options">
+        <button id="fullscreen-save-button" class="graph-save-button" aria-label="{{ i18n "knowledge_graph_save_aria" | default "Save graph as image" }}" aria-expanded="false" aria-controls="fullscreen-save-options">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
           </svg>
         </button>
         <div id="fullscreen-save-options" class="save-options-dropdown">
-          <button class="save-option" data-format="png" data-target="fullscreen">Save as PNG</button>
-          <button class="save-option" data-format="svg" data-target="fullscreen">Save as SVG</button>
-          <button class="save-option" data-format="jpeg" data-target="fullscreen">Save as JPEG</button>
+          <button class="save-option" data-format="png" data-target="fullscreen">{{ i18n "knowledge_graph_save_png" | default "Save as PNG" }}</button>
+          <button class="save-option" data-format="svg" data-target="fullscreen">{{ i18n "knowledge_graph_save_svg" | default "Save as SVG" }}</button>
+          <button class="save-option" data-format="jpeg" data-target="fullscreen">{{ i18n "knowledge_graph_save_jpeg" | default "Save as JPEG" }}</button>
         </div>
       </div>
-      
-      <button id="close-fullscreen" class="close-fullscreen-button" aria-label="Close fullscreen view">
+
+      <button id="close-fullscreen" class="close-fullscreen-button" aria-label="{{ i18n "knowledge_graph_close_fullscreen_aria" | default "Close fullscreen view" }}">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
@@ -146,34 +146,34 @@
     
     <div class="controls-dropdown fullscreen-controls">
       <button id="fullscreen-toggle-controls" class="toggle-controls-btn" aria-expanded="false" aria-controls="fullscreen-graph-controls-panel">
-        <span>Physics Controls</span>
+        <span>{{ i18n "knowledge_graph_physics_controls" | default "Physics Controls" }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="toggle-icon">
           <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
         </svg>
       </button>
-      
+
       <div id="fullscreen-graph-controls-panel" class="graph-controls collapsed">
         <div class="control-group">
-          <label for="fullscreen-charge-strength">Repulsion:</label>
+          <label for="fullscreen-charge-strength">{{ i18n "knowledge_graph_repulsion" | default "Repulsion:" }}</label>
           <span class="value-display">200</span>
           <input type="range" id="fullscreen-charge-strength" min="10" max="300" value="200" class="slider">
         </div>
         <div class="control-group">
-          <label for="fullscreen-link-distance">Link Distance:</label>
+          <label for="fullscreen-link-distance">{{ i18n "knowledge_graph_link_distance" | default "Link Distance:" }}</label>
           <span class="value-display">60</span>
           <input type="range" id="fullscreen-link-distance" min="10" max="200" value="60" class="slider">
         </div>
         <div class="control-group">
-          <label for="fullscreen-collision-radius">Node Spacing:</label>
+          <label for="fullscreen-collision-radius">{{ i18n "knowledge_graph_node_spacing" | default "Node Spacing:" }}</label>
           <span class="value-display">1.8×</span>
           <input type="range" id="fullscreen-collision-radius" min="1" max="3" value="1.8" step="0.1" class="slider">
         </div>
         <div class="control-group">
-          <label for="fullscreen-center-gravity">Center Gravity:</label>
+          <label for="fullscreen-center-gravity">{{ i18n "knowledge_graph_center_gravity" | default "Center Gravity:" }}</label>
           <span class="value-display">0.1</span>
           <input type="range" id="fullscreen-center-gravity" min="0" max="1" value="0.1" step="0.05" class="slider">
         </div>
-        <button id="fullscreen-reset-physics" class="reset-button">Reset to Default</button>
+        <button id="fullscreen-reset-physics" class="reset-button">{{ i18n "knowledge_graph_reset_default" | default "Reset to Default" }}</button>
       </div>
     </div>
   </div>
@@ -182,7 +182,7 @@
 <script type="application/json" id="graph-data">
   {{- $nodes := slice -}}
   {{- $links := slice -}}
-  {{- range .Site.Pages -}}
+  {{- range site.Pages -}}
     {{- $nodeID := .RelPermalink -}}
     {{- $node := dict "id" $nodeID "title" .Title "category" .Section -}}
     {{- $nodes = $nodes | append $node -}}
@@ -191,17 +191,29 @@
       {{- $links = $links | append $link -}}
     {{- end -}}
   {{- end -}}
-  {
-    "nodes": {{ $nodes | jsonify }},
-    "links": {{ $links | jsonify }}
-  }
+  {{ dict "nodes" $nodes "links" $links | jsonify }}
 </script>
 
-{{ $graphScript := resources.Get "js/knowledge-graph.js" }}
-{{ if $graphScript }}
-  {{ $graphScript = $graphScript | resources.ExecuteAsTemplate "js/knowledge-graph.js" . | resources.Minify | fingerprint }}
-  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-  <script src="{{ $graphScript.RelPermalink }}" integrity="{{ $graphScript.Data.Integrity }}"></script>
+{{/* D3 with SRI: prefer build-time fetch via resources.GetRemote so we get a verified hash. */}}
+{{ $d3URL := "https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" }}
+{{ $d3Integrity := "" }}
+{{ $d3Resource := resources.GetRemote $d3URL }}
+{{ if $d3Resource }}
+  {{ if $d3Resource.Err }}
+    {{ warnf "knowledge-graph: failed to fetch D3 for SRI: %s" $d3Resource.Err }}
+  {{ else }}
+    {{ $d3Integrity = $d3Resource.Data.Integrity }}
+  {{ end }}
+{{ end }}
+
+{{ with resources.Get "js/knowledge-graph.js" }}
+  {{ $graphScript := . | resources.ExecuteAsTemplate "js/knowledge-graph.js" $ | resources.Minify | fingerprint }}
+  {{ if $d3Integrity }}
+    <script defer src="{{ $d3URL }}" integrity="{{ $d3Integrity }}" crossorigin="anonymous"></script>
+  {{ else }}
+    <script defer src="{{ $d3URL }}" crossorigin="anonymous"></script>
+  {{ end }}
+  <script defer src="{{ $graphScript.RelPermalink }}" integrity="{{ $graphScript.Data.Integrity }}" crossorigin="anonymous"></script>
 {{ else }}
   {{ errorf "Required file 'knowledge-graph.js' not found in assets/js/ directory" }}
 {{ end }}

@@ -10,12 +10,12 @@
     <!-- Image slides -->
     <div class="gallery-slider__track" role="region" aria-label="Image gallery">
       {{- range $index, $image := $images }}
-      <div class="gallery-slider__slide {{ if eq $index 0 }}gallery-slider__slide--active{{ end }}{{ if $image.caption }} gallery-slider__slide--has-caption{{ end }}" 
+      <div class="gallery-slider__slide {{ if eq $index 0 }}gallery-slider__slide--active{{ end }}{{ if $image.caption }} gallery-slider__slide--has-caption{{ end }}"
            data-slide="{{ $index }}"
-           role="group" 
+           role="group"
            aria-roledescription="slide"
            aria-label="Slide {{ add $index 1 }} of {{ len $images }}">
-        <img src="{{ $image.src }}" 
+        <img src="{{ $image.src }}"
              alt="{{ $image.alt | default $image.caption }}"
              class="gallery-slider__image"
              loading="{{ if eq $index 0 }}eager{{ else }}lazy{{ end }}">
@@ -29,15 +29,15 @@
     </div>
 
     <!-- Navigation arrows -->
-    <button class="gallery-slider__nav gallery-slider__nav--prev" 
+    <button class="gallery-slider__nav gallery-slider__nav--prev"
             aria-label="Previous image"
             type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="15,18 9,12 15,6"></polyline>
       </svg>
     </button>
-    
-    <button class="gallery-slider__nav gallery-slider__nav--next" 
+
+    <button class="gallery-slider__nav gallery-slider__nav--next"
             aria-label="Next image"
             type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -67,7 +67,7 @@
             data-slide="{{ $index }}"
             aria-label="Show slide {{ add $index 1 }}"
             type="button">
-      <img src="{{ $image.thumb | default $image.src }}" 
+      <img src="{{ $image.thumb | default $image.src }}"
            alt="{{ $image.alt | default $image.caption }}"
            class="gallery-slider__thumbnail-image">
     </button>
@@ -79,34 +79,30 @@
   <div class="gallery-lightbox" id="{{ $id }}-lightbox" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="gallery-lightbox__backdrop"></div>
     <div class="gallery-lightbox__container">
-      <!-- Close button -->
       <button class="gallery-lightbox__close" aria-label="Close lightbox" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
-      
-      <!-- Main lightbox image -->
+
       <div class="gallery-lightbox__content">
         <img src="" alt="" class="gallery-lightbox__image">
         <div class="gallery-lightbox__caption"></div>
       </div>
-      
-      <!-- Navigation arrows -->
+
       <button class="gallery-lightbox__nav gallery-lightbox__nav--prev" aria-label="Previous image" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="15,18 9,12 15,6"></polyline>
         </svg>
       </button>
-      
+
       <button class="gallery-lightbox__nav gallery-lightbox__nav--next" aria-label="Next image" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="9,18 15,12 9,6"></polyline>
         </svg>
       </button>
-      
-      <!-- Image counter -->
+
       <div class="gallery-lightbox__counter">
         <span class="gallery-lightbox__current">1</span> / <span class="gallery-lightbox__total">{{ len $images }}</span>
       </div>
@@ -114,464 +110,13 @@
   </div>
 </div>
 
-<!-- Gallery slider JavaScript -->
-<script>
-(function() {
-  class GallerySlider {
-    constructor(element) {
-      this.element = element;
-      this.track = element.querySelector('.gallery-slider__track');
-      this.slides = element.querySelectorAll('.gallery-slider__slide');
-      this.indicators = element.querySelectorAll('.gallery-slider__indicator');
-      this.thumbnails = element.querySelectorAll('.gallery-slider__thumbnail');
-      this.prevBtn = element.querySelector('.gallery-slider__nav--prev');
-      this.nextBtn = element.querySelector('.gallery-slider__nav--next');
-      
-      // Lightbox elements
-      this.lightbox = element.querySelector('.gallery-lightbox');
-      this.lightboxImage = this.lightbox.querySelector('.gallery-lightbox__image');
-      this.lightboxCaption = this.lightbox.querySelector('.gallery-lightbox__caption');
-      this.lightboxClose = this.lightbox.querySelector('.gallery-lightbox__close');
-      this.lightboxPrev = this.lightbox.querySelector('.gallery-lightbox__nav--prev');
-      this.lightboxNext = this.lightbox.querySelector('.gallery-lightbox__nav--next');
-      this.lightboxCurrent = this.lightbox.querySelector('.gallery-lightbox__current');
-      this.lightboxBackdrop = this.lightbox.querySelector('.gallery-lightbox__backdrop');
-      
-      this.currentSlide = 0;
-      this.totalSlides = this.slides.length;
-      this.autoplay = element.dataset.autoplay === 'true';
-      this.interval = parseInt(element.dataset.interval) || 5000;
-      this.autoplayTimer = null;
-      this.isLightboxOpen = false;
-      this.containerHeight = null; // Store fixed container height
-      
-      // Store image data for lightbox
-      this.imageData = Array.from(this.slides).map(slide => {
-        const img = slide.querySelector('.gallery-slider__image');
-        const caption = slide.querySelector('.gallery-slider__caption');
-        return {
-          src: img.src,
-          alt: img.alt,
-          caption: caption ? caption.innerHTML : ''
-        };
-      });
-      
-      this.init();
-    }
-    
-    init() {
-      if (this.totalSlides <= 1) return;
-      
-      this.bindEvents();
-      this.updateSlide(0);
-      
-      // Calculate and set fixed container height based on smallest image
-      this.calculateFixedHeight();
-      
-      if (this.autoplay) {
-        this.startAutoplay();
-      }
-    }
-    
-    calculateFixedHeight() {
-      const container = this.element.querySelector('.gallery-slider__container');
-      const containerWidth = container.offsetWidth;
-      const minHeight = window.innerWidth <= 640 ? 200 : 250; // Minimum height
-      const maxHeight = window.innerHeight * 0.7; // Maximum height (70vh)
-      
-      let smallestHeight = maxHeight;
-      let imagesLoaded = 0;
-      
-      // Check all images to find the smallest height
-      this.slides.forEach(slide => {
-        const img = slide.querySelector('.gallery-slider__image');
-        
-        const calculateHeight = () => {
-          if (img.naturalWidth && img.naturalHeight) {
-            const aspectRatio = img.naturalHeight / img.naturalWidth;
-            const displayHeight = containerWidth * aspectRatio;
-            
-            // Apply constraints
-            const constrainedHeight = Math.max(minHeight, Math.min(displayHeight, maxHeight));
-            smallestHeight = Math.min(smallestHeight, constrainedHeight);
-          }
-          
-          imagesLoaded++;
-          if (imagesLoaded === this.totalSlides) {
-            // All images processed, set the fixed height
-            this.containerHeight = smallestHeight;
-            this.setFixedContainerHeight();
-          }
-        };
-        
-        if (img.complete && img.naturalWidth) {
-          calculateHeight();
-        } else {
-          img.onload = calculateHeight;
-          img.onerror = () => {
-            // If image fails to load, use minimum height
-            imagesLoaded++;
-            if (imagesLoaded === this.totalSlides) {
-              this.containerHeight = smallestHeight;
-              this.setFixedContainerHeight();
-            }
-          };
-        }
-      });
-    }
-    
-    setFixedContainerHeight() {
-      if (this.containerHeight) {
-        this.track.style.height = `${this.containerHeight}px`;
-      }
-    }
-    
-    bindEvents() {
-      this.prevBtn?.addEventListener('click', () => this.prevSlide());
-      this.nextBtn?.addEventListener('click', () => this.nextSlide());
-      
-      this.indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => this.goToSlide(index));
-      });
-      
-      this.thumbnails.forEach((thumbnail, index) => {
-        thumbnail.addEventListener('click', () => this.goToSlide(index));
-      });
-      
-      // Open lightbox when clicking on images
-      this.slides.forEach((slide, index) => {
-        const img = slide.querySelector('.gallery-slider__image');
-        img.addEventListener('click', () => {
-          // Always use the current slide index, not the clicked slide index
-          this.openLightbox(this.currentSlide);
-        });
-        img.style.cursor = 'pointer'; // Add visual feedback
-      });
-      
-      this.thumbnails.forEach((thumbnail, index) => {
-        // Regular click for navigation
-        thumbnail.addEventListener('click', (e) => {
-          // Only navigate if it's not a special click
-          if (!e.ctrlKey && !e.metaKey && e.button !== 2) {
-            this.goToSlide(index);
-          }
-        });
-        
-        // Special clicks for lightbox
-        thumbnail.addEventListener('click', (e) => {
-          if (e.ctrlKey || e.metaKey || e.button === 2) {
-            e.preventDefault();
-            this.goToSlide(index); // Navigate first
-            setTimeout(() => this.openLightbox(index), 50); // Then open lightbox
-          }
-        });
-        
-        // Double-click to open lightbox
-        thumbnail.addEventListener('dblclick', (e) => {
-          e.preventDefault();
-          this.goToSlide(index); // Navigate first
-          setTimeout(() => this.openLightbox(index), 50); // Then open lightbox
-        });
-      });
-      
-      // Lightbox events - ensure these are bound properly
-      if (this.lightboxClose) {
-        this.lightboxClose.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          this.closeLightbox();
-        });
-      }
-      
-      if (this.lightboxBackdrop) {
-        this.lightboxBackdrop.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          this.closeLightbox();
-        });
-      }
-      
-      // Close lightbox when clicking outside the image
-      const lightboxContainer = this.lightbox.querySelector('.gallery-lightbox__container');
-      if (lightboxContainer) {
-        lightboxContainer.addEventListener('click', (e) => {
-          // Only close if the click target is the container itself, not its children
-          if (e.target === lightboxContainer) {
-            e.preventDefault();
-            e.stopPropagation();
-            this.closeLightbox();
-          }
-        });
-      }
-      
-      // Prevent closing when clicking on the image or its content
-      const lightboxContent = this.lightbox.querySelector('.gallery-lightbox__content');
-      if (lightboxContent) {
-        lightboxContent.addEventListener('click', (e) => {
-          // Stop propagation to prevent container click from closing lightbox
-          e.stopPropagation();
-        });
-      }
-      
-      // Also prevent closing when clicking directly on the image
-      if (this.lightboxImage) {
-        this.lightboxImage.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-      }
-      
-      // Prevent closing when clicking on caption
-      if (this.lightboxCaption) {
-        this.lightboxCaption.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-      }
-      
-      if (this.lightboxPrev) {
-        this.lightboxPrev.addEventListener('click', () => this.lightboxPrevImage());
-      }
-      
-      if (this.lightboxNext) {
-        this.lightboxNext.addEventListener('click', () => this.lightboxNextImage());
-      }
-      
-      // Keyboard navigation - use arrow function to maintain 'this' context
-      this.keyboardHandler = (e) => {
-        if (this.isLightboxOpen) {
-          switch(e.key) {
-            case 'Escape':
-              e.preventDefault();
-              e.stopPropagation();
-              this.closeLightbox();
-              break;
-            case 'ArrowLeft':
-              e.preventDefault();
-              this.lightboxPrevImage();
-              break;
-            case 'ArrowRight':
-              e.preventDefault();
-              this.lightboxNextImage();
-              break;
-          }
-        } else if (this.element.contains(document.activeElement)) {
-          switch(e.key) {
-            case 'ArrowLeft':
-              e.preventDefault();
-              this.prevSlide();
-              break;
-            case 'ArrowRight':
-              e.preventDefault();
-              this.nextSlide();
-              break;
-            case 'Enter':
-            case ' ':
-              if (e.target.classList.contains('gallery-slider__image')) {
-                e.preventDefault();
-                this.openLightbox(this.currentSlide);
-              }
-              break;
-          }
-        }
-      };
-      
-      // Bind keyboard handler
-      document.addEventListener('keydown', this.keyboardHandler);
-      
-      // Pause autoplay on hover
-      this.element.addEventListener('mouseenter', () => this.pauseAutoplay());
-      this.element.addEventListener('mouseleave', () => this.resumeAutoplay());
-      
-      // Handle window resize - only recalculate if container width changes significantly
-      this.resizeHandler = () => {
-        if (this.isLightboxOpen) {
-          this.constrainImageToViewport();
-        } else {
-          // Only recalculate if width changed significantly (>50px)
-          const container = this.element.querySelector('.gallery-slider__container');
-          const currentWidth = container.offsetWidth;
-          if (Math.abs(currentWidth - this.lastContainerWidth) > 50) {
-            this.lastContainerWidth = currentWidth;
-            this.calculateFixedHeight();
-          }
-        }
-      };
-      
-      this.lastContainerWidth = this.element.querySelector('.gallery-slider__container').offsetWidth;
-      window.addEventListener('resize', this.resizeHandler);
-    }
-    
-    openLightbox(index) {
-      this.isLightboxOpen = true;
-      // Ensure we're using the correct index
-      const targetIndex = index !== undefined ? index : this.currentSlide;
-      this.updateLightboxImage(targetIndex);
-      this.lightbox.setAttribute('aria-hidden', 'false');
-      this.lightbox.classList.add('gallery-lightbox--active');
-      document.body.style.overflow = 'hidden';
-      this.pauseAutoplay();
-      
-      // Focus the close button for accessibility
-      setTimeout(() => this.lightboxClose.focus(), 100);
-    }
-    
-    closeLightbox() {
-      this.isLightboxOpen = false;
-      this.lightbox.setAttribute('aria-hidden', 'true');
-      this.lightbox.classList.remove('gallery-lightbox--active');
-      document.body.style.overflow = '';
-      this.resumeAutoplay();
-    }
-    
-    updateLightboxImage(index) {
-      // Ensure index is within bounds
-      const safeIndex = Math.max(0, Math.min(index, this.totalSlides - 1));
-      const imageData = this.imageData[safeIndex];
-      
-      this.lightboxImage.src = imageData.src;
-      this.lightboxImage.alt = imageData.alt;
-      this.lightboxCaption.innerHTML = imageData.caption;
-      this.lightboxCurrent.textContent = safeIndex + 1;
-      
-      // Update the current slide to match lightbox
-      this.currentSlide = safeIndex;
-      
-      // Ensure image loads with proper constraints
-      this.lightboxImage.onload = () => {
-        this.constrainImageToViewport();
-      };
-      
-      // Update navigation button states
-      this.lightboxPrev.style.display = this.totalSlides > 1 ? 'flex' : 'none';
-      this.lightboxNext.style.display = this.totalSlides > 1 ? 'flex' : 'none';
-    }
-
-    constrainImageToViewport() {
-      const img = this.lightboxImage;
-      
-      // Get viewport dimensions
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      // Account for padding and controls
-      const padding = 160; // Space for nav buttons and controls
-      const mobilePadding = window.innerWidth <= 768 ? 120 : padding;
-      
-      const maxWidth = viewportWidth - mobilePadding;
-      const maxHeight = viewportHeight - mobilePadding;
-      
-      // Set constraints via CSS
-      img.style.maxWidth = `${maxWidth}px`;
-      img.style.maxHeight = `${maxHeight}px`;
-    }
-    
-    lightboxPrevImage() {
-      const prevIndex = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-      this.updateLightboxImage(prevIndex);
-      this.updateSlide(prevIndex); // Sync gallery with lightbox
-    }
-    
-    lightboxNextImage() {
-      const nextIndex = (this.currentSlide + 1) % this.totalSlides;
-      this.updateLightboxImage(nextIndex);
-      this.updateSlide(nextIndex); // Sync gallery with lightbox
-    }
-    
-    updateSlide(index) {
-      // Update active slide
-      this.slides.forEach((slide, i) => {
-        slide.classList.toggle('gallery-slider__slide--active', i === index);
-      });
-      
-      // Update indicators
-      this.indicators.forEach((indicator, i) => {
-        indicator.classList.toggle('gallery-slider__indicator--active', i === index);
-        indicator.setAttribute('aria-selected', i === index);
-      });
-      
-      // Update thumbnails
-      this.thumbnails.forEach((thumbnail, i) => {
-        thumbnail.classList.toggle('gallery-slider__thumbnail--active', i === index);
-      });
-      
-      this.currentSlide = index;
-      
-      // Scroll thumbnails to show active thumbnail
-      this.scrollToActiveThumbnail(index);
-      
-      // No need to adjust container height - it's fixed
-    }
-    
-    scrollToActiveThumbnail(index) {
-      if (this.thumbnails.length === 0) return;
-      
-      const thumbnailsContainer = this.element.querySelector('.gallery-slider__thumbnails');
-      if (!thumbnailsContainer) return;
-      
-      const activeThumbnail = this.thumbnails[index];
-      if (!activeThumbnail) return;
-      
-      // Get container and thumbnail dimensions
-      const containerRect = thumbnailsContainer.getBoundingClientRect();
-      const thumbnailRect = activeThumbnail.getBoundingClientRect();
-      
-      // Calculate scroll position to center the active thumbnail
-      const containerCenter = containerRect.width / 2;
-      const thumbnailCenter = thumbnailRect.left - containerRect.left + (thumbnailRect.width / 2);
-      const scrollOffset = thumbnailCenter - containerCenter;
-      
-      // Smooth scroll to position
-      thumbnailsContainer.scrollTo({
-        left: thumbnailsContainer.scrollLeft + scrollOffset,
-        behavior: 'smooth'
-      });
-    }
-    
-    nextSlide() {
-      const next = (this.currentSlide + 1) % this.totalSlides;
-      this.goToSlide(next);
-    }
-    
-    prevSlide() {
-      const prev = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-      this.goToSlide(prev);
-    }
-    
-    goToSlide(index) {
-      if (index >= 0 && index < this.totalSlides) {
-        this.updateSlide(index);
-        this.resetAutoplay();
-      }
-    }
-    
-    startAutoplay() {
-      if (!this.autoplay) return;
-      this.autoplayTimer = setInterval(() => this.nextSlide(), this.interval);
-    }
-    
-    pauseAutoplay() {
-      if (this.autoplayTimer) {
-        clearInterval(this.autoplayTimer);
-        this.autoplayTimer = null;
-      }
-    }
-    
-    resumeAutoplay() {
-      if (this.autoplay && !this.autoplayTimer) {
-        this.startAutoplay();
-      }
-    }
-    
-    resetAutoplay() {
-      this.pauseAutoplay();
-      this.resumeAutoplay();
-    }
-  }
-  
-  // Initialize all gallery sliders
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.gallery-slider').forEach(slider => {
-      new GallerySlider(slider);
-    });
-  });
-})();
-</script>
+{{/* Emit the bundled gallery script once per page even if invoked multiple times. */}}
+{{ if not (.Page.Store.Get "gallery-slider-js-loaded") }}
+  {{ .Page.Store.Set "gallery-slider-js-loaded" true }}
+  {{ with resources.Get "js/gallery-slider.js" }}
+    {{ $gallerySliderJS := . | resources.Minify | fingerprint }}
+    <script defer src="{{ $gallerySliderJS.RelPermalink }}" integrity="{{ $gallerySliderJS.Data.Integrity }}" crossorigin="anonymous"></script>
+  {{ else }}
+    {{ errorf "Required file 'gallery-slider.js' not found in assets/js/ directory" }}
+  {{ end }}
+{{ end }}

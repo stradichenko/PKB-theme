@@ -1,10 +1,10 @@
 <div class="about-profile-container">
   <div class="zipf-box">
-    <h2 class="zipf-title">Content Analysis (Zipf's Law)</h2>
-    
+    <h2 class="zipf-title">{{ i18n "zipf_title" | default "Content Analysis (Zipf's Law)" }}</h2>
+
     <div class="zipf-container">
       <div class="zipf-graph">
-        <h3>Word Frequency Distribution</h3>
+        <h3>{{ i18n "zipf_word_freq_distribution" | default "Word Frequency Distribution" }}</h3>
         <!-- Wrapper for chart with relative positioning -->
         <div class="zipf-chart-wrapper">
           <div id="zipf-chart"></div>
@@ -29,9 +29,9 @@
                 </svg>
               </button>
               <div id="zipf-save-options" class="zipf-save-options">
-                <button class="zipf-save-option" data-format="png">Save as PNG</button>
-                <button class="zipf-save-option" data-format="svg">Save as SVG</button>
-                <button class="zipf-save-option" data-format="jpeg">Save as JPEG</button>
+                <button class="zipf-save-option" data-format="png">{{ i18n "zipf_save_png" | default "Save as PNG" }}</button>
+                <button class="zipf-save-option" data-format="svg">{{ i18n "zipf_save_svg" | default "Save as SVG" }}</button>
+                <button class="zipf-save-option" data-format="jpeg">{{ i18n "zipf_save_jpeg" | default "Save as JPEG" }}</button>
               </div>
             </div>
           </div>
@@ -77,16 +77,16 @@
       </div>
       
       <div class="zipf-table">
-        <h3>Word Frequency Analysis</h3>
+        <h3>{{ i18n "zipf_word_freq_analysis" | default "Word Frequency Analysis" }}</h3>
         <div class="table-container">
           <table id="zipf-data">
             <thead>
               <tr>
-                <th>Rank</th>
-                <th>Word</th>
-                <th>Freq (n/total)</th>
-                <th>Pr(%)</th>
-                <th>Ideal</th>
+                <th>{{ i18n "zipf_rank" | default "Rank" }}</th>
+                <th>{{ i18n "zipf_word" | default "Word" }}</th>
+                <th>{{ i18n "zipf_freq" | default "Freq (n/total)" }}</th>
+                <th>{{ i18n "zipf_pr" | default "Pr(%)" }}</th>
+                <th>{{ i18n "zipf_ideal" | default "Ideal" }}</th>
               </tr>
             </thead>
             <tbody>
@@ -119,9 +119,9 @@
             </svg>
           </button>
           <div id="zipf-fullscreen-save-options" class="zipf-save-options">
-            <button class="zipf-save-option" data-format="png" data-target="fullscreen">Save as PNG</button>
-            <button class="zipf-save-option" data-format="svg" data-target="fullscreen">Save as SVG</button>
-            <button class="zipf-save-option" data-format="jpeg" data-target="fullscreen">Save as JPEG</button>
+            <button class="zipf-save-option" data-format="png" data-target="fullscreen">{{ i18n "zipf_save_png" | default "Save as PNG" }}</button>
+            <button class="zipf-save-option" data-format="svg" data-target="fullscreen">{{ i18n "zipf_save_svg" | default "Save as SVG" }}</button>
+            <button class="zipf-save-option" data-format="jpeg" data-target="fullscreen">{{ i18n "zipf_save_jpeg" | default "Save as JPEG" }}</button>
           </div>
         </div>
       </div>
@@ -136,43 +136,28 @@
   </div>
 </div>
 
-<!-- Load external JavaScript -->
-{{ $zipfJS := resources.Get "js/zipfs-law.js" }}
-<script src="{{ $zipfJS.RelPermalink }}"></script>
+<!-- Per-page corpus data: built once via Hugo, consumed by zipfs-law.js on init -->
+{{- $mainSections := site.Params.taxonomies.mainSections | default site.Params.mainSections | default (slice "posts" "docs" "blog") -}}
+{{- $words := slice -}}
+{{- range where site.RegularPages "Type" "in" $mainSections -}}
+  {{- with .Title -}}
+    {{- $words = $words | append (split (lower .) " ") -}}
+  {{- end -}}
+  {{- with .Description -}}
+    {{- $words = $words | append (split (lower .) " ") -}}
+  {{- end -}}
+  {{- range .Params.tags -}}
+    {{- $words = $words | append (lower .) -}}
+  {{- end -}}
+  {{- range .Params.categories -}}
+    {{- $words = $words | append (lower .) -}}
+  {{- end -}}
+{{- end }}
+<script type="application/json" id="zipf-data-words">{{ $words | jsonify }}</script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Extract words from all posts
-  const allWords = [];
-  {{ range where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
-    // Extract from title
-    {{ $title := .Title | lower }}
-    {{ $titleWords := split $title " " }}
-    {{ range $titleWords }}
-      allWords.push("{{ . }}");
-    {{ end }}
-    
-    // Extract from description
-    {{ with .Description }}
-      {{ $desc := . | lower }}
-      {{ $descWords := split $desc " " }}
-      {{ range $descWords }}
-        allWords.push("{{ . }}");
-      {{ end }}
-    {{ end }}
-    
-    // Extract from tags
-    {{ range .Params.tags }}
-      allWords.push("{{ . | lower }}");
-    {{ end }}
-    
-    // Extract from categories
-    {{ range .Params.categories }}
-      allWords.push("{{ . | lower }}");
-    {{ end }}
-  {{ end }}
-  
-  // Initialize Zipf's Law visualization
-  initializeZipfsLaw(allWords);
-});
-</script>
+{{ with resources.Get "js/zipfs-law.js" }}
+  {{ $zipfJS := . | resources.Minify | fingerprint }}
+  <script defer src="{{ $zipfJS.RelPermalink }}" integrity="{{ $zipfJS.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ else }}
+  {{ errorf "Required file 'zipfs-law.js' not found in assets/js/ directory" }}
+{{ end }}

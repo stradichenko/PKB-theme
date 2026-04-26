@@ -1,0 +1,157 @@
+# PKB-theme English i18n strings.
+# This file is owned by Unit 4 of the modernization batch; Unit 12 added
+# widget-specific keys below. Keep the table-of-contents structure if Unit 4
+# expands this file.
+
+# ---------------------------------------------------------------------------
+# Knowledge graph widget
+# ---------------------------------------------------------------------------
+[knowledge_graph_physics_controls]
+other = "Physics Controls"
+
+[knowledge_graph_repulsion]
+other = "Repulsion:"
+
+[knowledge_graph_link_distance]
+other = "Link Distance:"
+
+[knowledge_graph_node_spacing]
+other = "Node Spacing:"
+
+[knowledge_graph_center_gravity]
+other = "Center Gravity:"
+
+[knowledge_graph_reset_default]
+other = "Reset to Default"
+
+[knowledge_graph_filter_by]
+other = "Filter by:"
+
+[knowledge_graph_all_nodes]
+other = "All Nodes"
+
+[knowledge_graph_filter_category]
+other = "Category"
+
+[knowledge_graph_filter_tag]
+other = "Tag"
+
+[knowledge_graph_filter_search]
+other = "Node Name"
+
+[knowledge_graph_search_placeholder]
+other = "Search nodes..."
+
+[knowledge_graph_clear_filters]
+other = "Clear Filters"
+
+[knowledge_graph_save_png]
+other = "Save as PNG"
+
+[knowledge_graph_save_svg]
+other = "Save as SVG"
+
+[knowledge_graph_save_jpeg]
+other = "Save as JPEG"
+
+[knowledge_graph_filter_aria]
+other = "Filter graph"
+
+[knowledge_graph_save_aria]
+other = "Save graph as image"
+
+[knowledge_graph_fullscreen_aria]
+other = "View graph in fullscreen"
+
+[knowledge_graph_close_fullscreen_aria]
+other = "Close fullscreen view"
+
+# ---------------------------------------------------------------------------
+# Zipf's law widget
+# ---------------------------------------------------------------------------
+[zipf_title]
+other = "Content Analysis (Zipf's Law)"
+
+[zipf_word_freq_distribution]
+other = "Word Frequency Distribution"
+
+[zipf_word_freq_analysis]
+other = "Word Frequency Analysis"
+
+[zipf_rank]
+other = "Rank"
+
+[zipf_word]
+other = "Word"
+
+[zipf_freq]
+other = "Freq (n/total)"
+
+[zipf_pr]
+other = "Pr(%)"
+
+[zipf_ideal]
+other = "Ideal"
+
+[zipf_save_png]
+other = "Save as PNG"
+
+[zipf_save_svg]
+other = "Save as SVG"
+
+[zipf_save_jpeg]
+other = "Save as JPEG"
+
+# ---------------------------------------------------------------------------
+# LDA topic analysis widget
+# ---------------------------------------------------------------------------
+[lda_title]
+other = "Topic Analysis (LDA)"
+
+[lda_topic_distribution]
+other = "Topic Distribution"
+
+[lda_topic_details]
+other = "Topic Details"
+
+[lda_loading]
+other = "Analyzing content using GPU-accelerated LDA..."
+
+[lda_switch_to_table]
+other = "Switch to Table View"
+
+[lda_switch_to_chart]
+other = "Switch to Chart View"
+
+# ---------------------------------------------------------------------------
+# Filters widget
+# ---------------------------------------------------------------------------
+[filters_select_category]
+other = "Select Category"
+
+[filters_select_tag]
+other = "Select Tag"
+
+[filters_clear_all]
+other = "Clear All"
+
+[filters_initial_message]
+other = "Select a category or tag to view matching posts"
+
+[filters_items_found]
+other = "items found"
+
+# ---------------------------------------------------------------------------
+# Contribution calendar widget
+# ---------------------------------------------------------------------------
+[calendar_activity_title]
+other = "Activity Calendar"
+
+[calendar_less]
+other = "Less"
+
+[calendar_more]
+other = "More"
+
+[calendar_no_activity]
+other = "No activity"

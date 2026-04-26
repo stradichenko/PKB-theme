@@ -611,3 +611,83 @@
     }
   };
 })();
+
+// ---------------------------------------------------------------------------
+// LDA mobile interaction + tooltip module
+// (Extracted from layouts/partials/lda-analysis.html inline script.)
+// ---------------------------------------------------------------------------
+(function () {
+  'use strict';
+
+  function init() {
+    const toggleBtn = document.getElementById('toggle-view');
+    const container = document.querySelector('.lda-container');
+    const toggleText = document.querySelector('.toggle-text');
+    const tooltip = document.getElementById('topic-tooltip');
+
+    if (toggleBtn && container && toggleText) {
+      const labelChart = toggleBtn.dataset.i18nChart || 'Switch to Chart View';
+      const labelTable = toggleBtn.dataset.i18nTable || 'Switch to Table View';
+      let showingTable = false;
+      toggleBtn.addEventListener('click', () => {
+        showingTable = !showingTable;
+        container.classList.toggle('show-table', showingTable);
+        toggleText.textContent = showingTable ? labelChart : labelTable;
+      });
+    }
+
+    if (!tooltip) return;
+
+    window.showTopicTooltip = function (event, topicData) {
+      if (!topicData) return;
+
+      const titleEl = tooltip.querySelector('.tooltip-title');
+      const keywordsEl = tooltip.querySelector('.tooltip-keywords');
+      const documentsEl = tooltip.querySelector('.tooltip-documents');
+      const confidenceEl = tooltip.querySelector('.tooltip-confidence');
+
+      if (titleEl) titleEl.textContent = `Topic ${topicData.id}: ${topicData.label}`;
+      if (keywordsEl && topicData.keywords) {
+        keywordsEl.innerHTML = topicData.keywords
+          .map(k => `<span class="keyword">${k}</span>`)
+          .join('');
+      }
+      if (documentsEl) {
+        documentsEl.textContent = `${topicData.documentCount} documents • ${topicData.percentage}%`;
+      }
+      if (confidenceEl) {
+        confidenceEl.textContent = `Confidence: ${topicData.confidence}%`;
+      }
+
+      const rect = event.target.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      let left = rect.left;
+      let top = rect.top - tooltipRect.height - 10;
+      if (left + tooltipRect.width > window.innerWidth) {
+        left = window.innerWidth - tooltipRect.width - 10;
+      }
+      if (left < 10) left = 10;
+      if (top < 10) top = rect.bottom + 10;
+
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+      tooltip.classList.add('visible');
+    };
+
+    window.hideTopicTooltip = function () {
+      tooltip.classList.remove('visible');
+    };
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.topic-bar-container')) {
+        window.hideTopicTooltip();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
