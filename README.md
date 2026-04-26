@@ -139,6 +139,22 @@ Described at [documentation](https://github.com/stradichenko/PKB-theme/blob/main
 ### [Color Theme Customization](https://stradichenko.github.io/PKB-theme/docs/color-theme-customization)
 
 
+### Math support (KaTeX)
+
+Math rendering is powered by [KaTeX](https://katex.org/). To enable math on a page, add `math = true` to its front matter:
+
+```toml
++++
+title = "My math post"
+math = true
++++
+```
+
+Then write inline math with `$...$` or `\(...\)` and display math with `$$...$$` or `\[...\]`. Chemical equations (`mhchem`) are also supported. To enable math site-wide, set `math = true` under `[params]` in your site config; individual pages can still override with `math = false`.
+
+A global `window.reprocessMath()` hook is exposed for re-rendering math after dynamic DOM updates.
+
+
 ## FAQ
 ### Hugo's Theme Configuration Inheritance (Lookup Order)
 

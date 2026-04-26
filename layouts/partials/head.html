@@ -17,13 +17,14 @@
     <!-- Main Stylesheet -->
     {{ partial "head/styles.html" . }}
     
-    {{/* Math Support - Load early for better rendering */}}
-    {{- if .Params.math -}}
+    {{/* Math Support - Preload KaTeX assets when enabled (page param falls back to site default) */}}
+    {{- $math := .Param "math" -}}
+    {{- if $math -}}
     <!-- KaTeX CSS - Preload for better performance -->
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css"></noscript>
-    
-    <!-- KaTeX JS - Load with high priority -->
+
+    <!-- KaTeX JS - Preload with high priority -->
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" as="script">
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" as="script">
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/mhchem.min.js" as="script">
@@ -58,7 +59,7 @@
     <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
 
     {{/* Math rendering scripts - Load after DOM is ready */}}
-    {{- if .Params.math -}}
+    {{- if $math -}}
     <!-- KaTeX JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" integrity="sha384-TNnVz4NqBjFIUtubnHyyCWyGiIboUd7yCCtn7k4DwDnkWWqyOEtNKYEELv0jW+NU" crossorigin="anonymous"></script>
 
@@ -68,22 +69,10 @@
     <!-- KaTeX auto-render extension -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" integrity="sha384-JKXHIJf8PKPyDFptuKZoUyMRQJAmQKj4B4xyOca62ebJhciMYGiDdq/9twUUWyZH" crossorigin="anonymous"></script>
 
-    <!-- KaTeX Configuration -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '$', right: '$', display: false},
-                {left: '\\(', right: '\\)', display: false},
-                {left: '\\[', right: '\\]', display: true}
-            ],
-            throwOnError: false,
-            errorColor: '#cc0000',
-            strict: false,
-            trust: true,
-        });
-    });
-    </script>
+    <!-- KaTeX initialization (auto-render + window.reprocessMath hook) -->
+    {{ with resources.Get "js/katex-init.js" }}
+        {{ $katexInit := . | js.Build | minify | fingerprint }}
+        <script src="{{ $katexInit.RelPermalink }}" integrity="{{ $katexInit.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
     {{- end -}}
 </head>

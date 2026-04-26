@@ -61,11 +61,7 @@
   {{ partial "head.html" . }}
   
   {{ block "head" . }}{{ end }}
-  
-  {{ if .Param "math" }}
-    {{ partialCached "math.html" . }}
-  {{ end }}
-  
+
   <!-- CSS preload with proper attributes -->
   {{ $mainCSS := resources.Get "css/main.css" }}
   {{ if $mainCSS }}
