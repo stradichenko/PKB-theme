@@ -2,6 +2,9 @@ baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'HUGO_site'
 
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+
 enableGitInfo = true
 #relativeURLs = true
 #canonifyURLs = true
@@ -519,3 +522,9 @@ enableGitInfo = true
   priority = -1
 
 uglyURLs = false
+
+[languages]
+  [languages.en]
+    languageName = "English"
+    languageCode = "en-US"
+    weight = 1

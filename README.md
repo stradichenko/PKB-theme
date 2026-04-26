@@ -138,6 +138,31 @@ Described at [documentation](https://github.com/stradichenko/PKB-theme/blob/main
 
 ### [Color Theme Customization](https://stradichenko.github.io/PKB-theme/docs/color-theme-customization)
 
+### Internationalization (i18n)
+
+The theme uses Hugo's built-in [i18n](https://gohugo.io/content-management/multilingual/) system so that template strings can be translated. All user-facing strings live in `i18n/en.toml` at the theme root, and templates reference them via `{{ T "key" }}`.
+
+To add a translation:
+
+1. Copy `i18n/en.toml` to `i18n/<lang>.toml` (e.g. `i18n/es.toml` for Spanish) and translate the values, leaving the keys unchanged.
+2. Register the new language in `config/_default/hugo.toml` under the `[languages]` block:
+
+   ```toml
+   [languages]
+     [languages.en]
+       languageName = "English"
+       languageCode = "en-US"
+       weight = 1
+     [languages.es]
+       languageName = "Español"
+       languageCode = "es-ES"
+       weight = 2
+   ```
+
+3. Optionally, override individual strings from your own site by creating an `i18n/<lang>.toml` file in your project root — Hugo's lookup order will prefer your project's translations over the theme's defaults.
+
+See [Hugo's multilingual documentation](https://gohugo.io/content-management/multilingual/) for full details on translating content, menus, and dates.
+
 
 ## FAQ
 ### Hugo's Theme Configuration Inheritance (Lookup Order)
