@@ -1,0 +1,9 @@
+{{- /*
+  Heading render hook.
+  Emits <hN id="…">…<a href="#…" class="anchor" aria-label="…">¶</a></hN>.
+*/ -}}
+{{- $label := i18n "AnchorLabel" | default "Anchor" -}}
+<h{{ .Level }} id="{{ .Anchor | safeURL }}">
+  {{- .Text | safeHTML -}}
+  <a href="#{{ .Anchor | safeURL }}" class="anchor" aria-label="{{ $label }}">&para;</a>
+</h{{ .Level }}>

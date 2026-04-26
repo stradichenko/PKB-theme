@@ -1,0 +1,44 @@
+{{- /*
+  Image render hook.
+  Emits <img> with loading="lazy" decoding="async". When the source resolves
+  to a Page Resource, derives a responsive srcset via images.Process/Resize
+  and sets intrinsic width/height to reduce CLS.
+*/ -}}
+{{- $src := .Destination -}}
+{{- $alt := .Text -}}
+{{- $title := .Title -}}
+{{- $isExternal := or (strings.HasPrefix $src "http:") (strings.HasPrefix $src "https:") (strings.HasPrefix $src "//") -}}
+{{- $resource := false -}}
+{{- if and (not $isExternal) .Page -}}
+  {{- with .Page.Resources.GetMatch $src -}}
+    {{- if eq .ResourceType "image" -}}
+      {{- $resource = . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if $resource -}}
+  {{- $orig := $resource -}}
+  {{- $w := $orig.Width -}}
+  {{- $h := $orig.Height -}}
+  {{- $widths := slice 480 768 1200 1600 -}}
+  {{- $srcset := slice -}}
+  {{- range $widths -}}
+    {{- if le . $w -}}
+      {{- $img := $orig.Resize (printf "%dx" .) -}}
+      {{- $srcset = $srcset | append (printf "%s %dw" $img.RelPermalink .) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $srcset = $srcset | append (printf "%s %dw" $orig.RelPermalink $w) -}}
+  <img src="{{ $orig.RelPermalink }}"
+    {{- with $alt }} alt="{{ . }}"{{ end }}
+    {{- with $title }} title="{{ . }}"{{ end }}
+    width="{{ $w }}" height="{{ $h }}"
+    srcset="{{ delimit $srcset ", " }}"
+    sizes="(max-width: 768px) 100vw, 768px"
+    loading="lazy" decoding="async">
+{{- else -}}
+  <img src="{{ $src | safeURL }}"
+    {{- with $alt }} alt="{{ . }}"{{ end }}
+    {{- with $title }} title="{{ . }}"{{ end }}
+    loading="lazy" decoding="async">
+{{- end -}}

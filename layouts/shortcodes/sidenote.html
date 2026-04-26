@@ -1,7 +1,13 @@
-{{- $counter := .Page.Scratch.Get "sidenoteCounter" | default 0 -}}
+{{- /*
+  Sidenote shortcode.
+  Usage: {{< sidenote >}}note text{{< /sidenote >}}
+  Tracks counter on .Page.Store (Hugo 0.85+).
+*/ -}}
+{{- $counter := .Page.Store.Get "sidenoteCounter" | default 0 -}}
 {{- $counter = add $counter 1 -}}
-{{- .Page.Scratch.Set "sidenoteCounter" $counter -}}
+{{- .Page.Store.Set "sidenoteCounter" $counter -}}
 {{- $letter := printf "%c" (add $counter 96) -}}
 {{- $content := .Inner | markdownify -}}
 {{- $cleanContent := $content | plainify -}}
-{{- printf `<sup class="sidenote-ref" title="%s">%s</sup><span class="sidenote sidenote-hidden" lang="%s"><sup class="sidenote-sup">%s.</sup>%s</span>` $cleanContent $letter (.Site.Language.Lang | default "en") $letter $content | safeHTML -}}
+{{- $lang := site.Language.Lang | default "en" -}}
+<sup class="sidenote-ref" title="{{ $cleanContent }}">{{ $letter }}</sup><span class="sidenote sidenote-hidden" lang="{{ $lang }}"><sup class="sidenote-sup">{{ $letter }}.</sup>{{ $content }}</span>

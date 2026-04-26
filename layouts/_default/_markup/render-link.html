@@ -1,15 +1,16 @@
+{{- /*
+  Link render hook.
+  Hugo's render-link context provides resolved URLs; no manual BaseURL prepend needed.
+*/ -}}
 {{- $url := .Destination -}}
 {{- $isExternal := or (strings.HasPrefix $url "http:") (strings.HasPrefix $url "https:") -}}
-{{- $fullUrl := $url -}}
-{{- if and (not $isExternal) (strings.HasPrefix $url "/") -}}
-  {{- $fullUrl = printf "%s%s" (.Page.Site.BaseURL | strings.TrimSuffix "/") $url -}}
-{{- end -}}
-
-<a href="{{ $fullUrl | safeURL }}"
+{{- $isInternalAbsolute := and (not $isExternal) (strings.HasPrefix $url "/") -}}
+<a href="{{ $url | safeURL }}"
   {{- with .Title }} title="{{ . }}"{{ end -}}
   {{- if $isExternal }} rel="external" target="_blank"{{ end -}}
-  {{- if and (not $isExternal) (strings.HasPrefix $url "/") }} data-internal-link="{{ $url }}" class="internal-link"{{ end -}}
->
-  {{- with .Text }}{{ . }}{{ end -}}
-</a>
-{{- /* chomp trailing newline */ -}}
+  {{- if $isInternalAbsolute }} data-internal-link="{{ $url }}" class="internal-link"{{ end -}}
+>{{- with .Text }}{{ . | safeHTML }}{{ end -}}</a>
+{{- /*
+  Note: .Text is rendered inline content (may contain emphasis tags etc.);
+  safeHTML preserves those tags.
+*/ -}}

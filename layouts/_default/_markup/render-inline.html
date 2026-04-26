@@ -1,8 +1,7 @@
+{{- /*
+  Inline render hook.
+  Trust assumption: inline content is authored markdown (LaTeX math source);
+  safeHTML preserves $...$ delimiters for client-side KaTeX processing.
+*/ -}}
 {{- $text := .Text | strings.TrimSpace -}}
-{{- if and (hasPrefix $text "$") (hasSuffix $text "$") (not (hasPrefix $text "$$")) -}}
-  {{/* Inline math - output directly without wrapping */}}
-  {{ $text | safeHTML }}
-{{- else -}}
-  {{/* Regular inline text */}}
-  {{ $text | safeHTML }}
-{{- end -}}
+{{ $text | safeHTML }}

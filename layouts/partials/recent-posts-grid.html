@@ -1,29 +1,29 @@
 <div class="recent-posts-grid">
-  {{ $recentPosts := first 6 (where site.RegularPages "Type" "posts") }}
-  {{ range $recentPosts }}
-    <div class="recent-post-card">  <!-- Changed from post-card -->
+  {{- $sections := site.Params.mainSections | default (slice "posts") -}}
+  {{- $recentPosts := first 6 (where site.RegularPages "Section" "in" $sections) -}}
+  {{- range $recentPosts }}
+    <div class="recent-post-card">
       <h3 class="post-title"><a href="{{ .Permalink | relURL }}" class="post-link">{{ .Title }}</a></h3>
       <div class="post-meta">
-        <div class="post-date">{{ .Date.Format "Jan 2, 2006" }}</div>
-        {{ if .Params.tags }}
+        <div class="post-date">{{ time.Format "Jan 2, 2006" .Date }}</div>
+        {{- if .Params.tags }}
         <div class="post-tags">
-          {{ $tagCount := len .Params.tags }}
-          {{ $maxTags := 2 }}
-          {{ $allTags := .Params.tags }}
-          
-          {{ range $index, $tag := .Params.tags }}
-            {{ if lt $index $maxTags }}
-              <span class="tag">{{ . }}</span>
-            {{ else if eq $index $maxTags }}
-              {{ $remainingTags := after $maxTags $allTags }}
+          {{- $tagCount := len .Params.tags -}}
+          {{- $maxTags := 2 -}}
+          {{- $allTags := .Params.tags -}}
+          {{- range $index, $tag := .Params.tags }}
+            {{- if lt $index $maxTags }}
+              <span class="tag">{{ $tag }}</span>
+            {{- else if eq $index $maxTags }}
+              {{- $remainingTags := after $maxTags $allTags -}}
               <span class="tag tag-more" data-tooltip="{{ delimit $remainingTags ", " }}">+{{ sub $tagCount $maxTags }}</span>
-              {{ break }}
-            {{ end }}
-          {{ end }}
+              {{- break -}}
+            {{- end -}}
+          {{- end }}
         </div>
-        {{ end }}
+        {{- end }}
       </div>
       <div class="post-summary">{{ .Summary | plainify | truncate 200 }}</div>
     </div>
-  {{ end }}
+  {{- end }}
 </div>
