@@ -5,23 +5,33 @@
   "private": true,
   "scripts": {
     "build": "hugo --gc --minify",
-    "build:advanced": "npm run build && npm run optimize-images && npm run seo-audit",
     "dev": "hugo server --disableFastRender --navigateToChanged",
     "optimize-images": "node scripts/optimize-images.js",
-    "seo-audit": "node scripts/seo-audit.js",
-    "validate-seo": "node scripts/validate-seo.js"
+    "lint": "eslint assets/js scripts && stylelint 'assets/css/**/*.css'",
+    "lint:fix": "eslint --fix assets/js scripts && stylelint --fix 'assets/css/**/*.css'",
+    "format": "prettier --write 'assets/**/*.{js,css,md}' 'layouts/**/*.html' 'scripts/**/*.js' '**/*.md'",
+    "format:check": "prettier --check 'assets/**/*.{js,css,md}' 'layouts/**/*.html' 'scripts/**/*.js' '**/*.md'"
   },
   "devDependencies": {
-    "sharp": "^0.34.0",
+    "@eslint/js": "^9.0.0",
+    "autoprefixer": "^10.4.0",
+    "cheerio": "^1.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
     "glob": "^11.0.0",
-    "cheerio": "^1.0.0"
+    "postcss": "^8.4.0",
+    "postcss-preset-env": "^9.5.0",
+    "prettier": "^3.2.0",
+    "sharp": "^0.34.0",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0"
   },
   "engines": {
-    "node": ">=18.17.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/pkb-theme"
+    "url": "https://github.com/stradichenko/PKB-theme"
   },
   "keywords": [
     "hugo",

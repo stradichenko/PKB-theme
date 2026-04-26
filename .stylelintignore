@@ -1,0 +1,5 @@
+node_modules
+exampleSite/public
+public
+resources
+**/*.min.css

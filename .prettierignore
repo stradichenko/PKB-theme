@@ -1,0 +1,11 @@
+node_modules
+exampleSite/public
+exampleSite/resources
+public
+resources
+.hugo_build.lock
+flake.lock
+package-lock.json
+*.min.js
+*.min.css
+static/bibtex
