@@ -1,22 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # Validate Hugo Theme Repository Configuration
 # Run from the theme's root directory
 
-# Color codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Color codes — disabled when NO_COLOR is set (https://no-color.org/)
+if [[ -n "${NO_COLOR:-}" ]]; then
+    RED=''
+    GREEN=''
+    YELLOW=''
+    NC=''
+else
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    NC='\033[0m' # No Color
+fi
 
 passed_checks=0
 total_checks=0
 
 function check_required_file() {
-    ((total_checks++))
+    ((++total_checks))
     if [[ -f "$1" ]]; then
         echo -e "${GREEN}✓ Found: $1${NC}"
-        ((passed_checks++))
+        ((++passed_checks))
         return 0
     else
         echo -e "${RED}✗ Missing: $1${NC}"
@@ -25,10 +33,10 @@ function check_required_file() {
 }
 
 function validate_theme_toml() {
-    ((total_checks++))
+    ((++total_checks))
     local required_fields=("name" "license")
     local missing_fields=()
-    
+
     if [[ ! -f "theme.toml" ]]; then
         echo -e "${RED}✗ Missing theme.toml${NC}"
         return 1
@@ -51,12 +59,12 @@ function validate_theme_toml() {
         return 1
     else
         echo -e "${GREEN}✓ theme.toml valid${NC}"
-        ((passed_checks++))
+        ((++passed_checks))
         return 0
     fi
 }
 function validate_go_mod() {
-    ((total_checks++))
+    ((++total_checks))
     if [[ ! -f "go.mod" ]]; then
         echo -e "${RED}✗ Missing go.mod${NC}"
         return 1
@@ -64,7 +72,7 @@ function validate_go_mod() {
 
     if grep -q "^module github.com/stradichenko/PKB-theme" go.mod; then
         echo -e "${GREEN}✓ go.mod has correct module path${NC}"
-        ((passed_checks++))
+        ((++passed_checks))
         return 0
     else
         echo -e "${RED}✗ Invalid module path in go.mod${NC}"
@@ -75,8 +83,8 @@ function validate_go_mod() {
 function validate_directory_structure() {
     local required_dirs=("archetypes" "layouts" "static" "assets")
     local missing_dirs=()
-    ((total_checks++))
-    
+    ((++total_checks))
+
     for dir in "${required_dirs[@]}"; do
         if [[ ! -d "$dir" ]]; then
             missing_dirs+=("$dir")
@@ -88,16 +96,17 @@ function validate_directory_structure() {
         return 1
     else
         echo -e "${GREEN}✓ All required directories present${NC}"
-        ((passed_checks++))
+        ((++passed_checks))
         return 0
     fi
 }
 
 function validate_version_tags() {
-    ((total_checks++))
-    local tags=$(git tag -l)
+    ((++total_checks))
+    local tags
+    tags=$(git tag -l)
     local semver_tags=()
-    
+
     while IFS= read -r tag; do
         if [[ $tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             semver_tags+=("$tag")
@@ -109,25 +118,33 @@ function validate_version_tags() {
         return 1
     else
         echo -e "${GREEN}✓ Found semantic version tags: ${semver_tags[*]}${NC}"
-        ((passed_checks++))
+        ((++passed_checks))
         return 0
     fi
 }
 
 function validate_example_site() {
-    ((total_checks++))
+    ((++total_checks))
     if [[ ! -d "exampleSite" ]]; then
         echo -e "${YELLOW}⚠ Missing exampleSite directory${NC}"
         return 1
     fi
 
     local example_checks=0
-    check_required_file "exampleSite/config.toml" && ((example_checks++))
-    [[ -d "exampleSite/content" ]] && ((example_checks++))
-    
+    # Hugo modern config layout: prefer hugo.toml, then per-environment config.
+    if [[ -f "exampleSite/hugo.toml" ]]; then
+        check_required_file "exampleSite/hugo.toml" && ((++example_checks))
+    elif [[ -f "exampleSite/config/_default/hugo.toml" ]]; then
+        check_required_file "exampleSite/config/_default/hugo.toml" && ((++example_checks))
+    else
+        ((++total_checks))
+        echo -e "${RED}✗ Missing exampleSite/hugo.toml (or exampleSite/config/_default/hugo.toml)${NC}"
+    fi
+    [[ -d "exampleSite/content" ]] && ((++example_checks))
+
     if [[ $example_checks -eq 2 ]]; then
         echo -e "${GREEN}✓ exampleSite configuration valid${NC}"
-        ((passed_checks++))
+        ((++passed_checks))
         return 0
     else
         echo -e "${YELLOW}⚠ Incomplete exampleSite configuration${NC}"
@@ -136,21 +153,18 @@ function validate_example_site() {
 }
 
 function validate_readme() {
-    ((total_checks++))
-    local check_passed=1
-    
+    ((++total_checks))
+
     if [[ ! -f "README.md" ]]; then
         echo -e "${RED}✗ Missing README.md${NC}"
         return 1
     fi
 
-    grep -q "hugo mod init" README.md && \
-    grep -q "module.imports" README.md && \
-    grep -q "hugo mod get" README.md
-    
-    if [[ $? -eq 0 ]]; then
+    if grep -q "hugo mod init" README.md \
+        && grep -qF "module.imports" README.md \
+        && grep -q "hugo mod get" README.md; then
         echo -e "${GREEN}✓ README contains module installation instructions${NC}"
-        ((passed_checks++))
+        ((++passed_checks))
         return 0
     else
         echo -e "${YELLOW}⚠ README missing module installation instructions${NC}"
@@ -160,11 +174,11 @@ function validate_readme() {
 
 function validate_environment() {
     echo -e "\n${YELLOW}=== Environment Validation ===${NC}"
-    
+
     # Check for required commands
     local required_commands=("git" "hugo" "grep")
     for cmd in "${required_commands[@]}"; do
-        if ! command -v $cmd &> /dev/null; then
+        if ! command -v "$cmd" &> /dev/null; then
             echo -e "${RED}✗ Missing required command: $cmd${NC}"
             exit 1
         fi
@@ -179,18 +193,20 @@ function validate_environment() {
 
 function main() {
     validate_environment
-    
+
     echo -e "\n${YELLOW}=== Theme Configuration Validation ===${NC}"
-    validate_theme_toml
-    validate_go_mod
-    validate_directory_structure
-    validate_version_tags
-    validate_example_site
-    validate_readme
+    # `set -e` would short-circuit on the first failed validator; we want the
+    # full report, so explicitly ignore non-zero returns from each check.
+    validate_theme_toml || true
+    validate_go_mod || true
+    validate_directory_structure || true
+    validate_version_tags || true
+    validate_example_site || true
+    validate_readme || true
 
     echo -e "\n${YELLOW}=== Validation Summary ===${NC}"
     echo -e "Passed checks: ${GREEN}$passed_checks${NC} / $total_checks"
-    
+
     if [[ $passed_checks -eq $total_checks ]]; then
         echo -e "${GREEN}✓ All critical checks passed!${NC}"
     else
