@@ -1,6 +1,23 @@
-<!-- Self-hosted analytics partials - Privacy-respecting analytics solutions -->
-{{ partial "analytics/plausible.html" . }}
-{{ partial "analytics/umami.html" . }}
-{{ partial "analytics/matomo.html" . }}
-{{ partial "analytics/fathom.html" . }}
-{{ partial "analytics/shynet.html" . }}
+{{/*
+  analytics.html — provider dispatcher.
+
+  Selects a single analytics provider via site.Params.analytics.provider.
+  Supported providers (matching files in layouts/partials/analytics/):
+    plausible, matomo, umami, fathom, shynet
+
+  Provider partials read their own configuration from
+    site.Params.analytics.<provider>* (e.g. plausibleDomain, matomoURL).
+
+  The output is invariant per site, so the dispatch is wrapped in
+  partialCached. Provider sub-partials are also cached, keyed on the
+  provider name, so they only render once per build.
+*/}}
+{{- $provider := site.Params.analytics.provider | default "" -}}
+{{- if $provider -}}
+  {{- $known := slice "plausible" "matomo" "umami" "fathom" "shynet" -}}
+  {{- if in $known $provider -}}
+    {{- partialCached (printf "analytics/%s.html" $provider) . $provider -}}
+  {{- else -}}
+    <!-- analytics: unknown provider {{ $provider | safeHTML }} -->
+  {{- end -}}
+{{- end -}}

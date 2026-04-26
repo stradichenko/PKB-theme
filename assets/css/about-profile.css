@@ -282,3 +282,9 @@
   margin-bottom: var(--spacing-md);
   line-height: 1.6;
 }
+
+/* Heading sizing for the about page (was inline in layouts/page/about.html) */
+.about-section h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}

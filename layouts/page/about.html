@@ -1,24 +1,18 @@
 {{ define "main" }}
-<style>
-  .about-section h1 {
-    font-size: 2em;
-    margin: 0.67em 0;
-  }
-</style>
 <article class="about-section">
   <div class="about-profile-container">
     <div class="about-left-column">
       <div class="profile-image">
-        <img src="{{ with .Site.Params.contact.profilepicture }}{{ . | absURL }}{{ else }}{{ "images/profile.png" | absURL }}{{ end }}" 
-             alt="Profile Picture" 
-             width="240" 
+        <img src="{{ with site.Params.contact.profilepicture }}{{ . | absURL }}{{ else }}{{ "images/profile.png" | absURL }}{{ end }}"
+             alt="Profile Picture"
+             width="240"
              height="240"
              loading="lazy">
       </div>
-      <h2 class="profile-name">{{ .Site.Params.contact.profilename | default "Your Name" }}</h2>
-      <p class="profile-description">{{ .Site.Params.about.profiledescription | default "A short description about yourself." }}</p>
+      <h2 class="profile-name">{{ site.Params.contact.profilename | default "Your Name" }}</h2>
+      <p class="profile-description">{{ site.Params.about.profiledescription | default "A short description about yourself." }}</p>
       <div class="social-links">
-        {{ with .Site.Params.social }}
+        {{ with site.Params.social }}
           {{ if or .linkedin .twitter .instagram .orcid .github .email }}
             {{ with .linkedin }}
             <a href="{{ . }}" target="_blank" rel="noopener" aria-label="LinkedIn Profile">
@@ -53,10 +47,10 @@
             </a>
             {{ end }}
           {{ else }}
-            <p>No social links available.</p>
+            <p>{{ i18n "NoSocialLinks" | default "No social links available." }}</p>
           {{ end }}
         {{ else }}
-          <p>No social links available.</p>
+          <p>{{ i18n "NoSocialLinks" | default "No social links available." }}</p>
         {{ end }}
       </div>
     </div>
@@ -65,8 +59,8 @@
       <div class="about-text">
         {{ .Site.Params.about.abouttext | markdownify }}
       </div>
-      <h2>{{ .Site.Params.about.intereststitle | default "Interests" }}</h2>
-      {{ with .Site.Params.about.interests }}
+      <h2>{{ site.Params.about.intereststitle | default (i18n "Interests" | default "Interests") }}</h2>
+      {{ with site.Params.about.interests }}
       <div class="interests-columns">
         <ul class="column-1">
           {{ range first (div (len .) 2) . }}
@@ -80,7 +74,7 @@
         </ul>
       </div>
       {{ else }}
-      <p>No interests listed.</p>
+      <p>{{ i18n "NoInterests" | default "No interests listed." }}</p>
       {{ end }}
     </div>
   </div>
@@ -91,11 +85,12 @@
   </div>
 
   <!-- Include Zipf's Law Analysis -->
+  {{/* TODO(Unit 12): zipfs-law CSS loading should move into the widget refactor. */}}
   {{ $zipfsCSS := resources.Get "css/zipfs-law.css" }}
   {{ if $zipfsCSS }}
     {{ $zipfsCSS = $zipfsCSS | resources.Minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $zipfsCSS.RelPermalink }}" 
-          integrity="{{ $zipfsCSS.Data.Integrity }}" 
+    <link rel="stylesheet" href="{{ $zipfsCSS.RelPermalink }}"
+          integrity="{{ $zipfsCSS.Data.Integrity }}"
           crossorigin="anonymous">
   {{ end }}
   {{ partial "zipfs-law.html" . }}
