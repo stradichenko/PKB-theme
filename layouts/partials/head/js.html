@@ -1,26 +1,24 @@
-<!-- Theme initialization script - must run BEFORE CSS loads -->
-<script>
-  (function() {
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    const currentTheme = localStorage.getItem('theme') || 
-                       (prefersDarkScheme.matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    
-    // Prevent flash of incorrect theme
-    document.documentElement.style.backgroundColor = 
-      currentTheme === 'dark' ? '#1a202c' : '#275f85';
-  })();
-</script>
+{{/*
+  js.html — application JS bundles. Theme-init is handled in critical-css.html
+  via assets/js/critical.js, do not duplicate it here.
 
-{{- with resources.Get "js/main.js" }}
-  {{- if eq hugo.Environment "development" }}
-    {{- with . | js.Build }}
-      <script src="{{ .RelPermalink }}"></script>
-    {{- end }}
-  {{- else }}
-    {{- $opts := dict "minify" true }}
-    {{- with . | js.Build $opts | fingerprint }}
-      <script src="{{ .RelPermalink }}" integrity="{{- .Data.Integrity }}" crossorigin="anonymous"></script>
-    {{- end }}
+  Production: minify, drop console/debugger, fingerprint with SRI.
+  Development: external sourceMap, no minify, no SRI (faster rebuilds).
+*/}}
+
+{{- $jsOpts := dict "sourceMap" "external" -}}
+{{- if hugo.IsProduction -}}
+  {{- $jsOpts = dict "minify" true "drop" (slice "console" "debugger") -}}
+{{- end -}}
+
+{{- range (slice "js/main.js" "js/pdf-generator.js" "js/scrollbar-fade.js") }}
+  {{- with resources.Get . }}
+    {{- $built := . | js.Build $jsOpts -}}
+    {{- if hugo.IsProduction -}}
+      {{- $built = $built | fingerprint -}}
+      <script src="{{ $built.RelPermalink }}" integrity="{{ $built.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{- else -}}
+      <script src="{{ $built.RelPermalink }}" defer></script>
+    {{- end -}}
   {{- end }}
 {{- end }}

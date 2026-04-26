@@ -1,91 +1,86 @@
-{{ if eq hugo.Environment "development" }}
-  <!-- Development mode CSS loading -->
-  {{ $cssFiles := slice 
-      "css/global/variables/core.css"
-      "css/global/variables/typography.css"
-      "css/global/variables/layout.css"
-      "css/global/variables/components.css"
-      "css/global/reset.css"
-      "css/body.css"
-      "css/header.css"
-      "css/footer.css"
-      "css/sidenotes.css"
-      "css/components/toc.css"
-      "css/components/table.css"
-      "css/components/blockquote.css"
-      "css/components/citation.css"
-      "css/components/code.css"
-      "css/components/markdown.css"
-      "css/components/knowledge-graph.css"
-      "css/components/lda-analysis.css"
-      "css/components/pdf-button.css"
-      "css/components/tts-button.css"
-      "css/list.css"
-      "css/filters.css"
-      "css/components/recent-posts-grid.css"
-      "css/about-profile.css"
-      "css/portfolio.css"
-      "css/main.css"
-  }}
-  {{ range $cssFiles }}
-    {{ with resources.Get . }}
-      {{ $css := . | fingerprint }}
+{{/*
+  styles.html — main CSS pipeline.
+
+  - Single source of truth for the file list ($cssFiles).
+  - Development: emit each file as a separate <link> for easier debugging.
+  - Production: concat + minify + fingerprint into one bundle with SRI.
+  - Feature CSS (search, contribution-calendar) is gated by site/page params.
+  - theme-toggle.css is loaded on every page (the toggle ships in the header).
+*/}}
+
+{{- $cssFiles := slice
+    "css/global/variables/core.css"
+    "css/global/variables/typography.css"
+    "css/global/variables/layout.css"
+    "css/global/variables/components.css"
+    "css/global/reset.css"
+    "css/body.css"
+    "css/header.css"
+    "css/footer.css"
+    "css/sidenotes.css"
+    "css/components/toc.css"
+    "css/components/table.css"
+    "css/components/blockquote.css"
+    "css/components/citation.css"
+    "css/components/code.css"
+    "css/components/markdown.css"
+    "css/components/knowledge-graph.css"
+    "css/components/lda-analysis.css"
+    "css/components/pdf-button.css"
+    "css/components/tts-button.css"
+    "css/list.css"
+    "css/filters.css"
+    "css/components/recent-posts-grid.css"
+    "css/about-profile.css"
+    "css/portfolio.css"
+    "css/main.css"
+-}}
+
+{{- if eq hugo.Environment "development" -}}
+  {{- range $cssFiles }}
+    {{- with resources.Get . }}
+      {{- $css := . | fingerprint }}
       <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
-    {{ end }}
-  {{ end }}
-{{ else }}
-  <!-- Production mode CSS loading -->
-  {{ $cssFiles := slice }}
-  {{ range (slice 
-      "css/global/variables/core.css"
-      "css/global/variables/typography.css"
-      "css/global/variables/layout.css"
-      "css/global/variables/components.css"
-      "css/global/reset.css"
-      "css/body.css"
-      "css/header.css"
-      "css/footer.css"
-      "css/sidenotes.css"
-      "css/components/toc.css"
-      "css/components/table.css"
-      "css/components/blockquote.css"
-      "css/components/citation.css"
-      "css/components/code.css"
-      "css/components/markdown.css"
-      "css/components/knowledge-graph.css"
-      "css/components/lda-analysis.css"
-      "css/components/pdf-button.css"
-      "css/components/tts-button.css"
-      "css/list.css"
-      "css/filters.css"
-      "css/components/recent-posts-grid.css"
-      "css/about-profile.css"
-      "css/portfolio.css"
-      "css/main.css"
-  ) }}
-    {{ with resources.Get . }}
-      {{ $cssFiles = $cssFiles | append . }}
-    {{ end }}
-  {{ end }}
-  {{ if gt (len $cssFiles) 0 }}
-    {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
-  {{ end }}
-{{ end }}
+    {{- end }}
+  {{- end }}
+{{- else -}}
+  {{- $resolved := slice -}}
+  {{- range $cssFiles -}}
+    {{- with resources.Get . -}}
+      {{- $resolved = $resolved | append . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if gt (len $resolved) 0 -}}
+    {{- $bundle := $resolved | resources.Concat "css/all.css" | minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}" crossorigin="anonymous">
+  {{- end -}}
+{{- end }}
 
-<!-- Always load search CSS separately -->
-{{ with resources.Get "css/search.css" }}
-  {{ $searchCSS := . | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $searchCSS.RelPermalink }}" integrity="{{ $searchCSS.Data.Integrity }}" crossorigin="anonymous">
-{{ end }}
-
-<!-- Theme toggle and contribution calendar CSS -->
-{{ with resources.Get "css/theme-toggle.css" }}
-  {{ $themeToggleCSS := . | minify | fingerprint }}
+{{/* Theme-toggle CSS — always loaded (toggle is in the header on every page) */}}
+{{- with resources.Get "css/theme-toggle.css" }}
+  {{- $themeToggleCSS := . | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $themeToggleCSS.RelPermalink }}" integrity="{{ $themeToggleCSS.Data.Integrity }}" crossorigin="anonymous">
-{{ end }}
+{{- end }}
 
-{{ with resources.Get "css/contribution-calendar.css" }}
-  {{ $contributionCalendarCSS := . | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $contributionCalendarCSS.RelPermalink }}" integrity="{{ $contributionCalendarCSS.Data.Integrity }}" crossorigin="anonymous">
-{{ end }}
+{{/* Search CSS — defaults to enabled; opt out via site.Params.search.enabled = false */}}
+{{- $searchEnabled := true -}}
+{{- with site.Params.search -}}
+  {{- if isset . "enabled" -}}
+    {{- $searchEnabled = .enabled -}}
+  {{- end -}}
+{{- end -}}
+{{- if $searchEnabled -}}
+  {{- with resources.Get "css/search.css" }}
+    {{- $searchCSS := . | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $searchCSS.RelPermalink }}" integrity="{{ $searchCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{- end }}
+{{- end }}
+
+{{/* Contribution-calendar CSS — only on opted-in pages or /about/* */}}
+{{- $needsContribCal := or (index .Params "contribution-calendar") (hasPrefix .RelPermalink "/about/") -}}
+{{- if $needsContribCal -}}
+  {{- with resources.Get "css/contribution-calendar.css" }}
+    {{- $contribCSS := . | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $contribCSS.RelPermalink }}" integrity="{{ $contribCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{- end }}
+{{- end }}

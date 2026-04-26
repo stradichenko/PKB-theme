@@ -1,89 +1,44 @@
-<head>
-    {{/* SEO Critical Resources - Must come first */}}
-    {{ partial "seo/preload-resources.html" . }}
-    
-    {{/* Consolidated Meta Tags with SEO */}}
-    {{ partial "head/meta.html" . }}
-    
-    {{/* Structured Data */}}
-    {{ partial "seo/schema-org.html" . }}
-    
-    <!-- Favicon and Apple Touch Icon -->
-    {{ partial "head/favicons.html" . }}
-    
-    <!-- Critical CSS -->
-    {{ partial "head/critical-css.html" . }}
-    
-    <!-- Main Stylesheet -->
-    {{ partial "head/styles.html" . }}
-    
-    {{/* Math Support - Load early for better rendering */}}
-    {{- if .Params.math -}}
-    <!-- KaTeX CSS - Preload for better performance -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css"></noscript>
-    
-    <!-- KaTeX JS - Load with high priority -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/mhchem.min.js" as="script">
-    {{- end -}}
+{{/*
+  head.html — emits <head> CHILDREN ONLY.
 
-    <!-- Site Verification Meta Tags -->
-    {{ with site.Params.seo.google_site_verification }}
-    <meta name="google-site-verification" content="{{ . }}">
-    {{ end }}
-    {{ with site.Params.seo.bing_verification }}
-    <meta name="msvalidate.01" content="{{ . }}">
-    {{ end }}
-    {{ with site.Params.seo.yandex_verification }}
-    <meta name="yandex-verification" content="{{ . }}">
-    {{ end }}
+  Ownership: layouts/_default/baseof.html opens <head> and closes </head>.
+  Do NOT add a literal <head>/</head> here, otherwise the document would
+  contain nested heads.
+*/}}
 
-    <!-- Include analytics scripts -->
-    {{ partial "analytics.html" . }}
+{{/* SEO Critical Resources - Must come first */}}
+{{ partial "seo/preload-resources.html" . }}
 
-    <!-- JavaScript loading - Deferred for performance -->
-    {{ with resources.Get "js/main.js" }}
-        {{ $mainJS := . | js.Build | minify | fingerprint }}
-        <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
-    {{ end }}
-    
-    <!-- PDF Generator -->
-    {{ $pdfJS := resources.Get "js/pdf-generator.js" | minify | fingerprint }}
-    <script src="{{ $pdfJS.RelPermalink }}" integrity="{{ $pdfJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
-    
-    <!-- Load scrollbar fade functionality -->
-    {{ $scrollbarFadeJS := resources.Get "js/scrollbar-fade.js" | minify }}
-    <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
+{{/* Consolidated Meta Tags with SEO (cached per URL — meta varies per page) */}}
+{{ partialCached "head/meta.html" . .RelPermalink }}
 
-    {{/* Math rendering scripts - Load after DOM is ready */}}
-    {{- if .Params.math -}}
-    <!-- KaTeX JS -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" integrity="sha384-TNnVz4NqBjFIUtubnHyyCWyGiIboUd7yCCtn7k4DwDnkWWqyOEtNKYEELv0jW+NU" crossorigin="anonymous"></script>
+{{/* Structured Data */}}
+{{ partial "seo/schema-org.html" . }}
 
-    <!-- KaTeX mhchem extension for chemical equations -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/mhchem.min.js" integrity="sha384-fB8BH//9nBzROkMUsu/Dr35jWHIbnKesUo9rW0hfEgw8mZGnkAyBAjKX9F98OVuo" crossorigin="anonymous"></script>
+<!-- Favicon and Apple Touch Icon -->
+{{ partial "head/favicons.html" . }}
 
-    <!-- KaTeX auto-render extension -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" integrity="sha384-JKXHIJf8PKPyDFptuKZoUyMRQJAmQKj4B4xyOca62ebJhciMYGiDdq/9twUUWyZH" crossorigin="anonymous"></script>
+<!-- Critical CSS + theme-init JS (single source of truth) -->
+{{ partial "head/critical-css.html" . }}
 
-    <!-- KaTeX Configuration -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '$', right: '$', display: false},
-                {left: '\\(', right: '\\)', display: false},
-                {left: '\\[', right: '\\]', display: true}
-            ],
-            throwOnError: false,
-            errorColor: '#cc0000',
-            strict: false,
-            trust: true,
-        });
-    });
-    </script>
-    {{- end -}}
-</head>
+<!-- Main Stylesheet -->
+{{ partial "head/styles.html" . }}
+
+{{/* TODO: replaced by Unit 11 katex partial — assets/js/katex-init.js + head/katex.html */}}
+
+<!-- Site Verification Meta Tags -->
+{{ with site.Params.seo.google_site_verification }}
+<meta name="google-site-verification" content="{{ . }}">
+{{ end }}
+{{ with site.Params.seo.bing_verification }}
+<meta name="msvalidate.01" content="{{ . }}">
+{{ end }}
+{{ with site.Params.seo.yandex_verification }}
+<meta name="yandex-verification" content="{{ . }}">
+{{ end }}
+
+<!-- Include analytics scripts -->
+{{ partial "analytics.html" . }}
+
+<!-- Application JavaScript (deferred) -->
+{{ partial "head/js.html" . }}

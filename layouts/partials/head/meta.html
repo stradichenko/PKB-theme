@@ -3,8 +3,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="format-detection" content="telephone=no">
 
-<!-- Content Security Policy -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' blob: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://huggingface.co https://*.huggingface.co https://*.hf.co; media-src 'self' blob:; worker-src 'self' blob:;">
+{{/*
+  Content Security Policy.
+  - Configurable via site.Params.security.csp (whole policy string).
+  - Default keeps 'unsafe-inline' on script-src because critical-css.html
+    inlines theme-init JS via safeJS, and on style-src for the inlined
+    critical CSS <style> block. Removing 'unsafe-inline' would require
+    moving to nonces/hashes (out of scope for Hugo 0.136).
+  - 'unsafe-eval' has been dropped from the default; opt back in via
+    site.Params.security.csp if a third-party script needs it.
+*/}}
+{{- $defaultCSP := "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' blob: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://huggingface.co https://*.huggingface.co https://*.hf.co; media-src 'self' blob:; worker-src 'self' blob:;" -}}
+{{- $csp := $defaultCSP -}}
+{{- with site.Params.security }}{{ with .csp }}{{ $csp = . }}{{ end }}{{ end -}}
+<meta http-equiv="Content-Security-Policy" content="{{ $csp }}">
 
 {{/* Title with fallback logic */}}
 {{ if .IsHome }}
@@ -96,10 +108,10 @@
 {{/* Article specific meta tags */}}
 {{ if .IsPage }}
   {{ if .Date }}
-    <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+    <meta property="article:published_time" content="{{ time.Format "2006-01-02T15:04:05Z07:00" .Date }}">
   {{ end }}
   {{ if .Lastmod }}
-    <meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+    <meta property="article:modified_time" content="{{ time.Format "2006-01-02T15:04:05Z07:00" .Lastmod }}">
   {{ end }}
   {{ with .Params.tags }}
     {{ range . }}

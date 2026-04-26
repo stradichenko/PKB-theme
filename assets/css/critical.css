@@ -1,0 +1,29 @@
+/*
+ * Critical CSS — inlined into <head> via partials/head/critical-css.html.
+ * Keep this file small: it is rendered on every page before main.css loads.
+ *
+ * Currently scoped to text-selection highlighting so the chosen color shows
+ * even before the main bundle is parsed.
+ */
+
+*::selection {
+  background-color: var(--color-primary, #4a90e2) !important;
+  color: var(--color-white, #ffffff) !important;
+  text-shadow: none !important;
+}
+
+*::-moz-selection {
+  background-color: var(--color-primary, #4a90e2) !important;
+  color: var(--color-white, #ffffff) !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="dark"] *::selection {
+  background-color: #e9996b !important;
+  color: #1a2633 !important;
+}
+
+html[data-theme="dark"] *::-moz-selection {
+  background-color: #e9996b !important;
+  color: #1a2633 !important;
+}

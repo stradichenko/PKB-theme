@@ -10,9 +10,8 @@
 
 {{/* Preload critical CSS - only if enabled and CSS exists */}}
 {{ if site.Params.seo.critical_css }}
-  {{ $mainCSS := resources.Get "css/main.css" }}
-  {{ if $mainCSS }}
-    {{ $css := $mainCSS | resources.Minify | fingerprint }}
+  {{ with resources.Get "css/main.css" }}
+    {{ $css := . | minify | fingerprint }}
     <link rel="preload" href="{{ $css.RelPermalink }}" as="style">
   {{ end }}
 {{ end }}
@@ -28,13 +27,10 @@
   {{ end }}
 {{ end }}
 
-{{/* DNS prefetch for external resources - conditional based on analytics */}}
-<link rel="dns-prefetch" href="//fonts.googleapis.com">
-<link rel="dns-prefetch" href="//fonts.gstatic.com">
-
-{{/* Preconnect to critical third-party origins */}}
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{/*
+  No Google Fonts are loaded by this theme — preconnect/dns-prefetch for
+  fonts.googleapis.com / fonts.gstatic.com removed.
+*/}}
 
 {{/* Conditional DNS prefetch based on enabled analytics */}}
 {{ with site.Params.analytics }}
@@ -52,5 +48,8 @@
   {{ end }}
 {{ end }}
 
-{{/* CDN prefetch only if needed */}}
+{{/*
+  CDN prefetch — jsdelivr is still in active use (mermaid via head/mermaid.html,
+  d3 via knowledge-graph, mathjax, vits-web/kokoro TTS, tensorflow LDA).
+*/}}
 <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
