@@ -1,0 +1,26 @@
+[SearchPlaceholder]
+other = "Search..."
+
+[Share]
+other = "Share"
+
+[ShareThisPage]
+other = "Share this page"
+
+[ToggleTheme]
+other = "Toggle dark/light mode"
+
+[CopyLink]
+other = "Copy URL"
+
+[LinkCopied]
+other = "Copied!"
+
+[QRCodeFor]
+other = "QR code for"
+
+[ToggleMenu]
+other = "Toggle menu"
+
+[Home]
+other = "Home"

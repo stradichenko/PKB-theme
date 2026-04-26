@@ -1,11 +1,10 @@
 <!-- layouts/partials/header.html -->
 <div class="header-container">
   <div class="header-left">
-    <a href="{{ .Site.Home.RelPermalink }}" class="logo-link" aria-label="Home">
-      <img src="{{ "img/logo.svg" | relURL }}" alt="Site Logo" class="site-logo" width="40" height="40">
-    </a>
-    
-    <button id="burger-menu" class="burger-button" aria-label="Toggle menu" aria-expanded="false">
+    {{/* Logo block — invariant per site, safe to cache. */}}
+    {{ partialCached "header/logo.html" . }}
+
+    <button id="burger-menu" class="burger-button" aria-label="{{ T "ToggleMenu" }}" aria-expanded="false">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="3" y1="12" x2="21" y2="12"></line>
         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -13,28 +12,31 @@
       </svg>
     </button>
 
-    <h1 class="site-title"><a href="{{ .Site.Home.RelPermalink }}">{{ site.Title }}</a></h1>
-    
+    <h1 class="site-title"><a href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a></h1>
+
     <!-- Wrap navigation in a relative container for proper dropdown positioning -->
     <div class="nav-wrapper" style="position: relative;">
       <nav class="main-nav" id="main-nav">
-        {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+        {{/* Menu uses IsMenuCurrent/HasMenuCurrent — cache key must vary per page. */}}
+        {{ partialCached "menu.html" (dict "menuID" "main" "page" .) .RelPermalink }}
       </nav>
     </div>
   </div>
-  
+
   <!-- Right section: Controls and search (search is rightmost) -->
   <div class="header-right">
     <!-- Control buttons first -->
     <div class="header-controls">
-      {{ with .Site.Params.social.github }}
+      {{ with site.Params.social.github }}
       <a href="{{ . }}" target="_blank" rel="noopener" title="GitHub" class="header-button">
+        {{/* TODO: replace with icons partial when Unit 7 lands */}}
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
       </a>
       {{ end }}
-      
+
       <!-- Theme toggle button -->
-      <button id="theme-toggle" class="theme-toggle header-button" title="Toggle dark/light mode">
+      <button id="theme-toggle" class="theme-toggle header-button" title="{{ T "ToggleTheme" }}" aria-label="{{ T "ToggleTheme" }}">
+        {{/* TODO: replace with icons partial when Unit 7 lands */}}
         <svg class="sun-icon toggle-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -50,9 +52,10 @@
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
       </button>
-      
+
       <!-- Share link button -->
-      <button id="share-link-btn" class="share-link-btn header-button" title="Share this page">
+      <button id="share-link-btn" class="share-link-btn header-button" title="{{ T "Share" }}" aria-label="{{ T "Share" }}">
+        {{/* TODO: replace with icons partial when Unit 7 lands */}}
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="18" cy="5" r="3"></circle>
           <circle cx="6" cy="12" r="3"></circle>
@@ -62,25 +65,26 @@
         </svg>
       </button>
     </div>
-    
+
     <!-- Mobile search icon (shows only on mobile) - always to the right of controls -->
-    <button id="mobile-search-btn" class="mobile-search-icon" title="Search">
+    <button id="mobile-search-btn" class="mobile-search-icon" title="{{ T "SearchPlaceholder" }}" aria-label="{{ T "SearchPlaceholder" }}">
+      {{/* TODO: replace with icons partial when Unit 7 lands */}}
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="10" cy="10" r="7"></circle>
         <line x1="21" y1="21" x2="15.5" y2="15.5"></line>
       </svg>
     </button>
-    
+
     <!-- Search form - positioned last (rightmost) - hidden on mobile -->
     <div class="header-search">
       <form role="search" method="get" action="/search/">
-        <input 
-          type="search" 
-          id="search-input" 
-          name="q" 
-          placeholder="" 
+        <input
+          type="search"
+          id="search-input"
+          name="q"
+          placeholder="{{ T "SearchPlaceholder" }}"
           autocomplete="off"
-          aria-label="Search site content"
+          aria-label="{{ T "SearchPlaceholder" }}"
         >
       </form>
     </div>
@@ -91,13 +95,13 @@
 <div id="mobile-search-overlay" class="mobile-search-overlay">
   <div class="mobile-search-content">
     <form class="mobile-search-form" role="search" method="get" action="/search/">
-      <input 
-        type="search" 
-        id="mobile-search-input" 
-        name="q" 
-        placeholder="Search..." 
+      <input
+        type="search"
+        id="mobile-search-input"
+        name="q"
+        placeholder="{{ T "SearchPlaceholder" }}"
         autocomplete="off"
-        aria-label="Search site content"
+        aria-label="{{ T "SearchPlaceholder" }}"
         class="mobile-search-input"
       >
     </form>
@@ -121,27 +125,30 @@
 <!-- Share Link Modal - simplified markup -->
 <div id="share-modal" class="share-modal">
   <div class="share-modal-content">
-    <h3>Share this page</h3>
-    
+    <h3>{{ T "ShareThisPage" }}</h3>
+
     <div class="qrcode-container">
-      <img 
-        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ .Permalink | urlquery }}" 
-        alt="QR code for {{ .Title }}" 
+      {{ $qr := images.QR .Permalink (dict "level" "medium" "scale" 4) }}
+      <img
+        src="{{ $qr.RelPermalink }}"
+        alt="{{ T "QRCodeFor" }} {{ .Permalink }}"
         class="page-qr-code"
         loading="lazy"
+        decoding="async"
         width="200"
         height="200"
       >
     </div>
-    
+
     <div class="share-url-container">
       <input type="text" id="share-url" value="{{ .Permalink }}" readonly aria-label="Page URL">
-      <button id="copy-url-btn" class="copy-url-btn">
+      <button id="copy-url-btn" class="copy-url-btn" data-label-copy="{{ T "CopyLink" }}" data-label-copied="{{ T "LinkCopied" }}">
+        {{/* TODO: replace with icons partial when Unit 7 lands */}}
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1-2-2h9a2 2 0 0 1-2 2v1"></path>
         </svg>
-        Copy URL
+        {{ T "CopyLink" }}
       </button>
     </div>
   </div>
@@ -151,118 +158,33 @@
 {{ $dropdownJS := resources.Get "js/dropdown.js" }}
 {{ if $dropdownJS }}
   {{ $dropdownJS = $dropdownJS | minify | fingerprint }}
-  <script src="{{ $dropdownJS.RelPermalink }}" integrity="{{ $dropdownJS.Data.Integrity }}" crossorigin="anonymous"></script>
+  <script src="{{ $dropdownJS.RelPermalink }}" integrity="{{ $dropdownJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
 {{ end }}
 
 <!-- Add menu.js before the closing body tag -->
 {{ $menuJS := resources.Get "js/menu.js" }}
 {{ if $menuJS }}
   {{ $menuJS = $menuJS | minify | fingerprint }}
-  <script src="{{ $menuJS.RelPermalink }}" integrity="{{ $menuJS.Data.Integrity }}" crossorigin="anonymous"></script>
+  <script src="{{ $menuJS.RelPermalink }}" integrity="{{ $menuJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
 {{ end }}
 
 <!-- Use external theme toggle script instead of inline -->
 {{ $themeToggleJS := resources.Get "js/theme-toggle.js" }}
 {{ if $themeToggleJS }}
   {{ $themeToggleJS = $themeToggleJS | minify | fingerprint }}
-  <script src="{{ $themeToggleJS.RelPermalink }}" integrity="{{ $themeToggleJS.Data.Integrity }}" crossorigin="anonymous"></script>
+  <script src="{{ $themeToggleJS.RelPermalink }}" integrity="{{ $themeToggleJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
 {{ end }}
 
 <!-- Add fuzzy search script -->
 {{ $fuzzySearchJS := resources.Get "js/fuzzy-search.js" }}
 {{ if $fuzzySearchJS }}
   {{ $fuzzySearchJS = $fuzzySearchJS | minify | fingerprint }}
-  <script src="{{ $fuzzySearchJS.RelPermalink }}" integrity="{{ $fuzzySearchJS.Data.Integrity }}" crossorigin="anonymous"></script>
+  <script src="{{ $fuzzySearchJS.RelPermalink }}" integrity="{{ $fuzzySearchJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
 {{ end }}
 
-<!-- Share link script -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const modal = document.getElementById("share-modal");
-  const btn = document.getElementById("share-link-btn");
-  const copyBtn = document.getElementById("copy-url-btn");
-  const input = document.getElementById("share-url");
-
-  // Mobile search functionality
-  const mobileSearchBtn = document.getElementById("mobile-search-btn");
-  const mobileSearchOverlay = document.getElementById("mobile-search-overlay");
-  const mobileSearchInput = document.getElementById("mobile-search-input");
-
-  // Mobile search toggle
-  if (mobileSearchBtn && mobileSearchOverlay) {
-    mobileSearchBtn.addEventListener("click", function() {
-      mobileSearchOverlay.style.display = "block";
-      setTimeout(() => {
-        mobileSearchOverlay.classList.add("active");
-        mobileSearchInput.focus();
-      }, 10);
-      document.body.style.overflow = "hidden";
-    });
-
-    // Close mobile search function
-    function closeMobileSearch() {
-      mobileSearchOverlay.classList.remove("active");
-      setTimeout(() => {
-        mobileSearchOverlay.style.display = "none";
-        document.body.style.overflow = "";
-      }, 300);
-    }
-
-    // Close on overlay click
-    mobileSearchOverlay.addEventListener("click", function(event) {
-      if (event.target === mobileSearchOverlay) {
-        closeMobileSearch();
-      }
-    });
-
-    // Close on escape key
-    document.addEventListener("keydown", function(event) {
-      if (event.key === "Escape" && mobileSearchOverlay.classList.contains("active")) {
-        closeMobileSearch();
-      }
-    });
-  }
-
-  btn.onclick = function() {
-    modal.style.display = "block";
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() {
-    modal.classList.remove("active");
-    setTimeout(() => {
-      modal.style.display = "none";
-      document.body.style.overflow = "";
-    }, 200);
-  }
-
-  window.onclick = function(event) {
-    if (event.target === modal) {
-      closeModal();
-    }
-  }
-
-  document.addEventListener("keydown", function(event) {
-    if (event.key === "Escape" && modal.style.display === "block") {
-      closeModal();
-    }
-  });
-
-  copyBtn.addEventListener("click", function() {
-    input.select();
-    document.execCommand("copy");
-    copyBtn.textContent = "Copied!";
-    
-    setTimeout(function() {
-      copyBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1-2-2h9a2 2 0 0 1-2 2v1"></path>
-        </svg>
-        Copy URL
-      `.trim();
-    }, 2000);
-  });
-});
-</script>
+<!-- Header modal + mobile search behaviour (extracted from inline script) -->
+{{ $headerModal := resources.Get "js/header-modal.js" }}
+{{ if $headerModal }}
+  {{ $headerModal = $headerModal | js.Build (dict "minify" true) | fingerprint }}
+  <script src="{{ $headerModal.RelPermalink }}" integrity="{{ $headerModal.Data.Integrity }}" crossorigin="anonymous" defer></script>
+{{ end }}
