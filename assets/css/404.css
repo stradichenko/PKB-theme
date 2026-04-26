@@ -1,0 +1,41 @@
+/* ------------------------------------------------------------------------- */
+/* 404 PAGE STYLES                                                           */
+/* ------------------------------------------------------------------------- */
+.error-content {
+  text-align: center;
+  margin: 2rem auto;
+  padding: 2rem;
+  max-width: 600px;
+}
+
+.error-content h1 {
+  font-size: 4rem;
+  color: var(--color-text-primary);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+}
+
+.error-content p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.error-content a {
+  color: var(--text-color-link);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.error-content a:hover {
+  color: var(--text-color-link-hover);
+  text-shadow: 1px 1px 3px rgba(100, 149, 237, 0.3);
+}
+
+#animation-container {
+  width: 100%;
+  height: 400px;
+  margin-top: 30px;
+}

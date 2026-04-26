@@ -1,0 +1,11 @@
+# i18n strings for the PKB theme.
+# Add new keys here so Hugo's `T` lookup resolves them across the site.
+
+[NotFoundTitle]
+other = "404 Not Found"
+
+[NotFoundMessage]
+other = "The page you requested cannot be found. But hey! you found the Default Cube."
+
+[NotFoundReturnHome]
+other = "Return to the home page"

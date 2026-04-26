@@ -1,0 +1,26 @@
+{{/*
+  Vendor script loader for the 404 page.
+  Loads a self-hosted copy from `assets/js/vendor/<file>` when present,
+  otherwise fetches from `remote` via resources.GetRemote (Hugo computes
+  the SRI hash at build time). Renders nothing if neither source resolves.
+
+  Params (dict):
+    local  - path under assets, e.g. "js/vendor/three.min.js"
+    remote - full URL to fetch when local is missing
+    name   - human label used in warnings, e.g. "three.js"
+*/}}
+{{ $res := resources.Get .local }}
+{{ if not $res }}
+  {{ $remote := resources.GetRemote .remote }}
+  {{ if $remote }}
+    {{ if $remote.Err }}
+      {{ warnf "404: failed to fetch %s: %s" .name $remote.Err }}
+    {{ else }}
+      {{ $res = $remote }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ with $res }}
+  {{ $r := . | fingerprint }}
+  <script src="{{ $r.RelPermalink }}" integrity="{{ $r.Data.Integrity }}" crossorigin="anonymous" defer></script>
+{{ end }}
