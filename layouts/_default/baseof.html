@@ -1,81 +1,22 @@
 <!DOCTYPE html>
 <html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" class="interaction" data-base-url="{{ .Site.BaseURL }}">
-<head>
-  <!-- Critical theme initialization script - improved for persistence -->
-  <script>
-    (function() {
-      // Always prioritize localStorage first for persistence
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      // Use the saved theme if available, otherwise check system preference
-      const currentTheme = savedTheme || (prefersDarkScheme.matches ? 'dark' : 'light');
-      
-      // Set theme attribute for CSS
-      document.documentElement.setAttribute('data-theme', currentTheme);
-      
-      // Apply critical colors using CSS variables with fallbacks
-      const rootStyle = document.documentElement.style;
-      if (currentTheme === 'dark') {
-        rootStyle.setProperty('--critical-bg', 'var(--dark-background, #1a202c)');
-        rootStyle.setProperty('--critical-text', 'var(--dark-text-primary, #e2e8ff)');
-      } else {
-        rootStyle.setProperty('--critical-bg', 'var(--light-background, #275f85)');
-        rootStyle.setProperty('--critical-text', 'var(--light-text-secondary, #cad6ff)');
-      }
-        
-      // Update localStorage to ensure persistence
-      if (!savedTheme) {
-        localStorage.setItem('theme', currentTheme);
-      }
-    })();
-  </script>
-  
-  <!-- Critical CSS for immediate theme application (screen only, not print) -->
-  <style media="screen">
-    /* Force the background color with maximum specificity using CSS variables */
-    html[data-theme="dark"],
-    html[data-theme="dark"] body,
-    html[data-theme="dark"] main,
-    html[data-theme="dark"] .content {
-      background-color: var(--dark-background, #1a202c) !important;
-      color: var(--dark-text-primary, #e2e8ff) !important;
-    }
-    
-    html[data-theme="light"],
-    html[data-theme="light"] body,
-    html[data-theme="light"] main,
-    html[data-theme="light"] .content {
-      background-color: var(--light-background, #275f85) !important;
-      color: var(--light-text-secondary, #cad6ff) !important;
-    }
-    
-    /* Apply critical colors immediately */
-    html {
-      background-color: var(--critical-bg, var(--color-background));
-      color: var(--critical-text, var(--color-text-primary));
-    }
-  </style>
-  
-  {{/* Main head partial handles all meta tags and SEO */}}
-  {{ partial "head.html" . }}
-  
-  {{ block "head" . }}{{ end }}
-  
-  {{ if .Param "math" }}
-    {{ partialCached "math.html" . }}
-  {{ end }}
-  
-  <!-- CSS preload with proper attributes -->
-  {{ $mainCSS := resources.Get "css/main.css" }}
-  {{ if $mainCSS }}
-    {{ $css := $mainCSS | minify | fingerprint }}
-    <link rel="preload" href="{{ $css.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ $css.RelPermalink }}"></noscript>
-    <!-- Fallback for immediate load if preload fails -->
-    <link rel="stylesheet" href="{{ $css.RelPermalink }}" media="print" onload="this.media='all'">
-  {{ end }}
-</head>
+{{/*
+  <head> is opened by partials/head.html (Unit 6 ensures that partial
+  owns the single <head> tag). We intentionally do NOT open another
+  <head> here so the rendered HTML stays valid.
+
+  Theme init, critical CSS, and the main stylesheet are delegated to
+  partials in head/* (critical-css.html, styles.html, etc.) and
+  assets/js/critical.js — that file is the single source of truth for
+  the inline theme-init script.
+*/}}
+{{ partial "head.html" . }}
+{{ block "head" . }}{{ end }}
+
+{{ if .Param "math" }}
+  {{ partialCached "math.html" . }}
+{{ end }}
+
 <body>
   <header>
     {{ partial "header.html" . }}
@@ -86,39 +27,10 @@
   <footer>
     {{ partial "footer.html" . }}
   </footer>
-  
+
   <!-- PDF generator loaded via single-page bundle in single.html -->
 
-  <!-- Mermaid diagram support -->
-  {{ if .Store.Get "hasMermaid" }}
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true });
-    /* Expose for pdf-generator.js to force-render before print */
-    window.__mermaid = mermaid;
-  </script>
-  {{ end }}
-  
-  <!-- Math processing helper for page refreshes -->
-  {{ if .Param "math" }}
-  <script>
-    // Ensure MathJax processes after everything is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      // Wait a bit more for all async resources
-      setTimeout(function() {
-        if (window.reprocessMath) {
-          window.reprocessMath();
-        }
-      }, 200);
-    });
-    
-    // Handle page visibility change (like refreshing)
-    document.addEventListener('visibilitychange', function() {
-      if (!document.hidden && window.reprocessMath) {
-        setTimeout(window.reprocessMath, 100);
-      }
-    });
-  </script>
-  {{ end }}
+  <!-- Mermaid diagram support (gated on .Store.Get "hasMermaid") -->
+  {{ partial "head/mermaid.html" . }}
 </body>
 </html>
