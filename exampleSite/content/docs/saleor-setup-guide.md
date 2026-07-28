@@ -3,7 +3,7 @@ title = "Saleor Integration Guide"
 date = 2023-08-22T16:00:00-07:00
 draft = false
 tags = ["ecommerce", "saleor", "headless commerce", "graphql", "tutorial", "integration"]
-categories = ["guides", "ecommerce"]
+categories = ["ecommerce"]
 toc = true
 description = "Developer-focused guide for implementing and integrating Saleor headless commerce platform with your PKB-theme project"
 +++
@@ -637,3 +637,5 @@ Integrating Saleor with your PKB-theme offers a powerful combination of content 
 Remember that Saleor is a developer-focused platform. While the integration requires more technical knowledge than traditional e-commerce systems, it provides greater flexibility and customization potential. For complex implementations, consider working with a developer experienced in both Saleor and web development.
 
 For further assistance, refer to the [Saleor documentation](https://docs.saleor.io/) or join the [Saleor community](https://github.com/saleor/saleor/discussions).
+
+**Related notes:** [Self-Hosted Ecommerce Solutions](ecommerce-solutions.md), [OpenCart Integration](opencart-setup-guide.md), [PrestaShop Integration](prestashop-setup-guide.md). See also the [glossary](glossary.md) for shared terminology.

@@ -3,7 +3,7 @@ title = "Reverse Proxy Configuration for Analytics"
 date = 2023-07-01T09:00:00-07:00
 draft = false
 tags = ["analytics", "reverse proxy", "nginx", "apache", "caddy", "traefik", "self-hosted"]
-categories = ["guides", "infrastructure"]
+categories = ["infrastructure"]
 toc = true
 description = "A comprehensive guide for setting up reverse proxies for self-hosted analytics solutions"
 +++
@@ -467,3 +467,5 @@ For specific analytics setup instructions, refer to our guides:
 - [Matomo Setup Guide](/docs/matomo-analytics-setup/)
 
 Remember to regularly update both your analytics software and reverse proxy to maintain security and stability.
+
+**Related notes:** [Self-Hosted Analytics](analytics-setup.md), [Matomo Analytics Setup](matomo-analytics-setup.md), [Analytics Configuration](analytics-configuration.md). See also the [glossary](glossary.md) for shared terminology.

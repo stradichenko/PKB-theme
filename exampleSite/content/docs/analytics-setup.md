@@ -3,7 +3,7 @@ title = "Self-Hosted Analytics for PKB-theme"
 date = 2023-06-01T09:00:00-07:00
 draft = false
 tags = ["analytics", "privacy", "self-hosted", "documentation", "setup"]
-categories = ["guides", "documentation"]
+categories = ["documentation"]
 toc = true
 description = "A comprehensive guide for implementing privacy-focused, FOSS analytics in your PKB-theme site"
 +++
@@ -208,3 +208,5 @@ Most self-hosted analytics solutions let you filter out your own visits and bot 
 ## Conclusion
 
 Self-hosted analytics give you complete control over your data while respecting visitor privacy. Choose the solution that best matches your needs, technical abilities, and hosting resources.
+
+**Related notes:** [Analytics Configuration](analytics-configuration.md), [Matomo Analytics Setup](matomo-analytics-setup.md), [Reverse Proxy Configuration](reverse-proxy-setup.md). See also the [glossary](glossary.md) for shared terminology.

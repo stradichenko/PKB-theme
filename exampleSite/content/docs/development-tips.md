@@ -3,7 +3,7 @@ title = "Development Tips"
 date = 2023-07-04T09:00:00-07:00
 draft = false
 tags = ["development", "hugo", "tips", "documentation"]
-categories = ["guides", "documentation"]
+categories = ["development"]
 toc = true
 description = "Development tips and useful commands for PKB-theme development"
 +++
@@ -46,3 +46,5 @@ hugo server --source exampleSite
 ```
 
 For more development tips, see the [Hugo documentation](https://gohugo.io/commands/hugo_server/).
+
+**Related notes:** [Creating Posts with Hugo](creating-posts.md), [Hugo SEO Implementation Guide](hugo-seo.md), [SOTA: Hugo](SOTA_hugo.md). See also the [glossary](glossary.md) for shared terminology.

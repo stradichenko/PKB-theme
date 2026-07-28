@@ -3,7 +3,7 @@ title = "Self-Hosted Ecommerce Solutions"
 date = 2023-08-15T10:00:00-07:00
 draft = false
 tags = ["ecommerce", "self-hosted", "open-source", "foss", "website", "store"]
-categories = ["guides", "documentation"]
+categories = ["ecommerce"]
 toc = true
 description = "A comprehensive guide to self-hosted and open-source ecommerce platforms for creating independent online stores"
 +++
@@ -226,3 +226,5 @@ While self-hosted solutions offer freedom from subscription fees, remember to ac
 Choose a solution that not only meets your current needs but also aligns with your long-term budget and technical capabilities.
 
 For specific deployment instructions for each platform, refer to their official documentation or our dedicated guides.
+
+**Related notes:** [OpenCart Integration](opencart-setup-guide.md), [PrestaShop Integration](prestashop-setup-guide.md), [Saleor Integration](saleor-setup-guide.md). See also the [glossary](glossary.md) for shared terminology.

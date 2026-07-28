@@ -3,7 +3,7 @@ title = "Analytics Configuration"
 date = 2023-06-15T09:00:00-07:00
 draft = false
 tags = ["analytics", "configuration", "privacy", "documentation"]
-categories = ["guides", "documentation"]
+categories = ["documentation"]
 toc = true
 description = "Guide for configuring various analytics providers with PKB-theme"
 +++
@@ -60,8 +60,8 @@ Add the following to your `config.toml` or `hugo.toml` file:
 
 For detailed installation instructions, refer to these content pages:
 
-- [General Analytics Setup](/content/docs/analytics-setup.md)
-- [Matomo Setup Guide](/content/docs/matomo-analytics-setup.md)
+- [General Analytics Setup](analytics-setup.md)
+- [Matomo Setup Guide](matomo-analytics-setup.md)
 
 ## Privacy Considerations
 
@@ -72,3 +72,5 @@ All supported analytics platforms are chosen for their privacy-respecting featur
 - Data ownership (self-hosting)
 
 Remember to update your site's privacy policy to reflect your analytics practices.
+
+**Related notes:** [Self-Hosted Analytics](analytics-setup.md), [Matomo Analytics Setup](matomo-analytics-setup.md), [Reverse Proxy Configuration](reverse-proxy-setup.md). See also the [glossary](glossary.md) for shared terminology.

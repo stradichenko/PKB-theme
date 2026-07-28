@@ -3,7 +3,7 @@ title = "Matomo Analytics Setup Guide"
 date = 2023-06-10T09:00:00-07:00
 draft = false
 tags = ["analytics", "matomo", "privacy", "self-hosted", "documentation"]
-categories = ["guides", "documentation"]
+categories = ["documentation"]
 toc = true
 description = "Comprehensive guide for setting up Matomo Analytics with your PKB-theme site"
 +++
@@ -251,3 +251,5 @@ php console core:update
 ## Conclusion
 
 With Matomo properly set up, you gain powerful analytics capabilities while maintaining full control over your data and respecting visitor privacy. The integration with PKB-theme makes the setup process straightforward, allowing you to focus on analyzing data and improving your site rather than managing infrastructure.
+
+**Related notes:** [Self-Hosted Analytics](analytics-setup.md), [Analytics Configuration](analytics-configuration.md), [Reverse Proxy Configuration](reverse-proxy-setup.md). See also the [glossary](glossary.md) for shared terminology.

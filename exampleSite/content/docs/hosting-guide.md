@@ -4,6 +4,8 @@ description: "Step-by-step instructions for deploying Hugo sites on popular host
 date: 2024-01-15
 lastmod: 2024-01-15
 toc: true
+categories: ["documentation"]
+tags: ["hosting", "deployment", "hugo", "static site"]
 ---
 
 This guide covers how to deploy your Hugo site on various hosting platforms, from static site hosts to cloud providers.
@@ -524,3 +526,5 @@ Most platforms support custom headers:
 
 
 This guide covers the most popular hosting options for Hugo sites. Choose based on your specific needs, technical expertise, and budget requirements.
+
+**Related notes:** [Setting up GitHub Pages](github-pages-setup.md), [GitHub Pages with Hugo](github-pages-hugo.md), [Deploying with exampleSite](examplesite-deployment.md). See also the [glossary](glossary.md) for shared terminology.

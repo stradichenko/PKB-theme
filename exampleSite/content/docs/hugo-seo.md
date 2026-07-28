@@ -8,7 +8,7 @@ description: "Complete guide to SEO files, configurations, and best practices im
 comments: false
 series: []
 tags: ["SEO", "Hugo", "Search Optimization", "Meta Tags", "Schema", "Performance"]
-categories: ["Documentation", "SEO"]
+categories: ["documentation"]
 slug: "hugo-seo-guide"
 toc: true
 sidenotes: true
@@ -569,3 +569,5 @@ If you have existing layout files referencing the old partial:
 ---
 
 This SEO implementation provides a solid foundation for search engine optimization. The robots.txt file ensures efficient crawling while protecting sensitive areas of your site. Regular monitoring and updates ensure continued effectiveness as search algorithms evolve.
+
+**Related notes:** [Creating Posts with Hugo](creating-posts.md), [Development Tips](development-tips.md), [SOTA: Hugo](SOTA_hugo.md). See also the [glossary](glossary.md) for shared terminology.

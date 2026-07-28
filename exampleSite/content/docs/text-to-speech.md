@@ -8,7 +8,7 @@ description: "Complete guide to Text-to-Speech implementation using browser-nati
 comments: false
 series: []
 tags: ["web-speech-api", "accessibility", "javascript", "browser-apis"]
-categories: ["development", "accessibility", "web-apis"]
+categories: ["components"]
 slug: "text-to-speech"
 toc: true
 sidenotes: true
@@ -148,7 +148,7 @@ recognition.onresult = (event) => {
 
 ### Voice Discovery and Selection
 
-Browser-native TTS doesn't create voices—it **discovers and utilizes** voices from:
+Browser-native TTS doesn't create voices; it **discovers and utilizes** voices from:
 
 1. **Operating System**: Native speech engines (SAPI, Speech Framework)
 2. **Browser Providers**: Built-in voices (Google voices in Chrome)
@@ -1070,3 +1070,5 @@ class WASMNeuralTTS {
 Chrome's voice loading challenges stem from legitimate architectural decisions prioritizing **security, privacy, and performance**. Understanding these constraints allows developers to implement robust solutions that work reliably across Chrome's evolving platform.
 
 The key to successful Chrome TTS implementation lies in **embracing asynchronous patterns**, implementing **multiple fallback strategies**, and designing for **graceful degradation** when voice loading fails. While these requirements add complexity, they ensure TTS functionality remains accessible across Chrome's diverse deployment scenarios.
+
+**Related notes:** [Color Theme Customization](color-theme-customization.md), [Development Tips](development-tips.md). See also the [glossary](glossary.md) for shared terminology.

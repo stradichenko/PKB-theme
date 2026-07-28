@@ -3,7 +3,7 @@ title = "Deploying with exampleSite"
 date = 2023-07-02T09:00:00-07:00
 draft = false
 tags = ["deployment", "examplesite", "quickstart", "documentation"]
-categories = ["guides", "documentation"]
+categories = ["documentation"]
 toc = true
 description = "Guide for deploying your site using PKB-theme's exampleSite as a template"
 +++
@@ -75,3 +75,5 @@ After copying exampleSite:
 4. Deploy to your hosting platform
 
 For more details on customization, see the [theme configuration guide](/docs/configuration).
+
+**Related notes:** [Hosting Your Hugo Site](hosting-guide.md), [Setting up GitHub Pages](github-pages-setup.md), [GitHub Pages with Hugo](github-pages-hugo.md). See also the [glossary](glossary.md) for shared terminology.
