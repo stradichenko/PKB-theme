@@ -75,9 +75,9 @@
     {{- end -}}
     {{- $imageData = merge $imageData $thumbnails -}}
 
-    {{- /* Optimized */ -}}
-    {{- $optimizedWebP := $image.Process "webp q85" -}}
-    {{- $optimizedJPEG := $image.Process "jpeg q85" -}}
+    {{- /* Optimized (capped: full-res WebP/JPEG encode of huge sources OOMs the WASM encoder and wastes bandwidth) */ -}}
+    {{- $optimizedWebP := $image.Process "resize 2400x webp q85" -}}
+    {{- $optimizedJPEG := $image.Process "resize 2400x jpeg q85" -}}
     {{- $imageData = merge $imageData (dict
       "pkb_optimized_webp" (dict
         "url" $optimizedWebP.RelPermalink
