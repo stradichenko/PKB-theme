@@ -7,11 +7,19 @@ title        = "PKB-theme Demo"
   [markup.goldmark]
     [markup.goldmark.renderHooks]
       [markup.goldmark.renderHooks.image]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+
       [markup.goldmark.renderHooks.link]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+
     [markup.goldmark.renderer]
       unsafe = true  # This allows raw HTML in markdown files
+    [markup.goldmark.extensions]
+      footnote = true  # Obsidian-style [^label] footnotes
+      [markup.goldmark.extensions.passthrough]
+        # Required for $$...$$ math; the theme's render-passthrough.html hook
+        # re-emits delimiters for KaTeX. NOTE: this must live in the SITE
+        # config; theme-provided markup config is not merged for module imports.
+        enable = true
+        delimiters = { block = [['\[', '\]'], ['$$', '$$']], inline = [['\(', '\)']] }
 
 [module]
   [[module.imports]]

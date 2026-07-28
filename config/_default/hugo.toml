@@ -83,15 +83,18 @@ enableGitInfo = true
   [markup.goldmark]
     [markup.goldmark.renderHooks]
       [markup.goldmark.renderHooks.image]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+: replaces enableDefault = true
       [markup.goldmark.renderHooks.link]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+: replaces enableDefault = true
     [markup.goldmark.renderer]
       unsafe = true  # This allows raw HTML in markdown files
     [markup.goldmark.parser]
       [markup.goldmark.parser.attribute]
         block = true
         title = true
+    # NOTE: markup extensions (footnote, passthrough) live in markup.toml,
+    # because this file (hugo.toml) is shadowed when the consuming site has
+    # its own config/_default/hugo.toml. See markup.toml.
 
 [mediaTypes]
   [mediaTypes.'application/json']

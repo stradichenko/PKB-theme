@@ -139,6 +139,33 @@ Described at [documentation](https://github.com/stradichenko/PKB-theme/blob/main
 ### [Color Theme Customization](https://stradichenko.github.io/PKB-theme/docs/color-theme-customization)
 
 
+## Obsidian / PKB markdown compatibility
+
+The theme supports markdown written for Obsidian-style PKB vaults (relative `.md` links, `[^label]` footnotes, `$$...$$` math) with a few pieces of setup. Requires Hugo v0.148+.
+
+**Goldmark extensions (site config, required).** Goldmark's footnote and passthrough extensions are off by default. Add this to your *site's* config (e.g. `config/_default/hugo.toml`), exactly as done in `exampleSite/config/_default/hugo.toml`:
+
+```toml
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      footnote = true
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        delimiters = { block = [['\[', '\]'], ['$$', '$$']], inline = [['\(', '\)']] }
+```
+
+This must live in the site config: when the theme is imported as a Hugo module, Hugo merges the theme's `params` (and menus, languages) but not the rest of its `config/` directory. The theme ships the same block in `config/_default/markup.toml` for reference and for `themes/`-directory installs, where theme config does merge.
+
+**Relative .md links.** Handled automatically. The link render hook (`layouts/_default/_markup/render-link.html`) rewrites Obsidian-style links like `[text](note.md#some-heading)` into Hugo permalinks, resolved relative to the linking page. Links that cannot be resolved are left untouched. A link to a vault's `index.md` resolves to the section page.
+
+**Math.** Two steps: the passthrough extension above (protects math from markdown mangling; the `render-passthrough.html` hook re-emits standard delimiters), and `math: true` in the page's frontmatter, which loads the theme's KaTeX auto-render. Single-dollar `$...$` inline math is left to KaTeX auto-render directly.
+
+**Footnotes.** The `footnote` extension above renders `[^label]` references and definitions with backlinks. Inline footnotes (`^[...]`) are Obsidian-only and not supported by Goldmark; use the label form.
+
+**PKB vaults and `index.md`.** A content folder containing `index.md` becomes a Hugo leaf bundle, so sibling notes in the same folder are treated as bundle resources and do not get their own URLs. When publishing a vault where `index.md` is the entry point, rename it to `_index.md` in the site (making the vault a section) so each note renders as its own page.
+
+
 ## FAQ
 ### Hugo's Theme Configuration Inheritance (Lookup Order)
 

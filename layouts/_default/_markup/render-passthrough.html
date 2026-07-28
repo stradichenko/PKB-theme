@@ -1,0 +1,13 @@
+{{- /*
+  Passthrough render hook: Goldmark's passthrough extension strips the math
+  delimiters and hands us the raw inner content, protecting it from markdown
+  interpretation (underscores, asterisks). We re-emit standard delimiters so
+  the theme's KaTeX auto-render (enabled per page with `math: true`) typesets
+  the result. Block math is normalized to $$...$$, inline to \(...\), both of
+  which are in the KaTeX delimiter configuration in partials/head.html.
+*/ -}}
+{{- if eq .Type "block" -}}
+<div class="math math-display">$${{ .Inner | safeHTML }}$$</div>
+{{- else -}}
+<span class="math math-inline">\({{ .Inner | safeHTML }}\)</span>
+{{- end -}}
