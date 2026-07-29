@@ -47,19 +47,22 @@
       "pkb_rel_permalink" $image.RelPermalink
     -}}
 
-    {{- with $image.Meta -}}
-      {{- $exif := dict
-        "pkb_exif_make" (.Exif.Make | default "")
-        "pkb_exif_model" (.Exif.Model | default "")
-        "pkb_exif_lens_model" (.Exif.LensModel | default "")
-        "pkb_exif_exposure_time" (.Exif.ExposureTime | default "")
-        "pkb_exif_f_number" (.Exif.FNumber | default "")
-        "pkb_exif_iso" (.Exif.ISOSpeedRatings | default "")
-      -}}
-      {{- with .Date -}}
-        {{- $exif = merge $exif (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
+    {{- if reflect.IsImageResourceWithMeta $image -}}
+      {{- with $image.Meta -}}
+        {{- $exif := dict -}}
+        {{- with .Exif.Make }}{{ $exif = merge $exif (dict "pkb_exif_make" .) }}{{- end -}}
+        {{- with .Exif.Model }}{{ $exif = merge $exif (dict "pkb_exif_model" .) }}{{- end -}}
+        {{- with .Exif.LensModel }}{{ $exif = merge $exif (dict "pkb_exif_lens_model" .) }}{{- end -}}
+        {{- with .Exif.ExposureTime }}{{ $exif = merge $exif (dict "pkb_exif_exposure_time" .) }}{{- end -}}
+        {{- with .Exif.FNumber }}{{ $exif = merge $exif (dict "pkb_exif_f_number" .) }}{{- end -}}
+        {{- with .Exif.ISOSpeedRatings }}{{ $exif = merge $exif (dict "pkb_exif_iso" .) }}{{- end -}}
+        {{- with .Date -}}
+          {{- $exif = merge $exif (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
+        {{- end -}}
+        {{- if gt (len $exif) 0 -}}
+          {{- $imageData = merge $imageData $exif -}}
+        {{- end -}}
       {{- end -}}
-      {{- $imageData = merge $imageData $exif -}}
     {{- end -}}
 
     {{- /* Thumbnails */ -}}
