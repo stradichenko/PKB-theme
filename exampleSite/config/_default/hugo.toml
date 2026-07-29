@@ -4,6 +4,10 @@ title        = "PKB-theme Demo"
 
 
 [markup]
+  [markup.highlight]
+    # Class-based highlighting (Hugo 0.164+): colors come from the theme's
+    # generated syntax-light.css / syntax-dark.css pairs scoped to html[data-theme=...]
+    noClasses = false
   [markup.goldmark]
     [markup.goldmark.renderHooks]
       [markup.goldmark.renderHooks.image]
