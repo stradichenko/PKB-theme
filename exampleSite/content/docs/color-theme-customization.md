@@ -3,8 +3,8 @@ title: "Color Theme Customization"
 author: "Your Name"
 date: 2025-06-16T14:46:21+02:00
 lastmod: 2025-06-16T14:46:21+02:00
-draft: true
-description: "" # Brief summary of the post.
+draft: false
+description: "How to customize the PKB-theme color palette using CSS variables, with readability and contrast guidance."
 comments: false  # Enable Remark42 comments by default
 series: []
 # for more control:
@@ -168,4 +168,4 @@ High Chroma is very opinionated
 
 
 60-30-10 rule
-**Related notes:** [Gallery Slider Documentation](gallery-slider.md), [Portfolio Usage](portfolio-usage.md), [Text to Speech](text-to-speech.md). See also the [glossary](glossary.md) for shared terminology.
+**Related notes:** [Gallery Slider Documentation](gallery-slider.md), [Text to Speech](text-to-speech.md). See also the [glossary](glossary.md) for shared terminology.

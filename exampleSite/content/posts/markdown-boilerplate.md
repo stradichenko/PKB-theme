@@ -77,7 +77,7 @@ Sidenotes work great with lists to provide additional context for specific items
 
 ## Links and Images
 
-[External link](https://example.com) and [internal link](../another-post/)
+[External link](https://example.com) and [internal link](../zettelkasten-method/)
 
 ![Image alt text](https://via.placeholder.com/150 "Image Title")
 
