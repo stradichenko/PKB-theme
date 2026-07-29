@@ -1,8 +1,8 @@
 ---
 title: "How the Hugo System Works (as of 2026-07-29)"
 author: "Your Name"
-date: 2026-07-29T09:00:00-05:00
-lastmod: 2026-07-29T09:00:00-05:00
+date: 2026-07-29T12:00:00+02:00
+lastmod: 2026-07-29T12:00:00+02:00
 draft: false
 description: "Dated architecture reference for the PKB-theme Hugo system: version floor, module and config model, template lookup, content pipeline, feature subsystems, CI, and known quirks."
 comments: false
