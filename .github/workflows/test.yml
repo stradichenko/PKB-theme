@@ -89,7 +89,7 @@ jobs:
           rm -f go.mod go.sum
           hugo mod init github.com/stradichenko/PKB-theme/exampleSite
           hugo mod get github.com/stradichenko/PKB-theme
-          hugo mod edit -replace github.com/stradichenko/PKB-theme=../
+          go mod edit -replace github.com/stradichenko/PKB-theme=../
 
           hugo mod tidy
           hugo mod verify
@@ -100,10 +100,13 @@ jobs:
 
       - name: Build the site
         working-directory: exampleSite
+        # Root baseURL so htmltest can resolve absolute internal links against public/
+        # (the production subpath baseURL would make every link look like a 404).
         run: |
           hugo --minify \
                --cleanDestinationDir \
                --environment _default \
+               --baseURL "http://localhost/" \
                --logLevel debug
 
       - name: Run HTML validation

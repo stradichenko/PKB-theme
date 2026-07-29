@@ -386,4 +386,4 @@ This approach allows you to define gallery images in frontmatter and reference t
 
 This approach allows you to define gallery images in frontmatter and reference them in your content, making management easier for large galleries.
 
-**Related notes:** [Color Theme Customization](color-theme-customization.md), [Portfolio Usage](portfolio-usage.md). See also the [glossary](glossary.md) for shared terminology.
+**Related notes:** [Color Theme Customization](color-theme-customization.md). See also the [glossary](glossary.md) for shared terminology.

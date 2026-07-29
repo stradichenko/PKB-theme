@@ -2,9 +2,9 @@
 #   htmltest -c .htmltest.yml --log-level 3 --skip-external
 DirectoryPath: public
 IgnoreDirectoryMissing: false
-# The site is served from a subpath (baseURL .../PKB-theme/), so tell htmltest
-# to resolve absolute internal URLs against that subdirectory.
-URLSubDir: PKB-theme
+# NOTE: the CI builds with --baseURL "http://localhost/" so absolute internal
+# links resolve against public/. htmltest has no URLSubDir-style option; do not
+# add one, unknown keys are silently ignored.
 
 # Hugo generates hash-bearing asset URLs and mailto/tel links that htmltest
 # would otherwise flag; keep checks to real internal 404s.
@@ -14,3 +14,4 @@ IgnoreURLs:
 IgnoreAltMissing: true
 IgnoreEmptyHref: false
 IgnoreInternalEmptyHash: true
+IgnoreDirectoryMissingTrailingSlash: true

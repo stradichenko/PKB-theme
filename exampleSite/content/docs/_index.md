@@ -46,5 +46,5 @@ This note maps the documentation base by subject. Each entry links to a dedicate
 
 - [Color Theme Customization](color-theme-customization.md): overriding the theme's color schemes.
 - [Gallery Slider Documentation](gallery-slider.md): the gallery-slider shortcode and its options.
-- [Portfolio Usage](portfolio-usage.md): the portfolio content type and its templates (draft, unpublished).
+- Portfolio Usage: the portfolio content type and its templates (draft, unpublished).
 - [Text to Speech](text-to-speech.md): the browser-native read-aloud feature and its voice strategy.
