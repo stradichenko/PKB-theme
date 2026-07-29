@@ -5,6 +5,7 @@ draft = false
 tags = ["academic", "writing", "markdown", "research", "citations", "footnotes", "publishing", "scholarly", "papers", "dissertations", "references", "LaTeX", "MathJax"]
 categories = ["academia", "writing", "research", "productivity", "education"]
 toc = true
+math = true
 sidenotes = true
 comments = true
 author = "Your Name"
