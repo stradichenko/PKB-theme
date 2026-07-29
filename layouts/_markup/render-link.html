@@ -1,0 +1,47 @@
+{{- $url := .Destination -}}
+{{- $isExternal := or (strings.HasPrefix $url "http:") (strings.HasPrefix $url "https:") -}}
+{{- $fullUrl := $url -}}
+{{- $isInternal := false -}}
+{{- if and (not $isExternal) (strings.HasPrefix $url "/") -}}
+  {{- $fullUrl = printf "%s%s" (.Page.Site.BaseURL | strings.TrimSuffix "/") $url -}}
+  {{- $isInternal = true -}}
+{{- end -}}
+
+{{- /*
+  Obsidian compatibility: rewrite relative .md links ([text](note.md#anchor))
+  into Hugo permalinks. The path is resolved relative to the directory of the
+  page containing the link, then looked up via Site.GetPage. If no page is
+  found (e.g. the target is a bundle resource), the original .md href is kept
+  as a graceful fallback.
+*/ -}}
+{{- if and (not $isExternal) (not (strings.HasPrefix $url "/")) -}}
+  {{- $path := $url -}}
+  {{- $frag := "" -}}
+  {{- if strings.Contains $path "#" -}}
+    {{- $frag = printf "#%s" (index (split $path "#") 1) -}}
+    {{- $path = index (split $path "#") 0 -}}
+  {{- end -}}
+  {{- if and (strings.HasSuffix $path ".md") $.Page.File -}}
+    {{- $path = strings.TrimSuffix ".md" $path -}}
+    {{- $abs := path.Join "/" $.Page.File.Dir $path -}}
+    {{- $target := $.Page.Site.GetPage $abs -}}
+    {{- /* PKB vaults use index.md as entry point; on Hugo that becomes the
+           section's _index.md, so fall back to the directory page. */ -}}
+    {{- if and (not $target) (eq (path.Base $path) "index") -}}
+      {{- $target = $.Page.Site.GetPage (path.Dir $abs) -}}
+    {{- end -}}
+    {{- with $target -}}
+      {{- $fullUrl = printf "%s%s" .RelPermalink $frag -}}
+      {{- $isInternal = true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<a href="{{ $fullUrl | safeURL }}"
+  {{- with .Title }} title="{{ . }}"{{ end -}}
+  {{- if $isExternal }} rel="external" target="_blank"{{ end -}}
+  {{- if $isInternal }} data-internal-link="{{ $url }}" class="internal-link"{{ end -}}
+>
+  {{- with .Text }}{{ . }}{{ end -}}
+</a>
+{{- /* chomp trailing newline */ -}}

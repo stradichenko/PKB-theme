@@ -1,4 +1,18 @@
 {{- /* File: layouts/portfolio/single.json */ -}}
+{{- if eq (site.Params.portfolioIndexing | default true) false -}}
+{{- dict
+  "portfolio_metadata" (dict
+    "total_images" 0
+    "supported_formats" (slice)
+    "generated_at" (now.Format "2006-01-02T15:04:05Z07:00")
+    "hugo_version" hugo.Version
+    "pkb_schema_version" "1.0.0"
+    "category_list" (slice)
+    "indexing_disabled" true
+  )
+  "images" (slice)
+| jsonify -}}
+{{- else -}}
 {{- $supportedFormats := slice "jpg" "jpeg" "png" "webp" "gif" "tiff" "tif" -}}
 {{- $portfolioImages := slice -}}
 
@@ -32,19 +46,22 @@
       "pkb_rel_permalink" $image.RelPermalink
     -}}
 
-    {{- with $image.Exif -}}
-      {{- $exif := dict
-        "pkb_exif_make" (.Tags.Make | default "")
-        "pkb_exif_model" (.Tags.Model | default "")
-        "pkb_exif_lens_model" (.Tags.LensModel | default "")
-        "pkb_exif_exposure_time" (.Tags.ExposureTime | default "")
-        "pkb_exif_f_number" (.Tags.FNumber | default "")
-        "pkb_exif_iso" (.Tags.ISOSpeedRatings | default "")
-      -}}
-      {{- with .Date -}}
-        {{- $exif = merge $exif (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
+    {{- if reflect.IsImageResourceWithMeta $image -}}
+      {{- with $image.Meta -}}
+        {{- $exif := dict -}}
+        {{- with .Exif.Make }}{{ $exif = merge $exif (dict "pkb_exif_make" .) }}{{- end -}}
+        {{- with .Exif.Model }}{{ $exif = merge $exif (dict "pkb_exif_model" .) }}{{- end -}}
+        {{- with .Exif.LensModel }}{{ $exif = merge $exif (dict "pkb_exif_lens_model" .) }}{{- end -}}
+        {{- with .Exif.ExposureTime }}{{ $exif = merge $exif (dict "pkb_exif_exposure_time" .) }}{{- end -}}
+        {{- with .Exif.FNumber }}{{ $exif = merge $exif (dict "pkb_exif_f_number" .) }}{{- end -}}
+        {{- with .Exif.ISOSpeedRatings }}{{ $exif = merge $exif (dict "pkb_exif_iso" .) }}{{- end -}}
+        {{- with .Date -}}
+          {{- $exif = merge $exif (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
+        {{- end -}}
+        {{- if gt (len $exif) 0 -}}
+          {{- $imageData = merge $imageData $exif -}}
+        {{- end -}}
       {{- end -}}
-      {{- $imageData = merge $imageData $exif -}}
     {{- end -}}
 
     {{- /* Reduced thumbnails - only one size for grid view */ -}}
@@ -54,6 +71,18 @@
         "url" $thumbnail.RelPermalink
         "width" $thumbnail.Width
         "height" $thumbnail.Height
+      )) -}}
+    {{- end -}}
+    {{- $imageData = merge $imageData $thumbnails -}}
+
+    {{- /* Optimized (capped: full-res WebP/JPEG encode of huge sources OOMs the WASM encoder and wastes bandwidth) */ -}}
+    {{- $optimizedWebP := $image.Process "resize 2400x webp q85" -}}
+    {{- $optimizedJPEG := $image.Process "resize 2400x jpeg q85" -}}
+    {{- $imageData = merge $imageData (dict
+      "pkb_optimized_webp" (dict
+        "url" $optimizedWebP.RelPermalink
+        "width" $optimizedWebP.Width
+        "height" $optimizedWebP.Height
       )
     ) -}}
 
@@ -75,53 +104,10 @@
       "pkb_orientation" $orientation
     ) -}}
 
-    {{- /* Simplified color analysis - much faster */ -}}
-    {{- $colorSample := $image.Fit "8x8" -}}
-    {{- $colors := first 3 $colorSample.Colors -}}
-    {{- $dominantColors := slice -}}
-    {{- $colorFamilies := slice -}}
-    
-    {{- range $colors }}
-      {{- $hex := .String -}}
-      {{- $dominantColors = $dominantColors | append $hex -}}
-      {{- /* Simple color family classification using hex values */ -}}
-      {{- $hexClean := strings.TrimPrefix $hex "#" -}}
-      {{- if eq (len $hexClean) 6 -}}
-        {{- $rHex := substr $hexClean 0 2 -}}
-        {{- $gHex := substr $hexClean 2 2 -}}
-        {{- $bHex := substr $hexClean 4 2 -}}
-        {{- /* Simple heuristic color classification */ -}}
-        {{- $family := "gray" -}}
-        {{- if or (strings.HasPrefix $hexClean "f") (strings.HasPrefix $hexClean "e") -}}
-          {{- $family = "white" -}}
-        {{- else if or (strings.HasPrefix $hexClean "0") (strings.HasPrefix $hexClean "1") (strings.HasPrefix $hexClean "2") -}}
-          {{- $family = "black" -}}
-        {{- else if gt $rHex $gHex -}}
-          {{- if gt $rHex $bHex -}}
-            {{- $family = "red" -}}
-          {{- end -}}
-        {{- else if gt $gHex $rHex -}}
-          {{- if gt $gHex $bHex -}}
-            {{- $family = "green" -}}
-          {{- end -}}
-        {{- else if gt $bHex $rHex -}}
-          {{- if gt $bHex $gHex -}}
-            {{- $family = "blue" -}}
-          {{- end -}}
-        {{- end -}}
-        {{- if not (in $colorFamilies $family) -}}
-          {{- $colorFamilies = $colorFamilies | append $family -}}
-        {{- end -}}
-      {{- end -}}
-    {{- end -}}
-
+    {{- /* Dominant Colors — use Hugo built-in .Colors (already sorted by frequency) */ -}}
+    {{- $colorSample := $image.Fit "32x32" -}}
     {{- $imageData = merge $imageData (dict
-      "pkb_dominant_colors" $dominantColors
-      "pkb_color_families" $colorFamilies
-    ) -}}
-
-    {{- $imageData = merge $imageData (dict
-      "pkb_processed_at" (now.Format "2006-01-02T15:04:05Z07:00")
+      "pkb_dominant_colors" (first 5 $colorSample.Colors)
     ) -}}
 
     {{- $portfolioImages = $portfolioImages | append $imageData -}}
@@ -147,3 +133,4 @@
   )
   "images" $portfolioImages
 | jsonify -}}
+{{- end -}}

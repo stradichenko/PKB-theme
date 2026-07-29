@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale }}" dir="{{ or site.Language.Direction `ltr` }}" class="interaction" data-base-url="{{ .Site.BaseURL }}">
+<head>
+  <meta name="site-base-url" content="{{ .Site.BaseURL | relURL }}">
+
+  <!-- 🌑 Critical theme setup (MUST stay in head) -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      const currentTheme = savedTheme || (prefersDarkScheme.matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', currentTheme);
+
+      const rootStyle = document.documentElement.style;
+      if (currentTheme === 'dark') {
+        rootStyle.setProperty('--critical-bg', 'var(--dark-background, #1a202c)');
+        rootStyle.setProperty('--critical-text', 'var(--dark-text-primary, #e2e8ff)');
+      } else {
+        rootStyle.setProperty('--critical-bg', 'var(--light-background, #275f85)');
+        rootStyle.setProperty('--critical-text', 'var(--light-text-secondary, #cad6ff)');
+      }
+
+      if (!savedTheme) {
+        localStorage.setItem('theme', currentTheme);
+      }
+    })();
+  </script>
+  
+  <!-- Critical CSS for immediate theme application (screen only, not print) -->
+  <style media="screen">
+    /* Force the background color with maximum specificity using CSS variables */
+    html[data-theme="dark"],
+    html[data-theme="dark"] body,
+    html[data-theme="light"] body,
+    html {
+      background-color: var(--critical-bg, var(--color-background));
+      color: var(--critical-text, var(--color-text-primary));
+      /* Add font fallbacks for critical rendering */
+      font-family: Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-display: swap;
+    }
+    
+    /* Prevent font loading flicker */
+    * {
+      font-display: swap;
+    }
+  </style>
+
+  {{ partial "head.html" . }}
+  {{ block "head" . }}{{ end }}
+
+  <!-- CSS preload with proper attributes -->
+  {{ $mainCSS := resources.Get "css/main.css" }}
+  {{ if $mainCSS }}
+    {{ $css := $mainCSS | minify | fingerprint }}
+    <link rel="preload" href="{{ $css.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $css.RelPermalink }}"></noscript>
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}" media="print" onload="this.media='all'">
+  {{ end }}
+</head>
+
+<body>
+  <header>
+    {{ partial "header.html" . }}
+  </header>
+
+  <main>
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  <footer>
+    {{ partial "footer.html" . }}
+  </footer>
+  
+  <!-- PDF generator loaded via single-page bundle in single.html -->
+
+  <!-- Mermaid diagram support -->
+  {{ if .Store.Get "hasMermaid" }}
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+    /* Expose for pdf-generator.js to force-render before print */
+    window.__mermaid = mermaid;
+  </script>
+</body>
+</html>

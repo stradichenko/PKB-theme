@@ -1,28 +1,116 @@
-/* -------------- PDF Print Styles -------------- */
-/* MINIMAL ACADEMIC STYLE - ARXIV INSPIRED */
+/* ================================================================
+   PDF Print Styles — LaTeX-Inspired Academic Typesetting
+   ================================================================
+   Mimics Computer Modern / LaTeX article class output:
+   • Palatino serif body (closest widely-available CM surrogate)
+   • Justified text with first-line indent
+   • Booktabs-style tables (three-rule)
+   • Numbered endnotes from sidenotes
+   • Hanging-indent bibliography
+   • Clean page numbers, no chrome
+   ================================================================ */
+
 @media print {
+
+  /* ─── @page — A4, tighter margins ───────────────────────────── */
   @page {
-    margin: 2.5cm 2cm;
+    margin: 2cm 2cm 2.5cm 2cm;
     size: A4;
+
+    @top-left {
+      content: none;
+    }
+    @top-center {
+      content: none;
+    }
+    @top-right {
+      content: none;
+    }
     @bottom-center {
       content: counter(page);
-      font-size: 9px;
-      color: #666;
+      font-family: var(--pdf-font-family, "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif);
+      font-size: var(--pdf-page-number-font-size, 10pt);
+      color: #333;
     }
   }
-  
-  /* Force print color adjustment */
+
+  @page :first {
+    @bottom-center {
+      content: counter(page);
+    }
+  }
+
+  /* ─── Color fidelity ────────────────────────────────────────── */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
-  /* ============================================ */
-  /* NUCLEAR HIDING - SIMPLE SELECTORS ONLY     */
-  /* ============================================ */
-  
-  /* Hide all non-content elements */
-  header,
+
+  /* ─── Universal background safety net ───────────────────────── */
+  *:not(.katex *):not(.katex):not(.katex-display):not(mjx-container):not(mjx-container *):not(.MathJax *):not(.mermaid *):not(svg.mermaid *):not(pre.mermaid *),
+  *::before,
+  *::after {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  html, body, main, article, section, div,
+  .layout-container, .main-content, .post-content,
+  .post-header, .post-header-container,
+  .references-container, #sidenotes-references {
+    background: white !important;
+    background-color: white !important;
+  }
+
+  /*
+   * Override the critical inline <style> in baseof.html which uses
+   *   html[data-theme="dark"] body { background-color: #1a202c !important }
+   * We must match or exceed that specificity.
+   */
+  html[data-theme="dark"],
+  html[data-theme="dark"] body,
+  html[data-theme="dark"] main,
+  html[data-theme="dark"] .content,
+  html[data-theme="dark"] .layout-container,
+  html[data-theme="dark"] .main-content,
+  html[data-theme="dark"] .post-content,
+  html[data-theme="dark"] .post-header,
+  html[data-theme="dark"] article {
+    background: white !important;
+    background-color: white !important;
+    color: #000 !important;
+  }
+
+  html[data-theme="light"],
+  html[data-theme="light"] body,
+  html[data-theme="light"] main,
+  html[data-theme="light"] .content,
+  html[data-theme="light"] .layout-container,
+  html[data-theme="light"] .main-content,
+  html[data-theme="light"] .post-content,
+  html[data-theme="light"] .post-header,
+  html[data-theme="light"] article {
+    background: white !important;
+    background-color: white !important;
+    color: #000 !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     NUCLEAR HIDE — Remove every non-content element
+     ═════════════════════════════════════════════════════════════ */
+
+  /* Style tags that may live inside body (partials inject them) */
+  body style,
+  main style,
+  article style,
+  .page-metadata style,
+  .post-header style {
+    display: none !important;
+  }
+
+  header:not(.post-header),
   footer,
   nav,
   aside,
@@ -70,106 +158,227 @@
   .header-button,
   .page-pdf,
   .pdf-button,
-  svg {
+  .pdf-loading,
+  .pdf-spinner,
+  .tts-button,
+  .tts-bar,
+  #tts-control-bar,
+  .tts-container,
+  .remark42-container,
+  .copy-button,
+  .code-copy-btn,
+  [class*="copy-btn"],
+  .post-header-image,
+  .header-image-overlay,
+  svg:not(.pdf-keep-svg):not(.mermaid):not([class*="mermaid"]):not([id^="mermaid"]) {
     display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
   }
-  
-  /* ============================================ */
-  /* DOCUMENT STRUCTURE - ACADEMIC STYLE        */
-  /* ============================================ */
-  
-  html, 
+
+  /* ═════════════════════════════════════════════════════════════
+     DOCUMENT FOUNDATION — LaTeX article class
+     ═════════════════════════════════════════════════════════════ */
+
+  html,
   body {
     background: white !important;
     color: #000 !important;
     margin: 0 !important;
     padding: 0 !important;
-    font-family: "Times New Roman", Times, serif !important;
-    font-size: 11pt !important;
-    line-height: 1.5 !important;
+    font-family: var(--pdf-font-family, "Palatino Linotype", "Book Antiqua", Palatino,
+                 "EB Garamond", Georgia, "Times New Roman", serif) !important;
+    font-size: var(--pdf-font-size, 11pt) !important;
+    line-height: 1.45 !important;
     width: 100% !important;
     height: auto !important;
+    -webkit-hyphens: auto !important;
+    hyphens: auto !important;
   }
-  
-  /* Layout container */
+
+  /* ─── Layout reset ──────────────────────────────────────────── */
   .layout-container {
     display: block !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
   }
-  
-  /* Main content */
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+  }
+
   .main-content,
   article {
     display: block !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
     color: #000 !important;
+    flex: none !important;
   }
-  
-  /* Post header */
+
+  /* ═════════════════════════════════════════════════════════════
+     TITLE BLOCK — Centered, LaTeX \maketitle
+     ═════════════════════════════════════════════════════════════ */
+
   .post-header,
   .post-header-container,
   .post-title-wrapper {
     display: block !important;
     background: white !important;
-    margin: 0 0 24pt 0 !important;
+    margin: 0 !important;
     padding: 0 !important;
     text-align: center !important;
+    border: none !important;
+    box-shadow: none !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    gap: 0 !important;
   }
-  
-  /* Post title */
+
+  /* Title — large, centered, bold serif */
   .post-title,
-  h1.post-title {
+  h1.post-title,
+  html body .layout-container .main-content .post-title {
     display: block !important;
-    font-size: 16pt !important;
+    font-size: var(--pdf-title-font-size, 17pt) !important;
     font-weight: 700 !important;
-    font-family: "Arial", "Helvetica", sans-serif !important;
+    font-family: var(--pdf-font-family, "Palatino Linotype", "Book Antiqua", Palatino,
+                 Georgia, serif) !important;
     color: #000 !important;
-    margin: 0 0 18pt 0 !important;
+    margin: 0 0 8pt 0 !important;
     padding: 0 !important;
     text-align: center !important;
     page-break-after: avoid !important;
     background: white !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
+    border: none !important;
+    border-bottom: none !important;
+    letter-spacing: 0 !important;
   }
-  
-  /* Page metadata */
+
+  /* ─── Metadata — author / date, centered ───────────────────── */
   .page-metadata {
     display: block !important;
     width: 100% !important;
-    font-size: 10pt !important;
-    color: #666 !important;
-    margin: 0 0 24pt 0 !important;
+    font-size: var(--pdf-font-size, 11pt) !important;
+    color: #000 !important;
+    margin: 0 auto 4pt auto !important;
     padding: 0 !important;
     text-align: center !important;
     background: white !important;
-    font-style: italic !important;
+    font-style: normal !important;
+    line-height: 1.6 !important;
+    gap: 0 !important;
+    flex-wrap: nowrap !important;
   }
-  
-  /* Metadata items */
+
+  /* Hide tags, categories, and action buttons in metadata */
+  .page-categories,
+  .page-tags,
+  .page-pdf,
+  .pdf-button,
+  .tts-button,
+  .post-actions,
+  .page-metadata .page-categories,
+  .page-metadata .page-tags,
+  .page-metadata .page-categories *,
+  .page-metadata .page-tags * {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+  }
+
+  /* Generic metadata item reset — hide all by default */
   .page-metadata > * {
-    display: inline !important;
-    margin: 0 12pt 0 0 !important;
-    padding: 0 !important;
-    color: #666 !important;
-    background: white !important;
+    display: none !important;
+    visibility: hidden !important;
   }
-  
+
+  /* Show only author, created-date, updated-date */
+  .page-author {
+    display: block !important;
+    font-size: 12pt !important;
+    color: #000 !important;
+    margin: 0 0 2pt 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    background: white !important;
+    visibility: visible !important;
+    overflow: visible !important;
+  }
+
+  .page-date,
+  .page-updated {
+    display: inline !important;
+    font-size: 10pt !important;
+    color: #000 !important;
+    margin: 0 6pt 0 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    background: white !important;
+    visibility: visible !important;
+    overflow: visible !important;
+  }
+
   .page-metadata span,
   .page-metadata time,
   .page-metadata a {
-    display: inline !important;
-    color: #666 !important;
+    color: #000 !important;
     background: white !important;
     text-decoration: none !important;
+    font-style: normal !important;
+    font-size: inherit !important;
+    height: auto !important;
+    line-height: inherit !important;
+    min-height: 0 !important;
   }
-  
-  /* Content area */
+
+  /* Make author and date inner spans visible */
+  .page-author span,
+  .page-author a,
+  .page-date span,
+  .page-date time,
+  .page-date a,
+  .page-updated span,
+  .page-updated time,
+  .page-updated a {
+    display: inline !important;
+    visibility: visible !important;
+    color: #000 !important;
+  }
+
+  /* Thin rule beneath the title block */
+  .page-metadata::after {
+    content: "" !important;
+    display: block !important;
+    width: 100% !important;
+    height: 0 !important;
+    border: none !important;
+    border-bottom: 0.4pt solid #000 !important;
+    margin: 10pt 0 16pt 0 !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     CONTENT AREA
+     ═════════════════════════════════════════════════════════════ */
+
   .post-content {
     display: block !important;
     width: 100% !important;
@@ -178,9 +387,11 @@
     margin: 0 !important;
     padding: 0 !important;
     text-align: justify !important;
+    -webkit-hyphens: auto !important;
+    hyphens: auto !important;
   }
-  
-  /* Content elements */
+
+  /* ─── Headings — LaTeX section hierarchy ────────────────────── */
   .post-content h1,
   .post-content h2,
   .post-content h3,
@@ -190,216 +401,799 @@
     display: block !important;
     visibility: visible !important;
     color: #000 !important;
-    margin: 18pt 0 9pt 0 !important;
     page-break-after: avoid !important;
-    font-weight: 700 !important;
-    font-family: "Arial", "Helvetica", sans-serif !important;
+    font-family: var(--pdf-font-family, "Palatino Linotype", "Book Antiqua", Palatino,
+                 Georgia, serif) !important;
     text-align: left !important;
+    background: white !important;
+    border: none !important;
+    border-bottom: none !important;
+    text-indent: 0 !important;
   }
-  
-  .post-content h1 { font-size: 14pt !important; }
-  .post-content h2 { font-size: 13pt !important; }
-  .post-content h3 { font-size: 12pt !important; }
-  .post-content h4 { font-size: 11pt !important; font-weight: 600 !important; }
-  
+
+  /* \section */
+  .post-content h1,
+  .post-content h2 {
+    font-size: var(--pdf-heading-font-size, 14pt) !important;
+    font-weight: 700 !important;
+    margin: 24pt 0 10pt 0 !important;
+    line-height: 1.25 !important;
+  }
+
+  /* \subsection */
+  .post-content h3 {
+    font-size: var(--pdf-subheading-font-size, 12pt) !important;
+    font-weight: 700 !important;
+    margin: 18pt 0 8pt 0 !important;
+    font-style: normal !important;
+    line-height: 1.3 !important;
+  }
+
+  /* \subsubsection */
+  .post-content h4 {
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    font-style: italic !important;
+    margin: 14pt 0 6pt 0 !important;
+    line-height: 1.3 !important;
+  }
+
+  .post-content h5,
+  .post-content h6 {
+    font-size: 11pt !important;
+    font-weight: 600 !important;
+    font-style: italic !important;
+    margin: 12pt 0 4pt 0 !important;
+    line-height: 1.3 !important;
+  }
+
+  /* ─── Paragraphs — justified, first-line indent ─────────────── */
   .post-content p {
     display: block !important;
     visibility: visible !important;
     color: #000 !important;
-    margin: 0 0 9pt 0 !important;
+    margin: 0 0 0 0 !important;   /* LaTeX uses indent, not spacing */
     text-align: justify !important;
     orphans: 3 !important;
     widows: 3 !important;
-    line-height: 1.5 !important;
+    line-height: 1.45 !important;
+    text-indent: 1.5em !important;
+    -webkit-hyphens: auto !important;
+    hyphens: auto !important;
+  }
+
+  /* First paragraph after a heading/block — no indent (LaTeX convention) */
+  .post-content h1 + p,
+  .post-content h2 + p,
+  .post-content h3 + p,
+  .post-content h4 + p,
+  .post-content h5 + p,
+  .post-content h6 + p,
+  .post-content blockquote + p,
+  .post-content pre + p,
+  .post-content .highlight + p,
+  .post-content table + p,
+  .post-content .table-wrapper + p,
+  .post-content figure + p,
+  .post-content ul + p,
+  .post-content ol + p,
+  .post-content hr + p,
+  .post-content img + p,
+  .post-content > p:first-child {
     text-indent: 0 !important;
   }
-  
-  /* Lists */
+
+  /* When paragraphs follow a block, add a small spacer */
+  .post-content p + ul,
+  .post-content p + ol,
+  .post-content p + pre,
+  .post-content p + .highlight,
+  .post-content p + table,
+  .post-content p + blockquote {
+    margin-top: 6pt !important;
+  }
+
+  /* ─── Lists ─────────────────────────────────────────────────── */
   .post-content ul,
   .post-content ol {
     display: block !important;
     visibility: visible !important;
-    margin: 9pt 0 !important;
-    padding-left: 18pt !important;
+    margin: 4pt 0 8pt 0 !important;
+    padding-left: 2em !important;
+    text-indent: 0 !important;
   }
-  
+
   .post-content li {
     display: list-item !important;
     visibility: visible !important;
     color: #000 !important;
-    margin: 3pt 0 !important;
-    line-height: 1.4 !important;
+    margin: 2pt 0 !important;
+    line-height: 1.45 !important;
+    text-align: justify !important;
+    text-indent: 0 !important;
   }
-  
-  /* Images */
-  .post-content img {
+
+  .post-content li p {
+    text-indent: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ─── Images — centered, no frames ───────────────────────────── */
+  .post-content img:not(.header-image) {
+    display: block !important;
+    visibility: visible !important;
+    max-width: 80% !important;
+    height: auto !important;
+    margin: 16pt auto !important;
+    page-break-inside: avoid !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .post-content figure {
+    display: block !important;
+    margin: 16pt auto !important;
+    text-align: center !important;
+    page-break-inside: avoid !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .post-content figcaption {
+    font-size: 9pt !important;
+    color: #333 !important;
+    text-align: center !important;
+    margin-top: 4pt !important;
+    font-style: italic !important;
+    text-indent: 0 !important;
+  }
+
+  /* ─── Gallery Slider — show only active slide, hide controls ── */
+  .gallery-slider {
+    display: block !important;
+    visibility: visible !important;
+    page-break-inside: avoid !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    background: white !important;
+    margin: 16pt auto !important;
+    max-width: 80% !important;
+  }
+
+  .gallery-slider__container {
+    display: block !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .gallery-slider__track {
+    display: block !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  /* Show only the active slide */
+  .gallery-slider__slide {
+    display: none !important;
+  }
+
+  .gallery-slider__slide--active {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  .gallery-slider__image {
     display: block !important;
     visibility: visible !important;
     max-width: 100% !important;
     height: auto !important;
-    margin: 12pt auto !important;
-    page-break-inside: avoid !important;
+    margin: 0 auto !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
-  
-  /* Tables */
+
+  .gallery-slider__caption {
+    display: block !important;
+    visibility: visible !important;
+    font-size: 9pt !important;
+    font-style: italic !important;
+    color: #333 !important;
+    text-align: center !important;
+    margin-top: 4pt !important;
+    background: white !important;
+  }
+
+  /* Hide gallery navigation, thumbnails, counter */
+  .gallery-slider__nav,
+  .gallery-slider__nav--prev,
+  .gallery-slider__nav--next,
+  .gallery-slider__thumbnails,
+  .gallery-slider__thumbnail,
+  .gallery-slider__counter,
+  .gallery-slider__dots {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+  }
+
+  /* ─── Tables — Booktabs (three-rule) ────────────────────────── */
   .post-content table {
     display: table !important;
     visibility: visible !important;
     border-collapse: collapse !important;
-    width: 100% !important;
+    width: auto !important;
+    min-width: 50% !important;
     font-size: 10pt !important;
-    margin: 12pt auto !important;
+    margin: 16pt auto !important;
     page-break-inside: avoid !important;
     border: none !important;
+    border-top: 1.5pt solid #000 !important;
+    border-bottom: 1.5pt solid #000 !important;
+    background: white !important;
   }
-  
+
+  .table-wrapper {
+    display: block !important;
+    overflow: visible !important;
+    margin: 16pt auto !important;
+    text-align: center !important;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
   .post-content th,
   .post-content td {
     display: table-cell !important;
     visibility: visible !important;
     border: none !important;
-    border-bottom: 1px solid #ccc !important;
-    padding: 3pt 6pt !important;
+    padding: 4pt 10pt !important;
     text-align: left !important;
     color: #000 !important;
     vertical-align: top !important;
+    line-height: 1.35 !important;
+    text-indent: 0 !important;
+    background: white !important;
   }
-  
+
+  .post-content thead tr {
+    border-bottom: 0.75pt solid #000 !important;
+  }
+
   .post-content th {
-    border-bottom: 2px solid #000 !important;
     font-weight: 700 !important;
-    color: #000 !important;
+    padding-top: 6pt !important;
+    padding-bottom: 5pt !important;
   }
-  
-  .post-content thead th {
-    border-top: 2px solid #000 !important;
+
+  .post-content tbody tr:last-child td {
+    padding-bottom: 6pt !important;
   }
-  
-  /* Code blocks */
-  .post-content pre {
+
+  /* ─── Code blocks ───────────────────────────────────────────── */
+  .post-content pre,
+  .post-content .highlight pre {
     display: block !important;
     visibility: visible !important;
-    background: white !important;
-    border: 1px solid #ddd !important;
-    padding: 9pt !important;
-    font-size: 9pt !important;
+    background: #f8f8f8 !important;
+    border: 0.4pt solid #ccc !important;
+    border-radius: 0 !important;
+    padding: 8pt 10pt !important;
+    font-size: 8.5pt !important;
     white-space: pre-wrap !important;
+    word-wrap: break-word !important;
     page-break-inside: avoid !important;
     margin: 12pt 0 !important;
-    font-family: "Courier New", Courier, monospace !important;
+    font-family: var(--pdf-code-font-family, "Courier New", Courier, "Liberation Mono", monospace) !important;
     line-height: 1.3 !important;
-  }
-  
-  .post-content code {
-    background: #f8f8f8 !important;
-    padding: 1pt 2pt !important;
-    font-size: 9pt !important;
-    font-family: "Courier New", Courier, monospace !important;
     color: #000 !important;
+    text-indent: 0 !important;
   }
-  
-  /* Blockquotes */
+
+  .post-content code {
+    background: #f4f4f4 !important;
+    padding: 0.5pt 2.5pt !important;
+    font-size: 9pt !important;
+    font-family: var(--pdf-code-font-family, "Courier New", Courier, "Liberation Mono", monospace) !important;
+    color: #000 !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .post-content pre code {
+    background: transparent !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+    border: none !important;
+  }
+
+  /* Syntax highlighting — flatten to monochrome for print */
+  .highlight span,
+  .chroma span {
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  /* Keep comments lighter for readability */
+  .highlight .c,  .highlight .c1, .highlight .cm, .highlight .cs,
+  .chroma .c,   .chroma .c1,  .chroma .cm,  .chroma .cs {
+    color: #666 !important;
+    font-style: italic !important;
+  }
+
+  /* Keywords bolder */
+  .highlight .k,  .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt,
+  .chroma .k,   .chroma .kd,  .chroma .kn {
+    font-weight: 700 !important;
+  }
+
+  /* Strings */
+  .highlight .s,  .highlight .s1, .highlight .s2, .highlight .sa, .highlight .sb, .highlight .sc, .highlight .se,
+  .chroma .s,   .chroma .s1,  .chroma .s2 {
+    color: #333 !important;
+  }
+
+  /* Line numbers */
+  .highlight .ln, .highlight .lnt,
+  .chroma .ln,  .chroma .lnt {
+    color: #999 !important;
+    margin-right: 8pt !important;
+    user-select: none !important;
+  }
+
+  /* ─── Blockquotes ───────────────────────────────────────────── */
   .post-content blockquote {
     display: block !important;
     visibility: visible !important;
-    margin: 12pt 18pt !important;
-    padding: 0 !important;
+    margin: 12pt 0 12pt 2em !important;
+    padding: 0 0 0 1em !important;
     font-style: italic !important;
     color: #000 !important;
     background: white !important;
     page-break-inside: avoid !important;
     border: none !important;
+    border-left: 1.5pt solid #999 !important;
+    text-indent: 0 !important;
   }
-  
-  /* Links */
+
+  .post-content blockquote p {
+    text-indent: 0 !important;
+    font-style: italic !important;
+  }
+
+  /* ─── Links — clean, no URL expansion ───────────────────────── */
   .post-content a {
     color: #000 !important;
-    text-decoration: underline !important;
+    text-decoration: none !important;
     visibility: visible !important;
+    border-bottom: 0.3pt solid #888 !important;
   }
-  
-  .post-content a[href^="http"]:after {
-    content: " [" attr(href) "]" !important;
-    font-size: 8pt !important;
-    color: #666 !important;
-    word-break: break-all !important;
-    font-weight: normal !important;
-  }
-  
-  .post-content a[href^="#"]:after,
-  .post-content a[href^="/"]:after {
+
+  /* Suppress URL-after-link — keeps PDF clean like LaTeX */
+  .post-content a::after {
     content: none !important;
   }
-  
-  /* Page breaks */
-  h1, h2, h3, h4, h5, h6 {
+
+  /* ─── Horizontal rules ──────────────────────────────────────── */
+  .post-content hr {
+    display: block !important;
+    visibility: visible !important;
+    border: none !important;
+    border-top: 0.4pt solid #bbb !important;
+    margin: 18pt 25% !important;
+    height: 0 !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     SIDENOTE REFERENCES — Superscript in text
+     ═════════════════════════════════════════════════════════════ */
+
+  .sidenote-ref {
+    display: inline !important;
+    visibility: visible !important;
+    font-size: 75% !important;
+    vertical-align: super !important;
+    line-height: 0 !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    border: none !important;
+  }
+
+  .citation-ref {
+    display: inline !important;
+    visibility: visible !important;
+    font-size: 75% !important;
+    vertical-align: super !important;
+    line-height: 0 !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    border: none !important;
+  }
+
+  /* Hide inline citation markers (the author-year text) */
+  .citation-marker {
+    display: none !important;
+  }
+
+  /* Hide original sidenotes — content moved to endnotes by JS */
+  .sidenote,
+  .sidenote-hidden,
+  .citation-sidenote {
+    display: none !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     ENDNOTES SECTION (created by pdf-generator.js beforeprint)
+     ═════════════════════════════════════════════════════════════ */
+
+  .pdf-footnotes-section {
+    display: block !important;
+    visibility: visible !important;
+    margin: 28pt 0 0 0 !important;
+    padding: 10pt 0 0 0 !important;
+    border-top: 0.4pt solid #000 !important;
+    background: white !important;
+    page-break-before: auto !important;
+  }
+
+  .pdf-footnotes-title {
+    display: block !important;
+    font-size: var(--pdf-heading-font-size, 14pt) !important;
+    font-weight: 700 !important;
+    font-family: var(--pdf-font-family, "Palatino Linotype", "Book Antiqua", Palatino,
+                 Georgia, serif) !important;
+    color: #000 !important;
+    margin: 0 0 10pt 0 !important;
+    text-align: left !important;
+    border: none !important;
+    text-indent: 0 !important;
+    line-height: 1.25 !important;
     page-break-after: avoid !important;
   }
-  
-  blockquote, pre, table, img {
-    page-break-inside: avoid !important;
+
+  .pdf-footnotes-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-  
-  /* ============================================ */
-  /* REFERENCES SECTION - PRINT SPECIFIC        */
-  /* ============================================ */
-  
-  /* Ensure references container is visible in print */
-  .references-container,
-  #sidenotes-references {
+
+  .pdf-footnote-item {
+    display: block !important;
+    font-size: var(--pdf-notes-font-size, 9pt) !important;
+    line-height: 1.4 !important;
+    margin: 0 0 4pt 0 !important;
+    padding-left: 1.8em !important;
+    text-indent: -1.8em !important;
+    color: #000 !important;
+    text-align: justify !important;
+    -webkit-hyphens: auto !important;
+    hyphens: auto !important;
+  }
+
+  .pdf-footnote-item,
+  .pdf-footnote-item * {
+    color: #000 !important;
+  }
+
+  .pdf-footnote-number {
+    display: inline !important;
+    font-weight: 700 !important;
+    margin-right: 0.4em !important;
+    font-size: 8pt !important;
+    vertical-align: super !important;
+    line-height: 0 !important;
+    color: #000 !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     BIBLIOGRAPHY (created by pdf-generator.js beforeprint)
+     ═════════════════════════════════════════════════════════════ */
+
+  .pdf-bibliography-section {
     display: block !important;
     visibility: visible !important;
     background: white !important;
     color: #000 !important;
-    margin: 24pt 0 0 0 !important;
+    margin: 22pt 0 0 0 !important;
     padding: 0 !important;
     page-break-before: auto !important;
-    page-break-inside: avoid !important;
+    border: none !important;
+    box-shadow: none !important;
   }
-  
-  /* References title */
-  .references-title {
+
+  .pdf-bibliography-title {
     display: block !important;
     visibility: visible !important;
-    font-size: 13pt !important;
+    font-size: var(--pdf-heading-font-size, 14pt) !important;
     font-weight: 700 !important;
-    font-family: "Arial", "Helvetica", sans-serif !important;
+    font-family: var(--pdf-font-family, "Palatino Linotype", "Book Antiqua", Palatino,
+                 Georgia, serif) !important;
     color: #000 !important;
-    margin: 0 0 12pt 0 !important;
+    margin: 0 0 10pt 0 !important;
     padding: 0 !important;
     text-align: left !important;
     page-break-after: avoid !important;
     background: white !important;
+    border: none !important;
+    border-bottom: none !important;
+    text-indent: 0 !important;
+    line-height: 1.25 !important;
   }
-  
-  /* References list */
-  .references-list {
+
+  .pdf-bibliography-list {
     display: block !important;
     visibility: visible !important;
     margin: 0 !important;
-    padding-left: 18pt !important;
+    padding: 0 !important;
     background: white !important;
+    list-style: none !important;
   }
-  
-  .references-list li {
-    display: list-item !important;
+
+  .pdf-bibliography-item {
+    display: block !important;
     visibility: visible !important;
     color: #000 !important;
-    margin: 6pt 0 !important;
+    margin: 0 0 6pt 0 !important;
     line-height: 1.4 !important;
-    font-size: 10pt !important;
-    list-style-type: decimal !important;
+    font-size: var(--pdf-bibliography-font-size, 9.5pt) !important;
+    list-style: none !important;
+    padding-left: 2em !important;
+    text-indent: -2em !important; /* Hanging indent — LaTeX \bibitem */
+    text-align: left !important;
   }
-  
-  /* ============================================ */
-  /* ACADEMIC SPACING */
-  /* ============================================ */
-  
+
+  .pdf-bibliography-item a {
+    color: #000 !important;
+    word-break: break-all !important;
+    border-bottom: none !important;
+  }
+
+  .pdf-bibliography-item .citation-text,
+  .pdf-bibliography-item .citation-text p {
+    display: inline !important;
+    font-size: inherit !important;
+    margin: 0 !important;
+    text-indent: 0 !important;
+  }
+
+  /* ─── Old references container — hide, replaced by JS ───────── */
+  .references-container,
+  #sidenotes-references,
+  div.references-container,
+  div#sidenotes-references,
+  [data-print-ready].references-container {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     MATH — Preserve MathJax & KaTeX output
+     ═════════════════════════════════════════════════════════════ */
+
+  .MathJax,
+  .MathJax_Display,
+  .mjx-chtml {
+    display: inline-block !important;
+    visibility: visible !important;
+    color: #000 !important;
+  }
+
+  mjx-container {
+    display: inline-block !important;
+    visibility: visible !important;
+    color: #000 !important;
+    font-weight: 400 !important;
+  }
+
+  mjx-container[display="true"] {
+    display: block !important;
+    margin: 12pt auto !important;
+    text-align: center !important;
+  }
+
+  /* MathJax internal SVGs and elements */
+  mjx-container svg,
+  .MathJax svg,
+  .MathJax_Display svg {
+    display: inline !important;
+    visibility: visible !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* ─── KaTeX ─────────────────────────────────────────────────── */
+  .katex {
+    display: inline !important;
+    visibility: visible !important;
+    color: #000 !important;
+    font-weight: 400 !important;
+    font-size: 1em !important;
+  }
+
+  .katex-display {
+    display: block !important;
+    visibility: visible !important;
+    color: #000 !important;
+    margin: 12pt auto !important;
+    text-align: center !important;
+    overflow: visible !important;
+  }
+
+  .katex-display > .katex {
+    display: inline-block !important;
+  }
+
+  /* KaTeX internal SVGs (fraction bars, sqrt signs, etc.) */
+  .katex svg,
+  .katex-display svg,
+  .katex .katex-html svg {
+    display: inline !important;
+    visibility: visible !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* KaTeX internal elements */
+  .katex .katex-html,
+  .katex .katex-mathml,
+  .katex .base,
+  .katex .strut,
+  .katex .mord,
+  .katex .mrel,
+  .katex .mbin,
+  .katex .mopen,
+  .katex .mclose,
+  .katex .mpunct,
+  .katex .minner,
+  .katex .mop,
+  .katex .vlist,
+  .katex .vlist-t,
+  .katex .vlist-r,
+  .katex .vlist-s,
+  .katex .pstrut,
+  .katex .frac-line,
+  .katex .overline-line,
+  .katex .underline-line,
+  .katex .sqrt-line,
+  .katex .sqrt-sign,
+  .katex .rule {
+    color: #000 !important;
+    visibility: visible !important;
+  }
+
+  /* KaTeX fraction lines and rules need visible borders */
+  .katex .frac-line,
+  .katex .overline-line,
+  .katex .sqrt-line {
+    border-color: #000 !important;
+    background: #000 !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     DESCRIPTION LISTS
+     ═════════════════════════════════════════════════════════════ */
+
+  .post-content dl {
+    margin: 8pt 0 !important;
+    text-indent: 0 !important;
+  }
+
+  .post-content dt {
+    font-weight: 700 !important;
+    margin-top: 6pt !important;
+    color: #000 !important;
+    text-indent: 0 !important;
+  }
+
+  .post-content dd {
+    margin-left: 2em !important;
+    margin-bottom: 4pt !important;
+    color: #000 !important;
+    text-indent: 0 !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     PAGE BREAK CONTROL
+     ═════════════════════════════════════════════════════════════ */
+
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  blockquote, pre, table, img, figure, .highlight {
+    page-break-inside: avoid !important;
+  }
+
   .post-content > *:first-child {
     margin-top: 0 !important;
   }
-  
-  .post-content > *:last-child {
-    margin-bottom: 0 !important;
+
+  /* ═════════════════════════════════════════════════════════════
+     MERMAID / DIAGRAMS — Preserve
+     ═════════════════════════════════════════════════════════════ */
+
+  /*
+   * During print the JS converts each Mermaid SVG into an <img>
+   * with class "pdf-mermaid-img".  The original <pre class="mermaid">
+   * is hidden via inline style.  We just need the <img> to display
+   * nicely and override any nuclear-hide that might catch it.
+   */
+  img.pdf-mermaid-img {
+    display: block !important;
+    visibility: visible !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 14pt auto !important;
+    page-break-inside: avoid !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /*
+   * Fallback: if Mermaid hasn't processed an element (no SVG inside),
+   * the raw definition text stays in the <pre>.  Show it as a
+   * readable code block so the reader at least sees the diagram spec.
+   */
+  pre.mermaid,
+  .post-content pre.mermaid,
+  article .post-content pre.mermaid {
+    display: block !important;
+    visibility: visible !important;
+    max-width: 100% !important;
+    margin: 12pt auto !important;
+    page-break-inside: avoid !important;
+    background: #f8f8f8 !important;
+    border: 0.4pt solid #ccc !important;
+    padding: 8pt 10pt !important;
+    font-size: 8.5pt !important;
+    font-family: var(--pdf-code-font-family, "Courier New", Courier, "Liberation Mono", monospace) !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    line-height: 1.3 !important;
+    color: #000 !important;
+    text-align: left !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* ═════════════════════════════════════════════════════════════
+     DETAILS / SUMMARY — Expand for print
+     ═════════════════════════════════════════════════════════════ */
+
+  details {
+    display: block !important;
+  }
+
+  details[open] summary ~ * {
+    display: block !important;
+  }
+
+  summary {
+    font-weight: 700 !important;
+    cursor: default !important;
+  }
+
+  summary::marker {
+    content: "" !important;
   }
 }

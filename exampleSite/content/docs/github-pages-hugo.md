@@ -1,12 +1,12 @@
-+++
-title = "GitHub Pages with Hugo"
-date = 2023-07-03T09:00:00-07:00
-draft = false
-tags = ["github-pages", "hugo", "deployment", "documentation"]
-categories = ["guides", "documentation"]
-toc = true
-description = "How to deploy your PKB-theme site to GitHub Pages using Hugo"
-+++
+---
+title: "GitHub Pages with Hugo"
+date: 2023-07-03T09:00:00-07:00
+draft: false
+tags: ["github-pages", "hugo", "deployment", "documentation"]
+categories: ["documentation"]
+toc: true
+description: "How to deploy your PKB-theme site to GitHub Pages using Hugo"
+---
 
 # Deploying to GitHub Pages with Hugo
 
@@ -103,3 +103,5 @@ After deployment is complete:
 - Configure cache settings
 
 For more details on GitHub Actions deployment, see the [Hugo documentation](https://gohugo.io/hosting-and-deployment/hosting-on-github/).
+
+**Related notes:** [Setting up GitHub Pages](github-pages-setup.md), [Hosting Your Hugo Site](hosting-guide.md), [Deploying with exampleSite](examplesite-deployment.md). See also the [glossary](glossary.md) for shared terminology.

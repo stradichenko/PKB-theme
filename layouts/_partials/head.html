@@ -1,0 +1,70 @@
+<head>
+    {{/* SEO Critical Resources - Must come first */}}
+    {{ partial "seo/preload-resources.html" . }}
+
+    {{/* Consolidated Meta Tags with SEO */}}
+    {{ partial "head/meta.html" . }}
+
+    {{/* Structured Data */}}
+    {{ partial "seo/schema-org.html" . }}
+
+    <!-- Favicon and Apple Touch Icon -->
+    {{ partial "head/favicons.html" . }}
+
+    <!-- Critical CSS -->
+    {{ partial "head/critical-css.html" . }}
+
+    <!-- Main Stylesheet -->
+    {{ partial "head/styles.html" . }}
+    
+    {{/* Math Support - Load early for better rendering */}}
+    {{- if .Params.math -}}
+    <!-- KaTeX CSS - Preload for better performance -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.css"></noscript>
+    
+    <!-- KaTeX JS - Load with high priority -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/mhchem.min.js" as="script">
+    {{- end -}}
+
+    <!-- Site Verification Meta Tags -->
+    {{ with site.Params.seo.google_site_verification }}
+      <meta name="google-site-verification" content="{{ . }}">
+    {{ end }}
+    {{ with site.Params.seo.bing_verification }}
+      <meta name="msvalidate.01" content="{{ . }}">
+    {{ end }}
+    {{ with site.Params.seo.yandex_verification }}
+      <meta name="yandex-verification" content="{{ . }}">
+    {{ end }}
+
+    <!-- Main JavaScript (minified & fingerprinted) -->
+    {{ with resources.Get "js/main.js" }}
+      {{ $mainJS := . | js.Build | minify | fingerprint }}
+      <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
+
+    <!-- PDF Generator -->
+    {{ with resources.Get "js/pdf-generator.js" }}
+      {{ $pdfJS := . | minify | fingerprint }}
+      <script src="{{ $pdfJS.RelPermalink }}" integrity="{{ $pdfJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{ end }}
+
+    {{/* Math rendering scripts - Load after DOM is ready */}}
+    {{- if .Params.math -}}
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/katex.min.js" integrity="sha384-TNnVz4NqBjFIUtubnHyyCWyGiIboUd7yCCtn7k4DwDnkWWqyOEtNKYEELv0jW+NU" crossorigin="anonymous"></script>
+
+    <!-- KaTeX mhchem extension for chemical equations -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/mhchem.min.js" integrity="sha384-fB8BH//9nBzROkMUsu/Dr35jWHIbnKesUo9rW0hfEgw8mZGnkAyBAjKX9F98OVuo" crossorigin="anonymous"></script>
+
+    <!-- KaTeX auto-render extension -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" integrity="sha384-JKXHIJf8PKPyDFptuKZoUyMRQJAmQKj4B4xyOca62ebJhciMYGiDdq/9twUUWyZH" crossorigin="anonymous"></script>
+
+    {{ partial "analytics/matomo.html" . }}
+      <script async src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+      <script async src="https://d3js.org/d3.v7.min.js"></script>
+
+</head>

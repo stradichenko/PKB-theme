@@ -44,17 +44,16 @@
         throw new Error('TensorFlow.js not loaded');
       }
 
-      // Try to set backend, but handle gracefully if it fails
-      try {
-        if (tf.setBackend && typeof tf.setBackend === 'function') {
-          await tf.setBackend('webgl');
-          console.log('TensorFlow.js backend set to WebGL');
-        } else {
-          console.log('TensorFlow.js setBackend not available, using default backend');
-        }
-      } catch (backendError) {
-        console.warn('Failed to set WebGL backend, using default:', backendError);
+      if (typeof tf.ready !== 'function') {
+        throw new Error(
+          'TensorFlow.js failed to initialize (tf.ready is not available). ' +
+          'This is typically caused by a Content Security Policy blocking eval. ' +
+          'Ensure script-src includes \'unsafe-eval\' for TensorFlow.js.'
+        );
       }
+
+      await tf.ready();
+      console.log('TensorFlow.js backend:', tf.getBackend());
       
       // Extract content from embedded data
       const documents = DataManager.getLDADocuments();
@@ -209,12 +208,6 @@
      */
     createTopicDistributionChart: function(processedTopicData) {
       if (!ldaContainer || !chartBars) return;
-      
-      // Check if D3 is available
-      if (typeof d3 === 'undefined') {
-        ldaContainer.innerHTML = '<p>Chart library not available</p>';
-        return;
-      }
 
       // Clear chart bars container
       chartBars.innerHTML = '';

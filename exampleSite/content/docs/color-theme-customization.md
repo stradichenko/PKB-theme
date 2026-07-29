@@ -12,7 +12,7 @@ series: []
 #   part:
 #   total:
 tags: ["color-theory"]
-categories: ["docs"]
+categories: ["components"]
 slug: "color-theme-customization"
 toc: true
 sidenotes: true
@@ -168,3 +168,4 @@ High Chroma is very opinionated
 
 
 60-30-10 rule
+**Related notes:** [Gallery Slider Documentation](gallery-slider.md), [Portfolio Usage](portfolio-usage.md), [Text to Speech](text-to-speech.md). See also the [glossary](glossary.md) for shared terminology.

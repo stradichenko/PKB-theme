@@ -1,0 +1,100 @@
+{{ if eq hugo.Environment "development" }}
+  <!-- Development mode CSS loading -->
+  {{ $cssFiles := slice 
+      "css/global/variables/core.css"
+      "css/global/variables/typography.css"
+      "css/global/variables/layout.css"
+      "css/global/variables/components.css"
+      "css/global/reset.css"
+      "css/body.css"
+      "css/header.css"
+      "css/footer.css"
+      "css/sidenotes.css"
+      "css/components/toc.css"
+      "css/components/table.css"
+      "css/components/blockquote.css"
+      "css/components/citation.css"
+      "css/components/code.css"
+      "css/components/syntax-light.css"
+      "css/components/syntax-dark.css"
+      "css/components/markdown.css"
+      "css/components/knowledge-graph.css"
+      "css/components/lda-analysis.css"
+      "css/components/pdf-button.css"
+      "css/components/tts-button.css"
+      "css/list.css"
+      "css/filters.css"
+      "css/components/recent-posts-grid.css"
+      "css/about-profile.css"
+      "css/portfolio.css"
+      "css/main.css"
+  }}
+  {{ range $cssFiles }}
+    {{ with resources.Get . }}
+      {{ $css := . | fingerprint }}
+      <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
+    {{ end }}
+  {{ end }}
+{{ else }}
+  <!-- Production mode CSS loading -->
+  {{ $cssFiles := slice }}
+  {{ range (slice 
+      "css/global/variables/core.css"
+      "css/global/variables/typography.css"
+      "css/global/variables/layout.css"
+      "css/global/variables/components.css"
+      "css/global/reset.css"
+      "css/body.css"
+      "css/header.css"
+      "css/footer.css"
+      "css/sidenotes.css"
+      "css/components/toc.css"
+      "css/components/table.css"
+      "css/components/blockquote.css"
+      "css/components/citation.css"
+      "css/components/code.css"
+      "css/components/syntax-light.css"
+      "css/components/syntax-dark.css"
+      "css/components/markdown.css"
+      "css/components/knowledge-graph.css"
+      "css/components/lda-analysis.css"
+      "css/components/pdf-button.css"
+      "css/components/tts-button.css"
+      "css/list.css"
+      "css/filters.css"
+      "css/components/recent-posts-grid.css"
+      "css/about-profile.css"
+      "css/portfolio.css"
+      "css/main.css"
+  ) }}
+    {{ with resources.Get . }}
+      {{ $cssFiles = $cssFiles | append . }}
+    {{ end }}
+  {{ end }}
+  {{ if gt (len $cssFiles) 0 }}
+    {{ $combinedCSS := $cssFiles | resources.Concat "css/all.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $combinedCSS.RelPermalink }}" integrity="{{ $combinedCSS.Data.Integrity }}" crossorigin="anonymous">
+  {{ end }}
+{{ end }}
+
+{{/* Use the new caching system */}}
+{{ partial "cache/resource-cache.html" (dict 
+  "bundleKey" "core-styles"
+  "resources" $coreCSS
+  "type" "css"
+  "minify" true
+) }}
+
+<!-- Load independent styles always -->
+{{ $independentCSS := slice
+    "css/search.css"
+    "css/theme-toggle.css"
+    "css/contribution-calendar.css"
+}}
+
+{{ partial "cache/resource-cache.html" (dict 
+  "bundleKey" "independent-styles"
+  "resources" $independentCSS
+  "type" "css"
+  "minify" true
+) }}

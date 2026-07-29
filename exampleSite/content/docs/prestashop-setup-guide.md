@@ -1,12 +1,12 @@
-+++
-title = "PrestaShop Integration Guide"
-date = 2023-08-21T15:00:00-07:00
-draft = false
-tags = ["ecommerce", "prestashop", "self-hosted", "tutorial", "integration"]
-categories = ["guides", "ecommerce"]
-toc = true
-description = "Comprehensive guide for installing and integrating PrestaShop with your PKB-theme project"
-+++
+---
+title: "PrestaShop Integration Guide"
+date: 2023-08-21T15:00:00-07:00
+draft: false
+tags: ["ecommerce", "prestashop", "self-hosted", "tutorial", "integration"]
+categories: ["ecommerce"]
+toc: true
+description: "Comprehensive guide for installing and integrating PrestaShop with your PKB-theme project"
+---
 
 # Setting Up PrestaShop with PKB-theme
 
@@ -370,3 +370,5 @@ For visual consistency between your blog and shop:
 You now have a functional PrestaShop store integrated with your PKB-theme website. This integration allows your readers to seamlessly transition from consuming your content to shopping in your store.
 
 For advanced customization and integration needs, consider consulting with a developer who specializes in both PrestaShop and web development. For assistance and troubleshooting, visit the [PrestaShop Forum](https://www.prestashop.com/forums/) or the [official documentation](https://devdocs.prestashop.com/).
+
+**Related notes:** [Self-Hosted Ecommerce Solutions](ecommerce-solutions.md), [OpenCart Integration](opencart-setup-guide.md), [Saleor Integration](saleor-setup-guide.md). See also the [glossary](glossary.md) for shared terminology.

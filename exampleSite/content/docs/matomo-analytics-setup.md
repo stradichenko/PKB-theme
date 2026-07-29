@@ -1,12 +1,12 @@
-+++
-title = "Matomo Analytics Setup Guide"
-date = 2023-06-10T09:00:00-07:00
-draft = false
-tags = ["analytics", "matomo", "privacy", "self-hosted", "documentation"]
-categories = ["guides", "documentation"]
-toc = true
-description = "Comprehensive guide for setting up Matomo Analytics with your PKB-theme site"
-+++
+---
+title: "Matomo Analytics Setup Guide"
+date: 2023-06-10T09:00:00-07:00
+draft: false
+tags: ["analytics", "matomo", "privacy", "self-hosted", "documentation"]
+categories: ["documentation"]
+toc: true
+description: "Comprehensive guide for setting up Matomo Analytics with your PKB-theme site"
+---
 
 # Matomo Analytics for PKB-theme
 
@@ -1192,80 +1192,4 @@ php console core:update
 
 With Matomo properly set up, you gain powerful analytics capabilities while maintaining full control over your data and respecting visitor privacy. The integration with PKB-theme makes the setup process straightforward, allowing you to focus on analyzing data and improving your site rather than managing infrastructure.
 
-## Data Flow: Internet to Database
-
-```mermaid
-flowchart TD
-    VISITOR[👤 Website Visitor<br/>analytics.krotanote.xyz]
-    DNS[🔗 DNS Resolution<br/>Domain → Server IP]
-    NGINX[📡 Nginx Reverse Proxy<br/>Port 80/443 → Port 8080]
-    MATOMO[🔧 Matomo Container<br/>PHP/Apache on Port 8080]
-    REDIS[⚡ Redis Container<br/>Cache Layer]
-    DATABASE[🗄️ PostgreSQL Container<br/>Data Storage]
-    
-    CONFIG[⚙️ config/ folder<br/>Matomo Settings]
-    LOGS[📋 logs/ folder<br/>Application Logs]
-    PLUGINS[🔌 plugins/ folder<br/>Plugin Code]
-    BACKUPS[💾 backups/ folder<br/>Database Backups]
-
-    VISITOR -->|1. Request| DNS
-    DNS -->|2. Route| NGINX
-    NGINX -->|3. Proxy| MATOMO
-    MATOMO -->|4. Cache| REDIS
-    MATOMO -->|5. Store Data| DATABASE
-    MATOMO -->|6. Read Config| CONFIG
-    MATOMO -->|7. Write Logs| LOGS
-    MATOMO -->|8. Load Plugins| PLUGINS
-    DATABASE -->|9. Backup| BACKUPS
-```
-
-### Understanding the Data Flow
-
-1. **Visitor Request**: User types `analytics.krotanote.xyz` in browser
-2. **DNS Resolution**: Domain points to your server's IP address  
-3. **Reverse Proxy**: Nginx receives request on port 80/443, forwards to Docker container on port 8080
-4. **Matomo Processing**: Container serves the Matomo interface and processes tracking data
-5. **Caching Layer**: Redis stores frequently accessed data for performance
-6. **Database Storage**: PostgreSQL stores all visitor tracking data permanently
-7. **Configuration**: Matomo reads settings from mounted config files
-8. **Logging**: Application writes access/error logs to mounted log directory
-9. **Plugin System**: Custom plugins loaded from mounted plugins directory
-10. **Backup Process**: Automated backups save database to mounted backup directory
-
-### Data Path Summary
-```
-Internet → DNS → Nginx (Port 80/443) → Docker Matomo (Port 8080) → Redis + PostgreSQL
-                                    ↓
-                              Host File System (config/, logs/, plugins/, backups/)
-```
-
-This flow shows how your containerized setup isolates services while maintaining data persistence through volume mounts.
-    %% Styling
-    classDef visitor fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    classDef network fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef container fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
-    classDef storage fill:#fff3e0,stroke:#f57c00,stroke-width:2px
-    classDef data fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    
-    class VISITOR,BROWSER visitor
-    class DNS,NGINX network
-    class MATOMO_CONTAINER,REDIS_CONTAINER,DB_CONTAINER container
-    class CONFIG_FILES,LOG_FILES,PLUGIN_FILES storage
-    class BACKUP_FILES data
-```
-
-### Understanding the Data Flow
-
-1. **Visitor Request**: User types `analytics.krotanote.xyz` in browser
-2. **DNS Resolution**: Domain points to your server's IP address
-3. **Reverse Proxy**: Nginx receives request on port 80/443, forwards to Docker container on port 8080
-4. **Matomo Response**: Container serves the Matomo interface with tracking JavaScript
-5. **JavaScript Execution**: Browser runs tracking code, sends analytics data back
-6. **Caching Layer**: Redis stores frequently accessed data for performance
-7. **Database Storage**: PostgreSQL stores all visitor tracking data permanently
-8. **Configuration**: Matomo reads settings from mounted config files
-9. **Logging**: Application writes access/error logs to mounted log directory
-10. **Plugin System**: Custom plugins loaded from mounted plugins directory
-11. **Backup Process**: Automated backups save database to mounted backup directory
-
-This flow shows how your containerized setup isolates services while maintaining data persistence through volume mounts.
+**Related notes:** [Self-Hosted Analytics](analytics-setup.md), [Analytics Configuration](analytics-configuration.md), [Reverse Proxy Configuration](reverse-proxy-setup.md). See also the [glossary](glossary.md) for shared terminology.

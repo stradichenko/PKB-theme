@@ -12,7 +12,7 @@ series: []
 #   part:
 #   total:
 tags: []
-categories: []
+categories: ["components"]
 slug: "portfolio-usage"
 toc: true
 sidenotes: true
@@ -21,3 +21,5 @@ alt: "" # Alt text for the header image (accessibility)
 ---
 
 Add your post content here...
+
+**Related notes:** [Color Theme Customization](color-theme-customization.md), [Gallery Slider Documentation](gallery-slider.md). See also the [glossary](glossary.md) for shared terminology.

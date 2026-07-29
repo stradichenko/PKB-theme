@@ -1,11 +1,12 @@
 {{ define "main" }}
-  {{- $jsonURL := (.OutputFormats.Get "JSON").RelPermalink }}
-  {{ with $jsonURL }}
+  {{- $indexingEnabled := site.Params.portfolioIndexing | default true -}}
+  {{- $jsonURL := "" -}}
+  {{- if $indexingEnabled -}}
+    {{- $jsonURL = (.OutputFormats.Get "JSON").RelPermalink -}}
+    {{ with $jsonURL }}
     <link rel="preload" as="fetch" href="{{ . }}" type="application/json">
-  {{ end }}
-  
-  <!-- Add portfolio CSS -->
-  <link rel="stylesheet" href="/assets/css/portfolio.css">
+    {{ end }}
+  {{- end -}}
 
   <div class="portfolio-container">
     <header class="portfolio-header">
@@ -58,7 +59,7 @@
       <p>Loading portfolio...</p>
     </div>
 
-    <div class="portfolio-grid" id="portfolioGrid" data-json-url="{{ $jsonURL }}">
+    <div class="portfolio-grid" id="portfolioGrid" data-json-url="{{ $jsonURL }}" data-indexing-enabled="{{ $indexingEnabled }}">
       <!-- Masonry columns will be rendered here -->
     </div>
 

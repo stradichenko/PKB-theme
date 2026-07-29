@@ -12,12 +12,12 @@
     "validate-seo": "node scripts/validate-seo.js"
   },
   "devDependencies": {
-    "sharp": "^0.32.0",
-    "glob": "^8.0.0",
+    "sharp": "^0.34.0",
+    "glob": "^11.0.0",
     "cheerio": "^1.0.0"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.17.0"
   },
   "repository": {
     "type": "git",

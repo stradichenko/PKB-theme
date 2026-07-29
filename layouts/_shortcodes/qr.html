@@ -1,0 +1,21 @@
+{{/* QR shortcode - generates the QR code locally via images.QR (Hugo 0.141+), no external service */}}
+{{ $text := .Get "text" | default (.Inner | .Page.RenderString) }}
+{{ $level := .Get "level" | default "medium" }}
+{{ $size := .Get "size" | default 200 }}
+{{ $alt := .Get "alt" | default "QR code" }}
+{{ $class := .Get "class" | default "qr-code" }}
+{{ $id := .Get "id" }}
+{{ $loading := .Get "loading" | default "lazy" }}
+{{ $qrImage := images.QR $text (dict "size" $size "level" $level) }}
+
+<div class="qr-code-wrapper">
+  <img
+    src="{{ $qrImage.RelPermalink }}"
+    alt="{{ $alt }}"
+    {{ with $id }}id="{{ . }}"{{ end }}
+    class="{{ $class }}"
+    loading="{{ $loading }}"
+    width="{{ $size }}"
+    height="{{ $size }}"
+  />
+</div>

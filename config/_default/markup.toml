@@ -1,0 +1,17 @@
+# Goldmark markdown extensions for Obsidian/PKB compatibility.
+#
+# This lives in its own file (not hugo.toml) because a theme file named
+# hugo.toml in config/_default is shadowed when the consuming site has its
+# own config/_default/hugo.toml, which exampleSite does. Distinct filenames
+# merge; same-named files do not.
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      footnote = true  # Obsidian-style [^label] footnotes
+      [markup.goldmark.extensions.passthrough]
+        # Protect $$...$$ and \(...\) math from markdown interpretation;
+        # layouts/_default/_markup/render-passthrough.html re-emits the
+        # delimiters so the theme's KaTeX auto-render (math: true) typesets it.
+        enable = true
+        delimiters = { block = [['\[', '\]'], ['$$', '$$']], inline = [['\(', '\)']] }

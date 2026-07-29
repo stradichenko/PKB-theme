@@ -1,12 +1,12 @@
-+++
-title = "Setting up GitHub Pages"
-date = 2023-07-01T09:00:00-07:00
-draft = false
-tags = ["github-pages", "setup", "documentation"]
-categories = ["guides", "documentation"] 
-toc = true
-description = "A comprehensive guide to set up GitHub Pages with PKB-theme"
-+++
+---
+title: "Setting up GitHub Pages"
+date: 2023-07-01T09:00:00-07:00
+draft: false
+tags: ["github-pages", "setup", "documentation"]
+categories: ["documentation"]
+toc: true
+description: "A comprehensive guide to set up GitHub Pages with PKB-theme"
+---
 
 # Setting up GitHub Pages with PKB-theme
 
@@ -82,3 +82,5 @@ After setup, your site will be available at `https://username.github.io/PKB-them
 - Configure additional settings in `_config.yml`
 
 For more details on GitHub Pages, visit the [official documentation](https://docs.github.com/en/pages).
+
+**Related notes:** [GitHub Pages with Hugo](github-pages-hugo.md), [Hosting Your Hugo Site](hosting-guide.md), [Deploying with exampleSite](examplesite-deployment.md). See also the [glossary](glossary.md) for shared terminology.

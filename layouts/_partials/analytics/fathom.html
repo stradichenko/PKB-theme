@@ -1,0 +1,6 @@
+{{- with .Site.Params.analytics -}}
+  {{- if .fathom -}}
+    <!-- Fathom Analytics -->
+    <script src="{{ .fathomScriptSrc }}" site="{{ .fathomSiteId }}" defer></script>
+  {{- end -}}
+{{- end -}}

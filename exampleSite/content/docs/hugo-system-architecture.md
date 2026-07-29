@@ -1,0 +1,60 @@
+---
+title: "How the Hugo System Works (as of 2026-07-29)"
+author: "Your Name"
+date: 2026-07-29T12:00:00+02:00
+lastmod: 2026-07-29T12:00:00+02:00
+draft: false
+description: "Dated architecture reference for the PKB-theme Hugo system: version floor, module and config model, template lookup, content pipeline, feature subsystems, CI, and known quirks."
+comments: false
+series: []
+tags: ["Hugo", "architecture", "render hooks", "Hugo Modules", "search", "syntax highlighting", "CI"]
+categories: ["development"]
+slug: "hugo-system-architecture"
+toc: true
+sidenotes: true
+---
+
+# How the Hugo System Works (as of 2026-07-29)
+
+This note documents the Hugo architecture of PKB-theme as it stands today, after the alignment with Hugo v0.164.0. It is a dated snapshot: Hugo moves quickly, so check the version floor and the [SOTA survey](SOTA_hugo.md) before relying on details here.
+
+## Version floor and why
+
+The theme requires **Hugo v0.164.0** (`theme.toml` `min_version`, CI pin, README). The floor is set by four features the theme now depends on: `useEmbedded` render-hook enums (v0.148.0), the `locale` config key replacing `languageCode` (v0.158.0), per-format imaging config plus `[imaging.meta]` (v0.163.0), and Chroma dark/light style pairs (v0.164.0). The v0.146 template-system rewrite shapes the entire `layouts/` tree.
+
+## Module and configuration model
+
+The theme is consumed as a **Hugo Module** (`module.imports` with `github.com/stradichenko/PKB-theme`); the exampleSite mounts the theme's `static`, `assets`, `content`, `layouts`, and `archetypes` directories and uses a `replace` directive to the local checkout for development. The critical rule, documented in the README: when the theme is imported as a module, Hugo merges only its **`params`, `menus`, and `languages`** config. Everything else in `config/_default/hugo.toml` (markup, outputs, imaging, caches) applies only to `themes/`-directory installs.
+
+Three consequences follow. First, Goldmark extensions (footnote, passthrough) and `noClasses = false` for syntax highlighting must live in the **site** config, which is why `exampleSite/config/_default/hugo.toml` carries a `[markup]` section and the theme ships a reference `config/_default/markup.toml` for `themes/` installs. Second, the theme's `[outputs]` table does not reach module consumers, which shaped the search design described below. Third, `[imaging]` tuning (per-format quality, `[imaging.meta]` fields) silently does nothing for module consumers unless copied into the site config.
+
+## Template system (v0.146 model)
+
+Templates follow the current Hugo layout model; there is no `_default/` directory. Standard templates live at `layouts/` root: `baseof.html`, `home.html`, `list.html`, `single.html`, plus the custom-layout templates `about.html` and `search.html` selected by front matter `layout`. Helper templates live in `layouts/_partials/`, shortcodes in `layouts/_shortcodes/`, and Markdown render hooks in `layouts/_markup/` (the documented hook set: `render-link`, `render-passthrough`, `render-codeblock-mermaid`, `render-codeblock-goat`). Output-format templates follow the `<name>.<outputformat>` grammar: `home.json` (search index generator for the legacy home JSON output) and `search.json` (the same generator attached to the search page). The `layouts/portfolio/` directory matches the `/portfolio` page path (front matter `type: portfolio` maps to the path), holding `portfolio.html` for HTML and `single.json` for the portfolio metadata JSON. List pages (sections, taxonomies, terms) all render through `list.html`.
+
+## Content pipeline
+
+Markdown is parsed by Goldmark with the `footnote` and `passthrough` extensions enabled in site config. Passthrough lifts `$$...$$` / `\[...\]` block math and `\(...\)` inline math out of the Markdown stream; the `render-passthrough` hook re-emits the delimiters for **KaTeX**, which is the single math renderer (MathJax was removed; math assets load only on pages with `math: true`). The `render-link` hook rewrites Obsidian-style relative `.md` links against `.Page.File.Dir` and marks resolved internal links with `data-internal-link`. Code blocks route by language: `mermaid` and `goat` fences go to their render hooks, everything else to Chroma. Citations and sidenotes use `.Page.Store` (the deprecated `.Page.Scratch` alias was removed from the shortcodes).
+
+## Feature subsystems
+
+**Syntax highlighting** is class-based Chroma (`noClasses = false` in site config). Colors come from two generated stylesheets, `syntax-light.css` and `syntax-dark.css` (produced by `hugo gen chromastyles --modeSelector` and re-scoped to `html[data-theme=...]`), so code blocks follow the theme's light/dark toggle, including in PDF print.
+
+**Search** avoids the home JSON output entirely. The theme ships `content/search.md` (`layout: "search"`, `outputs: ["HTML", "JSON"]`), which renders `/search/index.html` (the search page) and `/search/index.json` (the index, generated by `layouts/search.json`). `fuzzy-search.js` fetches `/search/index.json` first and falls back to `/index.json` for sites that do generate the home JSON. This works for module consumers without any `[outputs]` config, and it dodges an intermittent Hugo panic observed with the home JSON output (see Known quirks).
+
+**Images** use per-format quality (`[imaging.jpeg]` and `[imaging.webp]` at 85) and the `[imaging.meta]` field/source allowlists for EXIF extraction via `.Meta` (the deprecated `.Exif` accessor was replaced). Portfolio "optimized" derivatives are capped at 2400 px because full-resolution WebP encoding of very large sources exhausts the WASM encoder. QR codes are generated locally with `images.QR`; the external qrserver.com dependency is gone.
+
+**SEO and syndication**: the sitemap is Hugo's native `[sitemap]` output (the legacy Node `generate-sitemap.js` was retired), RSS links resolve through `.Site.Home.OutputFormats.Get "RSS"`, and Open Graph / JSON-LD remain hand-rolled partials.
+
+## CI and deployment
+
+`.github/workflows/test.yml` builds the exampleSite against a matrix: the pinned floor `0.164.0` (must pass) and `latest` (allowed to fail, early warning), plus a weekly cron so upstream breaking changes (Goldmark v2, the `_internal` deprecation, both on the v0.165 horizon) surface before they hit a PR. Validation uses htmltest with `--skip-external`. `.github/workflows/hugo.yml` deploys to GitHub Pages on Hugo `0.164.0`. Only two branches are kept: `main` and `gh-pages`.
+
+## Known quirks
+
+- The build prints one upstream deprecation warning, `.Site.AllPages`, during the assemble step. No template in the theme, exampleSite, or Hugo's own embedded set calls it; it is an upstream internal quirk and harmless.
+- An intermittent `paths.BaseRel` panic was observed during this upgrade: deterministic for stretches, then irreproducible after the machine's Hugo cache state changed, and not triggered by any single config or content element (documented in a local bug-report draft, to be filed if it resurfaces). The search design above makes the site indifferent to it.
+- Portfolio EXIF fields appear in the metadata JSON only when the source images actually carry EXIF; the bundled demo images are stripped, so the fields are absent there by design.
+- The pre-v0.146 layout structure still works via backward compatibility, but the theme now uses the current structure exclusively; do not reintroduce `layouts/_default/`, `layouts/partials/`, or `layouts/shortcodes/`.
+
+**Related notes:** [SOTA: Hugo](SOTA_hugo.md), [Creating Posts with Hugo](creating-posts.md), [Hugo SEO Implementation Guide](hugo-seo.md), [Development Tips](development-tips.md). See also the [glossary](glossary.md) for shared terminology.

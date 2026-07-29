@@ -1,5 +1,5 @@
 baseURL = 'https://example.org/'
-languageCode = 'en-us'
+locale = 'en-us'  # Hugo 0.158+: replaces languageCode
 title = 'HUGO_site'
 
 enableGitInfo = true
@@ -28,15 +28,9 @@ enableGitInfo = true
 
 [caches]
   [caches.assets]
-    dir = ":resourceDir/_gen"
-    maxAge = "1h"
-  
-  [caches.getcsv]
-    maxAge = "10s"
-  
-  [caches.getjson]
-    maxAge = "10s"
-  
+    dir = ':resourceDir/_gen'
+    maxAge = -1
+  # getcsv/getjson caches removed: the cache names were dropped in Hugo 0.156
   [caches.getresource]
     maxAge = "1h"
   
@@ -75,29 +69,38 @@ enableRobotsTXT = true
 [imaging]
   anchor = 'Smart'
   bgColor = '#ffffff'
-  hint = 'photo'
-  quality = 85
   resampleFilter = 'Lanczos'
-  # Add EXIF processing options
-  [imaging.exif]
-    includeFields = "DateTimeOriginal|Make|Model|LensModel|ExposureTime|FNumber|ISOSpeedRatings" #  includeFields = ".*" 
-    excludeFields = ""
-    disableDate = false
-    disableLatLong = true # disableLatLong = false
+  # Per-format encoding settings (Hugo 0.163+: global quality/hint deprecated)
+  [imaging.jpeg]
+    quality = 85
+  [imaging.webp]
+    quality = 85
+    hint = 'photo'
+  # Metadata extraction (Hugo 0.155+: replaces imaging.exif includeFields/disableLatLong)
+  [imaging.meta]
+    fields = ['DateTimeOriginal', 'Make', 'Model', 'LensModel', 'ExposureTime', 'FNumber', 'ISOSpeedRatings']
+    sources = ['exif', 'iptc']
 
 [markup]
+  [markup.highlight]
+    # Class-based highlighting (Hugo 0.164+): colors come from the generated
+    # syntax-light.css / syntax-dark.css pairs scoped to html[data-theme=...]
+    noClasses = false
   [markup.goldmark]
     [markup.goldmark.renderHooks]
       [markup.goldmark.renderHooks.image]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+: replaces enableDefault = true
       [markup.goldmark.renderHooks.link]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+: replaces enableDefault = true
     [markup.goldmark.renderer]
       unsafe = true  # This allows raw HTML in markdown files
     [markup.goldmark.parser]
       [markup.goldmark.parser.attribute]
         block = true
         title = true
+    # NOTE: markup extensions (footnote, passthrough) live in markup.toml,
+    # because this file (hugo.toml) is shadowed when the consuming site has
+    # its own config/_default/hugo.toml. See markup.toml.
 
 [mediaTypes]
   [mediaTypes.'application/json']
@@ -231,11 +234,11 @@ enableRobotsTXT = true
   [minify.tdewolff]
     [minify.tdewolff.css]
       inline = false
-      keepCSS2 = true
+      version = 2  # Hugo 0.150+: replaces keepCSS2 = true
       precision = 0
     [minify.tdewolff.html]
       keepComments = false
-      keepConditionalComments = false
+      # keepConditionalComments removed (deprecated Hugo 0.150); keepSpecialComments covers it
       keepDefaultAttrVals = true
       keepDocumentTags = true
       keepEndTags = true
@@ -429,13 +432,13 @@ enableRobotsTXT = true
     weight = 0
 
 [outputs]
-  # JSON output is required for search functionality
-  # The search index (/index.json) includes only pages from sections defined in params.taxonomies.mainSections
-  home = ['HTML', 'RSS', 'JSON', 'headers']
-  page = ['HTML', 'JSON'] # needed for portfolio.json
+  # JSON on home generates the search index (/index.json)
+  # Portfolio pages opt-in via front matter: outputs: ["html","json"]
+  home = ['HTML', 'RSS', 'JSON']
+  page = ['HTML']
   rss = ['RSS']
-  section = ['HTML', 'RSS', 'JSON']
-  taxonomy = ['HTML', 'RSS', 'JSON']
+  section = ['HTML', 'RSS']
+  taxonomy = ['HTML', 'RSS']
   term = ['HTML', 'RSS']
 
 

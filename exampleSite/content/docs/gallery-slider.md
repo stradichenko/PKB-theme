@@ -8,7 +8,7 @@ description: "Complete guide to using the gallery slider component with examples
 comments: false
 series: []
 tags: ["gallery", "slider", "images", "components", "documentation"]
-categories: ["documentation", "components"]
+categories: ["components"]
 slug: "gallery-slider"
 toc: true
 sidenotes: true
@@ -385,3 +385,5 @@ This approach allows you to define gallery images in frontmatter and reference t
 ```
 
 This approach allows you to define gallery images in frontmatter and reference them in your content, making management easier for large galleries.
+
+**Related notes:** [Color Theme Customization](color-theme-customization.md), [Portfolio Usage](portfolio-usage.md). See also the [glossary](glossary.md) for shared terminology.

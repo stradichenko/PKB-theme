@@ -1,17 +1,29 @@
 baseURL      = "https://stradichenko.github.io/PKB-theme/"
-#languageCode = "en-us"
+#locale = "en-us"  # Hugo 0.158+: replaces languageCode
 title        = "PKB-theme Demo"
 
 
 [markup]
+  [markup.highlight]
+    # Class-based highlighting (Hugo 0.164+): colors come from the theme's
+    # generated syntax-light.css / syntax-dark.css pairs scoped to html[data-theme=...]
+    noClasses = false
   [markup.goldmark]
     [markup.goldmark.renderHooks]
       [markup.goldmark.renderHooks.image]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+
       [markup.goldmark.renderHooks.link]
-        enableDefault = true
+        useEmbedded = 'fallback'  # Hugo 0.148+
     [markup.goldmark.renderer]
       unsafe = true  # This allows raw HTML in markdown files
+    [markup.goldmark.extensions]
+      footnote = true  # Obsidian-style [^label] footnotes
+      [markup.goldmark.extensions.passthrough]
+        # Required for $$...$$ math; the theme's render-passthrough.html hook
+        # re-emits delimiters for KaTeX. NOTE: this must live in the SITE
+        # config; theme-provided markup config is not merged for module imports.
+        enable = true
+        delimiters = { block = [['\[', '\]'], ['$$', '$$']], inline = [['\(', '\)']] }
 
 [module]
   [[module.imports]]

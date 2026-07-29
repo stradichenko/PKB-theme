@@ -1,12 +1,12 @@
-+++
-title = "OpenCart Integration Guide"
-date = 2023-08-20T14:00:00-07:00
-draft = false
-tags = ["ecommerce", "opencart", "self-hosted", "tutorial", "integration"]
-categories = ["guides", "ecommerce"]
-toc = true
-description = "Step-by-step guide for setting up and integrating OpenCart with your PKB-theme project"
-+++
+---
+title: "OpenCart Integration Guide"
+date: 2023-08-20T14:00:00-07:00
+draft: false
+tags: ["ecommerce", "opencart", "self-hosted", "tutorial", "integration"]
+categories: ["ecommerce"]
+toc: true
+description: "Step-by-step guide for setting up and integrating OpenCart with your PKB-theme project"
+---
 
 # Setting Up OpenCart with PKB-theme
 
@@ -258,3 +258,5 @@ For a seamless experience:
 You now have a fully functional OpenCart store integrated with your PKB-theme website. Remember to regularly update both platforms to ensure security and functionality. For advanced customization, consider hiring a developer familiar with both OpenCart and Hugo to create a more seamless integration.
 
 For troubleshooting and support, visit the [OpenCart Forum](https://forum.opencart.com/) or refer to the [official documentation](https://docs.opencart.com/).
+
+**Related notes:** [Self-Hosted Ecommerce Solutions](ecommerce-solutions.md), [PrestaShop Integration](prestashop-setup-guide.md), [Saleor Integration](saleor-setup-guide.md). See also the [glossary](glossary.md) for shared terminology.

@@ -1,0 +1,7 @@
+{{- $counter := .Page.Store.Get "sidenoteCounter" | default 0 -}}
+{{- $counter = add $counter 1 -}}
+{{- .Page.Store.Set "sidenoteCounter" $counter -}}
+{{- $letter := printf "%c" (add $counter 96) -}}
+{{- $content := .Inner | markdownify -}}
+{{- $cleanContent := $content | plainify -}}
+{{- printf `<sup class="sidenote-ref" title="%s">%s</sup><span class="sidenote sidenote-hidden" lang="%s"><sup class="sidenote-sup">%s.</sup>%s</span>` $cleanContent $letter (.Site.Language.Lang | default "en") $letter $content | safeHTML -}}

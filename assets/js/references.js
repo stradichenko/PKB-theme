@@ -25,28 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initReferences, 800);
   });
   
-  // Handle print events to prevent interference
-  window.addEventListener('beforeprint', () => {
-    console.log('Before print event - ensuring references are stable');
-    // Ensure references are created before print
-    initReferences();
-    // Small delay to let DOM settle
-    setTimeout(() => {
-      console.log('References ready for print');
-    }, 100);
-  });
-  
-  // Clean up after print if needed
-  window.addEventListener('afterprint', () => {
-    console.log('After print event');
-  });
+  // Print layout is handled entirely by pdf-generator.js
+  // Do NOT re-create references in beforeprint — it would duplicate them
 });
 
 function initReferences() {
   console.log('Initializing references');
   
-  // Check if we're in the middle of printing
-  if (window.matchMedia && window.matchMedia('print').matches) {
+  // Check if we're in the middle of printing or print prep
+  if ((window.matchMedia && window.matchMedia('print').matches) ||
+      document.body.classList.contains('pdf-printing')) {
     console.log('Print mode active, skipping dynamic references creation');
     return;
   }

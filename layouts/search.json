@@ -1,0 +1,17 @@
+{{- $mainSections := .Site.Params.taxonomies.mainSections | default (slice "posts" "docs" "blog") -}}
+{{- $pages := where .Site.RegularPages "Type" "in" $mainSections -}}
+{{- $searchData := slice -}}
+{{- range $pages -}}
+  {{- if not .Params.private -}}
+    {{- $searchData = $searchData | append (dict
+        "title" .Title
+        "content" (.Plain | truncate 1000)
+        "url" .RelPermalink
+        "date" (.Date.Format "2006-01-02")
+        "section" .Section
+        "tags" (.Params.tags | default (slice))
+        "categories" (.Params.categories | default (slice))
+    ) -}}
+  {{- end -}}
+{{- end -}}
+{{- $searchData | jsonify -}}
