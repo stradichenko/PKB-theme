@@ -18,13 +18,10 @@
 
   FuzzySearch.prototype.loadSearchData = function() {
     var self = this;
-    // Use relative URL - this will work with any baseURL including subpaths
-    var indexUrl = '/index.json';
-    
     // For sites with subpath (like GitHub Pages), get the full path from current location
     var currentPath = window.location.pathname;
     var basePath = '';
-    
+
     // If we're in a subpath (not root), extract the base path
     if (currentPath !== '/' && currentPath.indexOf('/') === 0) {
       var pathParts = currentPath.split('/').filter(function(part) { return part.length > 0; });
@@ -33,38 +30,38 @@
         basePath = '/' + pathParts[0];
       }
     }
-    
-    indexUrl = basePath + '/index.json';
-    
-    return fetch(indexUrl)
-      .then(function(response) {
+
+    // Primary: the dedicated search page shipped by the theme (works without
+    // enabling the home JSON output). Fallback: legacy home JSON output.
+    var candidateUrls = [basePath + '/search/index.json', basePath + '/index.json'];
+
+    var fetchIndex = function(url) {
+      return fetch(url).then(function(response) {
         if (response.ok) {
           return response.json();
-        } else {
-          throw new Error('Search index not found (HTTP ' + response.status + ') at ' + window.location.origin + indexUrl);
         }
-      })
-      .then(function(data) {
-        if (Array.isArray(data) && data.length > 0) {
-          self.searchData = data;
-          console.log('Search index loaded with ' + data.length + ' pages');
-        } else {
-          console.warn('Search index is empty or invalid');
-          self.searchData = [];
-        }
-        self.buildSearchIndex();
-      })
+        throw new Error('HTTP ' + response.status);
+      });
+    };
+
+    var applyData = function(data) {
+      if (Array.isArray(data) && data.length > 0) {
+        self.searchData = data;
+        console.log('Search index loaded with ' + data.length + ' pages');
+      } else {
+        console.warn('Search index is empty or invalid');
+        self.searchData = [];
+      }
+      self.buildSearchIndex();
+    };
+
+    return fetchIndex(candidateUrls[0])
+      .catch(function() { return fetchIndex(candidateUrls[1]); })
+      .then(applyData)
       .catch(function(error) {
-        console.warn('Could not load search data:', error.message);
-        console.info('GitHub Pages Debug: Ensure these Hugo config settings:');
-        console.info('1. In hugo.toml: outputs.home = ["HTML", "RSS", "JSON"]');
-        console.info('2. In params.toml: taxonomies.mainSections = ["posts", "docs", etc.]');
-        console.info('3. File exists: layouts/index.json');
-        console.info('4. Content exists in mainSections directories');
-        console.info('5. For GitHub Pages: baseURL should match your site URL exactly');
-        console.info('Current pathname:', currentPath);
-        console.info('Constructed base path:', basePath);
-        console.info('Final fetch URL:', window.location.origin + indexUrl);
+        console.warn('Could not load search data from ' + candidateUrls.join(' or ') + ': ' + error.message);
+        console.info('Search setup: the theme ships content/search.md (layout "search", outputs ["HTML","JSON"]), which generates /search/index.json without the home JSON output.');
+        console.info('Legacy setup: outputs.home = ["HTML", "RSS", "JSON"] plus layouts/home.json generates /index.json.');
         self.searchData = [];
         self.buildSearchIndex();
       });
