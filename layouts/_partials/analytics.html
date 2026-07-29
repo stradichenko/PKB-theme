@@ -1,4 +1,6 @@
-{{/* Include Matomo Analytics */}}
+<!-- Self-hosted analytics partials - Privacy-respecting analytics solutions -->
+{{ partial "analytics/plausible.html" . }}
+{{ partial "analytics/umami.html" . }}
 {{ partial "analytics/matomo.html" . }}
-
-{{/* Add other analytics services here if needed */}}
+{{ partial "analytics/fathom.html" . }}
+{{ partial "analytics/shynet.html" . }}

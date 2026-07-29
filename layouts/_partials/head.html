@@ -1,19 +1,19 @@
 <head>
     {{/* SEO Critical Resources - Must come first */}}
     {{ partial "seo/preload-resources.html" . }}
-
+    
     {{/* Consolidated Meta Tags with SEO */}}
     {{ partial "head/meta.html" . }}
-
+    
     {{/* Structured Data */}}
     {{ partial "seo/schema-org.html" . }}
-
+    
     <!-- Favicon and Apple Touch Icon -->
     {{ partial "head/favicons.html" . }}
-
+    
     <!-- Critical CSS -->
     {{ partial "head/critical-css.html" . }}
-
+    
     <!-- Main Stylesheet -->
     {{ partial "head/styles.html" . }}
     
@@ -31,26 +31,31 @@
 
     <!-- Site Verification Meta Tags -->
     {{ with site.Params.seo.google_site_verification }}
-      <meta name="google-site-verification" content="{{ . }}">
+    <meta name="google-site-verification" content="{{ . }}">
     {{ end }}
     {{ with site.Params.seo.bing_verification }}
-      <meta name="msvalidate.01" content="{{ . }}">
+    <meta name="msvalidate.01" content="{{ . }}">
     {{ end }}
     {{ with site.Params.seo.yandex_verification }}
-      <meta name="yandex-verification" content="{{ . }}">
+    <meta name="yandex-verification" content="{{ . }}">
     {{ end }}
 
-    <!-- Main JavaScript (minified & fingerprinted) -->
+    <!-- Include analytics scripts -->
+    {{ partial "analytics.html" . }}
+
+    <!-- JavaScript loading - Deferred for performance -->
     {{ with resources.Get "js/main.js" }}
-      {{ $mainJS := . | js.Build | minify | fingerprint }}
-      <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+        {{ $mainJS := . | js.Build | minify | fingerprint }}
+        <script src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
     {{ end }}
-
+    
     <!-- PDF Generator -->
-    {{ with resources.Get "js/pdf-generator.js" }}
-      {{ $pdfJS := . | minify | fingerprint }}
-      <script src="{{ $pdfJS.RelPermalink }}" integrity="{{ $pdfJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
-    {{ end }}
+    {{ $pdfJS := resources.Get "js/pdf-generator.js" | minify | fingerprint }}
+    <script src="{{ $pdfJS.RelPermalink }}" integrity="{{ $pdfJS.Data.Integrity }}" crossorigin="anonymous" defer></script>
+    
+    <!-- Load scrollbar fade functionality -->
+    {{ $scrollbarFadeJS := resources.Get "js/scrollbar-fade.js" | minify }}
+    <script src="{{ $scrollbarFadeJS.RelPermalink }}" defer></script>
 
     {{/* Math rendering scripts - Load after DOM is ready */}}
     {{- if .Params.math -}}
@@ -63,8 +68,22 @@
     <!-- KaTeX auto-render extension -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.32/dist/contrib/auto-render.min.js" integrity="sha384-JKXHIJf8PKPyDFptuKZoUyMRQJAmQKj4B4xyOca62ebJhciMYGiDdq/9twUUWyZH" crossorigin="anonymous"></script>
 
-    {{ partial "analytics/matomo.html" . }}
-      <script async src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
-      <script async src="https://d3js.org/d3.v7.min.js"></script>
-
+    <!-- KaTeX Configuration -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false,
+            errorColor: '#cc0000',
+            strict: false,
+            trust: true,
+        });
+    });
+    </script>
+    {{- end -}}
 </head>

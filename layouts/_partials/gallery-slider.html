@@ -10,13 +10,15 @@
     <!-- Image slides -->
     <div class="gallery-slider__track" role="region" aria-label="Image gallery">
       {{- range $index, $image := $images }}
-      <div class="gallery-slider__slide{{ if eq $index 0 }} gallery-slider__slide--active{{ end }}">
+      <div class="gallery-slider__slide {{ if eq $index 0 }}gallery-slider__slide--active{{ end }}{{ if $image.caption }} gallery-slider__slide--has-caption{{ end }}" 
+           data-slide="{{ $index }}"
+           role="group" 
+           aria-roledescription="slide"
+           aria-label="Slide {{ add $index 1 }} of {{ len $images }}">
         <img src="{{ $image.src }}" 
-             alt="{{ $image.alt | default "" }}" 
+             alt="{{ $image.alt | default $image.caption }}"
              class="gallery-slider__image"
-             width="{{ $image.width | default 800 }}"
-             height="{{ $image.height | default 600 }}"
-             style="aspect-ratio: {{ $image.width | default 800 }} / {{ $image.height | default 600 }};">
+             loading="{{ if eq $index 0 }}eager{{ else }}lazy{{ end }}">
         {{- if $image.caption }}
         <div class="gallery-slider__caption">
           {{ $image.caption | markdownify }}

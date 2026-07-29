@@ -14,6 +14,7 @@
 | jsonify -}}
 {{- else -}}
 {{- $supportedFormats := slice "jpg" "jpeg" "png" "webp" "gif" "tiff" "tif" -}}
+{{- $thumbnailSizes := slice "300x300" "600x400" "1200x800" -}}
 {{- $portfolioImages := slice -}}
 
 {{- $resources := slice -}}
@@ -64,10 +65,12 @@
       {{- end -}}
     {{- end -}}
 
-    {{- /* Reduced thumbnails - only one size for grid view */ -}}
-    {{- $thumbnail := $image.Fill "300x300 Smart q75 webp" -}}
-    {{- $imageData = merge $imageData (dict
-      "pkb_thumbnail_300_300" (dict
+    {{- /* Thumbnails */ -}}
+    {{- $thumbnails := dict -}}
+    {{- range $size := $thumbnailSizes -}}
+      {{- $thumbnail := $image.Fill (printf "%s Smart q85 webp" $size) -}}
+      {{- $key := printf "pkb_thumbnail_%s" (replace $size "x" "_") -}}
+      {{- $thumbnails = merge $thumbnails (dict $key (dict
         "url" $thumbnail.RelPermalink
         "width" $thumbnail.Width
         "height" $thumbnail.Height
@@ -84,15 +87,10 @@
         "width" $optimizedWebP.Width
         "height" $optimizedWebP.Height
       )
-    ) -}}
-
-    {{- /* Single optimized version for overlay */ -}}
-    {{- $optimized := $image.Fit "1200x800 q80 webp" -}}
-    {{- $imageData = merge $imageData (dict
-      "pkb_optimized" (dict
-        "url" $optimized.RelPermalink
-        "width" $optimized.Width
-        "height" $optimized.Height
+      "pkb_optimized_jpeg" (dict
+        "url" $optimizedJPEG.RelPermalink
+        "width" $optimizedJPEG.Width
+        "height" $optimizedJPEG.Height
       )
     ) -}}
 
