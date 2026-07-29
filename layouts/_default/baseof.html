@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" class="interaction" data-base-url="{{ .Site.BaseURL }}">
+<html lang="{{ site.Language.Locale }}" dir="{{ or site.Language.Direction `ltr` }}" class="interaction" data-base-url="{{ .Site.BaseURL }}">
 <head>
   <!-- Critical theme initialization script - improved for persistence -->
   <script>
@@ -61,11 +61,7 @@
   {{ partial "head.html" . }}
   
   {{ block "head" . }}{{ end }}
-  
-  {{ if .Param "math" }}
-    {{ partialCached "math.html" . }}
-  {{ end }}
-  
+
   <!-- CSS preload with proper attributes -->
   {{ $mainCSS := resources.Get "css/main.css" }}
   {{ if $mainCSS }}
@@ -96,28 +92,6 @@
     mermaid.initialize({ startOnLoad: true });
     /* Expose for pdf-generator.js to force-render before print */
     window.__mermaid = mermaid;
-  </script>
-  {{ end }}
-  
-  <!-- Math processing helper for page refreshes -->
-  {{ if .Param "math" }}
-  <script>
-    // Ensure MathJax processes after everything is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      // Wait a bit more for all async resources
-      setTimeout(function() {
-        if (window.reprocessMath) {
-          window.reprocessMath();
-        }
-      }, 200);
-    });
-    
-    // Handle page visibility change (like refreshing)
-    document.addEventListener('visibilitychange', function() {
-      if (!document.hidden && window.reprocessMath) {
-        setTimeout(window.reprocessMath, 100);
-      }
-    });
   </script>
   {{ end }}
 </body>
