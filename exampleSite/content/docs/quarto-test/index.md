@@ -2,9 +2,8 @@
 title: Hello, Quarto
 date: '2025-07-19'
 categories:
-  - Python
-  - R
-  - Bash
+  - documentation
+description: "Sample Quarto-rendered page: executable Python, R, and Bash blocks rendered to hugo-md with knitr."
 format:
   hugo-md:
     fig-format: svg
@@ -107,3 +106,5 @@ echo "Quarto supports multiple languages!"
 </details>
 
     Quarto supports multiple languages!
+
+**Related notes:** [Quarto Basics with PKB Theme](../rendering-code-with-quarto.md), [Creating Posts with Hugo](../creating-posts.md). See also the [glossary](../glossary.md) for shared terminology.

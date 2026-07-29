@@ -10,6 +10,7 @@ series: ["Hugo Theme Testing"]
 tags: ["testing", "markdown", "hugo", "theme", "archetype", "sample"]
 categories: ["Development", "Testing", "Documentation"]
 slug: "test-on-archetype"
+math: true
 toc: true
 sidenotes: true
 image: "images/posts/test-on-archetype/sina-saadatmand-gB9hryu1q40-unsplash.jpg"

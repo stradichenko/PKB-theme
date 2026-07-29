@@ -8,7 +8,7 @@ description: "Complete guide to creating and publishing Quarto documents with th
 comments: false
 series: []
 tags: ["quarto", "documentation", "publishing", "data-science", "r", "python", "jupyter"]
-categories: ["docs", "guides"]
+categories: ["documentation"]
 slug: "quarto-basics"
 toc: true
 sidenotes: true
@@ -525,3 +525,5 @@ Remember to:
 - Keep your environment and dependencies updated
 
 For more advanced features and examples, check out the [official Quarto documentation](https://quarto.org/docs/).
+
+**Related notes:** [Quarto Test Sample](quarto-test/index.md), [Creating Posts with Hugo](creating-posts.md), [How the Hugo System Works](hugo-system-architecture.md). See also the [glossary](glossary.md) for shared terminology.

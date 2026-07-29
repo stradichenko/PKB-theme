@@ -19,12 +19,10 @@ enableGitInfo = true
     disableClasses = false
     disableIDs = false
     disableTags = false
-    enable = false
+    enable = true # generates hugo_stats.json (classes/IDs/tags usage) in the project root
   [[build.cacheBusters]]
     source = '(postcss|tailwind)\.config\.js'
     target = '(css|styles|scss|sass)'
-
-  writeStats = true #Generates build statistics and dependency information Creates hugo_stats.json file in your project root. Contains information about HTML classes, IDs, and tags used across your site
 
 [caches]
   [caches.assets]
@@ -32,14 +30,16 @@ enableGitInfo = true
     maxAge = -1
   # getcsv/getjson caches removed: the cache names were dropped in Hugo 0.156
   [caches.getresource]
+    dir = ':cacheDir/:project'
     maxAge = "1h"
-  
   [caches.images]
-    dir = ":resourceDir/_gen"
+    dir = ':resourceDir/_gen'
     maxAge = "1h"
-  
+#  [caches.misc]
+#    dir = ':cacheDir/:project'
+#    maxAge = -1
   [caches.modules]
-    dir = ":cacheDir/modules"
+    dir = ':cacheDir/modules'
     maxAge = "1h"
 
 [cascade]
@@ -64,7 +64,6 @@ enableGitInfo = true
 ignoreFiles = [ "\\.qmd$", "\\.ipynb$", "\\.py$" ]
 enableEmoji = true
 enableRobotsTXT = true
-
 
 [imaging]
   anchor = 'Smart'
@@ -260,7 +259,6 @@ enableRobotsTXT = true
     [minify.tdewolff.xml]
       keepWhitespace = false
 
-
 [outputFormats]
   [outputFormats.amp]
     baseName = 'index'
@@ -416,20 +414,6 @@ enableRobotsTXT = true
     root = false
     ugly = false
     weight = 0
-  [outputFormats.headers]
-    baseName = '_headers'
-    isHTML = false
-    isPlainText = true
-    mediaType = 'text/plain'
-    noUgly = false
-    notAlternative = true
-    path = ''
-    permalinkable = false
-    protocol = ''
-    rel = 'alternate'
-    root = true
-    ugly = false
-    weight = 0
 
 [outputs]
   # JSON on home generates the search index (/index.json)
@@ -537,9 +521,9 @@ enableRobotsTXT = true
     disableInlineCSS = false
 
 [sitemap]
-  changeFreq = 'weekly'
+  changeFreq = ''
   disable = false
   filename = 'sitemap.xml'
-  priority = 0.5
+  priority = -1
 
 uglyURLs = false
