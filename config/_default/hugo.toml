@@ -19,7 +19,7 @@ enableGitInfo = true
     disableClasses = false
     disableIDs = false
     disableTags = false
-    enable = false
+    enable = true # generates hugo_stats.json (classes/IDs/tags usage) in the project root
   [[build.cacheBusters]]
     source = '(postcss|tailwind)\.config\.js'
     target = '(css|styles|scss|sass)'
@@ -31,16 +31,16 @@ enableGitInfo = true
   # getcsv/getjson caches removed: the cache names were dropped in Hugo 0.156
   [caches.getresource]
     dir = ':cacheDir/:project'
-    maxAge = -1
+    maxAge = "1h"
   [caches.images]
     dir = ':resourceDir/_gen'
-    maxAge = -1
+    maxAge = "1h"
 #  [caches.misc]
 #    dir = ':cacheDir/:project'
 #    maxAge = -1
   [caches.modules]
     dir = ':cacheDir/modules'
-    maxAge = -1
+    maxAge = "1h"
 
 [cascade]
 
@@ -60,6 +60,10 @@ enableGitInfo = true
   expiryDate = ['expirydate', 'unpublishdate']
   lastmod = [':git', 'lastmod', 'modified', 'date', 'publishdate', 'pubdate', 'published']
   publishDate = ['publishdate', 'pubdate', 'published', 'date']
+
+ignoreFiles = [ "\\.qmd$", "\\.ipynb$", "\\.py$" ]
+enableEmoji = true
+enableRobotsTXT = true
 
 [imaging]
   anchor = 'Smart'
@@ -225,7 +229,7 @@ enableGitInfo = true
   disableJSON = false
   disableSVG = false
   disableXML = false
-  minifyOutput = false
+  minifyOutput = true
   [minify.tdewolff]
     [minify.tdewolff.css]
       inline = false
