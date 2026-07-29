@@ -1,12 +1,12 @@
-+++
-title = "Self-Hosted Analytics for PKB-theme"
-date = 2023-06-01T09:00:00-07:00
-draft = false
-tags = ["analytics", "privacy", "self-hosted", "documentation", "setup"]
-categories = ["documentation"]
-toc = true
-description = "A comprehensive guide for implementing privacy-focused, FOSS analytics in your PKB-theme site"
-+++
+---
+title: "Self-Hosted Analytics for PKB-theme"
+date: 2023-06-01T09:00:00-07:00
+draft: false
+tags: ["analytics", "privacy", "self-hosted", "documentation", "setup"]
+categories: ["documentation"]
+toc: true
+description: "A comprehensive guide for implementing privacy-focused, FOSS analytics in your PKB-theme site"
+---
 
 # Self-Hosted Analytics for PKB-theme
 

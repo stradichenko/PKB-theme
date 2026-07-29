@@ -1,12 +1,12 @@
-+++
-title = "Creating Posts with Hugo"
-date = 2025-01-20T10:00:00-07:00
-draft = false
-tags = ["hugo", "content creation", "posts", "documentation", "workflow"]
-categories = ["documentation"]
-toc = true
-description = "Complete guide to creating new posts and content using Hugo's archetype system"
-+++
+---
+title: "Creating Posts with Hugo"
+date: 2025-01-20T10:00:00-07:00
+draft: false
+tags: ["hugo", "content creation", "posts", "documentation", "workflow"]
+categories: ["documentation"]
+toc: true
+description: "Complete guide to creating new posts and content using Hugo's archetype system"
+---
 
 Hugo provides a powerful content creation system using archetypes and the `hugo new` command. This guide explains how to create different types of content in your PKB-theme site.
 

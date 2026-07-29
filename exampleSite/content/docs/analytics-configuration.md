@@ -1,12 +1,12 @@
-+++
-title = "Analytics Configuration"
-date = 2023-06-15T09:00:00-07:00
-draft = false
-tags = ["analytics", "configuration", "privacy", "documentation"]
-categories = ["documentation"]
-toc = true
-description = "Guide for configuring various analytics providers with PKB-theme"
-+++
+---
+title: "Analytics Configuration"
+date: 2023-06-15T09:00:00-07:00
+draft: false
+tags: ["analytics", "configuration", "privacy", "documentation"]
+categories: ["documentation"]
+toc: true
+description: "Guide for configuring various analytics providers with PKB-theme"
+---
 
 # Analytics Configuration for PKB-theme
 

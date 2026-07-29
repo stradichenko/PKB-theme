@@ -1,12 +1,12 @@
-+++
-title = "Saleor Integration Guide"
-date = 2023-08-22T16:00:00-07:00
-draft = false
-tags = ["ecommerce", "saleor", "headless commerce", "graphql", "tutorial", "integration"]
-categories = ["ecommerce"]
-toc = true
-description = "Developer-focused guide for implementing and integrating Saleor headless commerce platform with your PKB-theme project"
-+++
+---
+title: "Saleor Integration Guide"
+date: 2023-08-22T16:00:00-07:00
+draft: false
+tags: ["ecommerce", "saleor", "headless commerce", "graphql", "tutorial", "integration"]
+categories: ["ecommerce"]
+toc: true
+description: "Developer-focused guide for implementing and integrating Saleor headless commerce platform with your PKB-theme project"
+---
 
 # Setting Up Saleor with PKB-theme
 

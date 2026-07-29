@@ -1,12 +1,12 @@
-+++
-title = "Deploying with exampleSite"
-date = 2023-07-02T09:00:00-07:00
-draft = false
-tags = ["deployment", "examplesite", "quickstart", "documentation"]
-categories = ["documentation"]
-toc = true
-description = "Guide for deploying your site using PKB-theme's exampleSite as a template"
-+++
+---
+title: "Deploying with exampleSite"
+date: 2023-07-02T09:00:00-07:00
+draft: false
+tags: ["deployment", "examplesite", "quickstart", "documentation"]
+categories: ["documentation"]
+toc: true
+description: "Guide for deploying your site using PKB-theme's exampleSite as a template"
+---
 
 # Deploying with exampleSite
 

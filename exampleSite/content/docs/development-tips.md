@@ -1,12 +1,12 @@
-+++
-title = "Development Tips"
-date = 2023-07-04T09:00:00-07:00
-draft = false
-tags = ["development", "hugo", "tips", "documentation"]
-categories = ["development"]
-toc = true
-description = "Development tips and useful commands for PKB-theme development"
-+++
+---
+title: "Development Tips"
+date: 2023-07-04T09:00:00-07:00
+draft: false
+tags: ["development", "hugo", "tips", "documentation"]
+categories: ["development"]
+toc: true
+description: "Development tips and useful commands for PKB-theme development"
+---
 
 # Development Tips
 

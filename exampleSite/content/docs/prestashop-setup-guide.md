@@ -1,12 +1,12 @@
-+++
-title = "PrestaShop Integration Guide"
-date = 2023-08-21T15:00:00-07:00
-draft = false
-tags = ["ecommerce", "prestashop", "self-hosted", "tutorial", "integration"]
-categories = ["ecommerce"]
-toc = true
-description = "Comprehensive guide for installing and integrating PrestaShop with your PKB-theme project"
-+++
+---
+title: "PrestaShop Integration Guide"
+date: 2023-08-21T15:00:00-07:00
+draft: false
+tags: ["ecommerce", "prestashop", "self-hosted", "tutorial", "integration"]
+categories: ["ecommerce"]
+toc: true
+description: "Comprehensive guide for installing and integrating PrestaShop with your PKB-theme project"
+---
 
 # Setting Up PrestaShop with PKB-theme
 

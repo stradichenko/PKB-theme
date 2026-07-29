@@ -1,12 +1,12 @@
-+++
-title = "Reverse Proxy Configuration for Analytics"
-date = 2023-07-01T09:00:00-07:00
-draft = false
-tags = ["analytics", "reverse proxy", "nginx", "apache", "caddy", "traefik", "self-hosted"]
-categories = ["infrastructure"]
-toc = true
-description = "A comprehensive guide for setting up reverse proxies for self-hosted analytics solutions"
-+++
+---
+title: "Reverse Proxy Configuration for Analytics"
+date: 2023-07-01T09:00:00-07:00
+draft: false
+tags: ["analytics", "reverse proxy", "nginx", "apache", "caddy", "traefik", "self-hosted"]
+categories: ["infrastructure"]
+toc: true
+description: "A comprehensive guide for setting up reverse proxies for self-hosted analytics solutions"
+---
 
 # Reverse Proxy Setup for Self-Hosted Analytics
 

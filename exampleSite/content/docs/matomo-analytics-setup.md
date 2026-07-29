@@ -1,12 +1,12 @@
-+++
-title = "Matomo Analytics Setup Guide"
-date = 2023-06-10T09:00:00-07:00
-draft = false
-tags = ["analytics", "matomo", "privacy", "self-hosted", "documentation"]
-categories = ["documentation"]
-toc = true
-description = "Comprehensive guide for setting up Matomo Analytics with your PKB-theme site"
-+++
+---
+title: "Matomo Analytics Setup Guide"
+date: 2023-06-10T09:00:00-07:00
+draft: false
+tags: ["analytics", "matomo", "privacy", "self-hosted", "documentation"]
+categories: ["documentation"]
+toc: true
+description: "Comprehensive guide for setting up Matomo Analytics with your PKB-theme site"
+---
 
 # Matomo Analytics for PKB-theme
 

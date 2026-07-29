@@ -1,12 +1,12 @@
-+++
-title = "Setting up GitHub Pages"
-date = 2023-07-01T09:00:00-07:00
-draft = false
-tags = ["github-pages", "setup", "documentation"]
-categories = ["documentation"]
-toc = true
-description = "A comprehensive guide to set up GitHub Pages with PKB-theme"
-+++
+---
+title: "Setting up GitHub Pages"
+date: 2023-07-01T09:00:00-07:00
+draft: false
+tags: ["github-pages", "setup", "documentation"]
+categories: ["documentation"]
+toc: true
+description: "A comprehensive guide to set up GitHub Pages with PKB-theme"
+---
 
 # Setting up GitHub Pages with PKB-theme
 

@@ -1,12 +1,12 @@
-+++
-title = "OpenCart Integration Guide"
-date = 2023-08-20T14:00:00-07:00
-draft = false
-tags = ["ecommerce", "opencart", "self-hosted", "tutorial", "integration"]
-categories = ["ecommerce"]
-toc = true
-description = "Step-by-step guide for setting up and integrating OpenCart with your PKB-theme project"
-+++
+---
+title: "OpenCart Integration Guide"
+date: 2023-08-20T14:00:00-07:00
+draft: false
+tags: ["ecommerce", "opencart", "self-hosted", "tutorial", "integration"]
+categories: ["ecommerce"]
+toc: true
+description: "Step-by-step guide for setting up and integrating OpenCart with your PKB-theme project"
+---
 
 # Setting Up OpenCart with PKB-theme
 

@@ -1,12 +1,12 @@
-+++
-title = "Self-Hosted Ecommerce Solutions"
-date = 2023-08-15T10:00:00-07:00
-draft = false
-tags = ["ecommerce", "self-hosted", "open-source", "foss", "website", "store"]
-categories = ["ecommerce"]
-toc = true
-description = "A comprehensive guide to self-hosted and open-source ecommerce platforms for creating independent online stores"
-+++
+---
+title: "Self-Hosted Ecommerce Solutions"
+date: 2023-08-15T10:00:00-07:00
+draft: false
+tags: ["ecommerce", "self-hosted", "open-source", "foss", "website", "store"]
+categories: ["ecommerce"]
+toc: true
+description: "A comprehensive guide to self-hosted and open-source ecommerce platforms for creating independent online stores"
+---
 
 # Self-Hosted Ecommerce Solutions
 
