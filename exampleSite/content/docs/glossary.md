@@ -4,7 +4,7 @@ description: "Short definitions of the technical terms that recur across the doc
 date: 2026-07-28T12:00:00-05:00
 lastmod: 2026-07-28T12:00:00-05:00
 draft: false
-tags: ["pkb", "glossary", "terminology"]
+tags: ["PKB", "glossary", "terminology"]
 categories: ["documentation"]
 slug: "glossary"
 toc: false

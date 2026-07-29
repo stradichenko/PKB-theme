@@ -4,7 +4,7 @@ description: "Entry point for the PKB-theme documentation notes, organized by su
 date: 2026-07-28T12:00:00-05:00
 lastmod: 2026-07-28T12:00:00-05:00
 draft: false
-tags: ["pkb", "index", "overview", "documentation"]
+tags: ["PKB", "index", "overview", "documentation"]
 categories: ["documentation"]
 toc: false
 ---
