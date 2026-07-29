@@ -16,6 +16,8 @@ Terms are listed alphabetically. Each entry gives a short definition followed by
 
 **Archetype**: the template Hugo uses to seed a new content file created with `hugo new`. See [Creating Posts with Hugo](creating-posts.md).
 
+**Chroma**: the syntax highlighter built into Hugo; the theme drives it class-based with generated dark/light style pairs that follow the color-scheme toggle. See [How the Hugo System Works](hugo-system-architecture.md#feature-subsystems), [SOTA: Hugo](SOTA_hugo.md#findings).
+
 **exampleSite**: the complete demo site bundled with the theme, usable directly as a deployment template. See [Deploying with exampleSite](examplesite-deployment.md).
 
 **Front matter**: the metadata block at the top of a content file (YAML, TOML, or JSON) controlling title, date, taxonomies, and page behavior. See [Creating Posts with Hugo](creating-posts.md), [SOTA: Hugo](SOTA_hugo.md#findings).

@@ -15,6 +15,7 @@ This note maps the documentation base by subject. Each entry links to a dedicate
 
 ## Hugo and theme development
 
+- [How the Hugo System Works (2026-07-29)](hugo-system-architecture.md): the dated architecture reference for the whole setup: version floor, module and config model, templates, content pipeline, and CI.
 - [Creating Posts with Hugo](creating-posts.md): the content workflow, from archetypes and front matter to page bundles.
 - [Hugo SEO Implementation Guide](hugo-seo.md): the meta tags, Open Graph, JSON-LD, and sitemap machinery built into the theme.
 - [Development Tips](development-tips.md): day-to-day practices for working on the theme itself.
