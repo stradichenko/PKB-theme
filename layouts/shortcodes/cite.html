@@ -1,16 +1,16 @@
 {{- $citationKey := .Get 0 | default "" -}}
 {{- $bibFile := .Get 1 | default "references.bib" -}}
-{{- $existingNum := .Page.Scratch.Get (printf "citation-%s-num" $citationKey) -}}
+{{- $existingNum := .Page.Store.Get (printf "citation-%s-num" $citationKey) -}}
 {{- if $existingNum -}}
   {{- $citationId := printf "citation-%s" $citationKey -}}
   {{- $existingCitation := index (.Page.Store.Get "citations") $citationKey -}}
   <sup class="citation-ref" data-citation-key="{{ $citationKey }}" title="{{ $existingCitation }}">{{ $existingNum }}</sup>
 {{- else -}}
   {{- /* New citation - increment counter and store */ -}}
-  {{- $num := .Page.Scratch.Get "citeCounter" | default 0 -}}
+  {{- $num := .Page.Store.Get "citeCounter" | default 0 -}}
   {{- $num = add $num 1 -}}
-  {{- .Page.Scratch.Set "citeCounter" $num -}}
-  {{- .Page.Scratch.Set (printf "citation-%s-num" $citationKey) $num -}}
+  {{- .Page.Store.Set "citeCounter" $num -}}
+  {{- .Page.Store.Set (printf "citation-%s-num" $citationKey) $num -}}
   {{- $style := .Get 2 | default "apa" -}}
   {{- $showNotes := .Get 3 | default "false" -}}
   {{- $citationId := printf "citation-%s" $citationKey -}}

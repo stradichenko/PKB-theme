@@ -1,8 +1,0 @@
-{{- $text := .Text | strings.TrimSpace -}}
-{{- if and (hasPrefix $text "$") (hasSuffix $text "$") (not (hasPrefix $text "$$")) -}}
-  {{/* Inline math - output directly without wrapping */}}
-  {{ $text | safeHTML }}
-{{- else -}}
-  {{/* Regular inline text */}}
-  {{ $text | safeHTML }}
-{{- end -}}

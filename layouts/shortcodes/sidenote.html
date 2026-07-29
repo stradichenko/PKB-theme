@@ -1,6 +1,6 @@
-{{- $counter := .Page.Scratch.Get "sidenoteCounter" | default 0 -}}
+{{- $counter := .Page.Store.Get "sidenoteCounter" | default 0 -}}
 {{- $counter = add $counter 1 -}}
-{{- .Page.Scratch.Set "sidenoteCounter" $counter -}}
+{{- .Page.Store.Set "sidenoteCounter" $counter -}}
 {{- $letter := printf "%c" (add $counter 96) -}}
 {{- $content := .Inner | markdownify -}}
 {{- $cleanContent := $content | plainify -}}

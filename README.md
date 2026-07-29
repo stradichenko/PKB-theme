@@ -141,7 +141,7 @@ Described at [documentation](https://github.com/stradichenko/PKB-theme/blob/main
 
 ## Obsidian / PKB markdown compatibility
 
-The theme supports markdown written for Obsidian-style PKB vaults (relative `.md` links, `[^label]` footnotes, `$$...$$` math) with a few pieces of setup. Requires Hugo v0.148+.
+The theme supports markdown written for Obsidian-style PKB vaults (relative `.md` links, `[^label]` footnotes, `$$...$$` math) with a few pieces of setup. Requires Hugo v0.164+.
 
 **Goldmark extensions (site config, required).** Goldmark's footnote and passthrough extensions are off by default. Add this to your *site's* config (e.g. `config/_default/hugo.toml`), exactly as done in `exampleSite/config/_default/hugo.toml`:
 

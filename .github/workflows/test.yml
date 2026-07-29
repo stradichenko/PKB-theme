@@ -12,52 +12,46 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        hugo-version: ['0.123.7'] # Match your theme's requirement
+        hugo-version: ['0.164.0'] # Match theme.toml min_version
 
     defaults:
       run:
         shell: bash
 
     steps:
-<<<<<<< HEAD
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: false
-=======
-    - name: Checkout code
-      uses: actions/checkout@v4
->>>>>>> gh-pages
 
-    - name: Setup Hugo
-      uses: peaceiris/actions-hugo@v2
-      with:
-        hugo-version: ${{ matrix.hugo-version }}
-        extended: true
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: ${{ matrix.hugo-version }}
+          extended: true
 
-    - name: Install htmltest
-      run: |
-        # Fetch the latest version of htmltest
-        LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest | grep "tag_name" | cut -d '"' -f 4)
-        echo "LATEST_VERSION=${LATEST_VERSION}"
-        
-        if [ -z "$LATEST_VERSION" ]; then
-            echo "Failed to fetch the latest version of htmltest."
-            exit 1
-        fi
-        
-        # Adjust the URL to match the asset naming convention
-        echo "Downloading from: https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
-        wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz || {
-            echo "Failed to download htmltest. Check the URL or network connection.";
-            exit 1;
-        }
-        
-        tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
-        sudo mv htmltest /usr/local/bin/
+      - name: Install htmltest
+        run: |
+          # Fetch the latest version of htmltest
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+          echo "LATEST_VERSION=${LATEST_VERSION}"
 
-<<<<<<< HEAD
+          if [ -z "$LATEST_VERSION" ]; then
+              echo "Failed to fetch the latest version of htmltest."
+              exit 1
+          fi
+
+          # Adjust the URL to match the asset naming convention
+          echo "Downloading from: https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz"
+          wget -q https://github.com/wjdp/htmltest/releases/download/${LATEST_VERSION}/htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz || {
+              echo "Failed to download htmltest. Check the URL or network connection.";
+              exit 1;
+          }
+
+          tar xzf htmltest_${LATEST_VERSION#v}_linux_amd64.tar.gz
+          sudo mv htmltest /usr/local/bin/
+
       - name: Cache Hugo Modules
         uses: actions/cache@v4
         with:
@@ -82,14 +76,6 @@ jobs:
         run: |
           hugo version
           go version
-
-      - name: Install htmltest
-        run: |
-          LATEST=$(curl -s https://api.github.com/repos/wjdp/htmltest/releases/latest \
-            | grep '"tag_name":' | cut -d '"' -f 4)
-          wget -q "https://github.com/wjdp/htmltest/releases/download/${LATEST}/htmltest_${LATEST#v}_linux_amd64.tar.gz"
-          tar xzf htmltest_${LATEST#v}_linux_amd64.tar.gz
-          sudo mv htmltest /usr/local/bin/
 
       - name: Initialize Hugo Module
         working-directory: exampleSite
@@ -117,24 +103,3 @@ jobs:
       - name: Run HTML validation
         working-directory: exampleSite
         run: htmltest -c .htmltest.yml --log-level 3 --skip-external
-=======
-    - name: Build and test
-      run: |
-        cd exampleSite
-        
-        # Clean previous modules
-        rm -rf go.mod go.sum resources/_gen public
-        
-        # Initialize temporary module
-        hugo mod init temp-site
-        
-        # Get latest theme version automatically
-        hugo mod get -u github.com/stradichenko/PKB-theme
-        
-        # Verify module integrity
-        hugo mod verify
-        
-        # Build and test
-        hugo --minify --cleanDestinationDir --environment production --logLevel debug
-        htmltest -c .htmltest.yml --log-level 3 --skip-external
->>>>>>> gh-pages

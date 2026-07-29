@@ -47,14 +47,14 @@
       "pkb_rel_permalink" $image.RelPermalink
     -}}
 
-    {{- with $image.Exif -}}
+    {{- with $image.Meta -}}
       {{- $exif := dict
-        "pkb_exif_make" (.Tags.Make | default "")
-        "pkb_exif_model" (.Tags.Model | default "")
-        "pkb_exif_lens_model" (.Tags.LensModel | default "")
-        "pkb_exif_exposure_time" (.Tags.ExposureTime | default "")
-        "pkb_exif_f_number" (.Tags.FNumber | default "")
-        "pkb_exif_iso" (.Tags.ISOSpeedRatings | default "")
+        "pkb_exif_make" (.Exif.Make | default "")
+        "pkb_exif_model" (.Exif.Model | default "")
+        "pkb_exif_lens_model" (.Exif.LensModel | default "")
+        "pkb_exif_exposure_time" (.Exif.ExposureTime | default "")
+        "pkb_exif_f_number" (.Exif.FNumber | default "")
+        "pkb_exif_iso" (.Exif.ISOSpeedRatings | default "")
       -}}
       {{- with .Date -}}
         {{- $exif = merge $exif (dict "pkb_exif_date" (.Format "2006-01-02T15:04:05Z07:00")) -}}
