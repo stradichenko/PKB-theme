@@ -34,9 +34,8 @@ plt.show()
 ```
 
 </details>
-<img
-src="index.markdown_strict_files/figure-markdown_strict/fig-polar-1.svg"
-id="fig-polar" alt="Figure 1: A line plot on a polar axis" />
+
+![Figure 1: A line plot on a polar axis](./fig-polar-1.svg "Figure 1: A line plot on a polar axis")
 
 ## Summary Statistics (R)
 
@@ -72,7 +71,7 @@ hist(cars$speed, col = "skyblue", main = "Histogram of Speed", xlab = "Speed (mp
 
 </details>
 
-![](index.markdown_strict_files/figure-markdown_strict/unnamed-chunk-2-1.svg)
+![](./unnamed-chunk-2-1.svg)
 
 ## ggplot2 Chart (R)
 
@@ -92,7 +91,7 @@ ggplot(cars, aes(x = speed)) +
 
 </details>
 
-![](index.markdown_strict_files/figure-markdown_strict/unnamed-chunk-3-1.svg)
+![](./unnamed-chunk-3-1.svg)
 
 ## Bash Output
 

@@ -124,9 +124,10 @@
     <h3>Share this page</h3>
     
     <div class="qrcode-container">
-      <img 
-        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ .Permalink | urlquery }}" 
-        alt="QR code for {{ .Title }}" 
+      {{ $qrImage := images.QR .Permalink (dict "size" 200 "level" "medium") }}
+      <img
+        src="{{ $qrImage.RelPermalink }}"
+        alt="QR code for {{ .Title }}"
         class="page-qr-code"
         loading="lazy"
         width="200"
